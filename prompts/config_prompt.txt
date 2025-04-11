@@ -1,0 +1,9 @@
+Create ConfigSpace for:
+        - ML algorithm used in train function
+        - Include relevant hyperparameters
+        - Specify proper ranges/types
+        Example:
+        from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter
+        
+        cs = ConfigurationSpace()
+        cs.add_hyperparameter(UniformFloatHyperparameter('alpha', 1e-5, 1e-1, log=True))

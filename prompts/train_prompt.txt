@@ -1,0 +1,19 @@
+Create a Python training function with these requirements:
+        - Dataset: {self.dataset.describe()}
+        - Use appropriate validation strategy
+        - Must return validation loss
+        - Signature: def train(cfg: Configuration, seed: int) -> float
+        - Should handle hyperparameters from config
+        - Include necessary imports
+        Example:
+        from sklearn.model_selection import cross_val_score
+        from sklearn.linear_model import SGDClassifier
+        
+        def train(cfg, seed):
+            model = SGDClassifier(
+                alpha=cfg['alpha'],
+                learning_rate=cfg['learning_rate'],
+                max_iter=cfg['max_iter']
+            )
+            scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
+            return 1 - np.mean(scores)
