@@ -1,0 +1,12 @@
+Create a scenario for SMAC:
+        - Use the generated training function
+        - Include necessary imports
+        Example:
+        from smac.scenario.scenario import Scenario
+        scenario = Scenario({
+            'runcount-limit': 100,
+            'cs': cs,
+            'deterministic': True,
+            'output-dir': './output',
+            'run_obj': 'quality'
+        })
