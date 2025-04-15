@@ -19,7 +19,7 @@ X, y = load_iris(return_X_y=True)
 # print(f"Best configuration: {incumbent}")
 
 if __name__ == "__main__":
-    llm_client = LLMClient(api_key=GROQ_API_KEY)
+    llm_client = LLMClient(api_key=GROQ_API_KEY, model_name="meta-llama/llama-4-scout-17b-16e-instruct")
     agent = AutoMLAgent(dataset={'X': X, 'y': y}, llm_client=llm_client)
     agent.generate_components()
     # incumbent = agent.run_smac()

@@ -1,6 +1,6 @@
 from scripts.LLMClient import LLMClient
 from typing import Any
-from scripts.utils import describe_dataset
+from scripts.utils import describe_dataset, log_message
 from scripts.CodeExecutor import CodeExecutor
 
 class AutoMLAgent:
@@ -37,21 +37,21 @@ class AutoMLAgent:
         # Generate training function
         train_prompt = self._create_train_prompt()
         train_code = self.llm.generate(train_prompt)
-        print(f"Generated training function code:\n{train_code}")
+        log_message(f"Generated training function code:\n{train_code}")
         self.train_function_code = train_code
         self.train_function = self._extract_function(train_code, "train")
 
         # Generate configuration space
         config_prompt = self._create_config_prompt()
         config_code = self.llm.generate(config_prompt)
-        print(f"Generated configuration space code:\n{config_code}")
+        log_message(f"Generated configuration space code:\n{config_code}")
         self.config_code = config_code
         self.config_space = self._extract_config_space(config_code)
 
         # Generate scenario
         scenario_prompt = self._create_scenario_prompt()
         scenario_code = self.llm.generate(scenario_prompt)
-        print(f"Generated scenario code:\n{scenario_code}")
+        log_message(f"Generated scenario code:\n{scenario_code}")
         self.scenario_code = scenario_code
         self.scenario = self._extract_scenario(scenario_code)
 
