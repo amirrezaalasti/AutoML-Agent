@@ -22,6 +22,6 @@ if __name__ == "__main__":
     llm_client = LLMClient(api_key=GROQ_API_KEY)
     agent = AutoMLAgent(dataset={'X': X, 'y': y}, llm_client=llm_client)
     agent.generate_components()
-    incumbent = agent.run_smac()
+    # incumbent = agent.run_smac()
     # print(f"Best configuration: {incumbent}")
     pass

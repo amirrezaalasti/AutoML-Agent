@@ -1,6 +1,6 @@
 from scripts.LLMClient import LLMClient
 from typing import Any
-from scripts.helpers import describe_dataset
+from scripts.utils import describe_dataset
 from scripts.CodeExecutor import CodeExecutor
 
 class AutoMLAgent:

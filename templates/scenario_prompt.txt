@@ -1,0 +1,20 @@
+Generate optimal SMAC scenario configuration considering:
+        - Previous context of training function requirements
+        - Integration with pre-defined ConfigSpace 'cs'
+        - Optimization objectives aligned with validation loss
+        - Resource constraints from original problem setup
+        - Multi-fidelity options if using neural networks
+        - Parallel execution settings for cloud deployment
+        
+        Required parameters:
+        - 'runcount_limit': 1000 (from project constraints)
+        - 'wallclock_limit': 86400 (24h timeout)
+        - 'deterministic': True (for reproducibility)
+        - 'output_dir': './automl_results' (from project spec)
+        - 'shared_model': True (for parallel optimization)
+        
+        Ensure compatibility with:
+        - Previously generated train() function signature
+        - Configuration space hyperparameter types
+        - Python 3.10 type annotations
+        - Latest SMAC v2.0 package requirements

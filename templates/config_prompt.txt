@@ -1,0 +1,22 @@
+Create rigorous ConfigurationSpace for classification models with:
+        - Conditional hyperparameters based on previous training function
+        - Proper scaling of numerical parameters (log-uniform for scale-sensitive)
+        - Categorical learning rate schedules from example
+        - Interaction constraints between parameters
+        - Hierarchical conditions for optimizer-dependent parameters
+        - Default values matching standard scikit-learn defaults
+        - Meta-features from {dataset} characteristics
+        
+        Required hyperparameters:
+        1. learning_rate: categorical ['adaptive', 'constant']
+        2. alpha: log-uniform [1e-7, 1e-1]
+        3. max_iter: integer [100, 1000]
+        4. eta0: conditional (when learning_rate=constant) [1e-4, 1.0]
+        5. early_stopping: boolean with default=True
+        
+        Include:
+        - ConfigSpace import statements
+        - Type conversions for SMAC compatibility
+        - Constraints validator functions
+        - Forbidden clauses for invalid combinations
+        - Seed handling from previous context

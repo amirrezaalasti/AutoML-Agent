@@ -1,0 +1,20 @@
+Generate production-grade Python code for a ML training function with these STRICT requirements:
+        - Function signature: def train(cfg: Configuration, seed: int) -> float
+        - Accepts {dataset} object with .data and .target attributes
+        - Uses stratified k-fold validation for classification tasks
+        - Returns mean validation NLL loss (negative log likelihood)
+        - Hyperparameters MUST match ConfigSpace structure:
+            * learning_rate: categorical with 'constant'/'adaptive'
+            * alpha: continuous log-scale
+            * max_iter: integer
+            * eta0: conditional when learning_rate=constant
+        - Include ALL required imports
+        - Handle random seeds via cross_val_score(random_state=seed)
+        - Type-annotated configuration input
+        - Example-based context from previous ConfigSpace definition
+        
+        Formatting requirements:
+        Use scikit-learn compatible estimators
+        Implement early stopping if max_iter present
+        Validate using sklearn.model_selection cross-validation
+        Return loss compatible with SMAC optimization (lower=better)

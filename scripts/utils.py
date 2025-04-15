@@ -22,3 +22,14 @@ def describe_dataset(dataset):
     )
     
     return description
+
+def log_message(message: str, log_file: str = "./logs/logs.txt"):
+    """
+    Log a message to a specified log file.
+    
+    Args:
+        message (str): The message to log.
+        log_file (str): The path to the log file. Default is "./logs/logs.txt".
+    """
+    with open(log_file, "a") as log:
+        log.write(message + "\n")
