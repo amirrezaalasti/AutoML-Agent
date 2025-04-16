@@ -1,186 +1,99 @@
 Generated training function code:
-Here's a Python function that meets the requirements:
-
 ```python
 import numpy as np
-from sklearn.model_selection import cross_val_score, train_test_split
-from sklearn.linear_model import SGDClassifier
-from sklearn.datasets import make_classification
-from sklearn.metrics import accuracy_score, log_loss
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import make_scorer, log_loss
+from ConfigSpace import Configuration
+from ConfigSpace.hyperparameters import CategoricalHyperparameter, UniformFloatHyperparameter, IntegerHyperparameter
 
-def train(cfg: dict, seed: int) -> float:
-    """
-    Train a model on a synthetic dataset and return the validation loss.
+def train(cfg: Configuration, seed: int, dataset: object) -> float:
+    learning_rate = cfg.get('learning_rate')
+    alpha = cfg.get('alpha')
+    max_iter = cfg.get('max_iter')
+    eta0 = cfg.get('eta0', default=None) if learning_rate == 'constant' else None
 
-    Args:
-    - cfg (dict): A dictionary containing hyperparameters.
-        - 'alpha' (float): The regularization parameter.
-        - 'learning_rate' (str): The learning rate schedule.
-        - 'max_iter' (int): The maximum number of iterations.
-    - seed (int): The random seed.
+    model = LogisticRegression(max_iter=max_iter, 
+                               learning_rate=learning_rate, 
+                               eta0=eta0, 
+                               penalty='l2', 
+                               C=1/alpha, 
+                               solver='liblinear', 
+                               tol=1e-3, 
+                               random_state=seed, 
+                               warm_start=True)
 
-    Returns:
-    - float: The validation loss.
-    """
-
-    # Set the random seed for reproducibility
-    np.random.seed(seed)
-
-    # Generate a synthetic dataset
-    X, y = make_classification(
-        n_samples=150,
-        n_features=4,
-        n_informative=4,
-        n_redundant=0,
-        n_repeated=0,
-        n_classes=3,
-        random_state=seed
-    )
-
-    # Define the model
-    model = SGDClassifier(
-        alpha=cfg['alpha'],
-        learning_rate=cfg['learning_rate'],
-        max_iter=cfg['max_iter'],
-        random_state=seed
-    )
-
-    # Split the data into training and validation sets
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed)
-
-    # Train the model on the training set
-    model.fit(X_train, y_train)
-
-    # Predict probabilities on the validation set
-    y_pred_proba = model.predict_proba(X_val)
-
-    # Calculate the validation loss
-    val_loss = log_loss(y_val, y_pred_proba)
-
-    return val_loss
-
-# Example usage:
-cfg = {
-    'alpha': 0.001,
-    'learning_rate': 'constant',
-    'max_iter': 1000
-}
-
-seed = 42
-val_loss = train(cfg, seed)
-print(f'Validation loss: {val_loss:.4f}')
+    scoring = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
+    scores = cross_val_score(model, dataset.data, dataset.target, cv=5, scoring=scoring, random_state=seed)
+    return np.mean(scores)
 ```
-
-In this code:
-
-*   We generate a synthetic dataset using `make_classification` from scikit-learn.
-*   We define a function `train` that takes a configuration dictionary `cfg` and a random seed `seed` as input.
-*   We set the random seed for reproducibility and create an SGDClassifier instance with the specified hyperparameters.
-*   We split the data into training and validation sets using `train_test_split`.
-*   We train the model on the training set and predict probabilities on the validation set.
-*   We calculate the validation loss using the log loss metric from scikit-learn.
-*   We provide an example usage of the `train` function with a sample configuration and seed.
 Generated configuration space code:
-### Creating a ConfigSpace for Machine Learning Algorithm
-
-Below is an example of creating a ConfigSpace for a machine learning algorithm. For this example, let's consider a Random Forest Classifier.
-
 ```python
-from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, CategoricalHyperparameter, UniformIntegerHyperparameter
+import ConfigSpace as CS
+from ConfigSpace import Configuration, ConfigurationSpace
+from ConfigSpace.hyperparameters import CategoricalHyperparameter, UniformFloatHyperparameter, \
+    LogUniformFloatHyperparameter, IntegerHyperparameter
+from ConfigSpace.conditions import InCondition, AndCondition
+from ConfigSpace.forbidden import ForbiddenAnd, ForbiddenOr
 
-def create_config_space():
-    """
-    Creates a ConfigSpace for a Random Forest Classifier.
+def create_configuration_space():
+    cs = ConfigurationSpace(seed=42)
 
-    Returns:
-    cs (ConfigurationSpace): The configuration space for the Random Forest Classifier.
-    """
-    cs = ConfigurationSpace()
+    # Hyperparameters
+    learning_rate = CategoricalHyperparameter("learning_rate", choices=["adaptive", "constant"], default="adaptive")
+    alpha = LogUniformFloatHyperparameter("alpha", lower=1e-7, upper=1e-1, default=1e-4)
+    max_iter = IntegerHyperparameter("max_iter", lower=100, upper=1000, default=1000)
+    eta0 = UniformFloatHyperparameter("eta0", lower=1e-4, upper=1.0, default=0.1)
+    early_stopping = CS.BooleanHyperparameter("early_stopping", default=True)
 
-    # Number of estimators (trees) in the forest
-    cs.add_hyperparameter(UniformIntegerHyperparameter('n_estimators', 10, 1000, log=True))
+    # Add hyperparameters to configuration space
+    cs.add_hyperparameter(learning_rate)
+    cs.add_hyperparameter(alpha)
+    cs.add_hyperparameter(max_iter)
+    cs.add_hyperparameter(eta0)
+    cs.add_hyperparameter(early_stopping)
 
-    # Maximum depth of the tree
-    cs.add_hyperparameter(UniformIntegerHyperparameter('max_depth', 5, 50))
+    # Conditions
+    eta0_condition = InCondition(eta0, learning_rate, ["constant"])
 
-    # Minimum number of samples required to split an internal node
-    cs.add_hyperparameter(UniformIntegerHyperparameter('min_samples_split', 2, 11))
+    # Add conditions to configuration space
+    cs.add_condition(eta0_condition)
 
-    # Minimum number of samples required to be at a leaf node
-    cs.add_hyperparameter(UniformIntegerHyperparameter('min_samples_leaf', 1, 10))
+    # Constraints validator functions
+    def validate_configuration(configuration):
+        return True
 
-    # Maximum number of features to consider at each split
-    cs.add_hyperparameter(CategoricalHyperparameter('max_features', ['auto', 'sqrt', 'log2']))
+    # Forbidden clauses
+    forbidden_clauses = [
+        ForbiddenAnd([configuration.get_dictionary()["learning_rate"] == "adaptive", 
+                       configuration.get_dictionary()["eta0"] > 0]),
+    ]
 
-    # Whether to bootstrap samples when constructing trees
-    cs.add_hyperparameter(CategoricalHyperparameter('bootstrap', ['True', 'False']))
+    # Add forbidden clauses to configuration space
+    for clause in forbidden_clauses:
+        cs.add_forbidden(clause)
 
     return cs
 
-# Example usage
-if __name__ == "__main__":
-    cs = create_config_space()
-    print(cs)
+cs = create_configuration_space()
+print(cs)
 ```
-
-### Explanation
-
-The ConfigSpace created above includes the following hyperparameters for a Random Forest Classifier:
-
-*   `n_estimators`: The number of trees in the forest. The range is set to `[10, 1000]` with a logarithmic scale.
-*   `max_depth`: The maximum depth of the tree. The range is set to `[5, 50]`.
-*   `min_samples_split`: The minimum number of samples required to split an internal node. The range is set to `[2, 11]`.
-*   `min_samples_leaf`: The minimum number of samples required to be at a leaf node. The range is set to `[1, 10]`.
-*   `max_features`: The maximum number of features to consider at each split. The possible values are `'auto'`, `'sqrt'`, and `'log2'`.
-*   `bootstrap`: Whether to bootstrap samples when constructing trees. The possible values are `'True'` and `'False'`.
-
-You can adjust these hyperparameters and their ranges according to your specific needs and the requirements of your machine learning algorithm.
-
-### Advice
-
-*   When creating a ConfigSpace, make sure to consider the relevant hyperparameters for your machine learning algorithm.
-*   Choose proper ranges and types for each hyperparameter based on the algorithm's requirements and the characteristics of your dataset.
-*   Use logarithmic scales for hyperparameters that have a large range of values to ensure that the optimization process explores the space efficiently.
-*   Consider using categorical hyperparameters for parameters that have a small, discrete set of possible values.
 Generated scenario code:
-To create a scenario for SMAC (SMAC: Sequential Model-based Algorithm Configuration), you first need to have a configuration space (`cs`) defined for your algorithm. The configuration space represents all possible configurations of the algorithm you want to configure.
-
-Below is a basic example that demonstrates how to create a scenario for SMAC. This example assumes you're configuring an algorithm with a simple configuration space that includes two parameters: one categorical and one integer.
-
 ```python
-import ConfigSpace as CS
-from smac.scenario.scenario import Scenario
+from smac import Scenario
+from ConfigSpace import ConfigSpace
 
-# Define the configuration space
-cs = CS.ConfigurationSpace()
-
-# Example parameter: integer parameter
-integer_param = CS.IntegerParameter("integer_param", 1, 10)
-cs.add(integer_param)
-
-# Example parameter: categorical parameter
-categorical_param = CS.CategoricalParameter("categorical_param", ["value1", "value2", "value3"])
-cs.add(categorical_param)
-
-# Create a scenario
-scenario = Scenario({
-    'runcount-limit': 100,  # Number of runs (evaluations) per configuration
-    'cs': cs,  # Configuration space
-    'deterministic': True,  # Whether the algorithm's run is deterministic
-    'output-dir': './output',  # Output directory for logs and results
-    'run_obj': 'quality'  # Optimization target: 'quality' (default), can also be 'runtime'
-})
-
-print(scenario)
-```
-
-In this example:
-- We import necessary modules from `ConfigSpace` for defining the configuration space and from `smac.scenario` for defining the scenario.
-- We create a configuration space `cs` and add two parameters to it: an integer parameter `integer_param` and a categorical parameter `categorical_param`.
-- We then create a scenario with a specified number of runs (`runcount-limit`), the configuration space (`cs`), deterministic run set to `True` (meaning the algorithm's performance is deterministic), an output directory for results and logs, and the optimization target (`run_obj`) set to `'quality'`, which means SMAC will aim to optimize the quality of the solution.
-
-Make sure you have SMAC and ConfigSpace installed in your Python environment. You can install them via pip:
-
-```bash
-pip install smac ConfigSpace
+def generate_scenario(cs: ConfigSpace) -> Scenario:
+    scenario = Scenario(
+        cs, 
+        "validation_loss", 
+        {
+            "runcount_limit": 1000,
+            "wallclock_limit": 86400,
+            "deterministic": True,
+            "output_dir": "./automl_results",
+            "shared_model": True
+        }
+    )
+    return scenario
 ```

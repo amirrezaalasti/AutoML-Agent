@@ -1,20 +1,21 @@
-Generate optimal SMAC scenario configuration considering:
-        - Previous context of training function requirements
-        - Integration with pre-defined ConfigSpace 'cs'
-        - Optimization objectives aligned with validation loss
-        - Resource constraints from original problem setup
-        - Multi-fidelity options if using neural networks
-        - Parallel execution settings for cloud deployment
-        
-        Required parameters:
-        - 'runcount_limit': 1000 (from project constraints)
-        - 'wallclock_limit': 86400 (24h timeout)
-        - 'deterministic': True (for reproducibility)
-        - 'output_dir': './automl_results' (from project spec)
-        - 'shared_model': True (for parallel optimization)
-        
-        Ensure compatibility with:
-        - Previously generated train() function signature
-        - Configuration space hyperparameter types
-        - Python 3.10 type annotations
-        - Latest SMAC v2.0 package requirements
+Generate an optimal SMAC scenario configuration in Python that meets the following strict requirements:
+
+- Integrate with a pre-defined ConfigSpace object named 'cs'.
+- Ensure compatibility with the previously defined train() function signature and associated ConfigSpace hyperparameter types.
+- Set the optimization objective to minimize the validation loss.
+- Incorporate resource constraints from the original problem setup, including a 24-hour wallclock limit and a run count limit.
+- Support multi-fidelity options for neural network use cases.
+- Include parallel execution settings for cloud deployment.
+
+Required SMAC scenario parameters:
+- "runcount_limit": 1000 (from project constraints)
+- "wallclock_limit": 86400 (24-hour timeout)
+- "deterministic": True (for reproducibility)
+- "output_dir": "./automl_results" (from project specification)
+- "shared_model": True (for parallel optimization)
+
+Ensure the generated code:
+- Uses Python 3.10 type annotations.
+- Complies with the latest SMAC v2.0 package requirements.
+- Includes all necessary import statements.
+- Does not include any additional explanation, example usage, or extra content. Output the code only.

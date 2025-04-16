@@ -9,7 +9,7 @@ class LLMClient:
             temperature=temparature, groq_api_key=api_key, model_name=model_name
         )
 
-    def generate(self, prompt, model="meta-llama/llama-4-scout-17b-16e-instruct"):
+    def generate(self, prompt):
         context = (
             "You are an AutoML expert creating components for SMAC optimization. "
             "Components must be Python code that strictly follows these requirements:\n"

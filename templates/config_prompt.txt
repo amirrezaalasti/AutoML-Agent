@@ -1,22 +1,20 @@
-Create rigorous ConfigurationSpace for classification models with:
-        - Conditional hyperparameters based on previous training function
-        - Proper scaling of numerical parameters (log-uniform for scale-sensitive)
-        - Categorical learning rate schedules from example
-        - Interaction constraints between parameters
-        - Hierarchical conditions for optimizer-dependent parameters
-        - Default values matching standard scikit-learn defaults
-        - Meta-features from {dataset} characteristics
-        
-        Required hyperparameters:
-        1. learning_rate: categorical ['adaptive', 'constant']
-        2. alpha: log-uniform [1e-7, 1e-1]
-        3. max_iter: integer [100, 1000]
-        4. eta0: conditional (when learning_rate=constant) [1e-4, 1.0]
-        5. early_stopping: boolean with default=True
-        
-        Include:
-        - ConfigSpace import statements
-        - Type conversions for SMAC compatibility
-        - Constraints validator functions
-        - Forbidden clauses for invalid combinations
-        - Seed handling from previous context
+Generate rigorous production-grade Python code that defines a ConfigurationSpace for classification models meeting the following STRICT requirements:
+
+- The ConfigurationSpace must include conditional hyperparameters as required by the associated training function.
+- Ensure proper scaling for numerical parameters by using log-uniform distributions for scale-sensitive hyperparameters.
+- Use a categorical hyperparameter for learning rate schedules with the options: "adaptive" and "constant".
+- Include interaction constraints between hyperparameters, and hierarchical conditions for optimizer-dependent parameters.
+- Default values must match standard scikit-learn defaults.
+- Incorporate meta-features derived from {dataset} characteristics.
+- Required hyperparameters:
+  1. learning_rate: categorical, options ["adaptive", "constant"]
+  2. alpha: continuous, log-uniform distribution range [1e-7, 1e-1]
+  3. max_iter: integer, range [100, 1000]
+  4. eta0: continuous, applicable only when learning_rate is "constant", range [1e-4, 1.0]
+  5. early_stopping: boolean, default True
+- The code must include all necessary ConfigSpace import statements.
+- Include type conversions for SMAC compatibility.
+- Implement constraints validator functions.
+- Add forbidden clauses to eliminate invalid hyperparameter combinations.
+- Ensure seed handling is incorporated consistently.
+- Do not include any explanations, example usage, or any content other than the required code. Output the code only.

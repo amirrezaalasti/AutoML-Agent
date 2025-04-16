@@ -1,20 +1,19 @@
-Generate production-grade Python code for a ML training function with these STRICT requirements:
-        - Function signature: def train(cfg: Configuration, seed: int) -> float
-        - Accepts {dataset} object with .data and .target attributes
-        - Uses stratified k-fold validation for classification tasks
-        - Returns mean validation NLL loss (negative log likelihood)
-        - Hyperparameters MUST match ConfigSpace structure:
-            * learning_rate: categorical with 'constant'/'adaptive'
-            * alpha: continuous log-scale
-            * max_iter: integer
-            * eta0: conditional when learning_rate=constant
-        - Include ALL required imports
-        - Handle random seeds via cross_val_score(random_state=seed)
-        - Type-annotated configuration input
-        - Example-based context from previous ConfigSpace definition
-        
-        Formatting requirements:
-        Use scikit-learn compatible estimators
-        Implement early stopping if max_iter present
-        Validate using sklearn.model_selection cross-validation
-        Return loss compatible with SMAC optimization (lower=better)
+Generate production-grade Python code for a machine learning training function with the following STRICT requirements:
+- Function signature must be:  
+  def train(cfg: Configuration, seed: int) -> float
+- The function must accept a dataset object with the attributes:
+  - dataset.data
+  - dataset.target
+- Use stratified k-fold cross-validation (using sklearn.model_selection.cross_val_score with random_state=seed) to validate a classification model.
+- The training function must:
+  - Return the mean validation negative log likelihood (NLL) loss.
+  - Compute a loss value that is compatible with SMAC optimization (lower is better).
+- Hyperparameters should strictly match a ConfigSpace structure with these specifications:
+  - learning_rate: a categorical hyperparameter with options 'constant' or 'adaptive'
+  - alpha: a continuous hyperparameter on a log-scale
+  - max_iter: an integer hyperparameter
+  - eta0: a hyperparameter that is conditionally present only if learning_rate is 'constant'
+- The code must include ALL necessary imports.
+- The code must be fully type-annotated, especially the configuration input.
+- The ML estimator used should be compatible with scikit-learn and implement early stopping if max_iter is provided.
+- Do not include any additional explanation, example usage, or extra content. Output the code only.
