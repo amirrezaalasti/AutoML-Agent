@@ -1,7 +1,7 @@
 from scripts.LLMClient import LLMClient
 from typing import Any
 from scripts.utils import describe_dataset, log_message
-from scripts.CodeExecutor import CodeExecutor
+import re
 
 
 class AutoMLAgent:
@@ -11,29 +11,26 @@ class AutoMLAgent:
         self.train_function = None
         self.config_space = None
         self.scenario = None
+        self.errors = []
 
     def _extract_function(self, code: str, function_name: str) -> str:
         """Extract the function code from the generated code"""
-        import re
-
-        pattern = rf"(def {function_name}\(.*?\):(?:\n    .*)+)"
-        match = re.search(pattern, code)
-        return match.group(1) if match else ""
+        pattern = r"```python\n(.*?)```"
+        match = re.search(
+            pattern, code, re.DOTALL
+        )  # Use re.DOTALL to allow dot to match newlines
 
     def _extract_config_space(self, code: str) -> str:
         """Extract the ConfigurationSpace definition"""
-        import re
+        pattern = r"```python\n(.*?)```"
+        match = re.search(pattern, code, re.DOTALL)
 
-        pattern = r"(cs\s*=\s*ConfigurationSpace\(\)(?:.|\n)*?)\n\n"
-        match = re.search(pattern, code)
         return match.group(1) if match else ""
 
     def _extract_scenario(self, code: str) -> str:
-        """Extract the Scenario definition"""
-        import re
-
-        pattern = r"(scenario\s*=\s*Scenario\((?:.|\n)*?\))"
-        match = re.search(pattern, code)
+        """Extract the scenario definition"""
+        pattern = r"```python\n(.*?)```"
+        match = re.search(pattern, code, re.DOTALL)
         return match.group(1) if match else ""
 
     def generate_components(self):
@@ -59,6 +56,9 @@ class AutoMLAgent:
         self.scenario_code = scenario_code
         self.scenario = self._extract_scenario(scenario_code)
 
+        # Execute the generated code
+        self.run_generated_code()
+
     def _create_train_prompt(self) -> str:
         with open("templates/train_prompt.txt", "r") as file:
             template = file.read()
@@ -78,5 +78,34 @@ class AutoMLAgent:
             dataset=describe_dataset(self.dataset),
         )
 
-    def run_smac(self):
-        pass
+    def _inform_errors_to_llm(self, original_promp, code: str) -> str:
+        """Inform the LLM about the errors and ask for a fix"""
+        with open("templates/fix_prompt.txt", "r") as file:
+            template = file.read()
+        prompt = template.format(
+            original_prompt=original_promp,
+            code=code,
+            errors="\n".join(self.errors),
+        )
+        return self.llm.generate(prompt)
+
+    def run_generated_code(self):
+        while True:
+            try:
+                namespace = {}
+                # print(f"Executing code:\n{self.config_space}")
+                exec(self.config_space, namespace)
+                if "get_configspace" in namespace:
+                    configuration = namespace["get_configspace"]()
+                    print("#####configuration result:\n\n",configuration)
+            except Exception as e:
+                print("****Error occurred during execution:", e)
+                error_message = str(e)
+                self.errors.append(error_message)
+                log_message(f"Error occurred: {error_message}")
+                config_prompt = self._create_config_prompt()
+                fixed_code = self._inform_errors_to_llm(
+                    config_prompt, self.config_space
+                )
+                self.config_space = self._extract_config_space(fixed_code)
+                continue

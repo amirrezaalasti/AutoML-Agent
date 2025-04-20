@@ -8,7 +8,7 @@ def generate_response():
     llm = LLMClient(api_key=GROQ_API_KEY)
     response = llm.generate(
         prompt="Generate a configuration space for a random forest classifier with max_depth between 1 and 10.",
-        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        model="llama-3.3-70b-versatile",
     )
     print(response)
 

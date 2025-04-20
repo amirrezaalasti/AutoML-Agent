@@ -1,0 +1,18 @@
+The following Python code is intended to define a function named `get_configspace()` that returns a valid `ConfigSpace.ConfigurationSpace` object for classification model tuning. However, the code has produced the following error(s) during execution:
+
+{errors}
+
+Your task is to fix the issues in the code. The requirements below MUST be respected:
+
+1. Do not change the function name or its purpose — it must define and return a `ConfigurationSpace` with appropriate hyperparameters.
+2. Fix all syntax and runtime errors.
+3. Use only valid parameters for ConfigSpace objects (e.g., use `default_value=...` instead of `default=...`).
+4. Do not change the logic unless necessary for fixing errors.
+5. Return ONLY the corrected function code — no explanations, comments, or extra output.
+6. The function must be syntactically and semantically correct, and executable with `exec`.
+
+Original user prompt:
+{original_prompt}
+
+Buggy code:
+{code}
