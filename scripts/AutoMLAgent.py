@@ -97,7 +97,7 @@ class AutoMLAgent:
                 exec(self.config_space, namespace)
                 if "get_configspace" in namespace:
                     configuration = namespace["get_configspace"]()
-                    print("#####configuration result:\n\n",configuration)
+                    log_message(f"Generated configuration space:\n{configuration}")
             except Exception as e:
                 print("****Error occurred during execution:", e)
                 error_message = str(e)
@@ -109,3 +109,35 @@ class AutoMLAgent:
                 )
                 self.config_space = self._extract_config_space(fixed_code)
                 continue
+            try:
+                exec(self.scenario, namespace)
+                if "generate_scenario" in namespace:
+                    scenario = namespace["generate_scenario"](configuration)
+                    log_message(f"Generated scenario: {scenario}")
+            except Exception as e:
+                print("****Error occurred during execution:", e)
+                error_message = str(e)
+                self.errors.append(error_message)
+                log_message(f"Error occurred: {error_message}")
+                scenario_prompt = self._create_scenario_prompt()
+                fixed_code = self._inform_errors_to_llm(scenario_prompt, self.scenario)
+                self.scenario = self._extract_scenario(fixed_code)
+                continue
+            
+            # try:
+            #     exec(self.train_function, namespace)
+            #     if "train" in namespace:
+            #         train_function = namespace["train"]
+            #         train_function(scenario)
+            # except Exception as e:
+            #     print("****Error occurred during execution:", e)
+            #     error_message = str(e)
+            #     self.errors.append(error_message)
+            #     log_message(f"Error occurred: {error_message}")
+            #     train_prompt = self._create_train_prompt()
+            #     fixed_code = self._inform_errors_to_llm(
+            #         train_prompt, self.train_function
+            #     )
+            #     self.train_function = self._extract_function(fixed_code, "train")
+            #     continue
+            # break

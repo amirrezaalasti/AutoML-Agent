@@ -1,0 +1,276 @@
+Generated training function code:
+```python
+import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import make_scorer, log_loss
+from ConfigSpace import Configuration
+from ConfigSpace.hyperparameters import CategoricalHyperparameter, UniformFloatHyperparameter, IntegerHyperparameter
+
+def train(cfg: Configuration, seed: int, dataset: object) -> float:
+    learning_rate = cfg.get('learning_rate')
+    alpha = cfg.get('alpha')
+    max_iter = cfg.get('max_iter')
+    eta0 = cfg.get('eta0', default=None) if learning_rate == 'constant' else None
+
+    model = LogisticRegression(max_iter=max_iter, 
+                               learning_rate=learning_rate, 
+                               eta0=eta0, 
+                               penalty='l2', 
+                               C=1/alpha, 
+                               solver='liblinear', 
+                               tol=1e-3, 
+                               random_state=seed, 
+                               warm_start=True)
+
+    scoring = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
+    scores = cross_val_score(model, dataset.data, dataset.target, cv=5, scoring=scoring, random_state=seed)
+    return np.mean(scores)
+```
+Generated configuration space code:
+```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, InCondition, OrConjunction, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ["adaptive", "constant"], default="adaptive")
+    alpha = Float('alpha', bounds=(1e-7, 1e-1), default=1e-4, log=True)
+    max_iter = Integer('max_iter', bounds=(100, 1000), default=1000)
+    eta0 = Float('eta0', bounds=(1e-4, 1.0), log=True)
+    early_stopping = Constant('early_stopping', "True")
+
+    cs.add([learning_rate, alpha, max_iter, early_stopping, eta0])
+
+    cond_1 = EqualsCondition(eta0, learning_rate, "constant")
+    cs.add_condition(cond_1)
+
+    penalty_and_loss = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, "adaptive"),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(penalty_and_loss)
+
+    return cs
+```
+Generated scenario code:
+```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    return Scenario(
+        cs,
+        wallclock_limit=3600,
+        multi_objectives=["validation_loss"],
+        use_ta_time=False,
+        abort_on_first_run_crash=True,
+        always_race_default=True,
+        deterministic=False,
+        intensification_percentage=0.8,
+        ta_run_limit=50,
+        memory_limit=4096
+    )
+```
+Generated configuration space:
+Configuration space object:
+  Hyperparameters:
+    alpha, Type: UniformFloat, Range: [1e-07, 0.1], Default: 0.0001, on log-scale
+    early_stopping, Type: Constant, Value: True
+    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
+    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
+    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 1000
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: learning_rate == 'adaptive' && Forbidden: eta0 == 0.1)
+
+Error occurred: __init__() got an unexpected keyword argument 'wallclock_limit'
+Generated configuration space:
+Configuration space object:
+  Hyperparameters:
+    alpha, Type: UniformFloat, Range: [1e-07, 0.1], Default: 0.0001, on log-scale
+    early_stopping, Type: Constant, Value: True
+    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
+    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
+    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 1000
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: learning_rate == 'adaptive' && Forbidden: eta0 == 0.1)
+
+Error occurred: __init__() got an unexpected keyword argument 'wallclock_limit'
+Generated training function code:
+```python
+import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import make_scorer, log_loss
+from ConfigSpace import Configuration
+from ConfigSpace.hyperparameters import CategoricalHyperparameter, UniformFloatHyperparameter, IntegerHyperparameter
+
+def train(cfg: Configuration, seed: int, dataset: object) -> float:
+    learning_rate = cfg.get('learning_rate')
+    alpha = cfg.get('alpha')
+    max_iter = cfg.get('max_iter')
+    eta0 = cfg.get('eta0', default=None) if learning_rate == 'constant' else None
+
+    model = LogisticRegression(max_iter=max_iter, 
+                               learning_rate=learning_rate, 
+                               eta0=eta0, 
+                               penalty='l2', 
+                               C=1/alpha, 
+                               solver='liblinear', 
+                               tol=1e-3, 
+                               random_state=seed, 
+                               warm_start=True)
+
+    scoring = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
+    scores = cross_val_score(model, dataset.data, dataset.target, cv=5, scoring=scoring, random_state=seed)
+    return np.mean(scores)
+```
+Generated configuration space code:
+```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, InCondition, OrConjunction, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ["adaptive", "constant"], default="adaptive")
+    alpha = Float('alpha', bounds=(1e-7, 1e-1), default=1e-4, log=True)
+    max_iter = Integer('max_iter', bounds=(100, 1000), default=1000)
+    eta0 = Float('eta0', bounds=(1e-4, 1.0), log=True)
+    early_stopping = Constant('early_stopping', "True")
+
+    cs.add([learning_rate, alpha, max_iter, early_stopping, eta0])
+
+    cond_1 = EqualsCondition(eta0, learning_rate, "constant")
+    cs.add_condition(cond_1)
+
+    penalty_and_loss = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, "adaptive"),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(penalty_and_loss)
+
+    return cs
+```
+Generated training function code:
+```python
+import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import make_scorer, log_loss
+from ConfigSpace import Configuration
+from ConfigSpace.hyperparameters import CategoricalHyperparameter, UniformFloatHyperparameter, IntegerHyperparameter
+
+def train(cfg: Configuration, seed: int, dataset: object) -> float:
+    learning_rate = cfg.get('learning_rate')
+    alpha = cfg.get('alpha')
+    max_iter = cfg.get('max_iter')
+    eta0 = cfg.get('eta0', default=None) if learning_rate == 'constant' else None
+
+    model = LogisticRegression(max_iter=max_iter, 
+                               learning_rate=learning_rate, 
+                               eta0=eta0, 
+                               penalty='l2', 
+                               C=1/alpha, 
+                               solver='liblinear', 
+                               tol=1e-3, 
+                               random_state=seed, 
+                               warm_start=True)
+
+    scoring = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
+    scores = cross_val_score(model, dataset.data, dataset.target, cv=5, scoring=scoring, random_state=seed)
+    return np.mean(scores)
+```
+Generated configuration space code:
+```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, InCondition, OrConjunction, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ["adaptive", "constant"], default="adaptive")
+    alpha = Float('alpha', bounds=(1e-7, 1e-1), default=1e-4, log=True)
+    max_iter = Integer('max_iter', bounds=(100, 1000), default=1000)
+    eta0 = Float('eta0', bounds=(1e-4, 1.0), log=True)
+    early_stopping = Constant('early_stopping', "True")
+
+    cs.add([learning_rate, alpha, max_iter, early_stopping, eta0])
+
+    cond_1 = EqualsCondition(eta0, learning_rate, "constant")
+    cs.add_condition(cond_1)
+
+    penalty_and_loss = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, "adaptive"),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(penalty_and_loss)
+
+    return cs
+```
+Generated scenario code:
+```python
+from smac.scenario.scenario import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario({
+        'run_obj': 'quality',
+        'output_dir': './automl_results',
+        'shared_model': False,
+        'abort_on_first_run_crash': True,
+        'cost_for_crash': 1e10,
+        'deterministic': False,
+        'wallclock_limit': 3600.0,
+        'memory_limit': 4096.0,
+        'cutoff': 3600.0,
+        'transform_y': 'none',
+        'overall_obj': 'default',
+        'multi_objectives': [],
+        'initial_incumbent': 'DEFAULT',
+        'ta_run_limit': 1,
+        'intensification_percentage': 0.5,
+        'intens_min_chall': 1,
+        'acq_opt_challengers': 1,
+        'rf_num_trees': 10,
+        'rf_max_depth': None,
+        'rf_min_samples_leaf': 1,
+        'rf_min_samples_split': 2,
+        'rf_ratio_features': 0.5,
+        'rf_do_bootstrapping': True,
+        'limit_resources': True,
+        'use_ta_time': False,
+        'save_results_instantly': True,
+        'always_race_default': True,
+    })
+    return scenario
+```
+Generated configuration space:
+Configuration space object:
+  Hyperparameters:
+    alpha, Type: UniformFloat, Range: [1e-07, 0.1], Default: 0.0001, on log-scale
+    early_stopping, Type: Constant, Value: True
+    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
+    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
+    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 1000
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: learning_rate == 'adaptive' && Forbidden: eta0 == 0.1)
+
+Error occurred: No module named 'smac.scenario.scenario'; 'smac.scenario' is not a package
+Generated configuration space:
+Configuration space object:
+  Hyperparameters:
+    alpha, Type: UniformFloat, Range: [1e-07, 0.1], Default: 0.0001, on log-scale
+    early_stopping, Type: Constant, Value: True
+    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
+    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
+    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 1000
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: learning_rate == 'adaptive' && Forbidden: eta0 == 0.1)
+

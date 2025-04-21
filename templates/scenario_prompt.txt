@@ -1,21 +1,93 @@
-Generate an optimal SMAC scenario configuration in Python that meets the following strict requirements:
+**Generate a Valid `generate_scenario(cs)` Function for SMAC (Python Only, Strict Output)**
 
-- Integrate with a pre-defined ConfigSpace object named 'cs'.
-- Ensure compatibility with the previously defined train() function signature and associated ConfigSpace hyperparameter types.
-- Set the optimization objective to minimize the validation loss.
-- Incorporate resource constraints from the original problem setup, including a 24-hour wallclock limit and a run count limit.
-- Support multi-fidelity options for neural network use cases.
-- Include parallel execution settings for cloud deployment.
+**Goal:**  
+Write a **Python function** named `generate_scenario(cs)` that creates and returns a `Scenario` object configured for use with SMAC.
 
-Required SMAC scenario parameters:
-- "runcount_limit": 1000 (from project constraints)
-- "wallclock_limit": 86400 (24-hour timeout)
-- "deterministic": True (for reproducibility)
-- "output_dir": "./automl_results" (from project specification)
-- "shared_model": True (for parallel optimization)
+---
 
-Ensure the generated code:
-- Uses Python 3.10 type annotations.
-- Complies with the latest SMAC v2.0 package requirements.
-- Includes all necessary import statements.
-- Does not include any additional explanation, example usage, or extra content. Output the code only.
+**Strict Rules:**
+
+- Only output the function `generate_scenario(cs)` and necessary import statements.
+- Use Python 3.10 type annotations.
+- Use **only valid parameters** supported by SMAC's `Scenario` class.
+- Code must be fully executable with the latest **SMAC v2.0+**.
+- Do **not** include any explanation, usage examples, comments, or extra output—**only the function and imports**.
+- no types needed for the function dont use type declaration
+
+---
+
+### Functional Requirements:
+- The input `cs` is a `ConfigurationSpace` object.
+- Integrate with the existing `train()` function using `ConfigSpace` hyperparameters.
+- Set the optimization objective to minimize **validation loss**.
+- Set the `output_dir` to `"./automl_results"`
+- Enable `shared_model`: False (for parallel optimization)
+- Support **multi-fidelity tuning** suitable for **neural networks**.
+- Allow **cloud-compatible parallel execution**.
+
+---
+
+### Output Rules:
+- Only valid Python function and necessary imports.
+- Use only allowed parameters listed below.
+- Ensure compatibility with the `Scenario` class from SMAC.
+
+---
+
+### Allowed Scenario Parameters (for LLM Reference Only – Do Not Output):
+
+- **algo_runs_timelimit**: Max CPU time for optimization (float)
+- **always_race_default**: Race new configs against default (bool)
+- **cost_for_crash**: Cost assigned to crashes in quality-based runs (float or list)
+- **cutoff**: Max runtime per run (float, needed if `run_obj` = 'runtime')
+- **deterministic**: Whether target function is deterministic (bool)
+- **execdir**: Execution directory (str)
+- **feature_fn**: Path to instance feature file (str)
+- **initial_incumbent**: Initial config, e.g. 'DEFAULT' (str)
+- **memory_limit**: Max memory in MB (float)
+- **multi_objectives**: List of objectives to optimize (list[str])
+- **overall_obj**: PARX for runtime penalty (str)
+- **pcs_fn**: Path to PCS file (str)
+- **run_obj**: Optimization metric: 'runtime' or 'quality' (str)
+- **save_results_instantly**: Save after each update (bool)
+- **ta**: Target algorithm call (str)
+- **ta_run_limit**: Max algorithm runs (int)
+- **test_inst_fn**, **train_inst_fn**: Files with test/train instances (str)
+- **wallclock_limit**: Max wall-clock time (float)
+- **abort_on_first_run_crash**: Abort if first run crashes (bool)
+- **acq_opt_challengers**: Number of challengers for acquisition (int)
+- **hydra_iterations**: Number of Hydra iterations (int)
+- **input_psmac_dirs**: For parallel runs (list)
+- **intens_adaptive_capping_slackfactor**: Slack factor for adaptive capping (float)
+- **intens_min_chall**: Min challengers per intensification (int)
+- **intensification_percentage**: Fraction of time for intensification (float)
+- **limit_resources**: Limit time/memory using pynisher (bool)
+- **maxR**, **minR**: Max/min calls per config (int)
+- **output_dir**: Output directory (str)
+- **rand_prob**: Probability of running a random config (float)
+- **random_configuration_chooser**: Path to custom random chooser (str)
+- **rf_do_bootstrapping**: Use bootstrapping in RF (bool)
+- **rf_max_depth**, **rf_min_samples_leaf**, **rf_min_samples_split**: RF params (int)
+- **rf_num_trees**: Number of RF trees (int)
+- **rf_ratio_features**: Ratio of features per split (float)
+- **shared_model**: Enable parallel shared model (bool)
+- **sls_max_steps**, **sls_n_steps_plateau_walk**: Local search params (int)
+- **transform_y**: Transform cost values (str)
+- **use_ta_time**: Use target algorithm time (bool)
+
+---
+
+### Example:
+from smac.scenario.scenario import Scenario
+
+def generate_scenario(cs):
+    scenario = Scenario({{
+        'option': 'value',
+        ...
+    }})
+
+False format: def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+True format: def generate_scenario(cs):
+
+
+**Reminder:** Only output the function `generate_scenario(cs)` and required imports. No extra text.
