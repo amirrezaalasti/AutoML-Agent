@@ -97,7 +97,9 @@ class AutoMLAgent:
                 exec(self.config_space, namespace)
                 if "get_configspace" in namespace:
                     configuration = namespace["get_configspace"]()
+                    print(f"Configuration space:\n{configuration}")
                     log_message(f"Generated configuration space:\n{configuration}")
+                    break
             except Exception as e:
                 print("****Error occurred during execution:", e)
                 error_message = str(e)
@@ -109,11 +111,14 @@ class AutoMLAgent:
                 )
                 self.config_space = self._extract_config_space(fixed_code)
                 continue
+        self.errors = []
+        while True:
             try:
                 exec(self.scenario, namespace)
                 if "generate_scenario" in namespace:
                     scenario = namespace["generate_scenario"](configuration)
                     log_message(f"Generated scenario: {scenario}")
+                    break
             except Exception as e:
                 print("****Error occurred during execution:", e)
                 error_message = str(e)
@@ -123,12 +128,15 @@ class AutoMLAgent:
                 fixed_code = self._inform_errors_to_llm(scenario_prompt, self.scenario)
                 self.scenario = self._extract_scenario(fixed_code)
                 continue
-            
+        self.errors = []
+        # while True:
             # try:
             #     exec(self.train_function, namespace)
             #     if "train" in namespace:
             #         train_function = namespace["train"]
             #         train_function(scenario)
+            #         log_message("Training function executed successfully.")
+            
             # except Exception as e:
             #     print("****Error occurred during execution:", e)
             #     error_message = str(e)
