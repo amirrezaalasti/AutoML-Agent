@@ -13,7 +13,6 @@ def generate_response():
     print(response)
 
 X, y = load_iris(return_X_y=True)
-
 # agent.generate_components()
 # incumbent = agent.run_smac()
 # print(f"Best configuration: {incumbent}")
