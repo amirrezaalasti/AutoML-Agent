@@ -17,8 +17,7 @@ Write a **Python function** named `generate_scenario(cs)` that creates and retur
 ---
 
 ### Functional Requirements:
-- The input `cs` is a `ConfigurationSpace` object.
-- Integrate with the existing `train()` function using `ConfigSpace` hyperparameters.
+- The input `cs` is a object.
 - Set the optimization objective to minimize **validation loss**.
 - Set the `output_dir` to `"./automl_results"`
 - Enable `shared_model`: False (for parallel optimization)
@@ -86,7 +85,6 @@ def generate_scenario(cs):
         ...
     }})
 
-False format: def generate_scenario(cs: ConfigurationSpace) -> Scenario:
 True format: def generate_scenario(cs):
 
 

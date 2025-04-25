@@ -1,43 +1,3 @@
-Generated training function code:
-```python
-import numpy as np
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import make_scorer, log_loss
-from ConfigSpace import Configuration, ConfigurationSpace
-from ConfigSpace.hyperparameters import CategoricalHyperparameter, UniformFloatHyperparameter, IntegerHyperparameter
-
-# Define configuration space
-def get_configuration_space() -> ConfigurationSpace:
-    cs = ConfigurationSpace()
-    learning_rate = CategoricalHyperparameter(name='learning_rate', choices=['constant', 'adaptive'])
-    alpha = UniformFloatHyperparameter(name='alpha', lower=1e-4, upper=1e1, log=True)
-    max_iter = IntegerHyperparameter(name='max_iter', lower=10, upper=1000)
-    eta0 = UniformFloatHyperparameter(name='eta0', lower=1e-4, upper=1.0)
-    cs.add_hyperparameter(learning_rate)
-    cs.add_hyperparameter(alpha)
-    cs.add_hyperparameter(max_iter)
-    cs.add_hyperparameter(eta0)
-    cs.add_condition(eta0, learning_rate, 'constant')
-    return cs
-
-# Define custom scorer for NLL loss
-nll_scorer = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
-
-def train(cfg: Configuration, seed: int, dataset) -> float:
-    learning_rate = cfg.get('learning_rate')
-    alpha = cfg.get('alpha')
-    max_iter = cfg.get('max_iter')
-    eta0 = cfg.get('eta0') if learning_rate == 'constant' else 1.0
-    
-    model = LogisticRegression(max_iter=max_iter, penalty='l2', C=1/alpha, solver='liblinear', 
-                                learning_rate=learning_rate, eta0=eta0, random_state=seed, 
-                                early_stopping=True, validation_fraction=0.2, n_jobs=-1)
-    
-    scores = cross_val_score(model, dataset.data, dataset.target, cv=5, scoring=nll_scorer, 
-                             random_state=seed)
-    return np.mean(scores)
-```
 Generated configuration space code:
 ```python
 from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, InCondition, OrConjunction, ForbiddenEqualsClause, ForbiddenAndConjunction
@@ -64,42 +24,114 @@ def get_configspace():
 
     return cs
 ```
+Generated configuration space:
+Configuration space object:
+  Hyperparameters:
+    alpha, Type: UniformFloat, Range: [1e-07, 0.1], Default: 0.0001, on log-scale
+    early_stopping, Type: Constant, Value: True
+    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
+    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
+    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 1000
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: learning_rate == 'adaptive' && Forbidden: eta0 == 0.1)
+
 Generated scenario code:
 ```python
 from smac.scenario.scenario import Scenario
-from ConfigSpace import ConfigurationSpace
 
 def generate_scenario(cs):
     scenario = Scenario({
         'run_obj': 'quality',
         'output_dir': './automl_results',
         'shared_model': False,
-        'abort_on_first_run_crash': True,
-        'cost_for_crash': 1e10,
+        'multi_objectives': ['validation_loss'],
+        'overall_obj': 'validation_loss',
         'deterministic': False,
+        'abort_on_first_run_crash': True,
         'wallclock_limit': 3600.0,
-        'memory_limit': 4096.0,
-        'cutoff': 3600.0,
-        'transform_y': 'none',
-        'overall_obj': 'default',
-        'multi_objectives': [],
-        'initial_incumbent': 'DEFAULT',
-        'ta_run_limit': 1,
-        'intensification_percentage': 0.5,
-        'intens_min_chall': 1,
-        'acq_opt_challengers': 1,
-        'rf_num_trees': 10,
-        'rf_max_depth': None,
-        'rf_min_samples_leaf': 1,
-        'rf_min_samples_split': 2,
-        'rf_ratio_features': 0.5,
-        'rf_do_bootstrapping': True,
-        'limit_resources': True,
-        'use_ta_time': False,
-        'save_results_instantly': True,
-        'always_race_default': True,
+        'ta_run_limit': 100,
     })
     return scenario
+```
+Error occurred: No module named 'smac.scenario.scenario'; 'smac.scenario' is not a package
+Generated scenario: Scenario(configspace={'run_obj': 'quality', 'output_dir': './automl_results', 'shared_model': False, 'multi_objectives': ['validation_loss'], 'overall_obj': 'validation_loss', 'deterministic': False, 'abort_on_first_run_crash': True, 'wallclock_limit': 3600.0, 'ta_run_limit': 100}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
+Generated training function code:
+```python
+from typing import Dict
+from ConfigSpace import Configuration
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import make_scorer, log_loss
+import numpy as np
+
+def train(cfg: Configuration, seed: int, dataset) -> float:
+    X, y = dataset.X, dataset.y
+
+    learning_rate = cfg.get('learning_rate')
+    alpha = cfg.get('alpha')
+    max_iter = cfg.get('max_iter')
+    early_stopping = cfg.get('early_stopping') == 'True'
+    eta0 = cfg.get('eta0') if learning_rate == 'constant' else 1.0
+
+    model = LogisticRegression(
+        penalty='l2',
+        C=1.0 / alpha,
+        max_iter=max_iter,
+        tol=1e-6,
+        solver='liblinear',
+        warm_start=True,
+        eta0=eta0,
+        early_stopping=early_stopping,
+        validation_fraction=0.2,
+        n_jobs=-1,
+        random_state=seed
+    )
+
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+    scorer = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
+
+    scores = cross_val_score(model, X, y, cv=skf, scoring=scorer)
+    loss = np.mean(scores)
+
+    return loss
+```
+Error occurred: 'dict' object has no attribute 'X'
+Error occurred: cannot import name 'scenario' from 'smac.scenario' (/Users/amirrezaalasti/.pyenv/versions/3.9.13/lib/python3.9/site-packages/smac/scenario.py)
+Error occurred: unsupported operand type(s) for /: 'float' and 'UniformFloatHyperparameter'
+Error occurred: unsupported operand type(s) for /: 'float' and 'UniformFloatHyperparameter'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: unsupported operand type(s) for /: 'float' and 'UniformFloatHyperparameter'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Generated configuration space code:
+```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, InCondition, OrConjunction, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ["adaptive", "constant"], default="adaptive")
+    alpha = Float('alpha', bounds=(1e-7, 1e-1), default=1e-4, log=True)
+    max_iter = Integer('max_iter', bounds=(100, 1000), default=1000)
+    eta0 = Float('eta0', bounds=(1e-4, 1.0), log=True)
+    early_stopping = Constant('early_stopping', "True")
+
+    cs.add([learning_rate, alpha, max_iter, early_stopping, eta0])
+
+    cond_1 = EqualsCondition(eta0, learning_rate, "constant")
+    cs.add_condition(cond_1)
+
+    penalty_and_loss = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, "adaptive"),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(penalty_and_loss)
+
+    return cs
 ```
 Generated configuration space:
 Configuration space object:
@@ -114,5 +146,88 @@ Configuration space object:
   Forbidden Clauses:
     (Forbidden: learning_rate == 'adaptive' && Forbidden: eta0 == 0.1)
 
+Generated scenario code:
+```python
+from smac.scenario.scenario import Scenario
+
+def generate_scenario(cs):
+    scenario = Scenario({
+        'run_obj': 'quality',
+        'output_dir': './automl_results',
+        'shared_model': False,
+        'multi_objectives': ['validation_loss'],
+        'overall_obj': 'validation_loss',
+        'deterministic': False,
+        'abort_on_first_run_crash': True,
+        'wallclock_limit': 3600.0,
+        'ta_run_limit': 100,
+    })
+    return scenario
+```
 Error occurred: No module named 'smac.scenario.scenario'; 'smac.scenario' is not a package
-Generated scenario: Scenario(configspace={'run_obj': 'quality', 'output_dir': './automl_results', 'shared_model': False}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
+Generated scenario: Scenario(configspace={'run_obj': 'quality', 'output_dir': './automl_results', 'shared_model': False, 'multi_objectives': ['validation_loss'], 'overall_obj': 'validation_loss', 'deterministic': False, 'abort_on_first_run_crash': True, 'wallclock_limit': 3600.0, 'ta_run_limit': 100}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
+Generated training function code:
+```python
+from typing import Dict
+from ConfigSpace import Configuration
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import make_scorer, log_loss
+import numpy as np
+
+def train(cfg: Configuration, seed: int, dataset) -> float:
+    X, y = dataset.X, dataset.y
+
+    learning_rate = cfg.get('learning_rate')
+    alpha = cfg.get('alpha')
+    max_iter = cfg.get('max_iter')
+    early_stopping = cfg.get('early_stopping') == 'True'
+    eta0 = cfg.get('eta0') if learning_rate == 'constant' else 1.0
+
+    model = LogisticRegression(
+        penalty='l2',
+        C=1.0 / alpha,
+        max_iter=max_iter,
+        tol=1e-6,
+        solver='liblinear',
+        warm_start=True,
+        eta0=eta0,
+        early_stopping=early_stopping,
+        validation_fraction=0.2,
+        n_jobs=-1,
+        random_state=seed
+    )
+
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+    scorer = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
+
+    scores = cross_val_score(model, X, y, cv=skf, scoring=scorer)
+    loss = np.mean(scores)
+
+    return loss
+```
+Error occurred: 'dict' object has no attribute 'X'
+Error occurred: cannot import name 'scenario' from 'smac.scenario' (/Users/amirrezaalasti/.pyenv/versions/3.9.13/lib/python3.9/site-packages/smac/scenario.py)
+Error occurred: unsupported operand type(s) for /: 'float' and 'UniformFloatHyperparameter'
+Error occurred: unsupported operand type(s) for /: 'float' and 'UniformFloatHyperparameter'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: unsupported operand type(s) for /: 'float' and 'UniformFloatHyperparameter'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'
+Error occurred: 'UniformFloatHyperparameter' object has no attribute 'get_value'
+Error occurred: float() argument must be a string or a number, not 'UniformFloatHyperparameter'

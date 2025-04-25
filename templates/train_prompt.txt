@@ -1,19 +1,56 @@
 Generate production-grade Python code for a machine learning training function with the following STRICT requirements:
-- Function signature must be:  
-  def train(cfg: Configuration, seed: int) -> float
-- The function must accept a dataset object with the attributes:
-  - dataset.data
-  - dataset.target
-- Use stratified k-fold cross-validation (using sklearn.model_selection.cross_val_score with random_state=seed) to validate a classification model.
-- The training function must:
-  - Return the mean validation negative log likelihood (NLL) loss.
-  - Compute a loss value that is compatible with SMAC optimization (lower is better).
-- Hyperparameters should strictly match a ConfigSpace structure with these specifications:
-  - learning_rate: a categorical hyperparameter with options 'constant' or 'adaptive'
-  - alpha: a continuous hyperparameter on a log-scale
-  - max_iter: an integer hyperparameter
-  - eta0: a hyperparameter that is conditionally present only if learning_rate is 'constant'
-- The code must include ALL necessary imports.
-- The code must be fully type-annotated, especially the configuration input.
-- The ML estimator used should be compatible with scikit-learn and implement early stopping if max_iter is provided.
-- Do not include any additional explanation, example usage, or extra content. Output the code only.
+
+Function signature must be:
+def train(cfg: Configuration, seed: int, dataset) -> float
+
+The function must accept a dataset object with the attributes:
+
+dataset.X (features)
+
+dataset.y (labels)
+
+The function must:
+
+Use stratified k-fold cross-validation via sklearn.model_selection.cross_val_score
+
+random_state=seed must be used for reproducibility
+
+Train a classification model compatible with scikit-learn
+
+Compute and return a loss value compatible with SMAC optimization
+
+Lower loss = better performance
+
+Hyperparameter constraints:
+
+Use only hyperparameters defined by the ConfigSpace structure:
+
+learning_rate: categorical, one of 'constant' or 'adaptive'
+
+alpha: float, log-scale
+
+max_iter: integer
+
+eta0: only present if learning_rate == 'constant'
+
+Additional requirements:
+
+The model must support early stopping if max_iter is provided
+
+All required imports must be included
+
+The function must be fully type-annotated, especially the cfg parameter
+
+All used libraries and APIs must be based on the latest scikit-learn versions
+
+Do not include example usage or explanations
+
+Output only the code — no extra content
+
+Supporting code snippets already provided:
+
+ConfigSpace definition: {config_space}
+
+SMAC scenario code: {scenario}
+
+Dataset description: {dataset_description}
