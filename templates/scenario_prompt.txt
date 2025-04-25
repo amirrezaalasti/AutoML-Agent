@@ -77,7 +77,7 @@ Write a **Python function** named `generate_scenario(cs)` that creates and retur
 ---
 
 ### Example:
-from smac.scenario.scenario import Scenario
+from smac import Scenario
 
 def generate_scenario(cs):
     scenario = Scenario({{

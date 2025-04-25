@@ -1,27 +1,26 @@
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import AIMessage
-
 
 class LLMClient:
-    def __init__(self, api_key, model_name, temparature=0):
+    def __init__(self, api_key, model_name, temperature=0):
         self.client = ChatGroq(
-            temperature=temparature, groq_api_key=api_key, model_name=model_name
+            temperature=temperature, groq_api_key=api_key, model_name=model_name
         )
 
     def generate(self, prompt):
-        context = (
-            "You are an AutoML expert creating components for SMAC optimization. "
-            "Components must be Python code that strictly follows these requirements:\n"
-            "1. Training function with proper hyperparameter handling\n"
-            "2. ConfigurationSpace with proper constraints\n"
-            "3. SMAC Scenario configuration\n"
-            "All components must be compatible and use consistent hyperparameter names."
-        )
-        
-        model_prompt = ChatPromptTemplate.from_messages(
-            [("system", context), ("human", prompt)]
-        )
 
-        response = self.client.invoke(input=prompt)
+        # Escape curly braces in the context TODO: the prompt should be escaped in the template
+        escaped_context = prompt.replace("{", "{{").replace("}", "}}")
+
+        # Create a ChatPromptTemplate with only a system message
+        model_prompt = ChatPromptTemplate.from_messages([
+            ("system", escaped_context)
+        ])
+
+        # Invoke the prompt without any additional input
+        prompt_value = model_prompt.invoke({})
+
+        # Pass the formatted prompt to the model
+        response = self.client.invoke(prompt_value)
         return response.content
+

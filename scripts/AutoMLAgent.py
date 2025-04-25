@@ -38,7 +38,6 @@ class AutoMLAgent:
         # Generate configuration space
         config_prompt = self._create_config_prompt()
         config_code = self.llm.generate(config_prompt)
-        log_message(f"Generated configuration space code:\n{config_code}")
         self.config_code = config_code
         self.config_space = self._extract_config_space(config_code)
         self._run__generated_config_space()
@@ -46,7 +45,6 @@ class AutoMLAgent:
         # Generate scenario
         scenario_prompt = self._create_scenario_prompt()
         scenario_code = self.llm.generate(scenario_prompt)
-        log_message(f"Generated scenario code:\n{scenario_code}")
         self.scenario_code = scenario_code
         self.scenario = self._extract_scenario(scenario_code)
         self._run_generated_scenario()
@@ -100,6 +98,7 @@ class AutoMLAgent:
                 # print(f"Executing code:\n{self.config_space}")
                 exec(self.config_space, namespace)
                 if "get_configspace" in namespace:
+                    log_message(f"Configuration space code:\n{self.config_space}")
                     configuration = namespace["get_configspace"]()
                     log_message(f"Generated configuration space:\n{configuration}")
                     break
@@ -121,6 +120,7 @@ class AutoMLAgent:
                 configuration = namespace["get_configspace"]()
                 exec(self.scenario, namespace)
                 if "generate_scenario" in namespace:
+                    log_message(f"Scenario code:\n{self.scenario}")
                     scenario = namespace["generate_scenario"](configuration)
                     log_message(f"Generated scenario: {scenario}")
                     break
