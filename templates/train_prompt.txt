@@ -1,56 +1,100 @@
 Generate production-grade Python code for a machine learning training function with the following STRICT requirements:
 
-Function signature must be:
-def train(cfg: Configuration, seed: int, dataset) -> float
+---
 
-The function must accept a dataset object with the attributes:
+**Function signature** must be:
 
-dataset.X (features)
+```python
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+```
 
-dataset.y (labels)
+---
 
-The function must:
+**The function must:**
 
-Use stratified k-fold cross-validation via sklearn.model_selection.cross_val_score
+- Accept a `dataset` object with the attributes:
+  - `dataset['X']` — feature matrix
+  - `dataset['y']` — label vector
 
-random_state=seed must be used for reproducibility
+- Assume that `cfg` is a **sampled configuration** object, where:
+  - `cfg.get('key')` returns a plain **Python primitive** value (`float`, `int`, `str`, etc.).
+  - **Never use** hyperparameter objects like `UniformFloatHyperparameter` inside `train`.
 
-Train a classification model compatible with scikit-learn
+- Use stratified k-fold cross-validation (`sklearn.model_selection.cross_val_score`).
+  - `random_state=seed` must be set for reproducibility.
 
-Compute and return a loss value compatible with SMAC optimization
+- Train a **scikit-learn classification model** that:
+  - Supports **early stopping** if `max_iter` is provided.
+  - Has `warm_start=True`.
+  - Accepts `random_state=seed`.
+  - Accepts `learning_rate` (`'constant'` or `'adaptive'`).
+  - Accepts `C = 1.0 / alpha` as the regularization strength.
 
-Lower loss = better performance
+- If `learning_rate == 'constant'`, set `eta0` correctly.
+- Otherwise, `eta0` should be ignored.
 
-Hyperparameter constraints:
+- Must compute and return a **loss value** (`float`) where **lower = better**.
+  - Loss = `1.0 - mean cross-validation accuracy`.
 
-Use only hyperparameters defined by the ConfigSpace structure:
+---
 
-learning_rate: categorical, one of 'constant' or 'adaptive'
+**Hyperparameter usage rules:**
 
-alpha: float, log-scale
+- Only use these hyperparameters:
+  - `learning_rate` (categorical: `'constant'` or `'adaptive'`)
+  - `alpha` (float, log-scaled) (this is directly C in LogisticRegression)
+  - `max_iter` (integer)
+  - `eta0` (float, only if `learning_rate == 'constant'`)
 
-max_iter: integer
+- Extract hyperparameters like this:
+  ```python
+  value = cfg.get('hyperparameter_name')
+  ```
 
-eta0: only present if learning_rate == 'constant'
+- Never use operations directly on hyperparameter objects.
 
-Additional requirements:
+---
 
-The model must support early stopping if max_iter is provided
+**Additional Requirements:**
 
-All required imports must be included
+- Use scikit-learn version >= 1.3.0 APIs.
+- Include all necessary imports.
+- Full type annotations for all function arguments and variables.
+- No example usages, no print statements, no extra text — **only pure code** output.
 
-The function must be fully type-annotated, especially the cfg parameter
+---
 
-All used libraries and APIs must be based on the latest scikit-learn versions
+**Supporting code already available:**
 
-Do not include example usage or explanations
+- ConfigSpace definition: `{config_space}`
+- SMAC scenario: `{scenario}`
+- Dataset description: `{dataset_description}`
 
-Output only the code — no extra content
+**Example:
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.linear_model import SGDClassifier
+from typing import Any
+from ConfigSpace import Configuration
 
-Supporting code snippets already provided:
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    X, y = dataset['X'], dataset['y']
+    lr: str = cfg.get('learning_rate')
+    alpha: float = cfg.get('alpha')
+    max_iter: int = cfg.get('max_iter')
+    eta0: float = cfg.get('eta0') if learning_rate == 'constant' else 0.1  # Ensure eta0 is > 0
 
-ConfigSpace definition: {config_space}
 
-SMAC scenario code: {scenario}
+    params = {{
+        'learning_rate': lr,
+        'alpha': alpha,
+        'max_iter': max_iter,
+        'early_stopping': True,
+        'warm_start': True,
+        'random_state': seed
+        'eta0': eta0,
+    }}
 
-Dataset description: {dataset_description}
+    model = SGDClassifier(**params)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+    scores = cross_val_score(model, X, y, cv=cv, scoring='accuracy')
+    return 1.0 - scores.mean()

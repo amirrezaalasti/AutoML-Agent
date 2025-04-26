@@ -1,9 +1,12 @@
 from scripts.LLMClient import LLMClient
 from typing import Any
-from scripts.utils import describe_dataset, log_message
+from scripts.utils import describe_dataset, log_message, save_code
 import re
 
+
 namespace = {}
+
+
 class AutoMLAgent:
     def __init__(self, dataset: Any, llm_client: LLMClient):
         self.dataset = dataset
@@ -57,6 +60,11 @@ class AutoMLAgent:
         self.train_function = self._extract_function(train_code, "train")
         self._run_generated_train_code()
 
+        # save the generated code to files
+        save_code(self.config_space, "generated_config_space.py")
+        save_code(self.scenario, "generated_scenario.py")
+        save_code(self.train_function, "generated_train_function.py")
+
     def _create_train_prompt(self) -> str:
         with open("templates/train_prompt.txt", "r") as file:
             template = file.read()
@@ -70,7 +78,7 @@ class AutoMLAgent:
         with open("templates/config_prompt.txt", "r") as file:
             template = file.read()
         return template.format(
-            dataset=describe_dataset(self.dataset),
+            dataset_description=describe_dataset(self.dataset),
         )
 
     def _create_scenario_prompt(self) -> str:
@@ -113,6 +121,7 @@ class AutoMLAgent:
                 )
                 self.config_space = self._extract_config_space(fixed_code)
                 continue
+
     def _run_generated_scenario(self):
         self.errors = []
         while True:
@@ -141,9 +150,9 @@ class AutoMLAgent:
                 exec(self.train_function, namespace)
                 if "train" in namespace:
                     train_function = namespace["train"]
-                    train_function(cfg=configuration, seed=42, dataset=self.dataset)
+                    sampled_cfg = configuration.sample_configuration()
+                    loss = train_function(cfg=sampled_cfg, seed=42, dataset=self.dataset)
                     log_message("Training function executed successfully.")
-
             except Exception as e:
                 print("****train****Error occurred during execution:", e)
                 error_message = str(e)
@@ -155,4 +164,7 @@ class AutoMLAgent:
                 )
                 self.train_function = self._extract_function(fixed_code, "train")
                 continue
+            log_message("Training function executed successfully.")
+            log_message(f"Loss: {loss}")
+            print(f"Loss: {loss}")
             break

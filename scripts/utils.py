@@ -33,3 +33,14 @@ def log_message(message: str, log_file: str = "./logs/logs.txt"):
     """
     with open(log_file, "a") as log:
         log.write(message + "\n")
+
+def save_code(code: str, filename: str):
+    """
+    Save the generated code to a file.
+    
+    Args:
+        code (str): The code to save.
+        filename (str): The name of the file to save the code in.
+    """
+    with open(filename, "w") as file:
+        file.write(code)

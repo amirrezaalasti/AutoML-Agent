@@ -1,49 +1,68 @@
-**Generate a Valid `get_configspace` Function for Classification (with Conditions and Constraints)**
+[TASK]
+Goal: Write a Python function called get_configspace() that returns a ConfigurationSpace for a classification task.
 
-**Goal:**  
-Write a **Python function** called `get_configspace()` that creates and returns a `ConfigurationSpace` for a **classification task** using the **ConfigSpace** library.
+Strict Output Rules:
+- Output only the get_configspace() function and necessary imports.
+- No extra text, no explanation, no comments.
+- Code must be syntactically correct, executable, and SMAC-compatible.
 
----
+[ALLOWED_CLASSES]
+# Core Classes
+- ConfigurationSpace
+- Categorical
+- Float
+- Integer
+- Constant
 
-**Strict Rules:**
+# Conditions
+- EqualsCondition
+- InCondition
+- OrConjunction
 
-- Only output the function `get_configspace()` and necessary imports.
-- Use **only** the classes and functions from the examples provided.
-- Do **not** use any other classes, functions, or modules not explicitly imported in the examples.
-- The code must be syntactically correct, executable, and compatible with SMAC.
+# Forbidden Clauses
+- ForbiddenEqualsClause
+- ForbiddenAndConjunction
 
----
+# Distributions (only if needed)
+- Beta
+- Normal
 
-### Required Hyperparameters (inside ConfigurationSpace):
-1. `learning_rate`: `Categorical`, values = `["adaptive", "constant"]`
-2. `alpha`: `Float`, range = `[1e-7, 1e-1]`, use `log=True`
-3. `max_iter`: `Integer`, range = `[100, 1000]`
-4. `eta0`: `Float`, range = `[1e-4, 1.0]`, only active when `learning_rate == "constant"`, use `EqualsCondition`, `log=True`
-5. `early_stopping`: `Bool`, default = `True`
+# Serialization (only if needed)
+- to_yaml()
+- from_yaml()
 
----
+[ALLOWED_OPTIONS]
+- default
+- log
+- distribution
+- seed
 
-### Conditions:
-- Use `EqualsCondition`, `InCondition`, or `OrConjunction` from the examples.
-- Correctly define hierarchical dependencies and grouped conditions.
+[REQUIRED_HYPERPARAMETERS]
+- learning_rate: Categorical(["adaptive", "constant"])
+- alpha: Float([1e-6, 1e-1], log=True)
+- max_iter: Integer([100, 1000])
+- eta0: Float([1e-4, 1.0], log=True) [Condition: active only if learning_rate == "constant"]
+- early_stopping: Categorical([True, False], default=True)
 
----
+[CONDITIONS]
+- eta0 must be active only when learning_rate == "constant" (use EqualsCondition).
 
-### Constraints:
-- Use `ForbiddenEqualsClause` and `ForbiddenAndConjunction` to block invalid combinations.
-- Include at least one `ForbiddenAndConjunction`.
+[CONSTRAINTS]
+- Must use at least one ForbiddenAndConjunction to block invalid combinations.
 
----
+[CONFIGURATION_SPACE]
+- seed = 1234
 
-### Other:
-- Set `seed=1234` in the ConfigurationSpace.
-- Use `default` values matching scikit-learn (e.g., for SGDClassifier).
-- Do **not** include any comments, explanations, or extra output—only the function and imports.
+[DATASET_DESCRIPTION]
+- {dataset_description}
 
----
+[IMPORTANT_RULE]
+- Do NOT use any classes, functions, methods, or modules outside of [ALLOWED_CLASSES].
 
-### Examples:
-# 1st Example: Integer hyperparameters and float hyperparameters
+[EXAMPLES]
+
+# Example 1: Basic ConfigurationSpace
+```python
 from ConfigSpace import ConfigurationSpace
 
 cs = ConfigurationSpace(
@@ -53,8 +72,9 @@ cs = ConfigurationSpace(
     }},
     seed=1234,
 )
-
-# 2nd Example: Categorical hyperparameters and conditions#
+```
+# Example 2: Adding Hyperparameters
+```python
 from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
 
 kernel_type = Categorical('kernel_type', ['linear', 'poly', 'rbf', 'sigmoid'])
@@ -64,7 +84,9 @@ gamma = Float('gamma', bounds=(1e-5, 1e2), default=1, log=True)
 
 cs = ConfigurationSpace()
 cs.add([kernel_type, degree, coef0, gamma])
-
+```
+# Example 3: Adding Conditions
+```python
 from ConfigSpace import EqualsCondition, InCondition, OrConjunction
 
 cond_1 = EqualsCondition(degree, kernel_type, 'poly')
@@ -72,18 +94,10 @@ cond_2 = OrConjunction(
     EqualsCondition(coef0, kernel_type, 'poly'),
     EqualsCondition(coef0, kernel_type, 'sigmoid')
 )
-cond_3 = InCondition(gamma, kernel_type, ['rbf', 'poly','sigmoid'])
-
-# 3rd Example: Forbidden clauses#
-from ConfigSpace import ConfigurationSpace, Categorical, Constant
-
-cs = ConfigurationSpace()
-
-penalty = Categorical("penalty", ["l1", "l2"], default="l2")
-loss = Categorical("loss", ["hinge", "squared_hinge"], default="squared_hinge")
-dual = Constant("dual", "False")
-cs.add([penalty, loss, dual])
-
+cond_3 = InCondition(gamma, kernel_type, ['rbf', 'poly', 'sigmoid'])
+```
+# Example 4: Adding Forbidden Clauses
+```pyhon
 from ConfigSpace import ForbiddenEqualsClause, ForbiddenAndConjunction
 
 penalty_and_loss = ForbiddenAndConjunction(
@@ -99,8 +113,9 @@ penalty_and_dual = ForbiddenAndConjunction(
     ForbiddenEqualsClause(dual, "False"),
     ForbiddenEqualsClause(penalty, "l1")
 )
-
-# 4th Example Serialization#
+```
+Example 5: Serialization
+```python
 from pathlib import Path
 from ConfigSpace import ConfigurationSpace
 
@@ -114,11 +129,9 @@ cs = ConfigurationSpace(
 )
 cs.to_yaml(path)
 loaded_cs = ConfigurationSpace.from_yaml(path)
-
-with path.open() as f:
-    print(f.read())
-
-# 5th Example: Placing priors on the hyperparameters#
+```
+# Example 6: Priors
+```python 
 import numpy as np
 from ConfigSpace import ConfigurationSpace, Float, Categorical, Beta, Normal
 
@@ -145,19 +158,4 @@ cs = ConfigurationSpace(
     }},
     seed=1234,
 )
-
----
-
-**Reminder:** Only allowed classes/functions (from examples):
-
-- `ConfigurationSpace`, `Categorical`, `Float`, `Integer`, `Constant`
-- `EqualsCondition`, `InCondition`, `OrConjunction`
-- `ForbiddenEqualsClause`, `ForbiddenAndConjunction`
-- `Beta`, `Normal`
-- `seed`, `default`, `log`, `distribution`
-- `.to_yaml()`, `.from_yaml()`
-
----
-
-
-Only output the function `get_configspace()` and the required imports. No extra text.
+```
