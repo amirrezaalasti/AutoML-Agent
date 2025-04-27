@@ -4,175 +4,148 @@ from scripts.utils import describe_dataset, log_message, save_code
 import re
 
 
-namespace = {}
+def extract_code_block(code: str) -> str:
+    """Extract Python code between markdown code fences"""
+    pattern = r"```python\n(.*?)```"
+    match = re.search(pattern, code, re.DOTALL)
+    return match.group(1) if match else code
 
 
 class AutoMLAgent:
+    MAX_RETRIES_PROMPT = 5
+    MAX_RETRIES_ABORT = 20
+
     def __init__(self, dataset: Any, llm_client: LLMClient, dataset_type: str):
         self.dataset = dataset
         self.llm = llm_client
-        self.train_function = None
+        self.dataset_type = dataset_type
+        self.dataset_description = describe_dataset(dataset, dataset_type)
+
+        self.config_code = None
+        self.scenario_code = None
+        self.train_function_code = None
+
         self.config_space = None
         self.scenario = None
-        self.errors = []
-        self.dataset_type = dataset_type
-        self.dataset_description = describe_dataset(self.dataset, self.dataset_type)
+        self.train_function = None
 
-    def _extract_function(self, code: str, function_name: str) -> str:
-        """Extract the function code from the generated code"""
-        pattern = r"```python\n(.*?)```"
-        match = re.search(pattern, code, re.DOTALL)
+        self.error_counters = {"config": 0, "scenario": 0, "train_function": 0}
+        self.error_history = {"config": [], "scenario": [], "train_function": []}
+        self.namespace = {}
 
-        return match.group(1) if match else ""
-
-    def _extract_config_space(self, code: str) -> str:
-        """Extract the ConfigurationSpace definition"""
-        pattern = r"```python\n(.*?)```"
-        match = re.search(pattern, code, re.DOTALL)
-
-        return match.group(1) if match else ""
-
-    def _extract_scenario(self, code: str) -> str:
-        """Extract the scenario definition"""
-        pattern = r"```python\n(.*?)```"
-        match = re.search(pattern, code, re.DOTALL)
-        return match.group(1) if match else ""
+        # store original prompts for retries
+        self.prompts = {}
 
     def generate_components(self):
-        """Generate all necessary components through LLM prompts"""
-        # Generate configuration space
-        config_prompt = self._create_config_prompt()
-        config_code = self.llm.generate(config_prompt)
-        self.config_code = config_code
-        self.config_space = self._extract_config_space(config_code)
-        self._run__generated_config_space()
+        # Configuration Space
+        self.prompts['config'] = self._create_config_prompt()
+        self.config_code = self.llm.generate(self.prompts['config'])
+        self._run_generated('config')
 
-        # Generate scenario
-        scenario_prompt = self._create_scenario_prompt()
-        scenario_code = self.llm.generate(scenario_prompt)
-        self.scenario_code = scenario_code
-        self.scenario = self._extract_scenario(scenario_code)
-        self._run_generated_scenario()
+        # Scenario
+        self.prompts['scenario'] = self._create_scenario_prompt()
+        self.scenario_code = self.llm.generate(self.prompts['scenario'])
+        self._run_generated('scenario')
 
-        # Generate training function
-        train_prompt = self._create_train_prompt()
-        train_code = self.llm.generate(train_prompt)
-        log_message(f"Generated training function code:\n{train_code}")
-        self.train_function_code = train_code
-        self.train_function = self._extract_function(train_code, "train")
-        loss = self._run_generated_train_code()
+        # Training Function
+        self.prompts['train_function'] = self._create_train_prompt()
+        self.train_function_code = self.llm.generate(self.prompts['train_function'])
+        log_message(f"Generated training function code:\n{self.train_function_code}")
+        self._run_generated('train_function')
 
-        # save the generated code to files
+        print("self.config_space", self.config_space)
+        print("self.scenario", self.scenario)
+        print("self.train_function", self.train_function)
+        # Save outputs
         save_code(self.config_space, "generated_config_space.py")
         save_code(self.scenario, "generated_scenario.py")
         save_code(self.train_function, "generated_train_function.py")
 
-        return self.config_space, self.scenario, self.train_function, loss
+        # Return results and last training loss
+        return self.config_space, self.scenario, self.train_function, self.last_loss
 
-    def _create_train_prompt(self) -> str:
-        with open("templates/train_prompt.txt", "r") as file:
-            template = file.read()
-        return template.format(
-            dataset_description=self.dataset_description,
-            config_space=self.config_space,
-            scenario=self.scenario,
-        )
+    def _run_generated(self, component: str):
+        """Generic runner for config, scenario, or train_function"""
+        retry_count = 0
+        while True:
+            code_attr = f"{component}_code"
+            raw_code = getattr(self, code_attr)
+            source = extract_code_block(raw_code)
+            log_message(f"Running {component} code:\n{source}")
+
+            try:
+                if component == 'config':
+                    exec(source, self.namespace)
+                    cfg = self.namespace['get_configspace']()
+                    self.config_space = source
+                    log_message(f"Configuration space generated: {cfg}")
+
+                elif component == 'scenario':
+                    cfg = self.namespace['get_configspace']()
+                    exec(source, self.namespace)
+                    scenario_obj = self.namespace['generate_scenario'](cfg)
+                    self.scenario = source
+                    log_message(f"Scenario generated: {scenario_obj}")
+
+                elif component == 'train_function':
+                    cfg = self.namespace['get_configspace']()
+                    exec(source, self.namespace)
+                    train_fn = self.namespace['train']
+                    sampled = cfg.sample_configuration()
+                    loss = train_fn(cfg=sampled, seed=42, dataset=self.dataset)
+                    self.train_function = source
+                    self.last_loss = loss
+                    log_message(f"Training executed, loss: {loss}")
+
+                return  # success
+
+            except Exception as e:
+                retry_count += 1
+                self.error_counters[component] += 1
+                err = str(e)
+                # record error history
+                self.error_history[component].append(err)
+                log_message(f"Error in {component} (#{retry_count}): {err}")
+
+                # Abort after too many retries
+                if self.error_counters[component] > self.MAX_RETRIES_ABORT:
+                    log_message(f"Max abort retries reached for {component}. Using last generated code.")
+                    if component == 'train_function':
+                        self.last_loss = getattr(self, 'last_loss', None)
+                    return
+
+                # Refresh code from original prompt after threshold
+                if retry_count == self.MAX_RETRIES_PROMPT:
+                    log_message(f"Retry limit reached for {component}. Fetching fresh code from LLM.")
+                    fresh = self.llm.generate(self.prompts[component])
+                    setattr(self, code_attr, fresh)
+                    retry_count = 0
+                else:
+                    # Ask LLM to fix errors with history of recent issues
+                    recent_errors = "\n".join(
+                        self.error_history[component][-self.MAX_RETRIES_PROMPT:]
+                    )
+                    fix_prompt = self._create_fix_prompt(recent_errors, raw_code)
+                    fixed = self.llm.generate(fix_prompt)
+                    setattr(self, code_attr, fixed)
 
     def _create_config_prompt(self) -> str:
-        with open("templates/config_prompt.txt", "r") as file:
-            template = file.read()
-        return template.format(
-            dataset_description=self.dataset_description,
-        )
+        with open("templates/config_prompt.txt", "r") as f:
+            return f.read().format(dataset_description=self.dataset_description)
 
     def _create_scenario_prompt(self) -> str:
-        with open("templates/scenario_prompt.txt", "r") as file:
-            template = file.read()
-        return template.format(
-            dataset=self.dataset_description,
-        )
+        with open("templates/scenario_prompt.txt", "r") as f:
+            return f.read().format(dataset=self.dataset_description)
 
-    def _inform_errors_to_llm(self, original_promp, code: str) -> str:
-        """Inform the LLM about the errors and ask for a fix"""
-        with open("templates/fix_prompt.txt", "r") as file:
-            template = file.read()
-        last_three_errors = self.errors[-3:] if len(self.errors) > 3 else self.errors
-        prompt = template.format(
-            code=code,
-            errors="\n".join(last_three_errors),
-        )
-        log_message(f"_inform_errors_to_llm**Prompt for LLM:\n{prompt}")
-        return self.llm.generate(prompt)
+    def _create_train_prompt(self) -> str:
+        with open("templates/train_prompt.txt", "r") as f:
+            return f.read().format(
+                dataset_description=self.dataset_description,
+                config_space=self.config_space or "",
+                scenario=self.scenario or ""
+            )
 
-    def _run__generated_config_space(self):
-        self.errors = []
-        while True:
-            try:
-                # print(f"Executing code:\n{self.config_space}")
-                exec(self.config_space, namespace)
-                if "get_configspace" in namespace:
-                    log_message(f"Configuration space code:\n{self.config_space}")
-                    configuration = namespace["get_configspace"]()
-                    log_message(f"Generated configuration space:\n{configuration}")
-                    break
-            except Exception as e:
-                print("****get_configspace****Error occurred during execution:", e)
-                error_message = str(e)
-                self.errors.append(error_message)
-                log_message(f"Error occurred: {error_message}")
-                config_prompt = self._create_config_prompt()
-                fixed_code = self._inform_errors_to_llm(
-                    config_prompt, self.config_space
-                )
-                self.config_space = self._extract_config_space(fixed_code)
-                continue
-
-    def _run_generated_scenario(self):
-        self.errors = []
-        while True:
-            try:
-                configuration = namespace["get_configspace"]()
-                exec(self.scenario, namespace)
-                if "generate_scenario" in namespace:
-                    log_message(f"Scenario code:\n{self.scenario}")
-                    scenario = namespace["generate_scenario"](configuration)
-                    log_message(f"Generated scenario: {scenario}")
-                    break
-            except Exception as e:
-                print("****scenario****Error occurred during execution:", e)
-                error_message = str(e)
-                self.errors.append(error_message)
-                log_message(f"Error occurred: {error_message}")
-                scenario_prompt = self._create_scenario_prompt()
-                fixed_code = self._inform_errors_to_llm(scenario_prompt, self.scenario)
-                self.scenario = self._extract_scenario(fixed_code)
-                continue
-
-    def _run_generated_train_code(self):
-        while True:
-            try:
-                configuration = namespace["get_configspace"]()
-                exec(self.train_function, namespace)
-                if "train" in namespace:
-                    train_function = namespace["train"]
-                    sampled_cfg = configuration.sample_configuration()
-                    loss = train_function(
-                        cfg=sampled_cfg, seed=42, dataset=self.dataset
-                    )
-                    log_message("Training function executed successfully.")
-            except Exception as e:
-                print("****train****Error occurred during execution:", e)
-                error_message = str(e)
-                self.errors.append(error_message)
-                log_message(f"Error occurred: {error_message}")
-                train_prompt = self._create_train_prompt()
-                fixed_code = self._inform_errors_to_llm(
-                    train_prompt, self.train_function
-                )
-                self.train_function = self._extract_function(fixed_code, "train")
-                continue
-            log_message("Training function executed successfully.")
-            log_message(f"Loss: {loss}")
-            print(f"Loss: {loss}")
-            return loss
-        return None
+    def _create_fix_prompt(self, errors: str, code: str) -> str:
+        """Include recent error history when asking LLM to fix code"""
+        with open("templates/fix_prompt.txt", "r") as f:
+            return f.read().format(code=code, errors=errors)
