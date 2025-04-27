@@ -8,13 +8,15 @@ namespace = {}
 
 
 class AutoMLAgent:
-    def __init__(self, dataset: Any, llm_client: LLMClient):
+    def __init__(self, dataset: Any, llm_client: LLMClient, dataset_type: str):
         self.dataset = dataset
         self.llm = llm_client
         self.train_function = None
         self.config_space = None
         self.scenario = None
         self.errors = []
+        self.dataset_type = dataset_type
+        self.dataset_description = describe_dataset(self.dataset, self.dataset_type)
 
     def _extract_function(self, code: str, function_name: str) -> str:
         """Extract the function code from the generated code"""
@@ -58,18 +60,20 @@ class AutoMLAgent:
         log_message(f"Generated training function code:\n{train_code}")
         self.train_function_code = train_code
         self.train_function = self._extract_function(train_code, "train")
-        self._run_generated_train_code()
+        loss = self._run_generated_train_code()
 
         # save the generated code to files
         save_code(self.config_space, "generated_config_space.py")
         save_code(self.scenario, "generated_scenario.py")
         save_code(self.train_function, "generated_train_function.py")
 
+        return self.config_space, self.scenario, self.train_function, loss
+
     def _create_train_prompt(self) -> str:
         with open("templates/train_prompt.txt", "r") as file:
             template = file.read()
         return template.format(
-            dataset_description=describe_dataset(self.dataset),
+            dataset_description=self.dataset_description,
             config_space=self.config_space,
             scenario=self.scenario,
         )
@@ -78,14 +82,14 @@ class AutoMLAgent:
         with open("templates/config_prompt.txt", "r") as file:
             template = file.read()
         return template.format(
-            dataset_description=describe_dataset(self.dataset),
+            dataset_description=self.dataset_description,
         )
 
     def _create_scenario_prompt(self) -> str:
         with open("templates/scenario_prompt.txt", "r") as file:
             template = file.read()
         return template.format(
-            dataset=describe_dataset(self.dataset),
+            dataset=self.dataset_description,
         )
 
     def _inform_errors_to_llm(self, original_promp, code: str) -> str:
@@ -97,6 +101,7 @@ class AutoMLAgent:
             code=code,
             errors="\n".join(last_three_errors),
         )
+        log_message(f"_inform_errors_to_llm**Prompt for LLM:\n{prompt}")
         return self.llm.generate(prompt)
 
     def _run__generated_config_space(self):
@@ -151,7 +156,9 @@ class AutoMLAgent:
                 if "train" in namespace:
                     train_function = namespace["train"]
                     sampled_cfg = configuration.sample_configuration()
-                    loss = train_function(cfg=sampled_cfg, seed=42, dataset=self.dataset)
+                    loss = train_function(
+                        cfg=sampled_cfg, seed=42, dataset=self.dataset
+                    )
                     log_message("Training function executed successfully.")
             except Exception as e:
                 print("****train****Error occurred during execution:", e)
@@ -167,4 +174,5 @@ class AutoMLAgent:
             log_message("Training function executed successfully.")
             log_message(f"Loss: {loss}")
             print(f"Loss: {loss}")
-            break
+            return loss
+        return None
