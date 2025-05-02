@@ -9,25 +9,19 @@ def train(cfg: Configuration, seed: int, dataset: Any) -> float:
     learning_rate: str = cfg.get('learning_rate')
     alpha: float = cfg.get('alpha')
     max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
+    eta0: float = cfg.get('eta0') if learning_rate == 'constant' else 1.0
 
-    C: float = 1.0 / alpha
     params: dict = {
-        'loss': 'log_loss',
-        'penalty': 'l2',
         'learning_rate': learning_rate,
         'alpha': alpha,
         'max_iter': max_iter,
+        'early_stopping': True,
         'warm_start': True,
         'random_state': seed,
+        'eta0': eta0 if learning_rate == 'constant' else 1.0
     }
-
-    if learning_rate in ['constant', 'invscaling', 'adaptive']:
-        params['eta0'] = eta0 if eta0 is not None and eta0 > 0 else 0.1
-    else:
-        params['eta0'] = 0.1
 
     model: SGDClassifier = SGDClassifier(**params)
     cv: StratifiedKFold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
-    scores: Any = cross_val_score(model, X, y, cv=cv, scoring='accuracy', error_score='raise')
+    scores: Any = cross_val_score(model, X, y, cv=cv, scoring='accuracy')
     return 1.0 - scores.mean()

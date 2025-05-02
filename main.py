@@ -5,6 +5,8 @@ from configs.api_keys import GROQ_API_KEY
 from scripts.LLMClient import LLMClient
 import streamlit as st
 import pandas as pd
+from sklearn.datasets import fetch_openml
+from keras.datasets import mnist
 
 # Available GROQ models
 AVAILABLE_MODELS = [
@@ -40,11 +42,20 @@ if __name__ == "__main__":
     st.title("AutoML Agent Interface")
 
     dataset_option = st.selectbox(
-        "Choose a dataset", ("Use Iris Dataset", "Upload CSV File")
+        "Choose a dataset", ("Use Iris Dataset", "MNIST Dataset", "Upload CSV File")
     )
 
     if dataset_option == "Use Iris Dataset":
         X, y = load_iris(return_X_y=True)
+        dataset = {"X": X, "y": y}
+    elif dataset_option == "MNIST Dataset":
+        (X_train, y_train), (X_test, y_test) = mnist.load_data()
+        # Flatten the images
+        X_train = X_train.reshape(X_train.shape[0], -1)
+        X_test = X_test.reshape(X_test.shape[0], -1)
+        # Combine train and test sets
+        X = pd.concat([pd.DataFrame(X_train), pd.DataFrame(X_test)], ignore_index=True)
+        y = pd.concat([pd.Series(y_train), pd.Series(y_test)], ignore_index=True)
         dataset = {"X": X, "y": y}
     else:
         uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
@@ -64,7 +75,6 @@ if __name__ == "__main__":
     # 3. LLM Model
     model_choice = st.selectbox("Select a GROQ LLM Model", AVAILABLE_MODELS)
 
-
     # 4. Run Agent
     if st.button("Run AutoML Agent"):
         if dataset is None:
@@ -72,8 +82,12 @@ if __name__ == "__main__":
         else:
             with st.spinner("Setting up AutoML Agent..."):
                 llm_client = LLMClient(api_key=GROQ_API_KEY, model_name=model_choice)
-                agent = AutoMLAgent(dataset=dataset, llm_client=llm_client, dataset_type=data_type)
-                config_code, scenario_code, train_code, loss = agent.generate_components()
+                agent = AutoMLAgent(
+                    dataset=dataset, llm_client=llm_client, dataset_type=data_type
+                )
+                config_code, scenario_code, train_code, loss = (
+                    agent.generate_components()
+                )
                 st.success("AutoML Agent setup complete!")
                 st.subheader("Generated Configuration Space Code")
                 st.code(config_code, language="python")

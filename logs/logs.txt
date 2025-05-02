@@ -1408,3 +1408,173 @@ def train(cfg: Configuration, seed: int, dataset: Any) -> float:
     return 1.0 - scores.mean()
 
 Training executed, loss: 0.040000000000000036
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+    
+    learning_rate = Categorical("learning_rate", ["adaptive", "constant"])
+    alpha = Float("alpha", [1e-6, 1e-1], log=True)
+    max_iter = Integer("max_iter", [100, 1000])
+    eta0 = Float("eta0", [1e-4, 1.0], log=True)
+    early_stopping = Categorical("early_stopping", [True, False], default=True)
+    
+    cs.add_hyperparameters([learning_rate, alpha, max_iter, eta0, early_stopping])
+    
+    cond_eta0 = EqualsCondition(eta0, learning_rate, "constant")
+    cs.add_condition(cond_eta0)
+    
+    penalty_and_loss = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, "constant"),
+        ForbiddenEqualsClause(early_stopping, False)
+    )
+    cs.add_forbidden_clause(penalty_and_loss)
+    
+    return cs
+
+Configuration space generated: Configuration space object:
+  Hyperparameters:
+    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
+    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
+    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
+    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
+    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
+
+Running scenario code:
+from smac import Scenario
+from smac.configspace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario({
+        'run_obj': 'quality',
+        'runcount-limit': 100,
+        'cs': cs,
+        'output_dir': "./automl_results",
+        'shared_model': False
+    })
+    return scenario
+
+Error in scenario (#1): No module named 'smac.configspace'
+Running scenario code:
+from smac.scenario import Scenario
+from smac.facade import ROARFacade
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario({
+        'run_obj': 'quality',
+        'runcount-limit': 100,
+        'cs': cs,
+        'output_dir': "./automl_results",
+        'shared_model': False
+    })
+    return scenario
+
+Error in scenario (#2): cannot import name 'ROARFacade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
+Running scenario code:
+from smac.scenario import Scenario
+from smac.facade import Facade
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario({
+        'run_obj': 'quality',
+        'runcount-limit': 100,
+        'cs': cs,
+        'output_dir': "./automl_results",
+        'shared_model': False
+    })
+    return scenario
+
+Error in scenario (#3): cannot import name 'Facade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
+Running scenario code:
+from smac.scenario import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario({
+        'run_obj': 'quality',
+        'runcount-limit': 100,
+        'cs': cs,
+        'output_dir': "./automl_results",
+        'shared_model': False
+    })
+    return scenario
+
+Scenario generated: Scenario(configspace={'run_obj': 'quality', 'runcount-limit': 100, 'cs': Configuration space object:
+  Hyperparameters:
+    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
+    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
+    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
+    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
+    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
+, 'output_dir': './automl_results', 'shared_model': False}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
+Generated training function code:
+```python
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.linear_model import SGDClassifier
+from typing import Any
+from ConfigSpace import Configuration
+
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    X: Any = dataset['X']
+    y: Any = dataset['y']
+    learning_rate: str = cfg.get('learning_rate')
+    alpha: float = cfg.get('alpha')
+    max_iter: int = cfg.get('max_iter')
+    eta0: float = cfg.get('eta0') if learning_rate == 'constant' else 1.0
+
+    params: dict = {
+        'learning_rate': learning_rate,
+        'alpha': alpha,
+        'max_iter': max_iter,
+        'early_stopping': True,
+        'warm_start': True,
+        'random_state': seed,
+        'eta0': eta0 if learning_rate == 'constant' else 1.0
+    }
+
+    model: SGDClassifier = SGDClassifier(**params)
+    cv: StratifiedKFold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+    scores: Any = cross_val_score(model, X, y, cv=cv, scoring='accuracy')
+    return 1.0 - scores.mean()
+```
+Running train_function code:
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.linear_model import SGDClassifier
+from typing import Any
+from ConfigSpace import Configuration
+
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    X: Any = dataset['X']
+    y: Any = dataset['y']
+    learning_rate: str = cfg.get('learning_rate')
+    alpha: float = cfg.get('alpha')
+    max_iter: int = cfg.get('max_iter')
+    eta0: float = cfg.get('eta0') if learning_rate == 'constant' else 1.0
+
+    params: dict = {
+        'learning_rate': learning_rate,
+        'alpha': alpha,
+        'max_iter': max_iter,
+        'early_stopping': True,
+        'warm_start': True,
+        'random_state': seed,
+        'eta0': eta0 if learning_rate == 'constant' else 1.0
+    }
+
+    model: SGDClassifier = SGDClassifier(**params)
+    cv: StratifiedKFold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+    scores: Any = cross_val_score(model, X, y, cv=cv, scoring='accuracy')
+    return 1.0 - scores.mean()
+
+Training executed, loss: 0.11108571428571445
