@@ -1,4 +1,4 @@
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
 
 def get_configspace():
     cs = ConfigurationSpace(seed=1234)
@@ -12,12 +12,12 @@ def get_configspace():
     cs.add_hyperparameters([learning_rate, alpha, max_iter, eta0, early_stopping])
     
     cond_eta0 = EqualsCondition(eta0, learning_rate, "constant")
-    cs.add_condition(cond_eta0)
+    cs.add_condition(EqualsCondition(eta0, learning_rate, "constant"))
     
-    penalty_and_loss = ForbiddenAndConjunction(
+    forbidden_clause = ForbiddenAndConjunction(
         ForbiddenEqualsClause(learning_rate, "constant"),
         ForbiddenEqualsClause(early_stopping, False)
     )
-    cs.add_forbidden_clause(penalty_and_loss)
+    cs.add_forbidden_clause(forbidden_clause)
     
     return cs

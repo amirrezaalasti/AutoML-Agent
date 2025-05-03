@@ -62,7 +62,7 @@ class AutoMLAgent:
         save_code(self.train_function, "generated_train_function.py")
 
         # Return results and last training loss
-        return self.config_space, self.scenario, self.train_function, self.last_loss
+        return self.config_space, self.scenario, self.train_function, self.last_loss, self.prompts
 
     def _run_generated(self, component: str):
         """Generic runner for config, scenario, or train_function"""

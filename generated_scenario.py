@@ -5,8 +5,9 @@ def generate_scenario(cs):
     scenario = Scenario({
         'run_obj': 'quality',
         'runcount-limit': 100,
-        'cs': cs,
+        'wallclock-limit': 3600,
         'output_dir': "./automl_results",
-        'shared_model': False
+        'shared_model': False,
+        'cs': cs
     })
     return scenario

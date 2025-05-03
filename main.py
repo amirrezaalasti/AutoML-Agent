@@ -85,7 +85,7 @@ if __name__ == "__main__":
                 agent = AutoMLAgent(
                     dataset=dataset, llm_client=llm_client, dataset_type=data_type
                 )
-                config_code, scenario_code, train_code, loss = (
+                config_code, scenario_code, train_code, loss, prompts = (
                     agent.generate_components()
                 )
                 st.success("AutoML Agent setup complete!")
@@ -97,5 +97,7 @@ if __name__ == "__main__":
                 st.code(train_code, language="python")
                 st.subheader("Loss Value")
                 st.write(loss)
+                st.subheader("Prompts Used")
+                st.write(prompts)
                 # # incumbent = agent.run_smac()
                 # # print(f"Best configuration: {incumbent}")
