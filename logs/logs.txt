@@ -1,420 +1,56 @@
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    learning_rate = Categorical("learning_rate", ["adaptive", "constant"])
-    alpha = Float("alpha", [1e-6, 1e-1], log=True)
-    max_iter = Integer("max_iter", [100, 1000])
-    eta0 = Float("eta0", [1e-4, 1.0], log=True)
-    early_stopping = Categorical("early_stopping", [True, False], default=True)
-    
-    cs.add_hyperparameters([learning_rate, alpha, max_iter, eta0, early_stopping])
-    
-    cond = EqualsCondition(eta0, learning_rate, "constant")
-    cs.add_condition(EqualsCondition(eta0, learning_rate, "constant"))
-    
-    forbidden_clause = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, "constant"),
-        ForbiddenEqualsClause(early_stopping, False)
-    )
-    cs.add_forbidden_clause(forbidden_clause)
-    
-    return cs
-
-Configuration space generated: Configuration space object:
-  Hyperparameters:
-    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
-    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
-    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
-    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
-    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
-  Conditions:
-    eta0 | learning_rate == 'constant'
-  Forbidden Clauses:
-    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
-
-Running scenario code:
-from smac import Scenario
-from smac.configspace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#1): No module named 'smac.configspace'
-Running scenario code:
-from smac.scenario import Scenario
-from smac.facade import ROARFacade
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#2): cannot import name 'ROARFacade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
-Running scenario code:
-from smac.scenario import Scenario
-from smac.facade import Facade
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#3): cannot import name 'Facade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
-Running scenario code:
-from smac.scenario import Scenario
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Scenario generated: Scenario(configspace={'run_obj': 'quality', 'runcount-limit': 100, 'wallclock-limit': 3600, 'output_dir': './automl_results', 'shared_model': False, 'cs': Configuration space object:
-  Hyperparameters:
-    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
-    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
-    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
-    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
-    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
-  Conditions:
-    eta0 | learning_rate == 'constant'
-  Forbidden Clauses:
-    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
-}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
-Generated training function code:
-```python
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
-from typing import Any
-from ConfigSpace import Configuration
-
-def train(cfg: Configuration, seed: int, dataset: Any) -> float:
-    X = dataset['X']
-    y = dataset['y']
-
-    learning_rate = cfg.get('learning_rate')
-    alpha = cfg.get('alpha')
-    max_iter = cfg.get('max_iter')
-    eta0 = cfg.get('eta0')
-
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta0 = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta0 = 'auto'
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        learning_rate=learning_rate,
-        eta0=eta0,
-        max_iter=max_iter,
-        warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
-    )
-
-    scores = cross_val_score(model, X, y, cv=5, scoring='accuracy', random_state=seed)
-    loss = 1.0 - scores.mean()
-    return loss
-```
 Running train_function code:
+from typing import Any
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
-from typing import Any
-from ConfigSpace import Configuration
-
-def train(cfg: Configuration, seed: int, dataset: Any) -> float:
-    X = dataset['X']
-    y = dataset['y']
-
-    learning_rate = cfg.get('learning_rate')
-    alpha = cfg.get('alpha')
-    max_iter = cfg.get('max_iter')
-    eta0 = cfg.get('eta0')
-
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta0 = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta0 = 'auto'
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        learning_rate=learning_rate,
-        eta0=eta0,
-        max_iter=max_iter,
-        warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
-    )
-
-    scores = cross_val_score(model, X, y, cv=5, scoring='accuracy', random_state=seed)
-    loss = 1.0 - scores.mean()
-    return loss
-
-Error in train_function (#1): got an unexpected keyword argument 'random_state'
-Running train_function code:
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
-from typing import Any
-from ConfigSpace import Configuration
-
-def train(cfg: Configuration, seed: int, dataset: Any) -> float:
-    X = dataset['X']
-    y = dataset['y']
-
-    learning_rate = cfg.get('learning_rate')
-    alpha = cfg.get('alpha')
-    max_iter = cfg.get('max_iter')
-    eta0 = cfg.get('eta0')
-
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta0 = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta0 = 'auto'
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        learning_rate=learning_rate,
-        eta0=eta0,
-        max_iter=max_iter,
-        warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
-    )
-
-    scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
-    loss = 1.0 - scores.mean()
-    return loss
-
-Error in train_function (#2): 
-All the 5 fits failed.
-It is very likely that your model is misconfigured.
-You can try to debug the error by setting error_score='raise'.
-
-Below are more details about the failures:
---------------------------------------------------------------------------------
-5 fits failed with the following error:
-Traceback (most recent call last):
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/model_selection/_validation.py", line 866, in _fit_and_score
-    estimator.fit(X_train, y_train, **fit_params)
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/base.py", line 1382, in wrapper
-    estimator._validate_params()
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/base.py", line 436, in _validate_params
-    validate_parameter_constraints(
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/utils/_param_validation.py", line 98, in validate_parameter_constraints
-    raise InvalidParameterError(
-sklearn.utils._param_validation.InvalidParameterError: The 'eta0' parameter of SGDClassifier must be a float in the range [0.0, inf). Got 'auto' instead.
-
-Running train_function code:
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
-from typing import Any
-from ConfigSpace import Configuration
-
-def train(cfg: Configuration, seed: int, dataset: Any) -> float:
-    X = dataset['X']
-    y = dataset['y']
-
-    learning_rate = cfg.get('learning_rate')
-    alpha = cfg.get('alpha')
-    max_iter = cfg.get('max_iter')
-    eta0 = cfg.get('eta0')
-
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta0 = float(eta0)
-    else:
-        learning_rate = 'adaptive'
-        eta0 = 1.0  # default value for eta0 when learning_rate is 'adaptive'
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        learning_rate=learning_rate,
-        eta0=eta0,
-        max_iter=max_iter,
-        warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
-    )
-
-    scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
-    loss = 1.0 - scores.mean()
-    return loss
-
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    learning_rate = Categorical("learning_rate", ["adaptive", "constant"])
-    alpha = Float("alpha", [1e-6, 1e-1], log=True)
-    max_iter = Integer("max_iter", [100, 1000])
-    eta0 = Float("eta0", [1e-4, 1.0], log=True)
-    early_stopping = Categorical("early_stopping", [True, False], default=True)
-    
-    cs.add_hyperparameters([learning_rate, alpha, max_iter, eta0, early_stopping])
-    
-    cond_eta0 = EqualsCondition(eta0, learning_rate, "constant")
-    cs.add_condition(EqualsCondition(eta0, learning_rate, "constant"))
-    
-    penalty_and_dual = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, "constant"),
-        ForbiddenEqualsClause(early_stopping, False)
-    )
-    cs.add_forbidden_clause(penalty_and_dual)
-    
-    return cs
-
-Configuration space generated: Configuration space object:
-  Hyperparameters:
-    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
-    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
-    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
-    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
-    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
-  Conditions:
-    eta0 | learning_rate == 'constant'
-  Forbidden Clauses:
-    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
-
-Running scenario code:
-from smac import Scenario
-from smac.configspace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#1): No module named 'smac.configspace'
-Running scenario code:
-from smac.scenario import Scenario
-from smac.facade import ROARFacade
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#2): cannot import name 'ROARFacade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
-Running scenario code:
-from smac.scenario import Scenario
-from smac.facade import Facade
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#3): cannot import name 'Facade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
-Running scenario code:
-from smac.scenario import Scenario
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Scenario generated: Scenario(configspace={'run_obj': 'quality', 'runcount-limit': 100, 'wallclock-limit': 3600, 'output_dir': './automl_results', 'shared_model': False, 'cs': Configuration space object:
-  Hyperparameters:
-    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
-    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
-    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
-    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
-    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
-  Conditions:
-    eta0 | learning_rate == 'constant'
-  Forbidden Clauses:
-    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
-}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
-Generated training function code:
-```python
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from typing import Any
+from sklearn.exceptions import ConvergenceWarning
+import warnings
+import numpy as np
+import pandas as pd
 
 def train(cfg: Any, seed: int, dataset: Any) -> float:
-    # Extract hyperparameters from the configuration
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
+    """
+    Train a classification model using the given configuration and dataset.
+
+    Args:
+    - cfg (Any): A configuration object containing hyperparameters.
+    - seed (int): A random seed for reproducibility.
+    - dataset (Any): A dictionary containing the feature matrix and label vector.
+
+    Returns:
+    - float: The loss value (1.0 - mean cross-validation accuracy).
+    """
+
+    # Get hyperparameters from the configuration object
+    learning_rate: str = cfg.get('learning_rate', 'constant')
+    alpha: float = cfg.get('alpha', 0.01)
+    max_iter: int = cfg.get('max_iter', 1000)
+    eta0: float = cfg.get('eta0', 1.0)
+
+    # Get the feature matrix and label vector from the dataset
+    X: np.ndarray = dataset['X']
+    y: np.ndarray = dataset['y']
+
+    # Ensure X and y are numeric
+    if isinstance(X, pd.DataFrame):
+        X = X.apply(pd.to_numeric, errors='coerce')
+    if isinstance(y, pd.Series):
+        y = pd.to_numeric(y, errors='coerce')
+
+    # Drop rows with missing values
+    if isinstance(X, pd.DataFrame):
+        X = X.dropna()
+    else:
+        X = X[~np.isnan(X).any(axis=1)]
+    if isinstance(y, pd.Series):
+        y = y.dropna()
+    else:
+        y = y[~np.isnan(y)]
+
+    # Ensure X and y have the same number of samples
+    if len(X) != len(y):
+        min_len = min(len(X), len(y))
+        X = X[:min_len]
+        y = y[:min_len]
 
     # Create a classification model with the given hyperparameters
     model = SGDClassifier(
@@ -423,155 +59,33 @@ def train(cfg: Any, seed: int, dataset: Any) -> float:
         alpha=alpha,
         max_iter=max_iter,
         learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else None,
+        eta0=1.0 if learning_rate == 'constant' else None,
         warm_start=True,
         random_state=seed
     )
 
-    # Perform stratified k-fold cross-validation
-    scores = cross_val_score(
-        model,
-        dataset['X'],
-        dataset['y'],
-        cv=5,
-        scoring='accuracy',
-        random_state=seed
-    )
+    # Suppress convergence warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=ConvergenceWarning)
 
-    # Calculate the loss value as 1.0 - mean cross-validation accuracy
-    loss: float = 1.0 - scores.mean()
+        # Perform stratified k-fold cross-validation
+        scores = cross_val_score(
+            model,
+            X,
+            y,
+            cv=5,
+            scoring='accuracy'
+        )
 
-    return loss
-```
-Running train_function code:
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from typing import Any
-
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    # Extract hyperparameters from the configuration
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
-
-    # Create a classification model with the given hyperparameters
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else None,
-        warm_start=True,
-        random_state=seed
-    )
-
-    # Perform stratified k-fold cross-validation
-    scores = cross_val_score(
-        model,
-        dataset['X'],
-        dataset['y'],
-        cv=5,
-        scoring='accuracy',
-        random_state=seed
-    )
-
-    # Calculate the loss value as 1.0 - mean cross-validation accuracy
-    loss: float = 1.0 - scores.mean()
+    # Calculate the loss value (1.0 - mean cross-validation accuracy)
+    loss: float = 1.0 - np.mean(scores)
 
     return loss
 
-Error in train_function (#1): got an unexpected keyword argument 'random_state'
-Running train_function code:
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from typing import Any
-
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else None,
-        warm_start=True,
-        random_state=seed
-    )
-
-    scores = cross_val_score(
-        model,
-        dataset['X'],
-        dataset['y'],
-        cv=5,
-        scoring='accuracy'
-    )
-
-    loss: float = 1.0 - scores.mean()
-
-    return loss
-
-Error in train_function (#2): 
-All the 5 fits failed.
-It is very likely that your model is misconfigured.
-You can try to debug the error by setting error_score='raise'.
-
-Below are more details about the failures:
---------------------------------------------------------------------------------
-5 fits failed with the following error:
-Traceback (most recent call last):
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/model_selection/_validation.py", line 866, in _fit_and_score
-    estimator.fit(X_train, y_train, **fit_params)
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/base.py", line 1382, in wrapper
-    estimator._validate_params()
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/base.py", line 436, in _validate_params
-    validate_parameter_constraints(
-  File "/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/sklearn/utils/_param_validation.py", line 98, in validate_parameter_constraints
-    raise InvalidParameterError(
-sklearn.utils._param_validation.InvalidParameterError: The 'eta0' parameter of SGDClassifier must be a float in the range [0.0, inf). Got None instead.
-
-Running train_function code:
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from typing import Any
-
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 1.0)  # default value for eta0
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else 1.0,  # default value for eta0
-        warm_start=True,
-        random_state=seed
-    )
-
-    scores = cross_val_score(
-        model,
-        dataset['X'],
-        dataset['y'],
-        cv=5,
-        scoring='accuracy'
-    )
-
-    loss: float = 1.0 - scores.mean()
-
-    return loss
-
+Error in train_function (#5): ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+Retry limit reached for train_function. Fetching fresh code from LLM.
 Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
 
 def get_configspace():
     cs = ConfigurationSpace(seed=1234)
@@ -608,25 +122,7 @@ Configuration space generated: Configuration space object:
     (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
 
 Running scenario code:
-from smac import Scenario
-from smac.configspace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#1): No module named 'smac.configspace'
-Running scenario code:
 from smac.scenario import Scenario
-from smac.facade import ROARFacade
-from ConfigSpace import ConfigurationSpace
 
 def generate_scenario(cs):
     scenario = Scenario({
@@ -634,299 +130,263 @@ def generate_scenario(cs):
         'runcount-limit': 100,
         'wallclock-limit': 3600,
         'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
+        'shared_model': False
     })
     return scenario
 
-Error in scenario (#2): cannot import name 'ROARFacade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
-Running scenario code:
-from smac.scenario import Scenario
-from smac.facade import Facade
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Error in scenario (#3): cannot import name 'Facade' from 'smac.facade' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/facade/__init__.py)
-Running scenario code:
-from smac.scenario import Scenario
-from ConfigSpace import ConfigurationSpace
-
-def generate_scenario(cs):
-    scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False,
-        'cs': cs
-    })
-    return scenario
-
-Scenario generated: Scenario(configspace={'run_obj': 'quality', 'runcount-limit': 100, 'wallclock-limit': 3600, 'output_dir': './automl_results', 'shared_model': False, 'cs': Configuration space object:
-  Hyperparameters:
-    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
-    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
-    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
-    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
-    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
-  Conditions:
-    eta0 | learning_rate == 'constant'
-  Forbidden Clauses:
-    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
-}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
+Scenario generated: Scenario(configspace={'run_obj': 'quality', 'runcount-limit': 100, 'wallclock-limit': 3600, 'output_dir': './automl_results', 'shared_model': False}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
 Generated training function code:
 ```python
 from typing import Any
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
+import warnings
 import numpy as np
 
 def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
+    # Get hyperparameters from configuration
     learning_rate: str = cfg.get('learning_rate')
     alpha: float = cfg.get('alpha')
     max_iter: int = cfg.get('max_iter')
     eta0: float = cfg.get('eta0')
 
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta = None
+    # Prepare dataset
+    X: np.ndarray = dataset['X']
+    y: np.ndarray = dataset['y']
 
-    model = SGDClassifier(
+    # Create classifier with specified hyperparameters
+    classifier = SGDClassifier(
         loss='log_loss',
         penalty='l2',
         alpha=alpha,
         max_iter=max_iter,
         learning_rate=learning_rate,
-        eta0=eta,
+        eta0=eta0 if learning_rate == 'constant' else None,
         warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
-    )
-
-    scores = cross_val_score(
-        model,
-        X,
-        y,
-        cv=5,
-        scoring='accuracy',
-        error_score='raise',
         random_state=seed
     )
 
-    loss = 1.0 - np.mean(scores)
+    # Suppress convergence warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+
+        # Perform stratified k-fold cross-validation
+        scores = cross_val_score(
+            classifier,
+            X,
+            y,
+            cv=5,
+            scoring='accuracy',
+            error_score='raise'
+        )
+
+    # Calculate loss as 1.0 - mean cross-validation accuracy
+    loss: float = 1.0 - np.mean(scores)
+
     return loss
 ```
 Running train_function code:
 from typing import Any
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
+import warnings
 import numpy as np
 
 def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
+    # Get hyperparameters from configuration
     learning_rate: str = cfg.get('learning_rate')
     alpha: float = cfg.get('alpha')
     max_iter: int = cfg.get('max_iter')
     eta0: float = cfg.get('eta0')
 
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta = None
+    # Prepare dataset
+    X: np.ndarray = dataset['X']
+    y: np.ndarray = dataset['y']
 
-    model = SGDClassifier(
+    # Create classifier with specified hyperparameters
+    classifier = SGDClassifier(
         loss='log_loss',
         penalty='l2',
         alpha=alpha,
         max_iter=max_iter,
         learning_rate=learning_rate,
-        eta0=eta,
+        eta0=eta0 if learning_rate == 'constant' else None,
         warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
-    )
-
-    scores = cross_val_score(
-        model,
-        X,
-        y,
-        cv=5,
-        scoring='accuracy',
-        error_score='raise',
         random_state=seed
     )
 
-    loss = 1.0 - np.mean(scores)
+    # Suppress convergence warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+
+        # Perform stratified k-fold cross-validation
+        scores = cross_val_score(
+            classifier,
+            X,
+            y,
+            cv=5,
+            scoring='accuracy',
+            error_score='raise'
+        )
+
+    # Calculate loss as 1.0 - mean cross-validation accuracy
+    loss: float = 1.0 - np.mean(scores)
+
     return loss
 
-Error in train_function (#1): got an unexpected keyword argument 'random_state'
+Error in train_function (#1): The 'eta0' parameter of cross_val_score must be a float in the range [0.0, inf). Got None instead.
 Running train_function code:
 from typing import Any
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
+import warnings
 import numpy as np
 
 def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
+    # Get hyperparameters from configuration
     learning_rate: str = cfg.get('learning_rate')
     alpha: float = cfg.get('alpha')
     max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
+    eta0: float = cfg.get('eta0', 0.0)  # default to 0.0 if not provided
 
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta = None
+    # Prepare dataset
+    X: np.ndarray = dataset['X']
+    y: np.ndarray = dataset['y']
 
-    model = SGDClassifier(
+    # Create classifier with specified hyperparameters
+    classifier = SGDClassifier(
         loss='log_loss',
         penalty='l2',
         alpha=alpha,
         max_iter=max_iter,
         learning_rate=learning_rate,
-        eta0=eta,
+        eta0=eta0 if learning_rate == 'constant' else 0.0,  # default to 0.0 if not 'constant'
         warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
+        random_state=seed
     )
 
-    scores = cross_val_score(
-        model,
-        X,
-        y,
-        cv=5,
-        scoring='accuracy',
-        error_score='raise'
-    )
+    # Suppress convergence warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=ConvergenceWarning)
 
-    loss = 1.0 - np.mean(scores)
+        # Perform stratified k-fold cross-validation
+        scores = cross_val_score(
+            classifier,
+            X,
+            y,
+            cv=5,
+            scoring='accuracy',
+            error_score='raise'
+        )
+
+    # Calculate loss as 1.0 - mean cross-validation accuracy
+    loss: float = 1.0 - np.mean(scores)
+
     return loss
 
-Error in train_function (#2): The 'eta0' parameter of cross_val_score must be a float in the range [0.0, inf). Got None instead.
+Error in train_function (#2): eta0 must be > 0
 Running train_function code:
 from typing import Any
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
+import warnings
 import numpy as np
 
 def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
+    # Get hyperparameters from configuration
     learning_rate: str = cfg.get('learning_rate')
     alpha: float = cfg.get('alpha')
     max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
+    eta0: float = cfg.get('eta0', 1.0)  # default to 1.0 if not provided
 
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta = None
+    # Prepare dataset
+    X: np.ndarray = dataset['X']
+    y: np.ndarray = dataset['y']
 
-    model = SGDClassifier(
+    # Create classifier with specified hyperparameters
+    classifier = SGDClassifier(
         loss='log_loss',
         penalty='l2',
         alpha=alpha,
         max_iter=max_iter,
         learning_rate=learning_rate,
+        eta0=eta0 if learning_rate == 'constant' else None,  
         warm_start=True,
-        random_state=seed,
-        class_weight='balanced'
+        random_state=seed
     )
 
-    if eta is not None:
-        model.eta0 = eta
+    # Suppress convergence warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=ConvergenceWarning)
 
-    scores = cross_val_score(
-        model,
-        X,
-        y,
-        cv=5,
-        scoring='accuracy',
-        error_score='raise'
-    )
+        # Perform stratified k-fold cross-validation
+        scores = cross_val_score(
+            classifier,
+            X,
+            y,
+            cv=5,
+            scoring='accuracy',
+            error_score='raise'
+        )
 
-    loss = 1.0 - np.mean(scores)
+    # Calculate loss as 1.0 - mean cross-validation accuracy
+    loss: float = 1.0 - np.mean(scores)
+
     return loss
 
-Error in train_function (#3): eta0 must be > 0
+Error in train_function (#3): The 'eta0' parameter of cross_val_score must be a float in the range [0.0, inf). Got None instead.
 Running train_function code:
 from typing import Any
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
+import warnings
 import numpy as np
 
 def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
+    # Get hyperparameters from configuration
     learning_rate: str = cfg.get('learning_rate')
     alpha: float = cfg.get('alpha')
     max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 1.0)  # default eta0 to 1.0
+    eta0: float = cfg.get('eta0', 1.0)  # default to 1.0 if not provided
 
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta = None
+    # Prepare dataset
+    X: np.ndarray = dataset['X']
+    y: np.ndarray = dataset['y']
 
-    model = SGDClassifier(
+    # Create classifier with specified hyperparameters
+    classifier = SGDClassifier(
         loss='log_loss',
         penalty='l2',
         alpha=alpha,
         max_iter=max_iter,
         learning_rate=learning_rate,
+        eta0=1.0 if learning_rate == 'constant' else 0.0,  
         warm_start=True,
-        random_state=None,  # removed seed
-        class_weight='balanced'
+        random_state=seed
     )
 
-    if eta is not None:
-        model.eta0 = eta
+    # Suppress convergence warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=ConvergenceWarning)
 
-    scores = cross_val_score(
-        model,
-        X,
-        y,
-        cv=5,
-        scoring='accuracy',
-        error_score='raise'
-    )
+        # Perform stratified k-fold cross-validation
+        scores = cross_val_score(
+            classifier,
+            X,
+            y,
+            cv=5,
+            scoring='accuracy',
+            error_score='raise'
+        )
 
-    loss = 1.0 - np.mean(scores)
+    # Calculate loss as 1.0 - mean cross-validation accuracy
+    loss: float = 1.0 - np.mean(scores)
+
     return loss
 
 Error in train_function (#4): eta0 must be > 0
@@ -934,125 +394,42 @@ Running train_function code:
 from typing import Any
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
+import warnings
 import numpy as np
 
 def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
     learning_rate: str = cfg.get('learning_rate')
     alpha: float = cfg.get('alpha')
     max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 1.0)  # default eta0 to 1.0
+    eta0: float = cfg.get('eta0', 1.0)
 
-    if learning_rate == 'constant':
-        learning_rate = 'constant'
-        eta = eta0
-    else:
-        learning_rate = 'adaptive'
-        eta = None
+    X: np.ndarray = dataset['X']
+    y: np.ndarray = dataset['y']
 
-    model = SGDClassifier(
+    classifier = SGDClassifier(
         loss='log_loss',
         penalty='l2',
         alpha=alpha,
         max_iter=max_iter,
         learning_rate=learning_rate,
+        eta0=1.0 if learning_rate == 'constant' else 1.0,
         warm_start=True,
-        random_state=seed,  
-        class_weight='balanced'
+        random_state=seed
     )
 
-    if eta is not None:
-        model.eta0 = eta
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+        scores = cross_val_score(
+            classifier,
+            X,
+            y,
+            cv=5,
+            scoring='accuracy',
+            error_score='raise'
+        )
 
-    scores = cross_val_score(
-        model,
-        X,
-        y,
-        cv=5,
-        scoring='accuracy',
-        error_score='raise'
-    )
-
-    loss = 1.0 - np.mean(scores)
+    loss: float = 1.0 - np.mean(scores)
     return loss
 
-Error in train_function (#5): eta0 must be > 0
-Retry limit reached for train_function. Fetching fresh code from LLM.
-Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
-import numpy as np
-
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
-
-    class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(y), y=y)
-    class_weights_dict = dict(zip(np.unique(y), class_weights))
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else None,
-        warm_start=True,
-        random_state=seed,
-        class_weight=class_weights_dict
-    )
-
-    scores = cross_val_score(model, X, y, cv=5, scoring='accuracy', random_state=seed)
-    loss = 1.0 - np.mean(scores)
-
-    return loss
-
-Error in train_function (#1): got an unexpected keyword argument 'random_state'
-Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.utils.class_weight import compute_class_weight
-import numpy as np
-
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 1.0)  # default to 1.0 if not provided
-
-    class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(y), y=y)
-    class_weights_dict = dict(zip(np.unique(y), class_weights))
-
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else 1.0,
-        warm_start=True,
-        random_state=seed,
-        class_weight=class_weights_dict
-    )
-
-    scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
-    loss = 1.0 - np.mean(scores)
-
-    return loss
-
-Training executed, loss: 0.11752857142857143
-Training executed, loss: 0.11991428571428586
+Training executed, loss: 0.08090358639962747

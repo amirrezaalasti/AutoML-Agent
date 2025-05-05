@@ -1,4 +1,4 @@
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
 
 def get_configspace():
     cs = ConfigurationSpace(seed=1234)
