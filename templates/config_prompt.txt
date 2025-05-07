@@ -1,63 +1,88 @@
-[TASK]
-Goal: Write a Python function called get_configspace() that returns a ConfigurationSpace for a classification task.
+**TASK**
 
-Strict Output Rules:
-- Output only the get_configspace() function and necessary imports.
-- No extra text, no explanation, no comments.
-- Code must be syntactically correct, executable, and SMAC-compatible.
+Goal: Write a Python function called `get_configspace()` that returns a valid `ConfigurationSpace` for a classification task.
 
-[ALLOWED_CLASSES]
-# Core Classes
-- ConfigurationSpace
-- Categorical
-- Float
-- Integer
-- Constant
+---
 
-# Conditions
-- EqualsCondition
-- InCondition
-- OrConjunction
+**STRICT OUTPUT RULES**
 
-# Forbidden Clauses
-- ForbiddenEqualsClause
-- ForbiddenAndConjunction
+* Output only the `get_configspace()` function and necessary imports.
+* Do not include any extra text, explanations, or comments.
+* Code must be syntactically correct, executable, and compatible with SMAC.
 
-# Distributions (only if needed)
-- Beta
-- Normal
+---
 
-# Serialization (only if needed)
-- to_yaml()
-- from_yaml()
+**ALLOWED CLASSES**
 
-[ALLOWED_OPTIONS]
-- default
-- log
-- distribution
-- seed
+**Core Classes**
 
-[REQUIRED_HYPERPARAMETERS]
-- learning_rate: Categorical(["adaptive", "constant"])
-- alpha: Float([1e-6, 1e-1], log=True)
-- max_iter: Integer([100, 1000])
-- eta0: Float([1e-4, 1.0], log=True) [Condition: active only if learning_rate == "constant"]
-- early_stopping: Categorical([True, False], default=True)
+* `ConfigurationSpace`
+* `Categorical`
+* `Float`
+* `Integer`
+* `Constant`
 
-[CONDITIONS]
-- eta0 must be active only when learning_rate == "constant" (use EqualsCondition).
+**Conditions**
 
-[CONSTRAINTS]
-- Must use at least one ForbiddenAndConjunction to block invalid combinations.
+* `EqualsCondition`
+* `InCondition`
+* `OrConjunction`
 
-[CONFIGURATION_SPACE]
-- seed = 1234
+**Forbidden Clauses**
 
-[DATASET_DESCRIPTION]
-- {dataset_description}
+* `ForbiddenEqualsClause`
+* `ForbiddenAndConjunction`
 
-[IMPORTANT_RULE]
-- Do NOT use any classes, functions, methods, or modules outside of [ALLOWED_CLASSES].
+**Distributions (only if needed)**
+
+* `Beta`
+* `Normal`
+
+**Serialization (only if needed)**
+
+* `to_yaml()`
+* `from_yaml()`
+
+---
+
+**ALLOWED OPTIONS**
+
+* `default`
+* `log`
+* `distribution`
+* `seed`
+
+---
+
+**CONDITIONS**
+
+* `eta0` must be active **only when** `learning_rate == "constant"` (use `EqualsCondition`).
+
+---
+
+**CONSTRAINTS**
+
+* Must include **at least one** `ForbiddenAndConjunction` to block invalid combinations.
+
+---
+
+**CONFIGURATION SPACE REQUIREMENTS**
+
+* Initialize `ConfigurationSpace` with `seed=1234`.
+
+---
+
+**DATASET DESCRIPTION**
+
+* The configuration space must be based on the following information 
+{dataset_description}.
+* Hyperparameters and model choices must reflect what is appropriate for that dataset type.
+
+---
+
+**IMPORTANT RULE**
+
+* Do **not** use any classes, functions, methods, or modules outside of the **ALLOWED CLASSES**.
 
 [EXAMPLES]
 

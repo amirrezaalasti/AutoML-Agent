@@ -24,10 +24,9 @@ AVAILABLE_MODELS = [
     "llama-3.1-8b-instant",
     "llama3-70b-8192",
     "meta-llama/llama-4-maverick-17b-128e-instruct",
+    "meta-llama/llama-4-scout-17b-16e-instruct",
     "deepseek-r1-distill-llama-70b",
     "gemma2-9b-it",
-    "whisper-large-v3",
-    "distil-whisper-large-v3-en",
 ]
 
 # Datasets grouped by type (conflict‑free)
@@ -45,8 +44,6 @@ DATASET_OPTIONS = {
     "image": [
         "MNIST (Keras)",
         "Fashion‑MNIST (Keras)",
-        "CIFAR‑10 (Keras)",
-        "CIFAR‑100 (Keras)",
     ],
     "time_series": ["Sunspots (statsmodels)"],
     "text": ["20 Newsgroups"],
@@ -171,18 +168,13 @@ class AutoMLAppUI:
                     dataset=self.dataset,
                     llm_client=llm_client,
                     dataset_type=self.data_type,
+                    ui_agent=st,
                 )
                 config_code, scenario_code, train_code, loss, prompts = (
                     agent.generate_components()
                 )
 
                 st.success("AutoML Agent setup complete!")
-                st.subheader("Generated Configuration Space Code")
-                st.code(config_code, language="python")
-                st.subheader("Generated Scenario Code")
-                st.code(scenario_code, language="python")
-                st.subheader("Generated Training Function Code")
-                st.code(train_code, language="python")
                 st.subheader("Loss Value")
                 st.write(loss)
                 st.subheader("Prompts Used")

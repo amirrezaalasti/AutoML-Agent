@@ -1,435 +1,938 @@
-Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.exceptions import ConvergenceWarning
-import warnings
-import numpy as np
-import pandas as pd
-
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    """
-    Train a classification model using the given configuration and dataset.
-
-    Args:
-    - cfg (Any): A configuration object containing hyperparameters.
-    - seed (int): A random seed for reproducibility.
-    - dataset (Any): A dictionary containing the feature matrix and label vector.
-
-    Returns:
-    - float: The loss value (1.0 - mean cross-validation accuracy).
-    """
-
-    # Get hyperparameters from the configuration object
-    learning_rate: str = cfg.get('learning_rate', 'constant')
-    alpha: float = cfg.get('alpha', 0.01)
-    max_iter: int = cfg.get('max_iter', 1000)
-    eta0: float = cfg.get('eta0', 1.0)
-
-    # Get the feature matrix and label vector from the dataset
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
-
-    # Ensure X and y are numeric
-    if isinstance(X, pd.DataFrame):
-        X = X.apply(pd.to_numeric, errors='coerce')
-    if isinstance(y, pd.Series):
-        y = pd.to_numeric(y, errors='coerce')
-
-    # Drop rows with missing values
-    if isinstance(X, pd.DataFrame):
-        X = X.dropna()
-    else:
-        X = X[~np.isnan(X).any(axis=1)]
-    if isinstance(y, pd.Series):
-        y = y.dropna()
-    else:
-        y = y[~np.isnan(y)]
-
-    # Ensure X and y have the same number of samples
-    if len(X) != len(y):
-        min_len = min(len(X), len(y))
-        X = X[:min_len]
-        y = y[:min_len]
-
-    # Create a classification model with the given hyperparameters
-    model = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=1.0 if learning_rate == 'constant' else None,
-        warm_start=True,
-        random_state=seed
-    )
-
-    # Suppress convergence warnings
-    with warnings.catch_warnings():
-        warnings.filterwarnings('ignore', category=ConvergenceWarning)
-
-        # Perform stratified k-fold cross-validation
-        scores = cross_val_score(
-            model,
-            X,
-            y,
-            cv=5,
-            scoring='accuracy'
-        )
-
-    # Calculate the loss value (1.0 - mean cross-validation accuracy)
-    loss: float = 1.0 - np.mean(scores)
-
-    return loss
-
-Error in train_function (#5): ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
-Retry limit reached for train_function. Fetching fresh code from LLM.
 Running config code:
 from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
 
 def get_configspace():
     cs = ConfigurationSpace(seed=1234)
-    
-    learning_rate = Categorical("learning_rate", ["adaptive", "constant"])
-    alpha = Float("alpha", [1e-6, 1e-1], log=True)
-    max_iter = Integer("max_iter", [100, 1000])
-    eta0 = Float("eta0", [1e-4, 1.0], log=True)
-    early_stopping = Categorical("early_stopping", [True, False], default=True)
-    
-    cs.add_hyperparameters([learning_rate, alpha, max_iter, eta0, early_stopping])
-    
-    cond_eta0 = EqualsCondition(eta0, learning_rate, "constant")
-    cs.add_condition(EqualsCondition(eta0, learning_rate, "constant"))
-    
-    forbidden_clause = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, "constant"),
-        ForbiddenEqualsClause(early_stopping, False)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling', 'adaptive'], default='constant')
+    eta0 = Float('eta0', bounds=(1e-7, 1e-1), default=1e-4, log=True)
+    power_t = Float('power_t', bounds=(0, 1), default=0.5)
+
+    cs.add([learning_rate, eta0, power_t])
+
+    cs.add_condition(EqualsCondition(eta0, learning_rate, 'constant'))
+
+    penalty_and_loss = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, "adaptive"),
+        ForbiddenEqualsClause(power_t, 0)
     )
-    cs.add_forbidden_clause(forbidden_clause)
-    
+    cs.add_forbidden_clause(penalty_and_loss)
+
     return cs
 
 Configuration space generated: Configuration space object:
   Hyperparameters:
-    alpha, Type: UniformFloat, Range: [1e-06, 0.1], Default: 0.000316227766, on log-scale
-    early_stopping, Type: Categorical, Choices: {True, False}, Default: True
-    eta0, Type: UniformFloat, Range: [0.0001, 1.0], Default: 0.01, on log-scale
-    learning_rate, Type: Categorical, Choices: {adaptive, constant}, Default: adaptive
-    max_iter, Type: UniformInteger, Range: [100, 1000], Default: 550
+    eta0, Type: UniformFloat, Range: [1e-07, 0.1], Default: 0.0001, on log-scale
+    learning_rate, Type: Categorical, Choices: {constant, invscaling, adaptive}, Default: constant
+    power_t, Type: UniformFloat, Range: [0.0, 1.0], Default: 0.5
   Conditions:
     eta0 | learning_rate == 'constant'
   Forbidden Clauses:
-    (Forbidden: learning_rate == 'constant' && Forbidden: early_stopping == False)
+    (Forbidden: learning_rate == 'adaptive' && Forbidden: power_t == 0)
 
 Running scenario code:
-from smac.scenario import Scenario
+from smac import Scenario
 
 def generate_scenario(cs):
     scenario = Scenario({
-        'run_obj': 'quality',
-        'runcount-limit': 100,
-        'wallclock-limit': 3600,
-        'output_dir': "./automl_results",
-        'shared_model': False
+        "run_obj": "quality",
+        "output_dir": "./automl_results",
+        "shared_model": False,
+        "multi_objectives": ["validation_loss"],
+        "abort_on_first_run_crash": True,
+        "wallclock_limit": 3600.0,
+        "ta_run_limit": 100,
+        "memory_limit": 16000.0,
+        "cutoff": 3600.0,
+        "deterministic": False
     })
     return scenario
 
-Scenario generated: Scenario(configspace={'run_obj': 'quality', 'runcount-limit': 100, 'wallclock-limit': 3600, 'output_dir': './automl_results', 'shared_model': False}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
+Scenario generated: Scenario(configspace={'run_obj': 'quality', 'output_dir': './automl_results', 'shared_model': False, 'multi_objectives': ['validation_loss'], 'abort_on_first_run_crash': True, 'wallclock_limit': 3600.0, 'ta_run_limit': 100, 'memory_limit': 16000.0, 'cutoff': 3600.0, 'deterministic': False}, name=None, output_directory=PosixPath('smac3_output'), deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=None, max_budget=None, seed=0, n_workers=1)
 Generated training function code:
 ```python
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.exceptions import ConvergenceWarning
-import warnings
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
 
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    # Get hyperparameters from configuration
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
 
-    # Prepare dataset
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
+    def __len__(self):
+        return len(self.y)
 
-    # Create classifier with specified hyperparameters
-    classifier = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else None,
-        warm_start=True,
-        random_state=seed
-    )
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
-    # Suppress convergence warnings
-    with warnings.catch_warnings():
-        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
-        # Perform stratified k-fold cross-validation
-        scores = cross_val_score(
-            classifier,
-            X,
-            y,
-            cv=5,
-            scoring='accuracy',
-            error_score='raise'
-        )
+    # Infer input and output dimensions dynamically from the dataset
+    input_size = dataset['X'].shape[1]
+    num_classes = len(np.unique(dataset['y']))
 
-    # Calculate loss as 1.0 - mean cross-validation accuracy
-    loss: float = 1.0 - np.mean(scores)
+    # Create dataset and data loader
+    dataset = ImageDataset(dataset['X'], dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-    return loss
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size, 128)
+            self.fc2 = nn.Linear(128, num_classes)
+
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+        losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
 ```
 Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.exceptions import ConvergenceWarning
-import warnings
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
 
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    # Get hyperparameters from configuration
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0')
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
 
-    # Prepare dataset
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
+    def __len__(self):
+        return len(self.y)
 
-    # Create classifier with specified hyperparameters
-    classifier = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else None,
-        warm_start=True,
-        random_state=seed
-    )
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
-    # Suppress convergence warnings
-    with warnings.catch_warnings():
-        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
-        # Perform stratified k-fold cross-validation
-        scores = cross_val_score(
-            classifier,
-            X,
-            y,
-            cv=5,
-            scoring='accuracy',
-            error_score='raise'
-        )
+    # Infer input and output dimensions dynamically from the dataset
+    input_size = dataset['X'].shape[1]
+    num_classes = len(np.unique(dataset['y']))
 
-    # Calculate loss as 1.0 - mean cross-validation accuracy
-    loss: float = 1.0 - np.mean(scores)
+    # Create dataset and data loader
+    dataset = ImageDataset(dataset['X'], dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-    return loss
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size, 128)
+            self.fc2 = nn.Linear(128, num_classes)
 
-Error in train_function (#1): The 'eta0' parameter of cross_val_score must be a float in the range [0.0, inf). Got None instead.
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+        losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#1): expected sequence of length 60000 at dim 0 (got 784)
 Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.exceptions import ConvergenceWarning
-import warnings
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
 
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    # Get hyperparameters from configuration
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 0.0)  # default to 0.0 if not provided
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
 
-    # Prepare dataset
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
+    def __len__(self):
+        return len(self.y)
 
-    # Create classifier with specified hyperparameters
-    classifier = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else 0.0,  # default to 0.0 if not 'constant'
-        warm_start=True,
-        random_state=seed
-    )
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
-    # Suppress convergence warnings
-    with warnings.catch_warnings():
-        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
-        # Perform stratified k-fold cross-validation
-        scores = cross_val_score(
-            classifier,
-            X,
-            y,
-            cv=5,
-            scoring='accuracy',
-            error_score='raise'
-        )
+    # Infer input and output dimensions dynamically from the dataset
+    input_size = dataset['X'].shape[1]
+    num_classes = len(np.unique(dataset['y']))
 
-    # Calculate loss as 1.0 - mean cross-validation accuracy
-    loss: float = 1.0 - np.mean(scores)
+    # Create dataset and data loader
+    dataset = ImageDataset(dataset['X'].reshape(-1, input_size), dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-    return loss
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size,128)
+            self.fc2 = nn.Linear(128, num_classes)
 
-Error in train_function (#2): eta0 must be > 0
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch 
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#2): 'DataFrame' object has no attribute 'reshape'
 Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.exceptions import ConvergenceWarning
-import warnings
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
 
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    # Get hyperparameters from configuration
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 1.0)  # default to 1.0 if not provided
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
 
-    # Prepare dataset
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
+    def __len__(self):
+        return len(self.y)
 
-    # Create classifier with specified hyperparameters
-    classifier = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=eta0 if learning_rate == 'constant' else None,  
-        warm_start=True,
-        random_state=seed
-    )
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
-    # Suppress convergence warnings
-    with warnings.catch_warnings():
-        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
-        # Perform stratified k-fold cross-validation
-        scores = cross_val_score(
-            classifier,
-            X,
-            y,
-            cv=5,
-            scoring='accuracy',
-            error_score='raise'
-        )
+    # Infer input and output dimensions dynamically from the dataset
+    input_size = dataset['X'].shape[1]
+    num_classes = len(np.unique(dataset['y']))
 
-    # Calculate loss as 1.0 - mean cross-validation accuracy
-    loss: float = 1.0 - np.mean(scores)
+    # Create dataset and data loader
+    dataset = ImageDataset(dataset['X'], dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-    return loss
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size,128)
+            self.fc2 = nn.Linear(128, num_classes)
 
-Error in train_function (#3): The 'eta0' parameter of cross_val_score must be a float in the range [0.0, inf). Got None instead.
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch 
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#3): expected sequence of length 60000 at dim 0 (got 784)
 Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.exceptions import ConvergenceWarning
-import warnings
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
 
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    # Get hyperparameters from configuration
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 1.0)  # default to 1.0 if not provided
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
 
-    # Prepare dataset
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
+    def __len__(self):
+        return len(self.y)
 
-    # Create classifier with specified hyperparameters
-    classifier = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=1.0 if learning_rate == 'constant' else 0.0,  
-        warm_start=True,
-        random_state=seed
-    )
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
-    # Suppress convergence warnings
-    with warnings.catch_warnings():
-        warnings.filterwarnings('ignore', category=ConvergenceWarning)
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
-        # Perform stratified k-fold cross-validation
-        scores = cross_val_score(
-            classifier,
-            X,
-            y,
-            cv=5,
-            scoring='accuracy',
-            error_score='raise'
-        )
+    # Infer input and output dimensions dynamically from the dataset
+    input_size = dataset['X'].shape[1]
+    num_classes = len(np.unique(dataset['y']))
 
-    # Calculate loss as 1.0 - mean cross-validation accuracy
-    loss: float = 1.0 - np.mean(scores)
+    # Create dataset and data loader
+    dataset = ImageDataset(dataset['X'].reshape(-1, input_size), dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-    return loss
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size,128)
+            self.fc2 = nn.Linear(128, num_classes)
 
-Error in train_function (#4): eta0 must be > 0
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch 
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#4): 'DataFrame' object has no attribute 'reshape'
 Running train_function code:
-from typing import Any
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import SGDClassifier
-from sklearn.exceptions import ConvergenceWarning
-import warnings
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
+import pandas as pd
 
-def train(cfg: Any, seed: int, dataset: Any) -> float:
-    learning_rate: str = cfg.get('learning_rate')
-    alpha: float = cfg.get('alpha')
-    max_iter: int = cfg.get('max_iter')
-    eta0: float = cfg.get('eta0', 1.0)
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
 
-    X: np.ndarray = dataset['X']
-    y: np.ndarray = dataset['y']
+    def __len__(self):
+        return len(self.y)
 
-    classifier = SGDClassifier(
-        loss='log_loss',
-        penalty='l2',
-        alpha=alpha,
-        max_iter=max_iter,
-        learning_rate=learning_rate,
-        eta0=1.0 if learning_rate == 'constant' else 1.0,
-        warm_start=True,
-        random_state=seed
-    )
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
-    with warnings.catch_warnings():
-        warnings.filterwarnings('ignore', category=ConvergenceWarning)
-        scores = cross_val_score(
-            classifier,
-            X,
-            y,
-            cv=5,
-            scoring='accuracy',
-            error_score='raise'
-        )
+def train(cfg: Configuration, seed: int, dataset: pd.DataFrame) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
-    loss: float = 1.0 - np.mean(scores)
-    return loss
+    # Infer input and output dimensions dynamically from the dataset
+    X = dataset.drop('y', axis=1).values
+    y = dataset['y'].values
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
 
-Training executed, loss: 0.08090358639962747
+    # Create dataset and data loader
+    dataset = ImageDataset(X, y)
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size,128)
+            self.fc2 = nn.Linear(128, num_classes)
+
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch 
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over10 epochs
+    return np.mean(losses)
+
+Error in train_function (#5): 'dict' object has no attribute 'drop'
+Retry limit reached for train_function. Fetching fresh code from LLM.
+Running train_function code:
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
+
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    # Infer input and output dimensions dynamically from the dataset
+    input_size = dataset['X'].shape[1]
+    num_classes = len(np.unique(dataset['y']))
+
+    # Create dataset and data loader
+    dataset = ImageDataset(dataset['X'], dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size, 128)
+            self.fc2 = nn.Linear(128, num_classes)
+
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+        losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#1): expected sequence of length 60000 at dim 0 (got 784)
+Running train_function code:
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
+
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    # Infer input and output dimensions dynamically from the dataset
+    X = np.array(dataset['X']).reshape(-1, 784) # Assuming 784 is the expected input size
+    input_size = X.shape[1]
+    num_classes = len(np.unique(dataset['y']))
+
+    # Create dataset and data loader
+    dataset = ImageDataset(X, dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size,128)
+            self.fc2 = nn.Linear(128, num_classes)
+
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, momentum=power_t)
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#2): '<=' not supported between instances of 'float' and 'NoneType'
+Running train_function code:
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
+
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+def train(cfg: Configuration, seed: int, dataset: dict) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    # Infer input and output dimensions dynamically from the dataset
+    X = np.array(dataset['X']).reshape(-1, 784)  # Assuming 784 is the expected input size
+    input_size = X.shape[1]
+    num_classes = len(np.unique(dataset['y']))
+
+    # Create dataset and data loader
+    dataset = ImageDataset(X, dataset['y'].tolist()) # Convert to list
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size, 128)
+            self.fc2 = nn.Linear(128, num_classes)
+
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t')
+            optimizer = optim.SGD(model.parameters(), lr=eta0, power_t=power_t) # corrected parameter
+        except:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#3): '<=' not supported between instances of 'float' and 'NoneType'
+Running train_function code:
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
+
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+def train(cfg: Configuration, seed: int, dataset: dict) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    # Infer input and output dimensions dynamically from the dataset
+    X = np.array(dataset['X'])
+    if X.ndim == 1 or X.shape[1] == 784:
+        X = X.reshape(-1, 784) 
+    else:
+        X = X.reshape(X.shape[0], -1)
+    input_size = X.shape[1]
+    num_classes = len(np.unique(dataset['y']))
+
+    # Create dataset and data loader
+    dataset = ImageDataset(X, dataset['y']) 
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size, 128)
+            self.fc2 = nn.Linear(128, num_classes)
+
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0')
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t', 0.25) # Provide a default value
+            optimizer = optim.SGD(model.parameters(), lr=eta0, power_t=power_t) 
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Error in train_function (#4): '<=' not supported between instances of 'float' and 'NoneType'
+Running train_function code:
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from ConfigSpace import Configuration
+from typing import Any
+
+class ImageDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.long)
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+def train(cfg: Configuration, seed: int, dataset: dict) -> float:
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    # Infer input and output dimensions dynamically from the dataset
+    X = np.array(dataset['X'])
+    if X.ndim == 1 or X.shape[1] == 784:
+        X = X.reshape(-1, 784)
+    else:
+        X = X.reshape(X.shape[0], -1)
+    input_size = X.shape[1]
+    num_classes = len(np.unique(dataset['y']))
+
+    # Create dataset and data loader
+    dataset = ImageDataset(X, dataset['y'])
+    data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    # Define model
+    class Net(nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.fc1 = nn.Linear(input_size, 128)
+            self.fc2 = nn.Linear(128, num_classes)
+
+        def forward(self, x):
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return x
+
+    model = Net()
+
+    # Define loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    learning_rate = cfg.get('learning_rate')
+    eta0 = cfg.get('eta0', 0.01)  # Provide a default value
+    if learning_rate == 'constant':
+        optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'invscaling':
+        try:
+            power_t = cfg.get('power_t', 0.25)  # Provide a default value
+            optimizer = optim.SGD(model.parameters(), lr=eta0, power_t=power_t)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif learning_rate == 'adaptive':
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Train model
+    losses = []
+    for epoch in range(10):
+        for batch in data_loader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+
+    # Return average training loss over 10 epochs
+    return np.mean(losses)
+
+Training executed, loss: 2.0110555472199123

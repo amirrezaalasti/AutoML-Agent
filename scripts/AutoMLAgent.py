@@ -15,7 +15,9 @@ class AutoMLAgent:
     MAX_RETRIES_PROMPT = 5
     MAX_RETRIES_ABORT = 20
 
-    def __init__(self, dataset: Any, llm_client: LLMClient, dataset_type: str):
+    def __init__(
+        self, dataset: Any, llm_client: LLMClient, dataset_type: str, ui_agent: Any
+    ):
         self.dataset = dataset
         self.llm = llm_client
         self.dataset_type = dataset_type
@@ -35,23 +37,30 @@ class AutoMLAgent:
 
         # store original prompts for retries
         self.prompts = {}
+        self.ui_agent = ui_agent
 
     def generate_components(self):
         # Configuration Space
-        self.prompts['config'] = self._create_config_prompt()
-        self.config_code = self.llm.generate(self.prompts['config'])
-        self._run_generated('config')
+        self.prompts["config"] = self._create_config_prompt()
+        self.config_code = self.llm.generate(self.prompts["config"])
+        self._run_generated("config")
+        self.ui_agent.subheader("Generated Configuration Space Code")
+        self.ui_agent.code(self.config_space, language="python")
 
         # Scenario
-        self.prompts['scenario'] = self._create_scenario_prompt()
-        self.scenario_code = self.llm.generate(self.prompts['scenario'])
-        self._run_generated('scenario')
+        self.prompts["scenario"] = self._create_scenario_prompt()
+        self.scenario_code = self.llm.generate(self.prompts["scenario"])
+        self._run_generated("scenario")
+        self.ui_agent.subheader("Generated Scenario Code")
+        self.ui_agent.code(self.scenario, language="python")
 
         # Training Function
-        self.prompts['train_function'] = self._create_train_prompt()
-        self.train_function_code = self.llm.generate(self.prompts['train_function'])
+        self.prompts["train_function"] = self._create_train_prompt()
+        self.train_function_code = self.llm.generate(self.prompts["train_function"])
         log_message(f"Generated training function code:\n{self.train_function_code}")
-        self._run_generated('train_function')
+        self._run_generated("train_function")
+        self.ui_agent.subheader("Generated Training Function Code")
+        self.ui_agent.code(self.train_function, language="python")
 
         print("self.config_space", self.config_space)
         print("self.scenario", self.scenario)
@@ -62,7 +71,13 @@ class AutoMLAgent:
         save_code(self.train_function, "generated_train_function.py")
 
         # Return results and last training loss
-        return self.config_space, self.scenario, self.train_function, self.last_loss, self.prompts
+        return (
+            self.config_space,
+            self.scenario,
+            self.train_function,
+            self.last_loss,
+            self.prompts,
+        )
 
     def _run_generated(self, component: str):
         """Generic runner for config, scenario, or train_function"""
@@ -74,23 +89,23 @@ class AutoMLAgent:
             log_message(f"Running {component} code:\n{source}")
 
             try:
-                if component == 'config':
+                if component == "config":
                     exec(source, self.namespace)
-                    cfg = self.namespace['get_configspace']()
+                    cfg = self.namespace["get_configspace"]()
                     self.config_space = source
                     log_message(f"Configuration space generated: {cfg}")
 
-                elif component == 'scenario':
-                    cfg = self.namespace['get_configspace']()
+                elif component == "scenario":
+                    cfg = self.namespace["get_configspace"]()
                     exec(source, self.namespace)
-                    scenario_obj = self.namespace['generate_scenario'](cfg)
+                    scenario_obj = self.namespace["generate_scenario"](cfg)
                     self.scenario = source
                     log_message(f"Scenario generated: {scenario_obj}")
 
-                elif component == 'train_function':
-                    cfg = self.namespace['get_configspace']()
+                elif component == "train_function":
+                    cfg = self.namespace["get_configspace"]()
                     exec(source, self.namespace)
-                    train_fn = self.namespace['train']
+                    train_fn = self.namespace["train"]
                     sampled = cfg.sample_configuration()
                     loss = train_fn(cfg=sampled, seed=42, dataset=self.dataset)
                     self.train_function = source
@@ -109,21 +124,25 @@ class AutoMLAgent:
 
                 # Abort after too many retries
                 if self.error_counters[component] > self.MAX_RETRIES_ABORT:
-                    log_message(f"Max abort retries reached for {component}. Using last generated code.")
-                    if component == 'train_function':
-                        self.last_loss = getattr(self, 'last_loss', None)
+                    log_message(
+                        f"Max abort retries reached for {component}. Using last generated code."
+                    )
+                    if component == "train_function":
+                        self.last_loss = getattr(self, "last_loss", None)
                     return
 
                 # Refresh code from original prompt after threshold
                 if retry_count == self.MAX_RETRIES_PROMPT:
-                    log_message(f"Retry limit reached for {component}. Fetching fresh code from LLM.")
+                    log_message(
+                        f"Retry limit reached for {component}. Fetching fresh code from LLM."
+                    )
                     fresh = self.llm.generate(self.prompts[component])
                     setattr(self, code_attr, fresh)
                     retry_count = 0
                 else:
                     # Ask LLM to fix errors with history of recent issues
                     recent_errors = "\n".join(
-                        self.error_history[component][-self.MAX_RETRIES_PROMPT:]
+                        self.error_history[component][-self.MAX_RETRIES_PROMPT :]
                     )
                     fix_prompt = self._create_fix_prompt(recent_errors, raw_code)
                     fixed = self.llm.generate(fix_prompt)
@@ -142,7 +161,7 @@ class AutoMLAgent:
             return f.read().format(
                 dataset_description=self.dataset_description,
                 config_space=self.config_space or "",
-                scenario=self.scenario or ""
+                scenario=self.scenario or "",
             )
 
     def _create_fix_prompt(self, errors: str, code: str) -> str:

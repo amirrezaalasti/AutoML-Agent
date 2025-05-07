@@ -5,6 +5,7 @@
 ### **Function signature** must be:
 
 ```python
+from ConfigSpace import Configuration
 def train(cfg: Configuration, seed: int, dataset: Any) -> float:
 ```
 
@@ -14,55 +15,65 @@ def train(cfg: Configuration, seed: int, dataset: Any) -> float:
 
 * The function **must accept** a `dataset` dictionary with:
 
-  * `dataset['X']`: feature matrix
-  * `dataset['y']`: label vector
+  * `dataset['X']`: feature matrix or input tensor
+  * `dataset['y']`: label vector or label tensor
 
 * Assume `cfg` is a sampled configuration object:
 
-  * Use `cfg.get('key')` to access **primitive values** only (`int`, `float`, `str`, etc.).
-  * **Do not** access or manipulate hyperparameter objects directly.
+  * Access primitive values using `cfg.get('key')` (only `int`, `float`, `str`, etc.).
+  * **Do not access or manipulate non-primitive hyperparameter objects**.
+  * Set `random_state=seed` or equivalent to ensure reproducibility in your chosen framework.
 
-* Use **stratified k-fold cross-validation** via `sklearn.model_selection.cross_val_score`.
-
-  * Set `random_state=seed` to ensure reproducibility.
-
-* You **must train a classification model** that satisfies:
-
-  * Supports **early stopping** if `max_iter` is given.
-  * Has `warm_start=True` or similar functionality.
-  * Accepts `random_state=seed`.
-  * Accepts `learning_rate` (`'constant'` or `'adaptive'`).
-  * Accepts `C = 1.0 / alpha` or equivalent regularization strength.
-  * If `learning_rate == 'constant'`, use `eta0`; otherwise, ignore `eta0`.
-
-* You **may use any suitable model or framework** (e.g. `scikit-learn`, `TensorFlow`, `PyTorch`) as long as it meets these requirements.
-
-* Return a **loss value**:
-  `loss = 1.0 - mean cross-validation accuracy`
-  (lower loss = better model)
-
----
-
-### **Only use the following hyperparameters:**
-
-* `learning_rate`: str (`'constant'` or `'adaptive'`)
-* `alpha`: float (log-scaled)
-* `max_iter`: int
-* `eta0`: float (only used if `learning_rate == 'constant'`)
-
-Use them like this:
+* The function must return the **average training loss** over 10 epochs.
 
 ```python
-value = cfg.get('hyperparameter_name')
+return loss  # float
 ```
+
+* Lower `loss` means a better model.
 
 ---
 
-### **Additional Constraints:**
+### **Frameworks**
 
-* Include all necessary imports.
-* Use full type annotations for all arguments and variables.
-* Output **only** the function definition and required imports — no extra text or example calls.
+You may choose **PyTorch**, **TensorFlow**, or **scikit-learn**, depending on the dataset and supporting code provided.
+
+---
+
+### **Model Requirements**
+
+* Infer input and output dimensions dynamically from the dataset:
+
+  ```python
+  input_size = dataset['X'].shape[1]
+  num_classes = len(np.unique(dataset['y']))
+  ```
+
+---
+
+### **Optimizer Logic**
+
+If `learning_rate` is specified in `cfg`, use:
+
+* `'constant'`:
+
+  * Use SGD with `lr=eta0` (supported in all frameworks)
+* `'invscaling'`:
+
+  * Use SGD with `lr=eta0` and `momentum=power_t` (if supported, otherwise fall back gracefully)
+* `'adaptive'`:
+
+  * Use Adam or equivalent with `lr=eta0`
+
+- Only use valid parameters for each optimizer. Do **not** use unsupported arguments (e.g., `eta0` in PyTorch ASGD or `AdaptiveASGD`).
+
+---
+
+### **Additional Instructions**
+
+* The code must not hardcode dataset dimensions like `784` or class count `10`.
+* The function must be runnable and not assume unavailable classes or modules.
+* You must only output the `def train(...)` function and nothing else.
 
 ---
 
@@ -71,4 +82,3 @@ value = cfg.get('hyperparameter_name')
 * ConfigSpace definition: `{config_space}`
 * SMAC scenario: `{scenario}`
 * Dataset description: `{dataset_description}`
-

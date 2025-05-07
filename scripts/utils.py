@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from smac import HyperparameterOptimizationFacade, Scenario
 
 from typing import Any
 
@@ -20,14 +21,10 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
 
     if dataset_type == "tabular":
         description += "This is a tabular dataset.\n"
-        description += (
-            f"It has {X.shape[0]} samples (rows) and {X.shape[1]} features (columns).\n"
-        )
+        description += f"It has {X.shape[0]} samples and {X.shape[1]} features.\n"
         description += "Feature columns and types:\n"
         if hasattr(X, "dtypes"):
-            description += "\n".join(
-                [f"- {col}: {dtype}" for col, dtype in X.dtypes.items()]
-            )
+            description += "\n".join([f"- {col}: {dtype}" for col, dtype in X.dtypes.items()])
         if hasattr(X, "describe"):
             description += "\n\nFeature statistical summary:\n"
             description += str(X.describe(include="all"))
@@ -72,9 +69,7 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
             description += f"\nTarget variable has {y.nunique()} unique classes."
 
     else:
-        description += (
-            "Dataset type not recognized. Please provide a valid dataset type."
-        )
+        description += "Dataset type not recognized. Please provide a valid dataset type."
 
     return description
 
@@ -101,3 +96,30 @@ def save_code(code: str, filename: str):
     """
     with open(filename, "w") as file:
         file.write(code)
+
+def run_smac(
+    scenario: Scenario,
+    train: Any,
+    metric: str = "accuracy",
+    budget: int = 100,
+    n_trials: int = 10,
+) -> Any:
+    """
+    Run the SMAC hyperparameter optimization.
+    Args:
+        scenario (Scenario): The SMAC scenario object.
+        train (Any): The training data.
+        metric (str): The evaluation metric. Default is "accuracy".
+        budget (int): The budget for the optimization. Default is 100.
+        n_trials (int): The number of trials to run. Default is 10.
+    Returns:
+        Any: The best hyperparameters found by SMAC.
+    """
+    # Placeholder for actual SMAC implementation
+    smac = HyperparameterOptimizationFacade(scenario, train)
+    smac.optimize(
+        metric=metric,
+        budget=budget,
+        n_trials=n_trials,
+    )
+    return smac.get_best_configuration()
