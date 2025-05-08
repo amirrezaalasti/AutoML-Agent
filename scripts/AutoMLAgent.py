@@ -2,6 +2,10 @@ from scripts.LLMClient import LLMClient
 from typing import Any
 from scripts.utils import describe_dataset, log_message, save_code
 import re
+from smac.facade.hyperparameter_optimization_facade import (
+    HyperparameterOptimizationFacade as HPOFacade,
+)
+from smac import RunHistory, Scenario
 
 
 def extract_code_block(code: str) -> str:
@@ -69,6 +73,16 @@ class AutoMLAgent:
         save_code(self.config_space, "generated_config_space.py")
         save_code(self.scenario, "generated_scenario.py")
         save_code(self.train_function, "generated_train_function.py")
+
+        best_config, best_loss = self.run_scenario(
+            self.scenario, self.train_function
+        )
+        log_message(f"Best configuration: {best_config}")
+        log_message(f"Best loss: {best_loss}")
+        self.ui_agent.subheader("Best Configuration")
+        self.ui_agent.code(best_config, language="python")
+        self.ui_agent.subheader("Best Loss")
+        self.ui_agent.code(best_loss, language="python")
 
         # Return results and last training loss
         return (
@@ -168,3 +182,19 @@ class AutoMLAgent:
         """Include recent error history when asking LLM to fix code"""
         with open("templates/fix_prompt.txt", "r") as f:
             return f.read().format(code=code, errors=errors)
+
+    def run_scenario(self, scenario: Scenario, train_fn: Any):
+        """Run the scenario code and return the results"""
+        smac = HPOFacade(
+            scenario,
+            train_fn,  # We pass the target function here
+            overwrite=True,  # Overrides any previous results that are found that are inconsistent with the meta-data
+        )
+        smac.optimize()
+
+        # Get the best configuration
+        best_config = smac.get_best_configuration()
+        best_loss = smac.get_best_cost()
+
+        # return the best configuration and its corresponding loss
+        return best_config, best_loss
