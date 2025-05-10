@@ -35,6 +35,9 @@ class AutoMLAgent:
         self.scenario = None
         self.train_function = None
 
+        self.scenario_obj = None
+        self.config_space_obj = None
+
         self.error_counters = {"config": 0, "scenario": 0, "train_function": 0}
         self.error_history = {"config": [], "scenario": [], "train_function": []}
         self.namespace = {}
@@ -70,19 +73,20 @@ class AutoMLAgent:
         print("self.scenario", self.scenario)
         print("self.train_function", self.train_function)
         # Save outputs
-        save_code(self.config_space, "generated_config_space.py")
-        save_code(self.scenario, "generated_scenario.py")
-        save_code(self.train_function, "generated_train_function.py")
+        save_code(self.config_space, "scripts/generated_codes/generated_config_space.py")
+        save_code(self.scenario, "scripts/generated_codes/generated_scenario.py")
+        save_code(self.train_function, "scripts/generated_codes/generated_train_function.py")
 
-        best_config, best_loss = self.run_scenario(
-            self.scenario, self.train_function
-        )
-        log_message(f"Best configuration: {best_config}")
-        log_message(f"Best loss: {best_loss}")
-        self.ui_agent.subheader("Best Configuration")
-        self.ui_agent.code(best_config, language="python")
-        self.ui_agent.subheader("Best Loss")
-        self.ui_agent.code(best_loss, language="python")
+        from scripts.generated_codes.generated_train_function import train
+
+        self.run_scenario(self.scenario_obj, train)
+
+        # log_message(f"Best configuration: {best_config}")
+        # log_message(f"Best loss: {best_loss}")
+        # self.ui_agent.subheader("Best Configuration")
+        # self.ui_agent.code(best_config, language="python")
+        # self.ui_agent.subheader("Best Loss")
+        # self.ui_agent.code(best_loss, language="python")
 
         # Return results and last training loss
         return (
@@ -107,6 +111,7 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     cfg = self.namespace["get_configspace"]()
                     self.config_space = source
+                    self.config_space_obj = cfg
                     log_message(f"Configuration space generated: {cfg}")
 
                 elif component == "scenario":
@@ -114,6 +119,7 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     scenario_obj = self.namespace["generate_scenario"](cfg)
                     self.scenario = source
+                    self.scenario_obj = scenario_obj
                     log_message(f"Scenario generated: {scenario_obj}")
 
                 elif component == "train_function":
@@ -190,11 +196,4 @@ class AutoMLAgent:
             train_fn,  # We pass the target function here
             overwrite=True,  # Overrides any previous results that are found that are inconsistent with the meta-data
         )
-        smac.optimize()
-
-        # Get the best configuration
-        best_config = smac.get_best_configuration()
-        best_loss = smac.get_best_cost()
-
-        # return the best configuration and its corresponding loss
-        return best_config, best_loss
+        smac.optimize()        

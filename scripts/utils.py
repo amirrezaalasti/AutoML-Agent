@@ -24,7 +24,9 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
         description += f"It has {X.shape[0]} samples and {X.shape[1]} features.\n"
         description += "Feature columns and types:\n"
         if hasattr(X, "dtypes"):
-            description += "\n".join([f"- {col}: {dtype}" for col, dtype in X.dtypes.items()])
+            description += "\n".join(
+                [f"- {col}: {dtype}" for col, dtype in X.dtypes.items()]
+            )
         if hasattr(X, "describe"):
             description += "\n\nFeature statistical summary:\n"
             description += str(X.describe(include="all"))
@@ -51,6 +53,12 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
         description += f"Number of images: {len(X)}\n"
         description += f"Labels available: {len(y)}\n"
 
+        description += f"Raw feature shape: {X.shape}\n"
+        if isinstance(X, np.ndarray) and X.ndim == 2:
+            description += "Note: images are likely flattened (e.g., 28x28 → 784)."
+        elif isinstance(X, np.ndarray) and X.ndim == 4:
+            description += "Note: images are likely in (N, C, H, W) format."
+
     elif dataset_type == "categorical":
         description += "This is a categorical dataset.\n"
         description += f"It has {X.shape[0]} samples.\n"
@@ -69,7 +77,9 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
             description += f"\nTarget variable has {y.nunique()} unique classes."
 
     else:
-        description += "Dataset type not recognized. Please provide a valid dataset type."
+        description += (
+            "Dataset type not recognized. Please provide a valid dataset type."
+        )
 
     return description
 
@@ -96,6 +106,7 @@ def save_code(code: str, filename: str):
     """
     with open(filename, "w") as file:
         file.write(code)
+
 
 def run_smac(
     scenario: Scenario,

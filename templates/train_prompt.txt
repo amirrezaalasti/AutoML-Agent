@@ -26,6 +26,12 @@ def train(cfg: Configuration, seed: int, dataset: Any) -> float:
 
 * The function must return the **average training loss** over 10 epochs.
 
+* You must check whether dataset['X'] is already image-shaped (e.g., len(X.shape) == 4). If not, and CNN is used, reshape carefully and raise a ValueError if the input size is not a perfect square.
+
+* Do not assume dataset['X'] has a specific shape. Always verify input dimensions before reshaping.
+
+* If using a CNN model, you must validate that reshaping is safe and explain your assumption.
+
 ```python
 return loss  # float
 ```
@@ -69,16 +75,16 @@ If `learning_rate` is specified in `cfg`, use:
 
 ---
 
-### **Additional Instructions**
-
-* The code must not hardcode dataset dimensions like `784` or class count `10`.
-* The function must be runnable and not assume unavailable classes or modules.
-* You must only output the `def train(...)` function and nothing else.
-
----
-
 ### **Supporting Code Provided:**
 
 * ConfigSpace definition: `{config_space}`
 * SMAC scenario: `{scenario}`
 * Dataset description: `{dataset_description}`
+
+---
+
+### **Additional Instructions**
+
+* The code must not hardcode dataset dimensions like `784` or class count `10`.
+* The function must be runnable and not assume unavailable classes or modules.
+* You must only output the `def train(...)` function and nothing else.

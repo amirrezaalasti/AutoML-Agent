@@ -1,37 +1,83 @@
 {
-    "name": "b6ebe95af758e3bace801c9639e9fc38",
-    "deterministic": true,
-    "objectives": "cost",
+    "name": "c67145a32d3c9430545061d36e1de7a1",
+    "deterministic": false,
+    "objectives": [
+        "validation_loss"
+    ],
     "crash_cost": Infinity,
     "termination_cost_threshold": Infinity,
     "walltime_limit": Infinity,
     "cputime_limit": Infinity,
     "trial_walltime_limit": null,
     "trial_memory_limit": null,
-    "n_trials": 200,
+    "n_trials": 100,
     "use_default_config": false,
     "instances": null,
     "instance_features": null,
-    "min_budget": null,
-    "max_budget": null,
+    "min_budget": 1,
+    "max_budget": 100,
     "seed": 0,
-    "n_workers": 1,
+    "n_workers": 4,
     "_meta": {
         "facade": {
             "name": "HyperparameterOptimizationFacade"
         },
         "runner": {
-            "name": "TargetFunctionRunner",
-            "code": "b't\\x00|\\x00d\\x01\\x19\\x00|\\x01d\\x02\\x8d\\x02}\\x02t\\x01|\\x02t\\x02j\\x03t\\x02j\\x04d\\x03d\\x04\\x8d\\x04}\\x03d\\x05t\\x05\\xa0\\x06|\\x03\\xa1\\x01\\x18\\x00S\\x00'"
+            "name": "DaskParallelRunner"
         },
         "model": {
             "name": "RandomForest",
             "types": [
+                3,
+                0,
+                5,
+                0,
+                0,
+                0,
+                3,
+                0,
+                0,
                 0
             ],
             "bounds": [
                 [
-                    0,
+                    3,
+                    NaN
+                ],
+                [
+                    -1.0,
+                    1.0
+                ],
+                [
+                    5,
+                    NaN
+                ],
+                [
+                    -1.0,
+                    1.0
+                ],
+                [
+                    -1.0,
+                    1.0
+                ],
+                [
+                    -1.0,
+                    1.0
+                ],
+                [
+                    3,
+                    NaN
+                ],
+                [
+                    -1.0,
+                    1.0
+                ],
+                [
+                    -1.0,
+                    1.0
+                ],
+                [
+                    -1.0,
                     1.0
                 ]
             ],
@@ -93,7 +139,7 @@
         },
         "initial_design": {
             "name": "SobolInitialDesign",
-            "n_configs": 10,
+            "n_configs": 25,
             "n_configs_per_hyperparameter": 10,
             "additional_configs": [],
             "seed": 0
@@ -123,5 +169,5 @@
         },
         "version": "2.3.1"
     },
-    "output_directory": "smac3_output/b6ebe95af758e3bace801c9639e9fc38/0"
+    "output_directory": "automl_results/c67145a32d3c9430545061d36e1de7a1/0"
 }
