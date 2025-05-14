@@ -1,0 +1,10 @@
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+ConfigSpace
+smac
+pre-commit
+black
+flake8

@@ -45,7 +45,7 @@ class array_data_container : public rfr::data_containers::data_container_base<nu
 	}
 
 	virtual ~array_data_container() {};
-  
+
 	virtual num_type feature (index_type feature_index, index_type sample_index) const {
 		return (feature_array[sample_index*n_features + feature_index]);
 	}
@@ -61,24 +61,24 @@ class array_data_container : public rfr::data_containers::data_container_base<nu
 		return(rv);
 	}
 
-	
+
 	virtual response_type response (index_type sample_index) const{
 		return (response_array[sample_index]);
 	}
-	
+
 	virtual void add_data_point (num_type* features, index_type num_elements, response_type response){
 		throw std::runtime_error("Array data containers do not support adding new data points.");
 	}
-	
+
 	virtual std::vector<num_type> retrieve_data_point (index_type index) const{
 		std::vector<num_type> rv(n_features);
 		for (auto i = 0u; i < rv.size(); i++)
 			rv[i] = feature_array[index*n_features + i];
 		return(rv);
 	}
-	
+
 	virtual index_type get_type_of_feature (index_type feature_index) const{
-		return(type_array[feature_index]);		
+		return(type_array[feature_index]);
 	}
 
 	virtual void set_type_of_feature (index_type feature_index, index_type feature_type){
@@ -87,7 +87,7 @@ class array_data_container : public rfr::data_containers::data_container_base<nu
 
 
 	virtual index_type get_type_of_response () const{
-		return(response_t);		
+		return(response_t);
 	}
 
 	virtual void set_type_of_response (index_type resp_t){

@@ -88,16 +88,16 @@ class running_statistics{
   	/* serialize function */
   	template<class Archive>
 	void serialize(Archive & archive) {
-		archive( N, avg, sdm); 
+		archive( N, avg, sdm);
 	}
 
-  
+
 	running_statistics(): N(0), avg(0), sdm(0) {}
 
 	running_statistics( long unsigned int n, num_t a, num_t s): N(n), avg(a), sdm(s) {}
 
 	/** \brief adds a value to the statistic
-	 * 
+	 *
 	 * \param x the value to add
 	 */
 	void push(num_t x){
@@ -109,11 +109,11 @@ class running_statistics{
 		sdm += delta*(x-avg);
 	}
 	/** \brief removes a value from the statistic
-	 * 
+	 *
 	 * Consider this the inverse operation to push. Note: you can create
 	 * a scenario where the variance would be negative, so a simple sanity
 	 * check is implemented that raises a RuntimeError if that happens.
-	 * 
+	 *
 	 * \param x the value to remove
 	 */
 	void pop (num_t x){
@@ -136,28 +136,28 @@ class running_statistics{
 	/** \brief returns the number of points
 	 *\returns the current number of points added*/
 	long unsigned int	number_of_points()		const	{return(N);}
-	
+
 	/** \brief the mean of all values added
-	 *\returns sum([x for x in values])/number_of_points()*/ 
+	 *\returns sum([x for x in values])/number_of_points()*/
 	num_t	mean()					const	{return(N>0 ? avg : NAN);}
-	
+
 	/** \brief the sum of all values added
 	 *\returns the sum of all values (equivalent to number_of_points()* mean())	*/
 	num_t	sum()					const	{return(avg*N);}
-	
+
 	/** \brief the sum of all values squared
 	 *\returns sum([x**2 for x in values]) */
 	num_t	sum_of_squares()		const	{return(sdm + N*mean()*mean());}
-	
+
 	/** \brief the variance of all samples assuming it is the total population
 	 *\returns sum([(x-mean())**2 for x in values])/number_of_points*/
 	num_t	variance_population()	const	{return(divide_sdm_by(N));}
-	
+
 	/** \brief unbiased variance of all samples assuming it is a sample from a population with unknown mean
 	 *\returns sum([(x-mean())**2 for x in values])/(number_of_points-1)*/
 	num_t	variance_sample()		const	{return(divide_sdm_by(N-1));}
 
-	/** \brief biased estimate variance of all samples with the smalles MSE 
+	/** \brief biased estimate variance of all samples with the smalles MSE
 	 *\returns sum([(x-mean())**2 for x in values])/(number_of_points+1)*/
 	num_t	variance_MSE()			const	{return(divide_sdm_by(N+1));}
 
@@ -171,7 +171,7 @@ class running_statistics{
 
 
 	/** \brief unbiased standard deviation for normally distributed values
-	 
+
 	 *  Source: https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation
 	 *\returns std_sample/correction_value */
 	num_t	std_unbiased_gaussian() const{
@@ -181,7 +181,7 @@ class running_statistics{
 	}
 
 	/** \brief operator to combine statistics
-	 * 
+	 *
 	 * This is a very stable operation, so it should always be accurate. */
 	running_statistics operator+ ( const running_statistics &other) const{
 
@@ -215,7 +215,7 @@ class running_statistics{
 		return(*this);
 	}
 	/** \brief operator to remove all points of one statistic from another one
-	 * 
+	 *
 	 * This function might suffer from catastrophic cancelations, if the two
 	 * statistics are almost the same. Use with caution!
 	 */
@@ -231,12 +231,12 @@ class running_statistics{
 		num_t avg1 = avg * (nt/n1) - other.avg * (n2/n1);
 		// the sdm looks a bit tricky, but is straight forward to derive
 		num_t sdm1 = sdm - other.sdm - n2*std::pow(other.avg - avg, 2) - n1*std::pow(avg1-avg,2);
-		
+
 		if (N1 == 1) sdm1 = 0;
-		
+
 		return(running_statistics( N1, avg1, sdm1));
 	}
-	
+
 	/** \brief operator to multiply all values by a number */
 	running_statistics operator* (const num_t &a) const{
 		return(running_statistics(N, a*avg, a*a*sdm));
@@ -251,7 +251,7 @@ class running_statistics{
 	running_statistics operator- (const num_t &a) const{
 		return(running_statistics(N, avg-a, sdm));
 	}
-	
+
 	/**\brief convenience operator for inplace subtraction*/
 	running_statistics &operator-= ( const running_statistics &other) {
 
@@ -271,10 +271,10 @@ class running_statistics{
 		avg = avg1;
 		sdm = sdm1;
 		if (N == 1) sdm = 0;
-		
+
 		return(*this);
 	}
-	
+
 	/**\brief method to check for numerical equivalency
 	 * \param other the other running statistic to compare against
 	 * \param rel_error relative tolerance for the mean and variance*/
@@ -309,7 +309,7 @@ class weighted_running_statistics{
   	/* serialize function */
   	template<class Archive>
 	void serialize(Archive & archive) {
-		archive( avg, sdm, weight_stat); 
+		archive( avg, sdm, weight_stat);
 	}
 
 	void push (num_t x, num_t weight){
@@ -461,9 +461,9 @@ class weighted_running_statistics{
 		// finally compare the weight statistics
 		return( weight_stat.numerically_equal(other.weight_stat, rel_error));
 	}
-	
+
 	running_statistics<num_t> get_weight_statistics() const { return(weight_stat);}
-	
+
 };
 
 template <typename num_t>

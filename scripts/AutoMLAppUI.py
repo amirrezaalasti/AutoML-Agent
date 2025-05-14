@@ -14,12 +14,13 @@ from keras.datasets import mnist, fashion_mnist, cifar10, cifar100
 import statsmodels.api as sm
 import seaborn as sns
 
-from configs.api_keys import GROQ_API_KEY
+from configs.api_keys import GROQ_API_KEY, GOOGLE_API_KEY
 from scripts.LLMClient import LLMClient
 from scripts.AutoMLAgent import AutoMLAgent
 
 # Available GROQ models
 AVAILABLE_MODELS = [
+    "gemini-2.0-flash",
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
     "llama3-70b-8192",
@@ -96,9 +97,7 @@ class AutoMLAppUI:
                 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
                 if uploaded_file:
                     df = pd.read_csv(uploaded_file)
-                    target_column = st.selectbox(
-                        "Select the target column (label):", df.columns
-                    )
+                    target_column = st.selectbox("Select the target column (label):", df.columns)
                     X = df.drop(columns=[target_column])
                     y = df[target_column]
                     return {"X": X, "y": y}
@@ -126,9 +125,7 @@ class AutoMLAppUI:
 
         # 4. Text
         if data_type == "text":
-            data = fetch_20newsgroups(
-                subset="all", remove=("headers", "footers", "quotes")
-            )
+            data = fetch_20newsgroups(subset="all", remove=("headers", "footers", "quotes"))
             return {"X": pd.Series(data.data), "y": pd.Series(data.target)}
 
         # 5. Categorical
@@ -145,12 +142,8 @@ class AutoMLAppUI:
     def display(self):
         st.title("AutoML Agent Interface")
 
-        self.data_type = st.selectbox(
-            "Select the dataset type", list(DATASET_OPTIONS.keys())
-        )
-        dataset_choice = st.selectbox(
-            "Choose a dataset", DATASET_OPTIONS[self.data_type]
-        )
+        self.data_type = st.selectbox("Select the dataset type", list(DATASET_OPTIONS.keys()))
+        dataset_choice = st.selectbox("Choose a dataset", DATASET_OPTIONS[self.data_type])
         self.dataset = self.load_dataset(self.data_type, dataset_choice)
 
         self.model_choice = st.selectbox("Select a GROQ LLM Model", AVAILABLE_MODELS)
@@ -161,23 +154,28 @@ class AutoMLAppUI:
                 return
 
             with st.spinner("Setting up AutoML Agent..."):
-                llm_client = LLMClient(
-                    api_key=GROQ_API_KEY, model_name=self.model_choice
-                )
+                if "gemini" in self.model_choice:
+                    api_key = GOOGLE_API_KEY
+                else:
+                    api_key = GROQ_API_KEY
+
+                llm_client = LLMClient(api_key=api_key, model_name=self.model_choice)
                 agent = AutoMLAgent(
                     dataset=self.dataset,
                     llm_client=llm_client,
                     dataset_type=self.data_type,
                     ui_agent=st,
                 )
-                config_code, scenario_code, train_code, loss, prompts = (
-                    agent.generate_components()
-                )
+                (
+                    config_code,
+                    scenario_code,
+                    train_code,
+                    loss,
+                    prompts,
+                ) = agent.generate_components()
 
                 st.success("AutoML Agent setup complete!")
                 st.subheader("Loss Value")
                 st.write(loss)
                 st.subheader("Prompts Used")
                 st.write(prompts)
-
-

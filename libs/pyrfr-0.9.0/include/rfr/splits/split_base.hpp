@@ -19,7 +19,7 @@ struct data_info_t{
 	response_t prediction_value;
 	num_t feature;
 	num_t weight;
-    
+
     data_info_t (): index(0), response(0), prediction_value(0), feature(NAN), weight(NAN) {}
     data_info_t (index_t i, response_t r, response_t p, num_t f, num_t w): index(i), response(r), prediction_value(p), feature(f), weight(w) {}
 };
@@ -32,13 +32,13 @@ class k_ary_split_base{
   public:
 
 	virtual ~k_ary_split_base() {};
-  
+
 	/** \brief member function to find the optimal split for a subset of the data and features
 	 *
 	 * Defining the interface that every split has to implement. Unfortunately, virtual constructors are
-	 * not allowed in C++, so this function is called instead. Code in the nodes and the tree will only use the 
+	 * not allowed in C++, so this function is called instead. Code in the nodes and the tree will only use the
 	 * default constructor and the methods below for training and prediction.
-	 * 
+	 *
 	 * \param data the container holding the training data
 	 * \param features_to_try a vector with the indices of all the features that can be considered for this split
 	 * \param infos_begin iterator to the first data_info element to be considered
@@ -47,7 +47,7 @@ class k_ary_split_base{
 	 * \param min_samples_in_child smallest acceptable number of samples in any of the children
 	 * \param min_weight_in_child smallest acceptable weight in any of the children
 	 * \param rng (pseudo) random number generator as a source for stochasticity
-	 * 
+	 *
 	 * \return float the loss of the found split
 	 */
 
@@ -61,16 +61,16 @@ class k_ary_split_base{
 									rng_t &rng) = 0;
 
 	/** \brief tells into which child a given feature vector falls
-	 * 
+	 *
 	 * \param feature_vector an array containing a valid (in terms of size and values!) feature vector
-	 * 
+	 *
 	 * \return index_t index of the child into which this feature falls
 	 */
 	virtual index_t operator() (const std::vector<num_t> &feature_vector) const  = 0;
-	
+
 	/** \brief some debug output that prints a informative representation to std::cout*/
 	virtual void print_info() const = 0;
-	
+
 	/** \brief hopefully all trees can create a LaTeX document as a visualization, this contributes the text of the split.*/
 	virtual std::string latex_representation() const = 0;
 };

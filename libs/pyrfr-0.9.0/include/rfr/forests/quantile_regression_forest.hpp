@@ -16,7 +16,7 @@ class quantile_regression_forest: public rfr::forests::regression_forest<tree_t,
 	quantile_regression_forest() : super()	{};
 	quantile_regression_forest (forest_options<num_t, response_t, index_t> forest_opts): super(forest_opts) {};
 
-	
+
 
 	virtual ~quantile_regression_forest()	{};
 
@@ -37,10 +37,10 @@ class quantile_regression_forest: public rfr::forests::regression_forest<tree_t,
 
 		if (quantiles.back() > 1)
 			throw std::runtime_error("quantiles cannot be >1.");
-		
+
 
 		std::vector<std::pair<num_t, num_t> > value_weight_pairs;
-		
+
 		for (auto &t: super::the_trees){
 			auto l = t.get_leaf(feature_vector);
 
@@ -71,7 +71,7 @@ class quantile_regression_forest: public rfr::forests::regression_forest<tree_t,
 			}
 
 			auto mew = std::min<unsigned int>(index,  value_weight_pairs.size()-1);
-			
+
 			rv.push_back((value_weight_pairs[mew]).first);
 		}
 

@@ -13,9 +13,9 @@ namespace rfr{ namespace trees{
 
 template <typename num_t = float,typename response_t = float, typename index_t = unsigned int>
 struct tree_options{
-  index_t	max_features; 			///< number of features to consider for each split 
+  index_t	max_features; 			///< number of features to consider for each split
   index_t	max_depth;				///< maximum depth for the tree
-    
+
   index_t	min_samples_to_split;	///< minumum number of samples to try splitting
   num_t 	min_weight_to_split;	///< minumum weight of samples to try splitting
 
@@ -24,7 +24,7 @@ struct tree_options{
 
   index_t	max_num_nodes;			///< maxmimum total number of nodes in the tree
   index_t	max_num_leaves;			///< maxmimum total number of leaves in the tree
-    
+
   response_t epsilon_purity;		///< minimum difference between two response values to be considered different*/
 
   num_t life_time; ///< life time of a mondrian tree
@@ -39,7 +39,7 @@ struct tree_options{
 	}
 
   /** (Re)set to default values with no limits on the size of the tree
-    * 
+    *
     * If nothing is know about the data, this member can be used
     * to get a valid setting for the tree_options struct. But beware
     * this setting could lead to a huge tree depending on the amount of
@@ -55,12 +55,12 @@ struct tree_options{
     min_samples_in_leaf = 1;
     min_weight_to_split = 2;
     min_weight_in_leaf = 1;
-  
+
     max_num_nodes = std::numeric_limits<index_t>::max();
     max_num_leaves = std::numeric_limits<index_t>::max();
-  
+
     epsilon_purity = 1e-10;
-    
+
     life_time = 1000;
     hierarchical_smoothing = false;
   }
@@ -69,16 +69,16 @@ struct tree_options{
   /** Default constructor that initializes the values with their default
     */
   tree_options(){ set_default_values();}
-  
+
   /** Constructor that adjusts the number of features considered at each split proportional to the square root of the number of features.
-    * 
-    */    
+    *
+    */
   tree_options (rfr::data_containers::base<num_t, response_t, index_t> &data){
     set_default_values();
     max_features =  static_cast<int>(std::sqrt(data.num_features()) + 0.5);
   }
-    
-    
+
+
   void adjust_limits_to_data (const rfr::data_containers::base<num_t, response_t, index_t> &data){
 		max_features = std::min(max_features, data.num_features());
   }
@@ -97,7 +97,7 @@ struct tree_options{
     std::cout<<"life_time           : "<< life_time <<std::endl;
     std::cout<<"hierarchical_smoothing: "<< hierarchical_smoothing <<std::endl;
 	}
-    
+
 };
 
 }}//namespace rfr::trees

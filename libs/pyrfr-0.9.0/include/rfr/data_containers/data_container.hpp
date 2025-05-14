@@ -15,7 +15,7 @@ class base{
   public:
 
 	virtual ~base(){};
-  
+
 	/** \brief Function for accessing a single feature value, consistency checks might be omitted for performance
 	 *
 	 * \param feature_index The index of the feature requested
@@ -37,7 +37,7 @@ class base{
 	/** \brief member function to query a single response value, consistency checks might be omitted for performance
 	 *
 	 * \param sample_index the response of which data point
-	 * 
+	 *
 	 * \return the response value
 	 */
 	virtual response_t response (index_t sample_index) const = 0;
@@ -54,7 +54,7 @@ class base{
 	/** \brief function to access the weight attributed to a single data point
 	 *
 	 * \param sample_index which data point
-	 * 
+	 *
 	 * \return the weigth of that sample
 	 */
 	virtual num_t weight(index_t sample_index) const = 0;
@@ -81,7 +81,7 @@ class base{
 	/** \brief method to retrieve a data point
 	 *
 	 * \param index index of the datapoint to extract
-	 * 
+	 *
 	 * \return std::vector<num_t> the features of the data point
 	 */
 	virtual std::vector<num_t> retrieve_data_point (index_t index) const = 0;
@@ -90,7 +90,7 @@ class base{
 	/** \brief query the type of a feature
 	 *
 	 * \param feature_index the index of the feature
-	 * 
+	 *
 	 * \return int type of the feature: 0 - numerical value (float or int); n>0 - categorical value with n different values {0,1,...,n-1}
 	 */
 	virtual index_t get_type_of_feature (index_t feature_index) const = 0;
@@ -116,12 +116,12 @@ class base{
 
 
 	/** \brief specifies the interval of allowed values for a feature
-	 * 
+	 *
 	 * To marginalize out certain feature dimensions using non-i.i.d. data, the numerical bounds
 	 * on each variable have to be known. This only applies to numerical features.
 	 *
 	 * Note: The forest will not check if a datapoint is consistent with the specified bounds!
-	 * 
+	 *
 	 * \param feature_index feature_index the index of the feature
 	 * \param min the smallest value for the feature
 	 * \param max the largest value for the feature

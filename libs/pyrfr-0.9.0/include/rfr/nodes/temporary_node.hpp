@@ -17,7 +17,7 @@ struct temporary_node{
 
     index_t node_index;
 	index_t parent_index;
-	typename std::vector<rfr::splits::data_info_t<num_t, response_t, index_t> >::iterator begin, end; 
+	typename std::vector<rfr::splits::data_info_t<num_t, response_t, index_t> >::iterator begin, end;
 	index_t node_level;
 
 
@@ -31,7 +31,7 @@ struct temporary_node{
 					typename std::vector<rfr::splits::data_info_t<num_t, response_t, index_t>>::iterator e):
 						node_index(node_id), parent_index(parent_id), begin(b), end(e), node_level(node_lvl)
 						{}
-	
+
 
 	num_t total_weight (){
         num_t tw = 0.;

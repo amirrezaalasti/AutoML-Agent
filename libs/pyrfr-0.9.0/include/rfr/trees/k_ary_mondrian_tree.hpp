@@ -32,7 +32,7 @@ namespace rfr{ namespace trees{
 template <const int k,typename node_t, typename num_t = float, typename response_t = float, typename index_t = unsigned int, typename rng_t = std::default_random_engine>
 class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, index_t, rng_t> {
   protected:
-  
+
 	std::vector<node_t> the_nodes;
 	index_t num_leafs;
 	index_t max_depth;
@@ -45,20 +45,20 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 	bool smooth_hierarchically;//
 	index_t min_samples_node;//
 	index_t min_samples_to_split;//
-	
+
   public:
-  
+
 	k_ary_mondrian_tree(): the_nodes(0), num_leafs(0), max_depth(0) {}
 
 	virtual ~k_ary_mondrian_tree() {}
-	
+
     /* serialize function for saving forests */
   	template<class Archive>
   	void serialize(Archive & archive){
-		archive(the_nodes, num_leafs, max_depth, life_time, variance_coef, sigmoid_coef, sfactor, 
+		archive(the_nodes, num_leafs, max_depth, life_time, variance_coef, sigmoid_coef, sfactor,
 			prior_variance, noise_variance, smooth_hierarchically, min_samples_node, min_samples_to_split);
 	}
-	
+
 	void set_tree_options(rfr::trees::tree_options<num_t, response_t, index_t> tree_opts){
 		life_time = tree_opts.life_time;
 		smooth_hierarchically = tree_opts.hierarchical_smoothing;
@@ -67,7 +67,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		sfactor = 2;
 	}
 
-	void partial_fit(const rfr::data_containers::base<num_t, response_t, index_t> &data, 
+	void partial_fit(const rfr::data_containers::base<num_t, response_t, index_t> &data,
 		rfr::trees::tree_options<num_t, response_t, index_t> tree_opts, index_t new_point, rng_t &rng){
 		set_tree_options(tree_opts);
 		internal_partial_fit(data, tree_opts, new_point, rng);
@@ -75,22 +75,22 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		if(smooth_hierarchically){
 			update_likelyhood();
 		}
-		
+
 
 	}
 
 	/** \brief internal_partial_fit adds a point to the current mondrian tree
-	 * 
+	 *
 	 * Finds the place of the new_point in the tree and adds the point in that part of the tree.
-	 * 
+	 *
 	 * made. Just make sure the max_features in tree_opts to a number smaller than the number of features!
-	 * 
+	 *
 	 * \param data the container holding the training data
 	 * \param tree_opts a tree_options object that controls certain aspects of "growing" the tree
 	 * \param new_point index of the point to add
 	 * \param rng the random number generator to be used
 	 */
-	void internal_partial_fit(const rfr::data_containers::base<num_t, response_t, index_t> &data, 
+	void internal_partial_fit(const rfr::data_containers::base<num_t, response_t, index_t> &data,
 		rfr::trees::tree_options<num_t, response_t, index_t> tree_opts, index_t new_point, rng_t &rng){
 		int position = 0;
 		std::vector<std::pair<num_t,num_t>> min_max;
@@ -104,7 +104,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		rfr::nodes::k_ary_mondrian_node_full<k, num_t, response_t, index_t, rng_t> tmp_node(-1, 1), father_parent;
 		if(the_nodes.size() == 0){
 			the_nodes.resize( the_nodes.size()+1);
-				
+
 			std::vector<index_t> selected_elements;
 			selected_elements.emplace_back(new_point);
 			std::vector<response_t> responses(response);
@@ -117,19 +117,19 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		else{
 			tmp_node = the_nodes[position];
 		}
-		
+
 		num_t min, max, time_parent, split_value, E;
 
 		while(!end){
 			num_t sum_E = calculate_nu(tmp_node, feature_vector);
 			min_max = tmp_node.get_min_max();
-			
+
 			std::exponential_distribution<num_t> distribution(sum_E);// 1/sum_E
 			E = distribution(rng);
-			
+
 			time_parent = get_parent_split_time(tmp_node);
-			
-			
+
+
 			if(time_parent + E < tmp_node.get_split_time()){//compare with the lifetime of the node
 				std::uniform_real_distribution<num_t> dist (0,sum_E);
 				double dice = dist(rng);
@@ -141,7 +141,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 					split_dimension++;
 				}
 				split_dimension--;
-				
+
 				if(feature_vector[split_dimension]>min_max[split_dimension].second){//
 					min = min_max[split_dimension].second;//first
 					max = feature_vector[split_dimension];
@@ -275,7 +275,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		rfr::nodes::k_ary_mondrian_node_full<k, num_t, response_t, index_t, rng_t> aux, tmp_node, aux_parent, child;
 		tmp_node = new_node;
 		int aux_parent_index = tmp_node.get_parent_index();
-		
+
 		int position = initial_position;
 		the_nodes.resize( the_nodes.size()+1);
 		std::vector<std::pair<index_t,index_t>> updated(the_nodes.size());
@@ -293,7 +293,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 						the_nodes[aux.get_children()[i]] = child;
 					}
 				}
-				
+
 				aux_parent_index = aux.get_parent_index();
 				if(aux_parent_index >= 0){
 					if(aux_parent_index == position){
@@ -302,7 +302,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 					else{
 						aux_parent = the_nodes[aux_parent_index];
 					}
-					
+
 					if( (int) aux_parent.get_children()[0] == position && !updated[aux_parent_index].first){
 						aux_parent.set_child(0, position+1);
 						updated[aux_parent_index].first = 1;
@@ -322,28 +322,28 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 					else {
 						the_nodes[aux_parent_index] = aux_parent;
 					}
-					
+
 				}
-				
+
 				if(aux.get_split_cost() == 0){
 					//increase the split cost ?
 				}
-				
+
 			}
 			the_nodes[position] = tmp_node;
 			tmp_node = aux;
 			position++;
 		}
-		
+
 	}
 	//move_update
 
 	/** \brief fits a randomized decision tree to a subset of the data
-	 * 
+	 *
 	 * At each node, if it is 'splitworthy', a random subset of all features is considered for the
 	 * split. Depending on the split_type provided, greedy or randomized choices can be
 	 * made. Just make sure the max_features in tree_opts to a number smaller than the number of features!
-	 * 
+	 *
 	 * \param data the container holding the training data
 	 * \param tree_opts a tree_options object that controls certain aspects of "growing" the tree
 	 * \param sample_weights vector containing the weights of all allowed datapoints (set to individual entries to zero for subsampling), no checks are done here!
@@ -365,14 +365,14 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		const rfr::data_containers::base<num_t, response_t, index_t> &data,
 		std::vector<rfr::nodes::k_ary_mondrian_node_full<k, num_t, response_t, index_t, rng_t>> &tmp_nodes,
 		std::vector<index_t> &selected_elements, std::vector<response_t> responses, index_t position, rng_t &rng){
-		
+
 		num_t E;
 		index_t actual_depth = 1;//modify
 
         //creates an array of lenght num_features from wiht values from 0 to num_features
 		std::vector<index_t> feature_indices(data.num_features());
 		std::iota(feature_indices.begin(), feature_indices.end(), 0);
-        
+
 		num_t sum_E, time_node, time_parent, split_value;
 		index_t split_dimension;
 		rfr::nodes::k_ary_mondrian_node_full<k, num_t, response_t, index_t, rng_t> tmp_node;
@@ -383,7 +383,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 
 		tmp_node = tmp_nodes.back();
 		tmp_nodes.pop_back();
-		
+
 		if(tmp_node.get_parent_index() != -1){
 			time_parent = the_nodes[tmp_node.get_parent_index()].get_split_time();
 			if(the_nodes[tmp_node.get_parent_index()].get_child_index(0)==0)
@@ -406,7 +406,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 
 		std::exponential_distribution<num_t> distribution(sum_E);// 1/sum_E
 		E = distribution(rng);
-		
+
 		if(time_parent + E < life_time && create_leaf){
 			time_node = time_parent + E;
 			//get split dimension
@@ -419,7 +419,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 				split_dimension++;
 			}
 			split_dimension--;
-	
+
 			num_t min = min_max[split_dimension].first, max = min_max[split_dimension].second;
 			std::uniform_real_distribution<num_t> dist2 (min, max);
 			split_value = dist2(rng);
@@ -429,7 +429,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 			tmp_node.set_info_split_its_index(info_split_its);
 			actual_depth = tmp_node.get_depth() + 1;
 			//pseudo_leaf, all elements in the same side
-			if((info_split_its[0] + min_samples_node) <= info_split_its[1] && 
+			if((info_split_its[0] + min_samples_node) <= info_split_its[1] &&
 			(info_split_its[1] + min_samples_node) <= info_split_its[2] ){//que pasa con 2 hojas como minimo?
 				//so the first one to pop will be the smaller one
 				//continue with right
@@ -443,7 +443,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 				info_split_its_child[2] = info_split_its[1];
 				tmp_nodes.emplace_back(position, actual_depth, info_split_its_child);
 			}
-			else{	
+			else{
 				split_dimension = -1;
 				split_value = -1;
 				num_leafs++;
@@ -451,7 +451,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 				//std::getchar();
 				tmp_node.set_child (0,0);
 			}
-			
+
 		} else{
 			if(time_parent + E < life_time){
 				time_node = time_parent + E;
@@ -459,7 +459,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 			else{
 				time_node = life_time;
 			}
-				
+
 			split_dimension = -1;
 			split_value = -1;
 			tmp_node.set_child (0,0);
@@ -467,8 +467,8 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 			if(tmp_node.get_depth()>max_depth){
 				max_depth = tmp_node.get_depth();
 			}
-			
-			//node is a leaf 
+
+			//node is a leaf
 		}
 		tmp_node.set_split_time(time_node);
 		tmp_node.set_split_cost(E);
@@ -491,18 +491,18 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		the_nodes.clear();
 		num_leafs = 0;
 		index_t actual_depth = 1;
-		
+
         //creates an array of lenght num_features from wiht values from 0 to num_features
 		std::vector<index_t> feature_indices(data.num_features());
 		std::iota(feature_indices.begin(), feature_indices.end(), 0);
-        
+
 		//vector with the indexes of the boostrap items
 		std::vector<index_t> selected_elements;
         std::vector<response_t> responses;
 
         for (auto i=0u; i<data.num_data_points(); ++i){
             if (sample_weights[i] > 0){
-                
+
 				//fill a vector with the indexes of the elements in the boostrap
 				selected_elements.emplace_back(i);
 				responses.emplace_back(data.response(i));
@@ -517,7 +517,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 		info_split_its[2] = selected_elements.size();
 
 		tmp_nodes.emplace_back(-1, actual_depth, info_split_its);
-		
+
 		index_t position = 0;
 		while (!tmp_nodes.empty()){
 			if (position >= the_nodes.size())
@@ -597,7 +597,7 @@ class k_ary_mondrian_tree : public rfr::trees::tree_base<num_t, response_t, inde
 	}
 	num_t get_sigmoid_variance(index_t node_index){
 		rfr::nodes::k_ary_mondrian_node_full<k, num_t, response_t, index_t, rng_t> node = the_nodes[node_index];
-		num_t res = variance_coef * (sigmoid(sigmoid_coef * node.get_split_time()) 
+		num_t res = variance_coef * (sigmoid(sigmoid_coef * node.get_split_time())
 			- sigmoid (sigmoid_coef * get_parent_split_time(node)));
 		return res;
 	}
@@ -625,7 +625,7 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 				aux = selected_elements[last];
 				selected_elements[last] = selected_elements[i];
 				selected_elements[i] = aux;
-				last--; 
+				last--;
 			}
 			else{
 				i++;
@@ -637,7 +637,7 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 		else{
 			last++;
 		}
-		
+
 		return last;
 	}
 
@@ -646,15 +646,15 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 		num_t min = NAN, max = NAN;
 		sum_E = 0;
 		std::vector<std::pair<num_t,num_t>> min_max(data.num_features());
-		std::vector<num_t> feature_values;//data.num_data_points());	
+		std::vector<num_t> feature_values;//data.num_data_points());
 		std::vector<index_t> selected_indexes(selected_elements.begin() + its[0], selected_elements.begin() + its[2]);
 		for(auto i =0u; i<data.num_features(); i++){
 			feature_values = data.features (i, selected_indexes);
-			
+
 			min_max_feature(feature_values, min, max, sum_E);
 			min_max[i].first = min;
 			min_max[i].second = max;
-			
+
 		}
 		return min_max;
 	}
@@ -706,10 +706,10 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 		while (!finished){
 			old_node = tmp_node;
 			delta_node = tmp_node.get_split_time() - get_parent_split_time(tmp_node);
-			
+
 			nu = calculate_nu(tmp_node, feature_vector);
 			prob_not_separated_now = exp(- delta_node * nu);
-			prob_separated_now = 1 - prob_not_separated_now;	
+			prob_separated_now = 1 - prob_not_separated_now;
 			if(prob_separated_now>0){
 				expected_cut_time = 1/ nu;
 				w = prob_not_separated_yet * prob_separated_now;
@@ -721,9 +721,9 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 					pred_mean_temp = old_node.get_mean();
 					pred_second_moment_temp = old_node.get_variance();
 					expected_split_time = expected_cut_time + get_parent_split_time(old_node);
-					variance_from_mean = variance_coef * (sigmoid(sigmoid_coef * expected_split_time) 
+					variance_from_mean = variance_coef * (sigmoid(sigmoid_coef * expected_split_time)
 						- sigmoid (sigmoid_coef * get_parent_split_time(old_node)) );
-						
+
 					pred_second_moment_temp += variance_from_mean;
 				}
 				else{
@@ -733,7 +733,7 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 
 				mean += w * pred_mean_temp;
 				second_moment += w * pred_second_moment_temp;
-				sum_W += w;		
+				sum_W += w;
 			}
 			//else if (prob_separated_now == 0 && std::isinf(old_node.get_split_cost()) ){
 			else if (prob_separated_now == 0 && old_node.get_split_cost() >= life_time ){
@@ -745,7 +745,7 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 					pred_mean_temp = old_node.get_response_stat().mean();
 					pred_second_moment_temp = old_node.get_response_stat().sum_of_squares() / old_node.get_response_stat().sum_of_weights() + noise_variance;
 				}
-				
+
 				mean += prob_not_separated_yet * pred_mean_temp;
 				second_moment += prob_not_separated_yet * pred_second_moment_temp;
 				sum_W += prob_not_separated_yet;
@@ -761,7 +761,7 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 				else{
 					tmp_node = the_nodes[tmp_node.get_child_index(1)];
 				}
-			}	
+			}
 		}
 		variance = second_moment - std::pow(mean,2);
 		return(std::pair<num_t, num_t> (mean, variance));
@@ -778,8 +778,8 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 		}
 		return tmp_node.get_response_stat().mean();
 	}
-    
-	
+
+
 
 
 	virtual num_t calculate_nu(rfr::nodes::k_ary_mondrian_node_full<k, num_t, response_t, index_t, rng_t> &tmp_node,
@@ -789,43 +789,43 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 		for(auto i = 0u; i< feature_vector.size(); i++){
 			nu += std::max(feature_vector[i] - min_max[i].second,(num_t)0) + std::max(min_max[i].first - feature_vector[i],(num_t)0);
 		}
-		
+
 		return nu;
 	}
-    
+
 
 
 	/* \brief function to recursively compute the marginalized predictions
-	 * 
+	 *
 	 * To compute the fANOVA, the mean prediction over partial assingments is needed.
 	 * To accomplish that, feed this function a numerical vector where each element that
 	 * is NAN will be marginalized over.
-     * 
+     *
 	 * At any split, this function either goes down one path or averages the
 	 * prediction of all children weighted by the fraction of the training data
 	 * going into them respectively.
-     * 
+     *
      * \param feature_vector the features vector with NAN for dimensions over which is marginalized
      * \param node_index index of root of the computation, default 0 means 'start at the root'
-     * 
+     *
      * \returns the mean prediction marginalized over the desired inputs according to the training data
 	 * */
 	num_t marginalized_mean_prediction(const std::vector<num_t> &feature_vector, index_t node_index=0) const{
-		
+
 		auto n = the_nodes[node_index];	// short hand notation
-		
+
 		if (n.is_a_leaf())
 			return(n.leaf_statistic().mean());
-		
+
 		// if the feature vector can be split, meaning the corresponding features are not NAN
 		// return the marginalized prediction of the corresponding child node
 		if (n.can_be_split(feature_vector)){
 			return marginalized_mean_prediction( feature_vector, n.falls_into_child(feature_vector));
 		}
-		
+
 		// otherwise the marginalized prediction consists of the weighted sum of all child nodes
 		num_t prediction = 0;
-		
+
 		for (auto i = 0u; i<k; i++){
 			prediction += n.get_split_fraction(i) * marginalized_mean_prediction(feature_vector, n.get_child_index(i));
 		}
@@ -837,15 +837,15 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 	}
 
 	/* \brief finds all the split points for each dimension of the input space
-	 * 
+	 *
 	 * This function only makes sense for axis aligned splits!
 	 * */
 	std::vector<std::vector<num_t> > all_split_values (const std::vector<index_t> &types) const {
 		std::vector<std::vector<num_t> > split_values(types.size());
-		
+
 		for (auto &n: the_nodes){
 			if (n.is_a_leaf()) continue;
-			
+
 			const auto &s = n.get_split();
 			auto fi = s.get_feature_index();
 
@@ -858,17 +858,17 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 				split_values[fi].emplace_back(s.get_num_split_value());
 			}
 		}
-		
+
 		for (auto &v: split_values)
 			std::sort(v.begin(), v.end());
 		return(split_values);
 	}
-	
+
 	virtual index_t number_of_nodes() const {return(the_nodes.size());}
 	virtual index_t number_of_leafs() const {return(num_leafs);}
 	virtual index_t depth()           const {return(max_depth);}
 
-	
+
 	/* \brief Function to recursively compute the partition induced by the tree
 	 *
 	 * Do not call this function from the outside! Needs become private at some point!
@@ -892,16 +892,16 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 
 	/* \brief computes the partitioning of the input space induced by the tree */
 	std::vector<std::vector< std::vector<num_t> > > partition( std::vector<std::vector<num_t> > pcs) const {
-	
+
 		std::vector<std::vector< std::vector<num_t> > > the_partition;
 		the_partition.reserve(num_leafs);
-		
+
 		partition_recursor(the_partition, pcs, 0);
-	
+
 	return(the_partition);
 	}
 
-	
+
 	num_t total_weight_in_subtree (index_t node_index) const {
 		num_t w = 0;
 		if (the_nodes[node_index].is_a_leaf())
@@ -913,20 +913,20 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 		return(w);
 	}
 
-	
+
 	bool check_split_fractions(num_t epsilon = 1e-6) const {
 
 		bool rt = true;
-		
+
 		for ( auto i=0u; i<the_nodes.size(); i++){
 			if (the_nodes[i].is_a_leaf()) continue;
-			
+
 			num_t W = total_weight_in_subtree(i);
-			
+
 			for (auto j = 0u; j<k; j++){
 				num_t Wj = total_weight_in_subtree(the_nodes[i].get_child_index(j));
 				num_t fj =  Wj / W;
-				
+
 				rt = rt && ((fj - the_nodes[i].get_split_fraction(j))/the_nodes[i].get_split_fraction(j) < epsilon) ;
 
 			}
@@ -935,12 +935,12 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 	}
 
 	/* \brief updates the forest by adding all provided datapoints without a complete retraining
-	 * 
-	 * 
+	 *
+	 *
 	 * As retraining can be quite expensive, this function can be used to quickly update the forest
 	 * by finding the leafs the datapoints belong into and just inserting them. This is, of course,
 	 * not the right way to do it for many data points, but it should be a good approximation for a few.
-	 * 
+	 *
 	 * \param features a valid feature vector
 	 * \param response the corresponding response value
 	 * \param weight the associated weight
@@ -952,10 +952,10 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 
 
 	/* \brief undoing a pseudo update by removing a point
-	 * 
+	 *
 	 * This function removes one point from the corresponding leaves into
 	 * which the given feature vector falls
-	 * 
+	 *
 	 * \param features a valid feature vector
 	 * \param response the corresponding response value
 	 * \param weight the associated weight
@@ -967,9 +967,9 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 
 	num_t max_life_time()const {return life_time;}
 
-	
+
 	void print_info() const {
-		
+
 		std::cout<<"number of nodes ="<<number_of_nodes()<<"\n";
 		std::cout<<"number of leaves="<<number_of_leafs()<<"\n";
 		std::cout<<"      depth     ="<<depth()<<"\n";
@@ -979,22 +979,22 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 			the_nodes[i].print_info();
 		}
 	}
-	    
+
 	/** \brief a visualization by generating a LaTeX document that can be compiled
-	* 
-	* 
+	*
+	*
 	* \param filename Name of the file that will be used. Note that any existing file will be silently overwritten!
 	*/
 	virtual void save_latex_representation(const char* filename) const {
 		std::fstream str;
-		    
+
 		str.open(filename, std::fstream::out);
 		std::stack <typename std::pair<std::array<index_t, k>, index_t> > stack;
-		    
+
 		// LaTeX headers
 		str<<"\\documentclass{standalone}\n\\usepackage{forest}\n\n\\begin{document}\n\\begin{forest}\n";
 		str<<"for tree={grow'=east, child anchor = west, draw, calign=center}\n";
-		    
+
 		// the root needs special treatment
 		if (!the_nodes[0].is_a_leaf()){
 			stack.emplace(typename std::pair<std::array<index_t, k>, index_t> (the_nodes[0].get_children(), 0));
@@ -1009,10 +1009,10 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 			}
 			else{
 				auto current_index = stack.top().first[stack.top().second++];
-				    
+
 				for (size_t i=0; i<stack.size(); i++) str << "\t";
 				str << "[" << the_nodes[current_index].latex_representation(current_index);
-				    
+
 				if (the_nodes[current_index].is_a_leaf())
 					str << "]\n";
 				else{
@@ -1028,4 +1028,3 @@ index_t myPartition( index_t it1, index_t it2, std::vector<index_t> &selected_el
 
 }}//namespace rfr::trees
 #endif
-

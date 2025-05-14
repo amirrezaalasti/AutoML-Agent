@@ -35,7 +35,7 @@ class k_ary_mondrian_node_minimal{
 
 	//average, variance, etc
 	rfr::util::weighted_running_statistics<num_t> response_stat;   //TODO: needs to be serialized!
-	
+
   public:
 
 	virtual ~k_ary_mondrian_node_minimal () {
@@ -55,13 +55,13 @@ class k_ary_mondrian_node_minimal{
   	/* serialize function for saving forests */
   	template<class Archive>
 	void serialize(Archive & archive) {
-		archive(children, depth); 
+		archive(children, depth);
 	}
 
 	/** \brief to test whether this node is a leaf */
 	bool is_a_leaf() const {return(children[0] == children[1] && children[0] == 0);}
 	/** \brief get the index of the node's parent */
-	
+
 	/** \brief get indices of all children */
 	std::array<index_t, k> get_children() const {return(children);}
 	index_t get_child_index (index_t idx) const {return(children[idx]);};
@@ -71,7 +71,7 @@ class k_ary_mondrian_node_minimal{
 	rfr::util::weighted_running_statistics<num_t> get_response_stat() const {return(response_stat);};
 
 	/** \brief returns the index of the child into which the provided sample falls
-	 * 
+	 *
 	 * \param feature_vector a feature vector of the appropriate size (not checked!)
 	 *
 	 * \return index_t index of the child
@@ -101,14 +101,14 @@ class k_ary_mondrian_node_minimal{
 		std::cout <<"variance polutation = " << response_stat.variance_population()<<std::endl;
 		std::cout <<"variance without noise = " << get_response_stat().sum_of_squares() / get_response_stat().sum_of_weights() <<std::endl;
 
-		
+
 		std::cout <<"depth = " << get_depth()<<std::endl;
 	}
 
 	/** \brief generates a label for the node to be used in the LaTeX visualization*/
 	virtual std::string latex_representation( int my_index) const {
 		std::stringstream str;
-			
+
 		if (is_a_leaf()){
 			str << "{i = " << my_index << ": ";
 			str << "N = "<<response_stat.sum_of_weights();
@@ -140,7 +140,7 @@ class k_ary_mondrian_node_full: public k_ary_mondrian_node_minimal<k, num_t, res
 	int number_of_points;
   public:
 	virtual ~k_ary_mondrian_node_full () {};
-	
+
 	k_ary_mondrian_node_full (){};
 
 	k_ary_mondrian_node_full (int parent, index_t depth, std::array<typename std::vector<index_t>::iterator, 3> info_split):
@@ -165,10 +165,10 @@ class k_ary_mondrian_node_full: public k_ary_mondrian_node_minimal<k, num_t, res
 			mean,/* min_max,*/ number_of_points);
 		//super::serialize(archive);
 	}
-	
-	/** \brief get reference to the response values*/	
+
+	/** \brief get reference to the response values*/
 	//std::vector<response_t> const &responses () const { return( (std::vector<response_t> const &) response_values);}
-	/** \brief get the sum of the mx-min intervals fo the node*/	
+	/** \brief get the sum of the mx-min intervals fo the node*/
 	num_t const get_sum_of_Min_Max_intervals () const { return( sum_E);}
 	int const get_parent_index () const { return( parent_index);}
 	num_t const get_split_time () const { return( split_time);}
@@ -196,11 +196,11 @@ class k_ary_mondrian_node_full: public k_ary_mondrian_node_minimal<k, num_t, res
 	void set_mean (num_t m){ mean = m;}
 	//void set_points (std::vector<index_t> p){ points = p;}
 	void set_number_of_points (int p){ number_of_points = p;}
-	
-	void set_split_cost (num_t sc){ split_cost =sc;}
-	
 
-	void add_response (response_t response, num_t weight){ 
+	void set_split_cost (num_t sc){ split_cost =sc;}
+
+
+	void add_response (response_t response, num_t weight){
 		//response_values.emplace_back(response);
 		k_ary_mondrian_node_minimal<k, num_t, response_t, index_t, rng_t>::response_stat.push(response, weight);
 	}
@@ -209,7 +209,7 @@ class k_ary_mondrian_node_full: public k_ary_mondrian_node_minimal<k, num_t, res
 	virtual void print_info() const {
 		k_ary_mondrian_node_minimal<k, num_t, response_t, index_t, rng_t>::print_info();
 		std::cout << "parent index:" << parent_index << std::endl;
-		
+
 		std::cout << "Split dimension:" << get_split_dimension() << std::endl;
 		std::cout << "Split time:" << split_time << std::endl;
 		std::cout << "Split value:" << split_value << std::endl;
@@ -228,6 +228,3 @@ class k_ary_mondrian_node_full: public k_ary_mondrian_node_minimal<k, num_t, res
 
 }} // namespace rfr::nodes
 #endif
-
-
-

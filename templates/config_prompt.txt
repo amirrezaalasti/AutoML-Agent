@@ -54,12 +54,6 @@ Goal: Write a Python function called `get_configspace()` that returns a valid `C
 
 ---
 
-**CONDITIONS**
-
-* `eta0` must be active **only when** `learning_rate == "constant"` (use `EqualsCondition`).
-
----
-
 **CONSTRAINTS**
 
 * Must include **at least one** `ForbiddenAndConjunction` to block invalid combinations.
@@ -74,7 +68,7 @@ Goal: Write a Python function called `get_configspace()` that returns a valid `C
 
 **DATASET DESCRIPTION**
 
-* The configuration space must be based on the following information 
+* The configuration space must be based on the following information
 {dataset_description}.
 * Hyperparameters and model choices must reflect what is appropriate for that dataset type.
 
@@ -156,7 +150,7 @@ cs.to_yaml(path)
 loaded_cs = ConfigurationSpace.from_yaml(path)
 ```
 # Example 6: Priors
-```python 
+```python
 import numpy as np
 from ConfigSpace import ConfigurationSpace, Float, Categorical, Beta, Normal
 

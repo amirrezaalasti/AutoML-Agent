@@ -41,7 +41,7 @@ class default_container : public rfr::data_containers::base<num_t, response_t, i
 		bounds = std::vector<std::pair<num_t, num_t> > (num_f, std::pair<num_t,num_t>(-std::numeric_limits<num_t>::infinity(), std::numeric_limits<num_t>::infinity()));
 		min_max = std::vector<std::pair<num_t, num_t> > (num_f, std::pair<num_t,num_t>(std::numeric_limits<num_t>::infinity(), -std::numeric_limits<num_t>::infinity()));
 	}
-  
+
 	virtual num_t feature  (index_t feature_index, index_t sample_index) const {
 		return(feature_values[feature_index][sample_index]);
 	}
@@ -229,7 +229,7 @@ class default_container : public rfr::data_containers::base<num_t, response_t, i
 		bounds.at(feature_index).first = min;
 		bounds.at(feature_index).second = max;
 	}
-	
+
 	virtual std::pair<num_t, num_t> get_bounds_of_feature(index_t feature_index) const {
 		return(bounds.at(feature_index));
 	}
@@ -254,14 +254,14 @@ class default_container : public rfr::data_containers::base<num_t, response_t, i
 				min = std::min(min, feature_values[i][j]);
 				max = std::max(max, feature_values[i][j]);
 			}
-			
+
 		}
 
 		for(unsigned int i = 0; i<num_features(); i++){
 			for(unsigned int j = 0; j<num_data_points(); j++){
 				feature_values[i][j] = (feature_values[i][j]-min)/(max-min);
 			}
-			
+
 		}
 	}
 
@@ -308,7 +308,7 @@ class default_container : public rfr::data_containers::base<num_t, response_t, i
 			auto pikachu = std::minmax_element(f.begin(), f.end());
 			min_max.emplace_back(*pikachu.first, *pikachu.second);
 		}
-		
+
 		guess_bounds_from_data();
 		return(feature_values.size());
 	}
@@ -332,10 +332,10 @@ class default_container : public rfr::data_containers::base<num_t, response_t, i
 			if (num_data_points() != it->size())
 				return(false);
 		}
-		
+
 		if (weights.size() != num_data_points())
 			return(false);
-		
+
 		return(true);
 	}
 

@@ -24,9 +24,7 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
         description += f"It has {X.shape[0]} samples and {X.shape[1]} features.\n"
         description += "Feature columns and types:\n"
         if hasattr(X, "dtypes"):
-            description += "\n".join(
-                [f"- {col}: {dtype}" for col, dtype in X.dtypes.items()]
-            )
+            description += "\n".join([f"- {col}: {dtype}" for col, dtype in X.dtypes.items()])
         if hasattr(X, "describe"):
             description += "\n\nFeature statistical summary:\n"
             description += str(X.describe(include="all"))
@@ -53,7 +51,7 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
         description += "- Example input validation check:\n"
         description += "  ```python\n"
         description += "  if model_type in ['LSTM', 'GRU', 'RNN'] and X_tensor.ndim != 3:\n"
-        description += "      raise ValueError(f\"Expected 3D input (batch, seq_len, features) for {model_type}, got {X_tensor.shape}\")\n"
+        description += '      raise ValueError(f"Expected 3D input (batch, seq_len, features) for {model_type}, got {X_tensor.shape}")\n'
         description += "  ```\n"
         description += "- Time index or datetime values can be logged but should not be used in the model unless specified.\n"
 
@@ -91,9 +89,7 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
             description += f"\nTarget variable has {y.nunique()} unique classes."
 
     else:
-        description += (
-            "Dataset type not recognized. Please provide a valid dataset type."
-        )
+        description += "Dataset type not recognized. Please provide a valid dataset type."
 
     return description
 
@@ -148,6 +144,7 @@ def run_smac(
         n_trials=n_trials,
     )
     return smac.get_best_configuration()
+
 
 def format_dataset(dataset: Any) -> dict:
     """

@@ -5,6 +5,7 @@
 # the SWIG interface file instead.
 
 from sys import version_info as _swig_python_version_info
+
 # Import the low-level C/C++ module
 if __package__ or "." in __name__:
     from . import _regression
@@ -16,12 +17,17 @@ try:
 except ImportError:
     import __builtin__
 
+
 def _swig_repr(self):
     try:
         strthis = "proxy of " + self.this.__repr__()
     except __builtin__.Exception:
         strthis = ""
-    return "<%s.%s; %s >" % (self.__class__.__module__, self.__class__.__name__, strthis,)
+    return "<%s.%s; %s >" % (
+        self.__class__.__module__,
+        self.__class__.__name__,
+        strthis,
+    )
 
 
 def _swig_setattr_nondynamic_instance_variable(set):
@@ -34,6 +40,7 @@ def _swig_setattr_nondynamic_instance_variable(set):
             set(self, name, value)
         else:
             raise AttributeError("You cannot add instance attributes to %s" % self)
+
     return set_instance_attr
 
 
@@ -43,43 +50,58 @@ def _swig_setattr_nondynamic_class_variable(set):
             set(cls, name, value)
         else:
             raise AttributeError("You cannot add class attributes to %s" % cls)
+
     return set_class_attr
 
 
 def _swig_add_metaclass(metaclass):
     """Class decorator for adding a metaclass to a SWIG wrapped class - a slimmed down version of six.add_metaclass"""
+
     def wrapper(cls):
         return metaclass(cls.__name__, cls.__bases__, cls.__dict__.copy())
+
     return wrapper
 
 
 class _SwigNonDynamicMeta(type):
     """Meta class to enforce nondynamic attributes (no new attributes) for a class"""
+
     __setattr__ = _swig_setattr_nondynamic_class_variable(type.__setattr__)
 
 
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class default_random_engine(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def __init__(self, *args):
-        _regression.default_random_engine_swiginit(self, _regression.new_default_random_engine(*args))
+        _regression.default_random_engine_swiginit(
+            self, _regression.new_default_random_engine(*args)
+        )
 
     def seed(self, arg2):
         return _regression.default_random_engine_seed(self, arg2)
+
     __swig_destroy__ = _regression.delete_default_random_engine
+
 
 # Register default_random_engine in _regression:
 _regression.default_random_engine_swigregister(default_random_engine)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class SwigPyIterator(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
 
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
+
     __repr__ = _swig_repr
     __swig_destroy__ = _regression.delete_SwigPyIterator
 
@@ -130,19 +152,26 @@ class SwigPyIterator(object):
 
     def __sub__(self, *args):
         return _regression.SwigPyIterator___sub__(self, *args)
+
     def __iter__(self):
         return self
 
+
 # Register SwigPyIterator in _regression:
 _regression.SwigPyIterator_swigregister(SwigPyIterator)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class num_vector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def iterator(self):
         return _regression.num_vector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
@@ -238,18 +267,25 @@ class num_vector(object):
 
     def capacity(self):
         return _regression.num_vector_capacity(self)
+
     __swig_destroy__ = _regression.delete_num_vector
+
 
 # Register num_vector in _regression:
 _regression.num_vector_swigregister(num_vector)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class idx_vector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def iterator(self):
         return _regression.idx_vector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
@@ -345,18 +381,25 @@ class idx_vector(object):
 
     def capacity(self):
         return _regression.idx_vector_capacity(self)
+
     __swig_destroy__ = _regression.delete_idx_vector
+
 
 # Register idx_vector in _regression:
 _regression.idx_vector_swigregister(idx_vector)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class num_vector_vector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def iterator(self):
         return _regression.num_vector_vector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
@@ -427,7 +470,9 @@ class num_vector_vector(object):
         return _regression.num_vector_vector_erase(self, *args)
 
     def __init__(self, *args):
-        _regression.num_vector_vector_swiginit(self, _regression.new_num_vector_vector(*args))
+        _regression.num_vector_vector_swiginit(
+            self, _regression.new_num_vector_vector(*args)
+        )
 
     def push_back(self, x):
         return _regression.num_vector_vector_push_back(self, x)
@@ -452,18 +497,25 @@ class num_vector_vector(object):
 
     def capacity(self):
         return _regression.num_vector_vector_capacity(self)
+
     __swig_destroy__ = _regression.delete_num_vector_vector
+
 
 # Register num_vector_vector in _regression:
 _regression.num_vector_vector_swigregister(num_vector_vector)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class num_vector_vector_vector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def iterator(self):
         return _regression.num_vector_vector_vector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
@@ -534,7 +586,9 @@ class num_vector_vector_vector(object):
         return _regression.num_vector_vector_vector_erase(self, *args)
 
     def __init__(self, *args):
-        _regression.num_vector_vector_vector_swiginit(self, _regression.new_num_vector_vector_vector(*args))
+        _regression.num_vector_vector_vector_swiginit(
+            self, _regression.new_num_vector_vector_vector(*args)
+        )
 
     def push_back(self, x):
         return _regression.num_vector_vector_vector_push_back(self, x)
@@ -559,46 +613,68 @@ class num_vector_vector_vector(object):
 
     def capacity(self):
         return _regression.num_vector_vector_vector_capacity(self)
+
     __swig_destroy__ = _regression.delete_num_vector_vector_vector
+
 
 # Register num_vector_vector_vector in _regression:
 _regression.num_vector_vector_vector_swigregister(num_vector_vector_vector)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class num_num_pair(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def __init__(self, *args):
         _regression.num_num_pair_swiginit(self, _regression.new_num_num_pair(*args))
-    first = property(_regression.num_num_pair_first_get, _regression.num_num_pair_first_set)
-    second = property(_regression.num_num_pair_second_get, _regression.num_num_pair_second_set)
+
+    first = property(
+        _regression.num_num_pair_first_get, _regression.num_num_pair_first_set
+    )
+    second = property(
+        _regression.num_num_pair_second_get, _regression.num_num_pair_second_set
+    )
+
     def __len__(self):
         return 2
+
     def __repr__(self):
         return str((self.first, self.second))
-    def __getitem__(self, index): 
+
+    def __getitem__(self, index):
         if not (index % 2):
             return self.first
         else:
             return self.second
+
     def __setitem__(self, index, val):
         if not (index % 2):
             self.first = val
         else:
             self.second = val
+
     __swig_destroy__ = _regression.delete_num_num_pair
+
 
 # Register num_num_pair in _regression:
 _regression.num_num_pair_swigregister(num_num_pair)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class num_num_pair_vector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def iterator(self):
         return _regression.num_num_pair_vector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
@@ -669,7 +745,9 @@ class num_num_pair_vector(object):
         return _regression.num_num_pair_vector_erase(self, *args)
 
     def __init__(self, *args):
-        _regression.num_num_pair_vector_swiginit(self, _regression.new_num_num_pair_vector(*args))
+        _regression.num_num_pair_vector_swiginit(
+            self, _regression.new_num_num_pair_vector(*args)
+        )
 
     def push_back(self, x):
         return _regression.num_num_pair_vector_push_back(self, x)
@@ -694,47 +772,54 @@ class num_num_pair_vector(object):
 
     def capacity(self):
         return _regression.num_num_pair_vector_capacity(self)
+
     __swig_destroy__ = _regression.delete_num_num_pair_vector
+
 
 # Register num_num_pair_vector in _regression:
 _regression.num_num_pair_vector_swigregister(num_num_pair_vector)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class data_base(object):
     r"""
 
 
-    The interface for any data container with the minimal functionality.  
+    The interface for any data container with the minimal functionality.
 
     C++ includes: data_container.hpp
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
 
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
+
     __repr__ = _swig_repr
     __swig_destroy__ = _regression.delete_data_base
 
     def feature(self, feature_index, sample_index):
         r"""
 
-        `feature(index_t feature_index, index_t sample_index) const =0 -> num_t`  
+        `feature(index_t feature_index, index_t sample_index) const =0 -> num_t`
 
         Function for accessing a single feature value, consistency checks might be
-        omitted for performance.  
+        omitted for performance.
 
         Parameters
         ----------
-        * `feature_index` :  
-            The index of the feature requested  
-        * `sample_index` :  
-            The index of the data point.  
+        * `feature_index` :
+            The index of the feature requested
+        * `sample_index` :
+            The index of the data point.
 
         Returns
         -------
-        the stored value  
+        the stored value
 
         """
         return _regression.data_base_feature(self, feature_index, sample_index)
@@ -743,21 +828,21 @@ class data_base(object):
         r"""
 
         `features(index_t feature_index, const std::vector< index_t > &sample_indices)
-            const =0 -> std::vector< num_t >`  
+            const =0 -> std::vector< num_t >`
 
         member function for accessing the feature values of multiple data points at
-        once, consistency checks might be omitted for performance  
+        once, consistency checks might be omitted for performance
 
         Parameters
         ----------
-        * `feature_index` :  
-            The index of the feature requested  
-        * `sample_indices` :  
-            The indices of the data point.  
+        * `feature_index` :
+            The index of the feature requested
+        * `sample_indices` :
+            The indices of the data point.
 
         Returns
         -------
-        the stored values  
+        the stored values
 
         """
         return _regression.data_base_features(self, feature_index, sample_indices)
@@ -765,19 +850,19 @@ class data_base(object):
     def response(self, sample_index):
         r"""
 
-        `response(index_t sample_index) const =0 -> response_t`  
+        `response(index_t sample_index) const =0 -> response_t`
 
         member function to query a single response value, consistency checks might be
-        omitted for performance  
+        omitted for performance
 
         Parameters
         ----------
-        * `sample_index` :  
-            the response of which data point  
+        * `sample_index` :
+            the response of which data point
 
         Returns
         -------
-        the response value  
+        the response value
 
         """
         return _regression.data_base_response(self, sample_index)
@@ -785,19 +870,19 @@ class data_base(object):
     def predict_value(self, sample_index):
         r"""
 
-        `predict_value(index_t sample_index) const =0 -> response_t`  
+        `predict_value(index_t sample_index) const =0 -> response_t`
 
         member function to query a single response value, consistency checks might be
-        omitted for performance  
+        omitted for performance
 
         Parameters
         ----------
-        * `sample_index` :  
-            the response of which data point  
+        * `sample_index` :
+            the response of which data point
 
         Returns
         -------
-        the prediction value  
+        the prediction value
 
         """
         return _regression.data_base_predict_value(self, sample_index)
@@ -805,18 +890,18 @@ class data_base(object):
     def weight(self, sample_index):
         r"""
 
-        `weight(index_t sample_index) const =0 -> num_t`  
+        `weight(index_t sample_index) const =0 -> num_t`
 
-        function to access the weight attributed to a single data point  
+        function to access the weight attributed to a single data point
 
         Parameters
         ----------
-        * `sample_index` :  
-            which data point  
+        * `sample_index` :
+            which data point
 
         Returns
         -------
-        the weigth of that sample  
+        the weigth of that sample
 
         """
         return _regression.data_base_weight(self, sample_index)
@@ -825,19 +910,19 @@ class data_base(object):
         r"""
 
         `add_data_point(std::vector< num_t > features, std::vector< response_t >
-            response, num_t weight)=0`  
+            response, num_t weight)=0`
 
-        method to add a single data point  
+        method to add a single data point
 
         Parameters
         ----------
-        * `features` :  
-            a vector containing the features  
-        * `response` :  
+        * `features` :
+            a vector containing the features
+        * `response` :
             the corresponding response vector. The first entry is the value used to fit
-            the trees with, the second is used to predict.  
-        * `weight` :  
-            the weight of the data point  
+            the trees with, the second is used to predict.
+        * `weight` :
+            the weight of the data point
 
         """
         return _regression.data_base_add_data_point(self, *args)
@@ -845,18 +930,18 @@ class data_base(object):
     def retrieve_data_point(self, index):
         r"""
 
-        `retrieve_data_point(index_t index) const =0 -> std::vector< num_t >`  
+        `retrieve_data_point(index_t index) const =0 -> std::vector< num_t >`
 
-        method to retrieve a data point  
+        method to retrieve a data point
 
         Parameters
         ----------
-        * `index` :  
-            index of the datapoint to extract  
+        * `index` :
+            index of the datapoint to extract
 
         Returns
         -------
-        std::vector<num_t> the features of the data point  
+        std::vector<num_t> the features of the data point
 
         """
         return _regression.data_base_retrieve_data_point(self, index)
@@ -864,19 +949,19 @@ class data_base(object):
     def get_type_of_feature(self, feature_index):
         r"""
 
-        `get_type_of_feature(index_t feature_index) const =0 -> index_t`  
+        `get_type_of_feature(index_t feature_index) const =0 -> index_t`
 
-        query the type of a feature  
+        query the type of a feature
 
         Parameters
         ----------
-        * `feature_index` :  
-            the index of the feature  
+        * `feature_index` :
+            the index of the feature
 
         Returns
         -------
         int type of the feature: 0 - numerical value (float or int); n>0 - categorical
-        value with n different values {0,1,...,n-1}  
+        value with n different values {0,1,...,n-1}
 
         """
         return _regression.data_base_get_type_of_feature(self, feature_index)
@@ -884,14 +969,14 @@ class data_base(object):
     def get_type_of_response(self):
         r"""
 
-        `get_type_of_response() const =0 -> index_t`  
+        `get_type_of_response() const =0 -> index_t`
 
-        query the type of the response  
+        query the type of the response
 
         Returns
         -------
         index_t type of the response: 0 - numerical value (float or int); n>0 -
-        categorical value with n different values {0,1,...,n-1}  
+        categorical value with n different values {0,1,...,n-1}
 
         """
         return _regression.data_base_get_type_of_response(self)
@@ -899,33 +984,35 @@ class data_base(object):
     def set_type_of_feature(self, feature_index, feature_type):
         r"""
 
-        `set_type_of_feature(index_t feature_index, index_t feature_type)=0`  
+        `set_type_of_feature(index_t feature_index, index_t feature_type)=0`
 
-        specifying the type of a feature  
+        specifying the type of a feature
 
         Parameters
         ----------
-        * `feature_index` :  
-            the index of the feature whose type is specified  
-        * `feature_type` :  
+        * `feature_index` :
+            the index of the feature whose type is specified
+        * `feature_type` :
             the actual type (0 - numerical, value >0 catergorical with values from
-            {0,1,...value-1}  
+            {0,1,...value-1}
 
         """
-        return _regression.data_base_set_type_of_feature(self, feature_index, feature_type)
+        return _regression.data_base_set_type_of_feature(
+            self, feature_index, feature_type
+        )
 
     def set_type_of_response(self, response_type):
         r"""
 
-        `set_type_of_response(index_t response_type)=0`  
+        `set_type_of_response(index_t response_type)=0`
 
-        specifying the type of the response  
+        specifying the type of the response
 
         Parameters
         ----------
-        * `response_type` :  
+        * `response_type` :
             the actual type (0 - numerical, value >0 catergorical with values from
-            {0,1,...value-1}  
+            {0,1,...value-1}
 
         """
         return _regression.data_base_set_type_of_response(self, response_type)
@@ -933,45 +1020,47 @@ class data_base(object):
     def set_bounds_of_feature(self, feature_index, min, max):
         r"""
 
-        `set_bounds_of_feature(index_t feature_index, num_t min, num_t max)=0`  
+        `set_bounds_of_feature(index_t feature_index, num_t min, num_t max)=0`
 
-        specifies the interval of allowed values for a feature  
+        specifies the interval of allowed values for a feature
 
         To marginalize out certain feature dimensions using non-i.i.d. data, the
         numerical bounds on each variable have to be known. This only applies to
-        numerical features.  
+        numerical features.
 
         Note: The forest will not check if a datapoint is consistent with the specified
-        bounds!  
+        bounds!
 
         Parameters
         ----------
-        * `feature_index` :  
-            feature_index the index of the feature  
-        * `min` :  
-            the smallest value for the feature  
-        * `max` :  
-            the largest value for the feature  
+        * `feature_index` :
+            feature_index the index of the feature
+        * `min` :
+            the smallest value for the feature
+        * `max` :
+            the largest value for the feature
 
         """
-        return _regression.data_base_set_bounds_of_feature(self, feature_index, min, max)
+        return _regression.data_base_set_bounds_of_feature(
+            self, feature_index, min, max
+        )
 
     def get_bounds_of_feature(self, feature_index):
         r"""
 
         `get_bounds_of_feature(index_t feature_index) const =0 -> std::pair< num_t,
-            num_t >`  
+            num_t >`
 
-        query the allowed interval for a feature; applies only to continuous variables  
+        query the allowed interval for a feature; applies only to continuous variables
 
         Parameters
         ----------
-        * `feature_index` :  
-            the index of the feature  
+        * `feature_index` :
+            the index of the feature
 
         Returns
         -------
-        std::pair<num_t,num_t> interval of allowed values  
+        std::pair<num_t,num_t> interval of allowed values
 
         """
         return _regression.data_base_get_bounds_of_feature(self, feature_index)
@@ -979,9 +1068,9 @@ class data_base(object):
     def num_features(self):
         r"""
 
-        `num_features() const =0 -> index_t`  
+        `num_features() const =0 -> index_t`
 
-        the number of features of every datapoint in the container  
+        the number of features of every datapoint in the container
 
         """
         return _regression.data_base_num_features(self)
@@ -989,46 +1078,53 @@ class data_base(object):
     def num_data_points(self):
         r"""
 
-        `num_data_points() const =0 -> index_t`  
+        `num_data_points() const =0 -> index_t`
 
-        the number of data points in the container  
+        the number of data points in the container
 
         """
         return _regression.data_base_num_data_points(self)
 
+
 # Register data_base in _regression:
 _regression.data_base_swigregister(data_base)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class default_data_container(data_base):
     r"""
 
 
-    A data container for mostly continuous data.  
+    A data container for mostly continuous data.
 
     It might happen that only a small fraction of all features is categorical. In
     that case it would be wasteful to store the type of every feature separately.
-    Instead, this data_container only stores the non-continuous ones in a hash-map.  
+    Instead, this data_container only stores the non-continuous ones in a hash-map.
 
     C++ includes: default_data_container.hpp
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def __init__(self, num_f):
         r"""
 
-        `default_container(index_t num_f)`  
+        `default_container(index_t num_f)`
 
         """
-        _regression.default_data_container_swiginit(self, _regression.new_default_data_container(num_f))
+        _regression.default_data_container_swiginit(
+            self, _regression.new_default_data_container(num_f)
+        )
 
     def init_protected(self, num_f):
         r"""
 
-        `init_protected(index_t num_f)`  
+        `init_protected(index_t num_f)`
 
         """
         return _regression.default_data_container_init_protected(self, num_f)
@@ -1036,24 +1132,28 @@ class default_data_container(data_base):
     def feature(self, feature_index, sample_index):
         r"""
 
-        `feature(index_t feature_index, index_t sample_index) const -> num_t`  
+        `feature(index_t feature_index, index_t sample_index) const -> num_t`
 
         """
-        return _regression.default_data_container_feature(self, feature_index, sample_index)
+        return _regression.default_data_container_feature(
+            self, feature_index, sample_index
+        )
 
     def features(self, feature_index, sample_indices):
         r"""
 
         `features(index_t feature_index, const std::vector< index_t > &sample_indices)
-            const -> std::vector< num_t >`  
+            const -> std::vector< num_t >`
 
         """
-        return _regression.default_data_container_features(self, feature_index, sample_indices)
+        return _regression.default_data_container_features(
+            self, feature_index, sample_indices
+        )
 
     def response(self, sample_index):
         r"""
 
-        `response(index_t sample_index) const -> response_t`  
+        `response(index_t sample_index) const -> response_t`
 
         """
         return _regression.default_data_container_response(self, sample_index)
@@ -1061,7 +1161,7 @@ class default_data_container(data_base):
     def predict_value(self, sample_index):
         r"""
 
-        `predict_value(index_t sample_index) const -> response_t`  
+        `predict_value(index_t sample_index) const -> response_t`
 
         """
         return _regression.default_data_container_predict_value(self, sample_index)
@@ -1070,7 +1170,7 @@ class default_data_container(data_base):
         r"""
 
         `add_data_point(std::vector< num_t > features, std::vector< response_t >
-            response, num_t weight=1)`  
+            response, num_t weight=1)`
 
         """
         return _regression.default_data_container_add_data_point(self, *args)
@@ -1078,7 +1178,7 @@ class default_data_container(data_base):
     def retrieve_data_point(self, index):
         r"""
 
-        `retrieve_data_point(index_t index) const -> std::vector< num_t >`  
+        `retrieve_data_point(index_t index) const -> std::vector< num_t >`
 
         """
         return _regression.default_data_container_retrieve_data_point(self, index)
@@ -1086,7 +1186,7 @@ class default_data_container(data_base):
     def weight(self, sample_index):
         r"""
 
-        `weight(index_t sample_index) const -> num_t`  
+        `weight(index_t sample_index) const -> num_t`
 
         """
         return _regression.default_data_container_weight(self, sample_index)
@@ -1094,41 +1194,43 @@ class default_data_container(data_base):
     def get_type_of_feature(self, feature_index):
         r"""
 
-        `get_type_of_feature(index_t feature_index) const -> index_t`  
+        `get_type_of_feature(index_t feature_index) const -> index_t`
 
-        query the type of a feature  
+        query the type of a feature
 
         Parameters
         ----------
-        * `feature_index` :  
-            the index of the feature  
+        * `feature_index` :
+            the index of the feature
 
         Returns
         -------
         int type of the feature: 0 - numerical value (float or int); n>0 - categorical
-        value with n different values {0,1,...,n-1}  
+        value with n different values {0,1,...,n-1}
 
         As most features are assumed to be numerical, it is actually beneficial to store
         only the categorical exceptions in a hash-map. Type = 0 means continuous, and
-        Type = n >= 1 means categorical with options in {0, n-1}.  
+        Type = n >= 1 means categorical with options in {0, n-1}.
 
         Parameters
         ----------
-        * `feature_index` :  
-            the index of the feature  
+        * `feature_index` :
+            the index of the feature
 
         Returns
         -------
         int type of the feature: 0 - numerical value (float or int); n>0 - categorical
-        value with n different values {1,2,...,n}  
+        value with n different values {1,2,...,n}
 
         """
-        return _regression.default_data_container_get_type_of_feature(self, feature_index)
+        return _regression.default_data_container_get_type_of_feature(
+            self, feature_index
+        )
 
     def set_type_of_feature(self, index, type):
         r"""
 
-        `set_type_of_feature(index_t index, index_t type)`  
+        `set_type_of_feature(index_t index, index_t type)`
 
         """
         return _regression.default_data_container_set_type_of_feature(self, index, type)
@@ -1136,9 +1238,9 @@ class default_data_container(data_base):
     def num_features(self):
         r"""
 
-        `num_features() const -> index_t`  
+        `num_features() const -> index_t`
 
-        the number of features of every datapoint in the container  
+        the number of features of every datapoint in the container
 
         """
         return _regression.default_data_container_num_features(self)
@@ -1146,9 +1248,9 @@ class default_data_container(data_base):
     def num_data_points(self):
         r"""
 
-        `num_data_points() const -> index_t`  
+        `num_data_points() const -> index_t`
 
-        the number of data points in the container  
+        the number of data points in the container
 
         """
         return _regression.default_data_container_num_data_points(self)
@@ -1156,14 +1258,14 @@ class default_data_container(data_base):
     def get_type_of_response(self):
         r"""
 
-        `get_type_of_response() const -> index_t`  
+        `get_type_of_response() const -> index_t`
 
-        query the type of the response  
+        query the type of the response
 
         Returns
         -------
         index_t type of the response: 0 - numerical value (float or int); n>0 -
-        categorical value with n different values {0,1,...,n-1}  
+        categorical value with n different values {0,1,...,n-1}
 
         """
         return _regression.default_data_container_get_type_of_response(self)
@@ -1171,7 +1273,7 @@ class default_data_container(data_base):
     def set_type_of_response(self, resp_t):
         r"""
 
-        `set_type_of_response(index_t resp_t)`  
+        `set_type_of_response(index_t resp_t)`
 
         """
         return _regression.default_data_container_set_type_of_response(self, resp_t)
@@ -1179,33 +1281,39 @@ class default_data_container(data_base):
     def set_bounds_of_feature(self, feature_index, min, max):
         r"""
 
-        `set_bounds_of_feature(index_t feature_index, num_t min, num_t max)`  
+        `set_bounds_of_feature(index_t feature_index, num_t min, num_t max)`
 
         """
-        return _regression.default_data_container_set_bounds_of_feature(self, feature_index, min, max)
+        return _regression.default_data_container_set_bounds_of_feature(
+            self, feature_index, min, max
+        )
 
     def get_bounds_of_feature(self, feature_index):
         r"""
 
         `get_bounds_of_feature(index_t feature_index) const -> std::pair< num_t, num_t
-            >`  
+            >`
 
         """
-        return _regression.default_data_container_get_bounds_of_feature(self, feature_index)
+        return _regression.default_data_container_get_bounds_of_feature(
+            self, feature_index
+        )
 
     def get_min_max_of_feature(self, feature_index):
         r"""
 
         `get_min_max_of_feature(index_t feature_index) const -> std::pair< num_t, num_t
-            >`  
+            >`
 
         """
-        return _regression.default_data_container_get_min_max_of_feature(self, feature_index)
+        return _regression.default_data_container_get_min_max_of_feature(
+            self, feature_index
+        )
 
     def guess_bounds_from_data(self):
         r"""
 
-        `guess_bounds_from_data()`  
+        `guess_bounds_from_data()`
 
         """
         return _regression.default_data_container_guess_bounds_from_data(self)
@@ -1213,7 +1321,7 @@ class default_data_container(data_base):
     def normalize_data(self):
         r"""
 
-        `normalize_data()`  
+        `normalize_data()`
 
         """
         return _regression.default_data_container_normalize_data(self)
@@ -1222,7 +1330,7 @@ class default_data_container(data_base):
         r"""
 
         `import_csv_files(const std::string &feature_file, const std::string
-            &response_file, std::string weight_file="") -> int`  
+            &response_file, std::string weight_file="") -> int`
 
         """
         return _regression.default_data_container_import_csv_files(self, *args)
@@ -1230,7 +1338,7 @@ class default_data_container(data_base):
     def check_consistency(self):
         r"""
 
-        `check_consistency() -> bool`  
+        `check_consistency() -> bool`
 
         """
         return _regression.default_data_container_check_consistency(self)
@@ -1238,102 +1346,124 @@ class default_data_container(data_base):
     def print_data(self):
         r"""
 
-        `print_data()`  
+        `print_data()`
 
         """
         return _regression.default_data_container_print_data(self)
+
     __swig_destroy__ = _regression.delete_default_data_container
+
 
 # Register default_data_container in _regression:
 _regression.default_data_container_swigregister(default_data_container)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class default_data_container_with_instances(data_base):
     r"""
 
 
-    A data container for mostly continuous data with instances.  
+    A data container for mostly continuous data with instances.
 
     Similar to the mostly_continuous_data container, but with the capability to
-    handle instance features.  
+    handle instance features.
 
     C++ includes: default_data_container_with_instances.hpp
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def __init__(self, *args):
         r"""
 
-        `default_container_with_instances(index_t num_config_f, index_t num_instance_f)`  
+        `default_container_with_instances(index_t num_config_f, index_t num_instance_f)`
 
         """
-        _regression.default_data_container_with_instances_swiginit(self, _regression.new_default_data_container_with_instances(*args))
+        _regression.default_data_container_with_instances_swiginit(
+            self, _regression.new_default_data_container_with_instances(*args)
+        )
 
     def feature(self, feature_index, sample_index):
         r"""
 
-        `feature(index_t feature_index, index_t sample_index) const -> num_t`  
+        `feature(index_t feature_index, index_t sample_index) const -> num_t`
 
         """
-        return _regression.default_data_container_with_instances_feature(self, feature_index, sample_index)
+        return _regression.default_data_container_with_instances_feature(
+            self, feature_index, sample_index
+        )
 
     def features(self, feature_index, sample_indices):
         r"""
 
         `features(index_t feature_index, const std::vector< index_t > &sample_indices)
-            const -> std::vector< num_t >`  
+            const -> std::vector< num_t >`
 
         """
-        return _regression.default_data_container_with_instances_features(self, feature_index, sample_indices)
+        return _regression.default_data_container_with_instances_features(
+            self, feature_index, sample_indices
+        )
 
     def response(self, sample_index):
         r"""
 
-        `response(index_t sample_index) const -> response_t`  
+        `response(index_t sample_index) const -> response_t`
 
         """
-        return _regression.default_data_container_with_instances_response(self, sample_index)
+        return _regression.default_data_container_with_instances_response(
+            self, sample_index
+        )
 
     def predict_value(self, sample_index):
         r"""
 
-        `predict_value(index_t sample_index) const -> response_t`  
+        `predict_value(index_t sample_index) const -> response_t`
 
         """
-        return _regression.default_data_container_with_instances_predict_value(self, sample_index)
+        return _regression.default_data_container_with_instances_predict_value(
+            self, sample_index
+        )
 
     def add_data_point(self, *args):
         r"""
 
         `add_data_point(index_t config_index, index_t instance_index, response_t r,
-            num_t weight=1)`  
+            num_t weight=1)`
 
         """
-        return _regression.default_data_container_with_instances_add_data_point(self, *args)
+        return _regression.default_data_container_with_instances_add_data_point(
+            self, *args
+        )
 
     def weight(self, sample_index):
         r"""
 
-        `weight(index_t sample_index) const -> num_t`  
+        `weight(index_t sample_index) const -> num_t`
 
         """
-        return _regression.default_data_container_with_instances_weight(self, sample_index)
+        return _regression.default_data_container_with_instances_weight(
+            self, sample_index
+        )
 
     def num_configurations(self):
         r"""
 
-        `num_configurations() -> index_t`  
+        `num_configurations() -> index_t`
 
         """
-        return _regression.default_data_container_with_instances_num_configurations(self)
+        return _regression.default_data_container_with_instances_num_configurations(
+            self
+        )
 
     def num_instances(self):
         r"""
 
-        `num_instances() -> index_t`  
+        `num_instances() -> index_t`
 
         """
         return _regression.default_data_container_with_instances_num_instances(self)
@@ -1341,65 +1471,79 @@ class default_data_container_with_instances(data_base):
     def add_configuration(self, config_features):
         r"""
 
-        `add_configuration(const std::vector< num_t > &config_features) -> index_t`  
+        `add_configuration(const std::vector< num_t > &config_features) -> index_t`
 
         """
-        return _regression.default_data_container_with_instances_add_configuration(self, config_features)
+        return _regression.default_data_container_with_instances_add_configuration(
+            self, config_features
+        )
 
     def add_instance(self, instance_features):
         r"""
 
-        `add_instance(const std::vector< num_t > instance_features) -> index_t`  
+        `add_instance(const std::vector< num_t > instance_features) -> index_t`
 
         """
-        return _regression.default_data_container_with_instances_add_instance(self, instance_features)
+        return _regression.default_data_container_with_instances_add_instance(
+            self, instance_features
+        )
 
     def retrieve_data_point(self, index):
         r"""
 
-        `retrieve_data_point(index_t index) const -> std::vector< num_t >`  
+        `retrieve_data_point(index_t index) const -> std::vector< num_t >`
 
         """
-        return _regression.default_data_container_with_instances_retrieve_data_point(self, index)
+        return _regression.default_data_container_with_instances_retrieve_data_point(
+            self, index
+        )
 
     def get_type_of_feature(self, feature_index):
         r"""
 
-        `get_type_of_feature(index_t feature_index) const -> index_t`  
+        `get_type_of_feature(index_t feature_index) const -> index_t`
 
         """
-        return _regression.default_data_container_with_instances_get_type_of_feature(self, feature_index)
+        return _regression.default_data_container_with_instances_get_type_of_feature(
+            self, feature_index
+        )
 
     def set_type_of_configuration_feature(self, index, type):
         r"""
 
-        `set_type_of_configuration_feature(index_t index, index_t type)`  
+        `set_type_of_configuration_feature(index_t index, index_t type)`
 
         """
-        return _regression.default_data_container_with_instances_set_type_of_configuration_feature(self, index, type)
+        return _regression.default_data_container_with_instances_set_type_of_configuration_feature(
+            self, index, type
+        )
 
     def set_type_of_instance_feature(self, index, type):
         r"""
 
-        `set_type_of_instance_feature(index_t index, index_t type)`  
+        `set_type_of_instance_feature(index_t index, index_t type)`
 
         """
-        return _regression.default_data_container_with_instances_set_type_of_instance_feature(self, index, type)
+        return _regression.default_data_container_with_instances_set_type_of_instance_feature(
+            self, index, type
+        )
 
     def set_type_of_feature(self, index, type):
         r"""
 
-        `set_type_of_feature(index_t index, index_t type)`  
+        `set_type_of_feature(index_t index, index_t type)`
 
         """
-        return _regression.default_data_container_with_instances_set_type_of_feature(self, index, type)
+        return _regression.default_data_container_with_instances_set_type_of_feature(
+            self, index, type
+        )
 
     def num_features(self):
         r"""
 
-        `num_features() const -> index_t`  
+        `num_features() const -> index_t`
 
-        the number of features of every datapoint in the container  
+        the number of features of every datapoint in the container
 
         """
         return _regression.default_data_container_with_instances_num_features(self)
@@ -1407,9 +1551,9 @@ class default_data_container_with_instances(data_base):
     def num_data_points(self):
         r"""
 
-        `num_data_points() const -> index_t`  
+        `num_data_points() const -> index_t`
 
-        the number of data points in the container  
+        the number of data points in the container
 
         """
         return _regression.default_data_container_with_instances_num_data_points(self)
@@ -1417,7 +1561,7 @@ class default_data_container_with_instances(data_base):
     def check_consistency(self):
         r"""
 
-        `check_consistency()`  
+        `check_consistency()`
 
         """
         return _regression.default_data_container_with_instances_check_consistency(self)
@@ -1425,50 +1569,58 @@ class default_data_container_with_instances(data_base):
     def get_type_of_response(self):
         r"""
 
-        `get_type_of_response() const -> index_t`  
+        `get_type_of_response() const -> index_t`
 
-        query the type of the response  
+        query the type of the response
 
         Returns
         -------
         index_t type of the response: 0 - numerical value (float or int); n>0 -
-        categorical value with n different values {0,1,...,n-1}  
+        categorical value with n different values {0,1,...,n-1}
 
         """
-        return _regression.default_data_container_with_instances_get_type_of_response(self)
+        return _regression.default_data_container_with_instances_get_type_of_response(
+            self
+        )
 
     def set_type_of_response(self, resp_t):
         r"""
 
-        `set_type_of_response(index_t resp_t)`  
+        `set_type_of_response(index_t resp_t)`
 
         """
-        return _regression.default_data_container_with_instances_set_type_of_response(self, resp_t)
+        return _regression.default_data_container_with_instances_set_type_of_response(
+            self, resp_t
+        )
 
     def set_bounds_of_feature(self, feature_index, min, max):
         r"""
 
-        `set_bounds_of_feature(index_t feature_index, num_t min, num_t max)`  
+        `set_bounds_of_feature(index_t feature_index, num_t min, num_t max)`
 
         """
-        return _regression.default_data_container_with_instances_set_bounds_of_feature(self, feature_index, min, max)
+        return _regression.default_data_container_with_instances_set_bounds_of_feature(
+            self, feature_index, min, max
+        )
 
     def get_bounds_of_feature(self, feature_index):
         r"""
 
         `get_bounds_of_feature(index_t feature_index) const -> std::pair< num_t, num_t
-            >`  
+            >`
 
         """
-        return _regression.default_data_container_with_instances_get_bounds_of_feature(self, feature_index)
+        return _regression.default_data_container_with_instances_get_bounds_of_feature(
+            self, feature_index
+        )
 
     def get_instance_set(self):
         r"""
 
-        `get_instance_set() -> std::vector< num_t >`  
+        `get_instance_set() -> std::vector< num_t >`
 
         method to get instance as set_feature for
-        predict_mean_var_of_mean_response_on_set method in regression forest  
+        predict_mean_var_of_mean_response_on_set method in regression forest
 
         """
         return _regression.default_data_container_with_instances_get_instance_set(self)
@@ -1476,39 +1628,53 @@ class default_data_container_with_instances(data_base):
     def get_configuration_set(self, configuration_index):
         r"""
 
-        `get_configuration_set(num_t configuration_index) -> std::vector< num_t >`  
+        `get_configuration_set(num_t configuration_index) -> std::vector< num_t >`
 
         """
-        return _regression.default_data_container_with_instances_get_configuration_set(self, configuration_index)
+        return _regression.default_data_container_with_instances_get_configuration_set(
+            self, configuration_index
+        )
 
-    def get_features_by_configuration_and_instance(self, configuration_index, instance_index):
+    def get_features_by_configuration_and_instance(
+        self, configuration_index, instance_index
+    ):
         r"""
 
         `get_features_by_configuration_and_instance(num_t configuration_index, num_t
-            instance_index) -> std::vector< num_t >`  
+            instance_index) -> std::vector< num_t >`
 
         """
-        return _regression.default_data_container_with_instances_get_features_by_configuration_and_instance(self, configuration_index, instance_index)
+        return _regression.default_data_container_with_instances_get_features_by_configuration_and_instance(
+            self, configuration_index, instance_index
+        )
+
     __swig_destroy__ = _regression.delete_default_data_container_with_instances
 
+
 # Register default_data_container_with_instances in _regression:
-_regression.default_data_container_with_instances_swigregister(default_data_container_with_instances)
+_regression.default_data_container_with_instances_swigregister(
+    default_data_container_with_instances
+)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class bindary_node(object):
     r"""
 
 
-    The node class for regular k-ary trees.  
+    The node class for regular k-ary trees.
 
     In a regular k-ary tree, every node has either zero (a leaf) or exactly
     k-children (an internal node). In this case, one can try to gain some speed by
-    replacing variable length std::vectors by std::arrays.  
+    replacing variable length std::vectors by std::arrays.
 
     C++ includes: k_ary_node.hpp
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
     __swig_destroy__ = _regression.delete_bindary_node
@@ -1516,12 +1682,12 @@ class bindary_node(object):
     def push_response_value(self, r, w):
         r"""
 
-        `push_response_value(response_t r, num_t w)`  
+        `push_response_value(response_t r, num_t w)`
 
-        adds an observation to the leaf node  
+        adds an observation to the leaf node
 
         This function can be used for pseudo updates of a tree by simply adding
-        observations into the corresponding leaf  
+        observations into the corresponding leaf
 
         """
         return _regression.bindary_node_push_response_value(self, r, w)
@@ -1529,19 +1695,19 @@ class bindary_node(object):
     def pop_response_value(self, r, w):
         r"""
 
-        `pop_response_value(response_t r, num_t w)`  
+        `pop_response_value(response_t r, num_t w)`
 
-        removes the last added observation from the leaf node  
+        removes the last added observation from the leaf node
 
         This function can be used for pseudo updates of a tree by simply adding
-        observations into the corresponding leaf  
+        observations into the corresponding leaf
 
         Parameters
         ----------
-        * `r` :  
-            ignored  
-        * `w` :  
-            ignored  
+        * `r` :
+            ignored
+        * `w` :
+            ignored
 
         """
         return _regression.bindary_node_pop_response_value(self, r, w)
@@ -1549,9 +1715,9 @@ class bindary_node(object):
     def responses(self):
         r"""
 
-        `responses() const -> std::vector< response_t > const  &`  
+        `responses() const -> std::vector< response_t > const  &`
 
-        get reference to the response values  
+        get reference to the response values
 
         """
         return _regression.bindary_node_responses(self)
@@ -1559,9 +1725,9 @@ class bindary_node(object):
     def weights(self):
         r"""
 
-        `weights() const -> std::vector< num_t > const  &`  
+        `weights() const -> std::vector< num_t > const  &`
 
-        get reference to the response values  
+        get reference to the response values
 
         """
         return _regression.bindary_node_weights(self)
@@ -1569,9 +1735,9 @@ class bindary_node(object):
     def print_info(self):
         r"""
 
-        `print_info() const`  
+        `print_info() const`
 
-        prints out some basic information about the node  
+        prints out some basic information about the node
 
         """
         return _regression.bindary_node_print_info(self)
@@ -1579,18 +1745,18 @@ class bindary_node(object):
     def falls_into_child(self, feature_vector):
         r"""
 
-        `falls_into_child(const std::vector< num_t > &feature_vector) const -> index_t`  
+        `falls_into_child(const std::vector< num_t > &feature_vector) const -> index_t`
 
-        returns the index of the child into which the provided sample falls  
+        returns the index of the child into which the provided sample falls
 
         Parameters
         ----------
-        * `feature_vector` :  
-            a feature vector of the appropriate size (not checked!)  
+        * `feature_vector` :
+            a feature vector of the appropriate size (not checked!)
 
         Returns
         -------
-        index_t index of the child  
+        index_t index of the child
 
         """
         return _regression.bindary_node_falls_into_child(self, feature_vector)
@@ -1598,9 +1764,9 @@ class bindary_node(object):
     def is_a_leaf(self):
         r"""
 
-        `is_a_leaf() const -> bool`  
+        `is_a_leaf() const -> bool`
 
-        to test whether this node is a leaf  
+        to test whether this node is a leaf
 
         """
         return _regression.bindary_node_is_a_leaf(self)
@@ -1608,9 +1774,9 @@ class bindary_node(object):
     def parent(self):
         r"""
 
-        `parent() const -> index_t`  
+        `parent() const -> index_t`
 
-        get the index of the node's parent  
+        get the index of the node's parent
 
         """
         return _regression.bindary_node_parent(self)
@@ -1618,9 +1784,9 @@ class bindary_node(object):
     def get_children(self):
         r"""
 
-        `get_children() const -> std::array< index_t, k >`  
+        `get_children() const -> std::array< index_t, k >`
 
-        get indices of all children  
+        get indices of all children
 
         """
         return _regression.bindary_node_get_children(self)
@@ -1628,7 +1794,7 @@ class bindary_node(object):
     def get_child_index(self, idx):
         r"""
 
-        `get_child_index(index_t idx) const -> index_t`  
+        `get_child_index(index_t idx) const -> index_t`
 
         """
         return _regression.bindary_node_get_child_index(self, idx)
@@ -1636,7 +1802,7 @@ class bindary_node(object):
     def get_depth(self):
         r"""
 
-        `get_depth() const -> index_t`  
+        `get_depth() const -> index_t`
 
         """
         return _regression.bindary_node_get_depth(self)
@@ -1644,10 +1810,10 @@ class bindary_node(object):
     def get_feature_index(self):
         r"""
 
-        `get_feature_index() const -> index_t`  
+        `get_feature_index() const -> index_t`
 
         get feature index of the current node, e.g. which feaure will be split at this
-        node  
+        node
 
         """
         return _regression.bindary_node_get_feature_index(self)
@@ -1655,10 +1821,10 @@ class bindary_node(object):
     def get_num_split_value(self):
         r"""
 
-        `get_num_split_value() const -> num_t`  
+        `get_num_split_value() const -> num_t`
 
         get the numerical split value of this node, if feature is smaller than this
-        value, the feature should fall into the left node and vice versa  
+        value, the feature should fall into the left node and vice versa
 
         """
         return _regression.bindary_node_get_num_split_value(self)
@@ -1666,10 +1832,10 @@ class bindary_node(object):
     def get_cat_split(self):
         r"""
 
-        `get_cat_split() const -> std::vector< num_t >`  
+        `get_cat_split() const -> std::vector< num_t >`
 
         get the catigorical split value of this node, if feature is insides the set, the
-        feature should fall into the left node and vice versa  
+        feature should fall into the left node and vice versa
 
         """
         return _regression.bindary_node_get_cat_split(self)
@@ -1677,9 +1843,9 @@ class bindary_node(object):
     def get_num_data(self):
         r"""
 
-        `get_num_data() const -> index_t`  
+        `get_num_data() const -> index_t`
 
-        get the number of data points stored in the tree derived from this node  
+        get the number of data points stored in the tree derived from this node
 
         """
         return _regression.bindary_node_get_num_data(self)
@@ -1687,8 +1853,11 @@ class bindary_node(object):
     def __init__(self):
         _regression.bindary_node_swiginit(self, _regression.new_bindary_node())
 
+
 # Register bindary_node in _regression:
 _regression.bindary_node_swigregister(bindary_node)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class tree_opts(object):
     r"""
@@ -1696,68 +1865,99 @@ class tree_opts(object):
 
     Attributes
     ----------
-    * `max_features` : `index_t`  
-        number of features to consider for each split  
+    * `max_features` : `index_t`
+        number of features to consider for each split
 
-    * `max_depth` : `index_t`  
-        maximum depth for the tree  
+    * `max_depth` : `index_t`
+        maximum depth for the tree
 
-    * `min_samples_to_split` : `index_t`  
-        minumum number of samples to try splitting  
+    * `min_samples_to_split` : `index_t`
+        minumum number of samples to try splitting
 
-    * `min_weight_to_split` : `num_t`  
-        minumum weight of samples to try splitting  
+    * `min_weight_to_split` : `num_t`
+        minumum weight of samples to try splitting
 
-    * `min_samples_in_leaf` : `index_t`  
-        minimum total sample weights in a leaf  
+    * `min_samples_in_leaf` : `index_t`
+        minimum total sample weights in a leaf
 
-    * `min_weight_in_leaf` : `num_t`  
-        minimum total sample weights in a leaf  
+    * `min_weight_in_leaf` : `num_t`
+        minimum total sample weights in a leaf
 
-    * `max_num_nodes` : `index_t`  
-        maxmimum total number of nodes in the tree  
+    * `max_num_nodes` : `index_t`
+        maxmimum total number of nodes in the tree
 
-    * `max_num_leaves` : `index_t`  
-        maxmimum total number of leaves in the tree  
+    * `max_num_leaves` : `index_t`
+        maxmimum total number of leaves in the tree
 
-    * `epsilon_purity` : `response_t`  
-        minimum difference between two response values to be considered different*/  
+    * `epsilon_purity` : `response_t`
+        minimum difference between two response values to be considered different*/
 
-    * `life_time` : `num_t`  
-        life time of a mondrian tree  
+    * `life_time` : `num_t`
+        life time of a mondrian tree
 
-    * `hierarchical_smoothing` : `bool`  
-        flag to enable/disable hierachical smoothing for mondrian forests  
+    * `hierarchical_smoothing` : `bool`
+        flag to enable/disable hierachical smoothing for mondrian forests
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
-    max_features = property(_regression.tree_opts_max_features_get, _regression.tree_opts_max_features_set)
-    max_depth = property(_regression.tree_opts_max_depth_get, _regression.tree_opts_max_depth_set)
-    min_samples_to_split = property(_regression.tree_opts_min_samples_to_split_get, _regression.tree_opts_min_samples_to_split_set)
-    min_weight_to_split = property(_regression.tree_opts_min_weight_to_split_get, _regression.tree_opts_min_weight_to_split_set)
-    min_samples_in_leaf = property(_regression.tree_opts_min_samples_in_leaf_get, _regression.tree_opts_min_samples_in_leaf_set)
-    min_weight_in_leaf = property(_regression.tree_opts_min_weight_in_leaf_get, _regression.tree_opts_min_weight_in_leaf_set)
-    max_num_nodes = property(_regression.tree_opts_max_num_nodes_get, _regression.tree_opts_max_num_nodes_set)
-    max_num_leaves = property(_regression.tree_opts_max_num_leaves_get, _regression.tree_opts_max_num_leaves_set)
-    epsilon_purity = property(_regression.tree_opts_epsilon_purity_get, _regression.tree_opts_epsilon_purity_set)
-    life_time = property(_regression.tree_opts_life_time_get, _regression.tree_opts_life_time_set)
-    hierarchical_smoothing = property(_regression.tree_opts_hierarchical_smoothing_get, _regression.tree_opts_hierarchical_smoothing_set)
+    max_features = property(
+        _regression.tree_opts_max_features_get, _regression.tree_opts_max_features_set
+    )
+    max_depth = property(
+        _regression.tree_opts_max_depth_get, _regression.tree_opts_max_depth_set
+    )
+    min_samples_to_split = property(
+        _regression.tree_opts_min_samples_to_split_get,
+        _regression.tree_opts_min_samples_to_split_set,
+    )
+    min_weight_to_split = property(
+        _regression.tree_opts_min_weight_to_split_get,
+        _regression.tree_opts_min_weight_to_split_set,
+    )
+    min_samples_in_leaf = property(
+        _regression.tree_opts_min_samples_in_leaf_get,
+        _regression.tree_opts_min_samples_in_leaf_set,
+    )
+    min_weight_in_leaf = property(
+        _regression.tree_opts_min_weight_in_leaf_get,
+        _regression.tree_opts_min_weight_in_leaf_set,
+    )
+    max_num_nodes = property(
+        _regression.tree_opts_max_num_nodes_get, _regression.tree_opts_max_num_nodes_set
+    )
+    max_num_leaves = property(
+        _regression.tree_opts_max_num_leaves_get,
+        _regression.tree_opts_max_num_leaves_set,
+    )
+    epsilon_purity = property(
+        _regression.tree_opts_epsilon_purity_get,
+        _regression.tree_opts_epsilon_purity_set,
+    )
+    life_time = property(
+        _regression.tree_opts_life_time_get, _regression.tree_opts_life_time_set
+    )
+    hierarchical_smoothing = property(
+        _regression.tree_opts_hierarchical_smoothing_get,
+        _regression.tree_opts_hierarchical_smoothing_set,
+    )
 
     def set_default_values(self):
         r"""
 
-        `set_default_values()`  
+        `set_default_values()`
 
-        (Re)set to default values with no limits on the size of the tree  
+        (Re)set to default values with no limits on the size of the tree
 
         If nothing is know about the data, this member can be used to get a valid
         setting for the tree_options struct. But beware this setting could lead to a
         huge tree depending on the amount of data. There is no limit to the size, and
         nodes are split into pure leafs. For each split, every feature is considered!
-        This not only slows the training down, but also makes this tree deterministic!  
+        This not only slows the training down, but also makes this tree deterministic!
 
         """
         return _regression.tree_opts_set_default_values(self)
@@ -1765,10 +1965,10 @@ class tree_opts(object):
     def __init__(self, *args):
         r"""
 
-        `tree_options(rfr::data_containers::base< num_t, response_t, index_t > &data)`  
+        `tree_options(rfr::data_containers::base< num_t, response_t, index_t > &data)`
 
         Constructor that adjusts the number of features considered at each split
-        proportional to the square root of the number of features.  
+        proportional to the square root of the number of features.
 
         """
         _regression.tree_opts_swiginit(self, _regression.new_tree_opts(*args))
@@ -1777,7 +1977,7 @@ class tree_opts(object):
         r"""
 
         `adjust_limits_to_data(const rfr::data_containers::base< num_t, response_t,
-            index_t > &data)`  
+            index_t > &data)`
 
         """
         return _regression.tree_opts_adjust_limits_to_data(self, data)
@@ -1785,26 +1985,30 @@ class tree_opts(object):
     def print_info(self):
         r"""
 
-        `print_info()`  
+        `print_info()`
 
         """
         return _regression.tree_opts_print_info(self)
+
     __swig_destroy__ = _regression.delete_tree_opts
+
 
 # Register tree_opts in _regression:
 _regression.tree_opts_swigregister(tree_opts)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class base_tree(object):
-    r"""
+    r""" """
 
-
-    """
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
 
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
+
     __repr__ = _swig_repr
     __swig_destroy__ = _regression.delete_base_tree
 
@@ -1813,26 +2017,26 @@ class base_tree(object):
 
         `fit(const rfr::data_containers::base< num_t, response_t, index_t > &data,
             rfr::trees::tree_options< num_t, response_t, index_t > tree_opts, const
-            std::vector< num_t > &sample_weights, rng_type &rng)=0`  
+            std::vector< num_t > &sample_weights, rng_type &rng)=0`
 
-        fits a (possibly randomized) decision tree to a subset of the data  
+        fits a (possibly randomized) decision tree to a subset of the data
 
         At each node, if it is 'splitworthy', a random subset of all features is
         considered for the split. Depending on the split_type provided, greedy or
         randomized choices can be made. Just make sure the max_features in tree_opts to
-        a number smaller than the number of features!  
+        a number smaller than the number of features!
 
         Parameters
         ----------
-        * `data` :  
-            the container holding the training data  
-        * `tree_opts` :  
-            a tree_options opject that controls certain aspects of "growing" the tree  
-        * `sample_weights` :  
+        * `data` :
+            the container holding the training data
+        * `tree_opts` :
+            a tree_options opject that controls certain aspects of "growing" the tree
+        * `sample_weights` :
             vector containing the weights of all datapoints, can be used for subsampling
-            (no checks are done here!)  
-        * `rng` :  
-            a (pseudo) random number generator  
+            (no checks are done here!)
+        * `rng` :
+            a (pseudo) random number generator
 
         """
         return _regression.base_tree_fit(self, *args)
@@ -1840,19 +2044,19 @@ class base_tree(object):
     def predict(self, feature_vector):
         r"""
 
-        `predict(const std::vector< num_t > &feature_vector) const =0 -> response_t`  
+        `predict(const std::vector< num_t > &feature_vector) const =0 -> response_t`
 
-        predicts the response value for a single feature vector  
+        predicts the response value for a single feature vector
 
         Parameters
         ----------
-        * `feature_vector` :  
-            an array containing a valid (in terms of size and values!) feature vector  
+        * `feature_vector` :
+            an array containing a valid (in terms of size and values!) feature vector
 
         Returns
         -------
         num_t the prediction of the response value (usually the mean of all responses in
-        the corresponding leaf)  
+        the corresponding leaf)
 
         """
         return _regression.base_tree_predict(self, feature_vector)
@@ -1861,19 +2065,19 @@ class base_tree(object):
         r"""
 
         `leaf_entries(const std::vector< num_t > &feature_vector) const =0 ->
-            std::vector< response_t > const  &`  
+            std::vector< response_t > const  &`
 
         returns all response values in the leaf into which the given feature vector
-        falls  
+        falls
 
         Parameters
         ----------
-        * `feature_vector` :  
-            an array containing a valid (in terms of size and values!) feature vector  
+        * `feature_vector` :
+            an array containing a valid (in terms of size and values!) feature vector
 
         Returns
         -------
-        std::vector<response_t> all response values in that leaf  
+        std::vector<response_t> all response values in that leaf
 
         """
         return _regression.base_tree_leaf_entries(self, feature_vector)
@@ -1881,7 +2085,7 @@ class base_tree(object):
     def number_of_nodes(self):
         r"""
 
-        `number_of_nodes() const =0 -> index_t`  
+        `number_of_nodes() const =0 -> index_t`
 
         """
         return _regression.base_tree_number_of_nodes(self)
@@ -1889,7 +2093,7 @@ class base_tree(object):
     def number_of_leafs(self):
         r"""
 
-        `number_of_leafs() const =0 -> index_t`  
+        `number_of_leafs() const =0 -> index_t`
 
         """
         return _regression.base_tree_number_of_leafs(self)
@@ -1897,7 +2101,7 @@ class base_tree(object):
     def depth(self):
         r"""
 
-        `depth() const =0 -> index_t`  
+        `depth() const =0 -> index_t`
 
         """
         return _regression.base_tree_depth(self)
@@ -1905,33 +2109,38 @@ class base_tree(object):
     def save_latex_representation(self, filename):
         r"""
 
-        `save_latex_representation(const char *filename) const =0`  
+        `save_latex_representation(const char *filename) const =0`
 
-        creates a LaTeX document visualizing the tree  
+        creates a LaTeX document visualizing the tree
 
         """
         return _regression.base_tree_save_latex_representation(self, filename)
 
+
 # Register base_tree in _regression:
 _regression.base_tree_swigregister(base_tree)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class binary_full_tree_rss(base_tree):
-    r"""
+    r""" """
 
-
-    """
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def __init__(self):
         r"""
 
-        `k_ary_random_tree()`  
+        `k_ary_random_tree()`
 
         """
-        _regression.binary_full_tree_rss_swiginit(self, _regression.new_binary_full_tree_rss())
+        _regression.binary_full_tree_rss_swiginit(
+            self, _regression.new_binary_full_tree_rss()
+        )
+
     __swig_destroy__ = _regression.delete_binary_full_tree_rss
 
     def fit(self, data, tree_opts, sample_weights, rng):
@@ -1939,34 +2148,36 @@ class binary_full_tree_rss(base_tree):
 
         `fit(const rfr::data_containers::base< num_t, response_t, index_t > &data,
             rfr::trees::tree_options< num_t, response_t, index_t > tree_opts, const
-            std::vector< num_t > &sample_weights, rng_type &rng)`  
+            std::vector< num_t > &sample_weights, rng_type &rng)`
 
-        fits a randomized decision tree to a subset of the data  
+        fits a randomized decision tree to a subset of the data
 
         At each node, if it is 'splitworthy', a random subset of all features is
         considered for the split. Depending on the split_type provided, greedy or
         randomized choices can be made. Just make sure the max_features in tree_opts to
-        a number smaller than the number of features!  
+        a number smaller than the number of features!
 
         Parameters
         ----------
-        * `data` :  
-            the container holding the training data  
-        * `tree_opts` :  
-            a tree_options object that controls certain aspects of "growing" the tree  
-        * `sample_weights` :  
+        * `data` :
+            the container holding the training data
+        * `tree_opts` :
+            a tree_options object that controls certain aspects of "growing" the tree
+        * `sample_weights` :
             vector containing the weights of all allowed datapoints (set to individual
-            entries to zero for subsampling), no checks are done here!  
-        * `rng` :  
-            the random number generator to be used  
+            entries to zero for subsampling), no checks are done here!
+        * `rng` :
+            the random number generator to be used
 
         """
-        return _regression.binary_full_tree_rss_fit(self, data, tree_opts, sample_weights, rng)
+        return _regression.binary_full_tree_rss_fit(
+            self, data, tree_opts, sample_weights, rng
+        )
 
     def find_leaf_index(self, feature_vector):
         r"""
 
-        `find_leaf_index(const std::vector< num_t > &feature_vector) const -> index_t`  
+        `find_leaf_index(const std::vector< num_t > &feature_vector) const -> index_t`
 
         """
         return _regression.binary_full_tree_rss_find_leaf_index(self, feature_vector)
@@ -1975,7 +2186,7 @@ class binary_full_tree_rss(base_tree):
         r"""
 
         `get_leaf(const std::vector< num_t > &feature_vector) const -> const node_type
-            &`  
+            &`
 
         """
         return _regression.binary_full_tree_rss_get_leaf(self, feature_vector)
@@ -1984,7 +2195,7 @@ class binary_full_tree_rss(base_tree):
         r"""
 
         `leaf_entries(const std::vector< num_t > &feature_vector) const -> std::vector<
-            response_t > const  &`  
+            response_t > const  &`
 
         """
         return _regression.binary_full_tree_rss_leaf_entries(self, feature_vector)
@@ -1993,7 +2204,7 @@ class binary_full_tree_rss(base_tree):
         r"""
 
         `leaf_statistic(const std::vector< num_t > &feature_vector) const ->
-            rfr::util::weighted_running_statistics< num_t > const  &`  
+            rfr::util::weighted_running_statistics< num_t > const  &`
 
         """
         return _regression.binary_full_tree_rss_leaf_statistic(self, feature_vector)
@@ -2001,7 +2212,7 @@ class binary_full_tree_rss(base_tree):
     def predict(self, feature_vector):
         r"""
 
-        `predict(const std::vector< num_t > &feature_vector) const -> response_t`  
+        `predict(const std::vector< num_t > &feature_vector) const -> response_t`
 
         """
         return _regression.binary_full_tree_rss_predict(self, feature_vector)
@@ -2010,15 +2221,17 @@ class binary_full_tree_rss(base_tree):
         r"""
 
         `marginalized_mean_prediction(const std::vector< num_t > &feature_vector,
-            index_t node_index=0) const -> num_t`  
+            index_t node_index=0) const -> num_t`
 
         """
-        return _regression.binary_full_tree_rss_marginalized_mean_prediction(self, feature_vector, node_index)
+        return _regression.binary_full_tree_rss_marginalized_mean_prediction(
+            self, feature_vector, node_index
+        )
 
     def number_of_nodes(self):
         r"""
 
-        `number_of_nodes() const -> index_t`  
+        `number_of_nodes() const -> index_t`
 
         """
         return _regression.binary_full_tree_rss_number_of_nodes(self)
@@ -2026,7 +2239,7 @@ class binary_full_tree_rss(base_tree):
     def number_of_leafs(self):
         r"""
 
-        `number_of_leafs() const -> index_t`  
+        `number_of_leafs() const -> index_t`
 
         """
         return _regression.binary_full_tree_rss_number_of_leafs(self)
@@ -2034,7 +2247,7 @@ class binary_full_tree_rss(base_tree):
     def depth(self):
         r"""
 
-        `depth() const -> index_t`  
+        `depth() const -> index_t`
 
         """
         return _regression.binary_full_tree_rss_depth(self)
@@ -2042,7 +2255,7 @@ class binary_full_tree_rss(base_tree):
     def get_node(self, node_index):
         r"""
 
-        `get_node(index_t node_index) const -> const node_type &`  
+        `get_node(index_t node_index) const -> const node_type &`
 
         """
         return _regression.binary_full_tree_rss_get_node(self, node_index)
@@ -2052,16 +2265,18 @@ class binary_full_tree_rss(base_tree):
 
         `partition_recursor(std::vector< std::vector< std::vector< num_t > > >
             &the_partition, std::vector< std::vector< num_t > > &subspace, num_t
-            node_index) const`  
+            node_index) const`
 
         """
-        return _regression.binary_full_tree_rss_partition_recursor(self, the_partition, subspace, node_index)
+        return _regression.binary_full_tree_rss_partition_recursor(
+            self, the_partition, subspace, node_index
+        )
 
     def partition(self, pcs):
         r"""
 
         `partition(std::vector< std::vector< num_t > > pcs) const -> std::vector<
-            std::vector< std::vector< num_t > > >`  
+            std::vector< std::vector< num_t > > >`
 
         """
         return _regression.binary_full_tree_rss_partition(self, pcs)
@@ -2069,15 +2284,17 @@ class binary_full_tree_rss(base_tree):
     def total_weight_in_subtree(self, node_index):
         r"""
 
-        `total_weight_in_subtree(index_t node_index) const -> num_t`  
+        `total_weight_in_subtree(index_t node_index) const -> num_t`
 
         """
-        return _regression.binary_full_tree_rss_total_weight_in_subtree(self, node_index)
+        return _regression.binary_full_tree_rss_total_weight_in_subtree(
+            self, node_index
+        )
 
     def check_split_fractions(self, epsilon=1e-6):
         r"""
 
-        `check_split_fractions(num_t epsilon=1e-6) const -> bool`  
+        `check_split_fractions(num_t epsilon=1e-6) const -> bool`
 
         """
         return _regression.binary_full_tree_rss_check_split_fractions(self, epsilon)
@@ -2086,24 +2303,28 @@ class binary_full_tree_rss(base_tree):
         r"""
 
         `pseudo_update(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.binary_full_tree_rss_pseudo_update(self, features, response, weight)
+        return _regression.binary_full_tree_rss_pseudo_update(
+            self, features, response, weight
+        )
 
     def pseudo_downdate(self, features, response, weight):
         r"""
 
         `pseudo_downdate(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.binary_full_tree_rss_pseudo_downdate(self, features, response, weight)
+        return _regression.binary_full_tree_rss_pseudo_downdate(
+            self, features, response, weight
+        )
 
     def print_info(self):
         r"""
 
-        `print_info() const`  
+        `print_info() const`
 
         """
         return _regression.binary_full_tree_rss_print_info(self)
@@ -2111,29 +2332,37 @@ class binary_full_tree_rss(base_tree):
     def save_latex_representation(self, filename):
         r"""
 
-        `save_latex_representation(const char *filename) const`  
+        `save_latex_representation(const char *filename) const`
 
-        a visualization by generating a LaTeX document that can be compiled  
+        a visualization by generating a LaTeX document that can be compiled
 
         Parameters
         ----------
-        * `filename` :  
+        * `filename` :
             Name of the file that will be used. Note that any existing file will be
-            silently overwritten!  
+            silently overwritten!
 
         """
-        return _regression.binary_full_tree_rss_save_latex_representation(self, filename)
+        return _regression.binary_full_tree_rss_save_latex_representation(
+            self, filename
+        )
+
 
 # Register binary_full_tree_rss in _regression:
 _regression.binary_full_tree_rss_swigregister(binary_full_tree_rss)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class binary_rss_vectors(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def iterator(self):
         return _regression.binary_rss_vectors_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
@@ -2204,7 +2433,9 @@ class binary_rss_vectors(object):
         return _regression.binary_rss_vectors_erase(self, *args)
 
     def __init__(self, *args):
-        _regression.binary_rss_vectors_swiginit(self, _regression.new_binary_rss_vectors(*args))
+        _regression.binary_rss_vectors_swiginit(
+            self, _regression.new_binary_rss_vectors(*args)
+        )
 
     def push_back(self, x):
         return _regression.binary_rss_vectors_push_back(self, x)
@@ -2229,10 +2460,14 @@ class binary_rss_vectors(object):
 
     def capacity(self):
         return _regression.binary_rss_vectors_capacity(self)
+
     __swig_destroy__ = _regression.delete_binary_rss_vectors
+
 
 # Register binary_rss_vectors in _regression:
 _regression.binary_rss_vectors_swigregister(binary_rss_vectors)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class forest_opts(object):
     r"""
@@ -2240,42 +2475,60 @@ class forest_opts(object):
 
     Attributes
     ----------
-    * `num_trees` : `index_t`  
-        number of trees in the forest  
+    * `num_trees` : `index_t`
+        number of trees in the forest
 
-    * `num_data_points_per_tree` : `index_t`  
-        number of datapoints used in each tree  
+    * `num_data_points_per_tree` : `index_t`
+        number of datapoints used in each tree
 
-    * `do_bootstrapping` : `bool`  
-        flag to toggle bootstrapping  
+    * `do_bootstrapping` : `bool`
+        flag to toggle bootstrapping
 
-    * `compute_oob_error` : `bool`  
-        flag to enable/disable computing the out-of-bag error  
+    * `compute_oob_error` : `bool`
+        flag to enable/disable computing the out-of-bag error
 
-    * `compute_law_of_total_variance` : `bool`  
-        flag to enable/disable computation with the lotv  
+    * `compute_law_of_total_variance` : `bool`
+        flag to enable/disable computation with the lotv
 
-    * `tree_opts` : `rfr::trees::tree_options< num_t, response_t, index_t >`  
-        the options for each tree  
+    * `tree_opts` : `rfr::trees::tree_options< num_t, response_t, index_t >`
+        the options for each tree
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
-    num_trees = property(_regression.forest_opts_num_trees_get, _regression.forest_opts_num_trees_set)
-    num_data_points_per_tree = property(_regression.forest_opts_num_data_points_per_tree_get, _regression.forest_opts_num_data_points_per_tree_set)
-    do_bootstrapping = property(_regression.forest_opts_do_bootstrapping_get, _regression.forest_opts_do_bootstrapping_set)
-    compute_oob_error = property(_regression.forest_opts_compute_oob_error_get, _regression.forest_opts_compute_oob_error_set)
-    compute_law_of_total_variance = property(_regression.forest_opts_compute_law_of_total_variance_get, _regression.forest_opts_compute_law_of_total_variance_set)
-    tree_opts = property(_regression.forest_opts_tree_opts_get, _regression.forest_opts_tree_opts_set)
+    num_trees = property(
+        _regression.forest_opts_num_trees_get, _regression.forest_opts_num_trees_set
+    )
+    num_data_points_per_tree = property(
+        _regression.forest_opts_num_data_points_per_tree_get,
+        _regression.forest_opts_num_data_points_per_tree_set,
+    )
+    do_bootstrapping = property(
+        _regression.forest_opts_do_bootstrapping_get,
+        _regression.forest_opts_do_bootstrapping_set,
+    )
+    compute_oob_error = property(
+        _regression.forest_opts_compute_oob_error_get,
+        _regression.forest_opts_compute_oob_error_set,
+    )
+    compute_law_of_total_variance = property(
+        _regression.forest_opts_compute_law_of_total_variance_get,
+        _regression.forest_opts_compute_law_of_total_variance_set,
+    )
+    tree_opts = property(
+        _regression.forest_opts_tree_opts_get, _regression.forest_opts_tree_opts_set
+    )
 
     def set_default_values(self):
         r"""
 
-        `set_default_values()`  
+        `set_default_values()`
 
-        (Re)set to default values for the forest.  
+        (Re)set to default values for the forest.
 
         """
         return _regression.forest_opts_set_default_values(self)
@@ -2284,9 +2537,9 @@ class forest_opts(object):
         r"""
 
         `adjust_limits_to_data(const rfr::data_containers::base< num_t, response_t,
-            index_t > &data)`  
+            index_t > &data)`
 
-        adjusts all relevant variables to the data  
+        adjusts all relevant variables to the data
 
         """
         return _regression.forest_opts_adjust_limits_to_data(self, data)
@@ -2295,9 +2548,9 @@ class forest_opts(object):
         r"""
 
         `forest_options(rfr::trees::tree_options< num_t, response_t, index_t > &to,
-            rfr::data_containers::base< num_t, response_t, index_t > &data)`  
+            rfr::data_containers::base< num_t, response_t, index_t > &data)`
 
-        Constructor that adjusts to the data.  
+        Constructor that adjusts to the data.
 
         """
         _regression.forest_opts_swiginit(self, _regression.new_forest_opts(*args))
@@ -2305,14 +2558,18 @@ class forest_opts(object):
     def to_string(self):
         r"""
 
-        `to_string() const -> std::string`  
+        `to_string() const -> std::string`
 
         """
         return _regression.forest_opts_to_string(self)
+
     __swig_destroy__ = _regression.delete_forest_opts
+
 
 # Register forest_opts in _regression:
 _regression.forest_opts_swigregister(forest_opts)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class binary_rss_forest(object):
     r"""
@@ -2320,38 +2577,46 @@ class binary_rss_forest(object):
 
     Attributes
     ----------
-    * `options` : `forest_options< num_t, response_t, index_t >`  
+    * `options` : `forest_options< num_t, response_t, index_t >`
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
-    options = property(_regression.binary_rss_forest_options_get, _regression.binary_rss_forest_options_set)
+    options = property(
+        _regression.binary_rss_forest_options_get,
+        _regression.binary_rss_forest_options_set,
+    )
 
     def __init__(self, *args):
         r"""
 
-        `regression_forest(forest_options< num_t, response_t, index_t > opts)`  
+        `regression_forest(forest_options< num_t, response_t, index_t > opts)`
 
         """
-        _regression.binary_rss_forest_swiginit(self, _regression.new_binary_rss_forest(*args))
+        _regression.binary_rss_forest_swiginit(
+            self, _regression.new_binary_rss_forest(*args)
+        )
+
     __swig_destroy__ = _regression.delete_binary_rss_forest
 
     def fit(self, data, rng):
         r"""
 
         `fit(const rfr::data_containers::base< num_t, response_t, index_t > &data,
-            rng_type &rng)`  
+            rng_type &rng)`
 
-        growing the random forest for a given data set  
+        growing the random forest for a given data set
 
         Parameters
         ----------
-        * `data` :  
-            a filled data container  
-        * `rng` :  
-            the random number generator to be used  
+        * `data` :
+            a filled data container
+        * `rng` :
+            the random number generator to be used
 
         """
         return _regression.binary_rss_forest_fit(self, data, rng)
@@ -2359,7 +2624,7 @@ class binary_rss_forest(object):
     def predict(self, feature_vector):
         r"""
 
-        `predict(const std::vector< num_t > &feature_vector) const -> response_t`  
+        `predict(const std::vector< num_t > &feature_vector) const -> response_t`
 
         """
         return _regression.binary_rss_forest_predict(self, feature_vector)
@@ -2368,16 +2633,18 @@ class binary_rss_forest(object):
         r"""
 
         `predict_mean_var(const std::vector< num_t > &feature_vector, bool
-            weighted_data=false) -> std::pair< num_t, num_t >`  
+            weighted_data=false) -> std::pair< num_t, num_t >`
 
         """
-        return _regression.binary_rss_forest_predict_mean_var(self, feature_vector, weighted_data)
+        return _regression.binary_rss_forest_predict_mean_var(
+            self, feature_vector, weighted_data
+        )
 
     def covariance(self, f1, f2):
         r"""
 
         `covariance(const std::vector< num_t > &f1, const std::vector< num_t > &f2) ->
-            num_t`  
+            num_t`
 
         """
         return _regression.binary_rss_forest_covariance(self, f1, f2)
@@ -2386,7 +2653,7 @@ class binary_rss_forest(object):
         r"""
 
         `kernel(const std::vector< num_t > &f1, const std::vector< num_t > &f2) ->
-            num_t`  
+            num_t`
 
         """
         return _regression.binary_rss_forest_kernel(self, f1, f2)
@@ -2394,7 +2661,7 @@ class binary_rss_forest(object):
     def get_all_trees(self):
         r"""
 
-        `get_all_trees() const -> std::vector< tree_type >`  
+        `get_all_trees() const -> std::vector< tree_type >`
 
         """
         return _regression.binary_rss_forest_get_all_trees(self)
@@ -2403,7 +2670,7 @@ class binary_rss_forest(object):
         r"""
 
         `all_leaf_values(const std::vector< num_t > &feature_vector) const ->
-            std::vector< std::vector< num_t > >`  
+            std::vector< std::vector< num_t > >`
 
         """
         return _regression.binary_rss_forest_all_leaf_values(self, feature_vector)
@@ -2412,44 +2679,54 @@ class binary_rss_forest(object):
         r"""
 
         `predict_marginalized_over_instances(const std::vector< std::vector< num_t >>
-            &feature_matrix, const bool log_y=false) const -> std::vector< num_t >`  
+            &feature_matrix, const bool log_y=false) const -> std::vector< num_t >`
 
         """
-        return _regression.binary_rss_forest_predict_marginalized_over_instances(self, feature_matrix, log_y)
+        return _regression.binary_rss_forest_predict_marginalized_over_instances(
+            self, feature_matrix, log_y
+        )
 
-    def predict_marginalized_over_instances_batch(self, configuration_matrix, feature_matrix, log_y=False):
+    def predict_marginalized_over_instances_batch(
+        self, configuration_matrix, feature_matrix, log_y=False
+    ):
         r"""
 
         `predict_marginalized_over_instances_batch(const std::vector< std::vector< num_t
             >> configuration_matrix, const std::vector< std::vector< num_t >>
             feature_matrix, const bool log_y=false) const -> std::vector< std::vector<
-            num_t > >`  
+            num_t > >`
 
         """
-        return _regression.binary_rss_forest_predict_marginalized_over_instances_batch(self, configuration_matrix, feature_matrix, log_y)
+        return _regression.binary_rss_forest_predict_marginalized_over_instances_batch(
+            self, configuration_matrix, feature_matrix, log_y
+        )
 
     def pseudo_update(self, features, response, weight):
         r"""
 
         `pseudo_update(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.binary_rss_forest_pseudo_update(self, features, response, weight)
+        return _regression.binary_rss_forest_pseudo_update(
+            self, features, response, weight
+        )
 
     def pseudo_downdate(self, features, response, weight):
         r"""
 
         `pseudo_downdate(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.binary_rss_forest_pseudo_downdate(self, features, response, weight)
+        return _regression.binary_rss_forest_pseudo_downdate(
+            self, features, response, weight
+        )
 
     def out_of_bag_error(self):
         r"""
 
-        `out_of_bag_error() -> num_t`  
+        `out_of_bag_error() -> num_t`
 
         """
         return _regression.binary_rss_forest_out_of_bag_error(self)
@@ -2457,7 +2734,7 @@ class binary_rss_forest(object):
     def save_to_binary_file(self, filename):
         r"""
 
-        `save_to_binary_file(const std::string filename)`  
+        `save_to_binary_file(const std::string filename)`
 
         """
         return _regression.binary_rss_forest_save_to_binary_file(self, filename)
@@ -2465,7 +2742,7 @@ class binary_rss_forest(object):
     def load_from_binary_file(self, filename):
         r"""
 
-        `load_from_binary_file(const std::string filename)`  
+        `load_from_binary_file(const std::string filename)`
 
         """
         return _regression.binary_rss_forest_load_from_binary_file(self, filename)
@@ -2473,7 +2750,7 @@ class binary_rss_forest(object):
     def ascii_string_representation(self):
         r"""
 
-        `ascii_string_representation() -> std::string`  
+        `ascii_string_representation() -> std::string`
 
         """
         return _regression.binary_rss_forest_ascii_string_representation(self)
@@ -2481,7 +2758,7 @@ class binary_rss_forest(object):
     def load_from_ascii_string(self, str):
         r"""
 
-        `load_from_ascii_string(std::string const &str)`  
+        `load_from_ascii_string(std::string const &str)`
 
         """
         return _regression.binary_rss_forest_load_from_ascii_string(self, str)
@@ -2489,15 +2766,17 @@ class binary_rss_forest(object):
     def save_latex_representation(self, filename_template):
         r"""
 
-        `save_latex_representation(const std::string filename_template)`  
+        `save_latex_representation(const std::string filename_template)`
 
         """
-        return _regression.binary_rss_forest_save_latex_representation(self, filename_template)
+        return _regression.binary_rss_forest_save_latex_representation(
+            self, filename_template
+        )
 
     def print_info(self):
         r"""
 
-        `print_info()`  
+        `print_info()`
 
         """
         return _regression.binary_rss_forest_print_info(self)
@@ -2505,23 +2784,25 @@ class binary_rss_forest(object):
     def num_trees(self):
         r"""
 
-        `num_trees() -> unsigned int`  
+        `num_trees() -> unsigned int`
 
         """
         return _regression.binary_rss_forest_num_trees(self)
 
     def __getstate__(self):
-    	d = {}
-    	d['str_representation'] = self.ascii_string_representation()
-    	return (d)
+        d = {}
+        d["str_representation"] = self.ascii_string_representation()
+        return d
 
     def __setstate__(self, sState):
-    	self.__init__()
-    	self.load_from_ascii_string(sState['str_representation'])
+        self.__init__()
+        self.load_from_ascii_string(sState["str_representation"])
 
 
 # Register binary_rss_forest in _regression:
 _regression.binary_rss_forest_swigregister(binary_rss_forest)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class qr_forest_prototype(object):
     r"""
@@ -2529,38 +2810,46 @@ class qr_forest_prototype(object):
 
     Attributes
     ----------
-    * `options` : `forest_options< num_t, response_t, index_t >`  
+    * `options` : `forest_options< num_t, response_t, index_t >`
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
-    options = property(_regression.qr_forest_prototype_options_get, _regression.qr_forest_prototype_options_set)
+    options = property(
+        _regression.qr_forest_prototype_options_get,
+        _regression.qr_forest_prototype_options_set,
+    )
 
     def __init__(self, *args):
         r"""
 
-        `regression_forest(forest_options< num_t, response_t, index_t > opts)`  
+        `regression_forest(forest_options< num_t, response_t, index_t > opts)`
 
         """
-        _regression.qr_forest_prototype_swiginit(self, _regression.new_qr_forest_prototype(*args))
+        _regression.qr_forest_prototype_swiginit(
+            self, _regression.new_qr_forest_prototype(*args)
+        )
+
     __swig_destroy__ = _regression.delete_qr_forest_prototype
 
     def fit(self, data, rng):
         r"""
 
         `fit(const rfr::data_containers::base< num_t, response_t, index_t > &data,
-            rng_type &rng)`  
+            rng_type &rng)`
 
-        growing the random forest for a given data set  
+        growing the random forest for a given data set
 
         Parameters
         ----------
-        * `data` :  
-            a filled data container  
-        * `rng` :  
-            the random number generator to be used  
+        * `data` :
+            a filled data container
+        * `rng` :
+            the random number generator to be used
 
         """
         return _regression.qr_forest_prototype_fit(self, data, rng)
@@ -2568,7 +2857,7 @@ class qr_forest_prototype(object):
     def predict(self, feature_vector):
         r"""
 
-        `predict(const std::vector< num_t > &feature_vector) const -> response_t`  
+        `predict(const std::vector< num_t > &feature_vector) const -> response_t`
 
         """
         return _regression.qr_forest_prototype_predict(self, feature_vector)
@@ -2577,16 +2866,18 @@ class qr_forest_prototype(object):
         r"""
 
         `predict_mean_var(const std::vector< num_t > &feature_vector, bool
-            weighted_data=false) -> std::pair< num_t, num_t >`  
+            weighted_data=false) -> std::pair< num_t, num_t >`
 
         """
-        return _regression.qr_forest_prototype_predict_mean_var(self, feature_vector, weighted_data)
+        return _regression.qr_forest_prototype_predict_mean_var(
+            self, feature_vector, weighted_data
+        )
 
     def covariance(self, f1, f2):
         r"""
 
         `covariance(const std::vector< num_t > &f1, const std::vector< num_t > &f2) ->
-            num_t`  
+            num_t`
 
         """
         return _regression.qr_forest_prototype_covariance(self, f1, f2)
@@ -2595,7 +2886,7 @@ class qr_forest_prototype(object):
         r"""
 
         `kernel(const std::vector< num_t > &f1, const std::vector< num_t > &f2) ->
-            num_t`  
+            num_t`
 
         """
         return _regression.qr_forest_prototype_kernel(self, f1, f2)
@@ -2604,7 +2895,7 @@ class qr_forest_prototype(object):
         r"""
 
         `all_leaf_values(const std::vector< num_t > &feature_vector) const ->
-            std::vector< std::vector< num_t > >`  
+            std::vector< std::vector< num_t > >`
 
         """
         return _regression.qr_forest_prototype_all_leaf_values(self, feature_vector)
@@ -2613,44 +2904,56 @@ class qr_forest_prototype(object):
         r"""
 
         `predict_marginalized_over_instances(const std::vector< std::vector< num_t >>
-            &feature_matrix, const bool log_y=false) const -> std::vector< num_t >`  
+            &feature_matrix, const bool log_y=false) const -> std::vector< num_t >`
 
         """
-        return _regression.qr_forest_prototype_predict_marginalized_over_instances(self, feature_matrix, log_y)
+        return _regression.qr_forest_prototype_predict_marginalized_over_instances(
+            self, feature_matrix, log_y
+        )
 
-    def predict_marginalized_over_instances_batch(self, configuration_matrix, feature_matrix, log_y=False):
+    def predict_marginalized_over_instances_batch(
+        self, configuration_matrix, feature_matrix, log_y=False
+    ):
         r"""
 
         `predict_marginalized_over_instances_batch(const std::vector< std::vector< num_t
             >> configuration_matrix, const std::vector< std::vector< num_t >>
             feature_matrix, const bool log_y=false) const -> std::vector< std::vector<
-            num_t > >`  
+            num_t > >`
 
         """
-        return _regression.qr_forest_prototype_predict_marginalized_over_instances_batch(self, configuration_matrix, feature_matrix, log_y)
+        return (
+            _regression.qr_forest_prototype_predict_marginalized_over_instances_batch(
+                self, configuration_matrix, feature_matrix, log_y
+            )
+        )
 
     def pseudo_update(self, features, response, weight):
         r"""
 
         `pseudo_update(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.qr_forest_prototype_pseudo_update(self, features, response, weight)
+        return _regression.qr_forest_prototype_pseudo_update(
+            self, features, response, weight
+        )
 
     def pseudo_downdate(self, features, response, weight):
         r"""
 
         `pseudo_downdate(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.qr_forest_prototype_pseudo_downdate(self, features, response, weight)
+        return _regression.qr_forest_prototype_pseudo_downdate(
+            self, features, response, weight
+        )
 
     def out_of_bag_error(self):
         r"""
 
-        `out_of_bag_error() -> num_t`  
+        `out_of_bag_error() -> num_t`
 
         """
         return _regression.qr_forest_prototype_out_of_bag_error(self)
@@ -2658,7 +2961,7 @@ class qr_forest_prototype(object):
     def save_to_binary_file(self, filename):
         r"""
 
-        `save_to_binary_file(const std::string filename)`  
+        `save_to_binary_file(const std::string filename)`
 
         """
         return _regression.qr_forest_prototype_save_to_binary_file(self, filename)
@@ -2666,7 +2969,7 @@ class qr_forest_prototype(object):
     def load_from_binary_file(self, filename):
         r"""
 
-        `load_from_binary_file(const std::string filename)`  
+        `load_from_binary_file(const std::string filename)`
 
         """
         return _regression.qr_forest_prototype_load_from_binary_file(self, filename)
@@ -2674,7 +2977,7 @@ class qr_forest_prototype(object):
     def ascii_string_representation(self):
         r"""
 
-        `ascii_string_representation() -> std::string`  
+        `ascii_string_representation() -> std::string`
 
         """
         return _regression.qr_forest_prototype_ascii_string_representation(self)
@@ -2682,7 +2985,7 @@ class qr_forest_prototype(object):
     def load_from_ascii_string(self, str):
         r"""
 
-        `load_from_ascii_string(std::string const &str)`  
+        `load_from_ascii_string(std::string const &str)`
 
         """
         return _regression.qr_forest_prototype_load_from_ascii_string(self, str)
@@ -2690,15 +2993,17 @@ class qr_forest_prototype(object):
     def save_latex_representation(self, filename_template):
         r"""
 
-        `save_latex_representation(const std::string filename_template)`  
+        `save_latex_representation(const std::string filename_template)`
 
         """
-        return _regression.qr_forest_prototype_save_latex_representation(self, filename_template)
+        return _regression.qr_forest_prototype_save_latex_representation(
+            self, filename_template
+        )
 
     def print_info(self):
         r"""
 
-        `print_info()`  
+        `print_info()`
 
         """
         return _regression.qr_forest_prototype_print_info(self)
@@ -2706,21 +3011,23 @@ class qr_forest_prototype(object):
     def num_trees(self):
         r"""
 
-        `num_trees() -> unsigned int`  
+        `num_trees() -> unsigned int`
 
         """
         return _regression.qr_forest_prototype_num_trees(self)
 
+
 # Register qr_forest_prototype in _regression:
 _regression.qr_forest_prototype_swigregister(qr_forest_prototype)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class qr_forest(qr_forest_prototype):
-    r"""
+    r""" """
 
-
-    """
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
@@ -2728,23 +3035,27 @@ class qr_forest(qr_forest_prototype):
         r"""
 
         `quantile_regression_forest(forest_options< num_t, response_t, index_t >
-            forest_opts)`  
+            forest_opts)`
 
         """
         _regression.qr_forest_swiginit(self, _regression.new_qr_forest(*args))
+
     __swig_destroy__ = _regression.delete_qr_forest
 
     def predict_quantiles(self, feature_vector, quantiles):
         r"""
 
         `predict_quantiles(const std::vector< num_t > &feature_vector, std::vector<
-            num_t > quantiles) const -> std::vector< num_t >`  
+            num_t > quantiles) const -> std::vector< num_t >`
 
         """
         return _regression.qr_forest_predict_quantiles(self, feature_vector, quantiles)
 
+
 # Register qr_forest in _regression:
 _regression.qr_forest_swigregister(qr_forest)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class fanova_forest_prototype(object):
     r"""
@@ -2752,38 +3063,46 @@ class fanova_forest_prototype(object):
 
     Attributes
     ----------
-    * `options` : `forest_options< num_t, response_t, index_t >`  
+    * `options` : `forest_options< num_t, response_t, index_t >`
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
-    options = property(_regression.fanova_forest_prototype_options_get, _regression.fanova_forest_prototype_options_set)
+    options = property(
+        _regression.fanova_forest_prototype_options_get,
+        _regression.fanova_forest_prototype_options_set,
+    )
 
     def __init__(self, *args):
         r"""
 
-        `regression_forest(forest_options< num_t, response_t, index_t > opts)`  
+        `regression_forest(forest_options< num_t, response_t, index_t > opts)`
 
         """
-        _regression.fanova_forest_prototype_swiginit(self, _regression.new_fanova_forest_prototype(*args))
+        _regression.fanova_forest_prototype_swiginit(
+            self, _regression.new_fanova_forest_prototype(*args)
+        )
+
     __swig_destroy__ = _regression.delete_fanova_forest_prototype
 
     def fit(self, data, rng):
         r"""
 
         `fit(const rfr::data_containers::base< num_t, response_t, index_t > &data,
-            rng_type &rng)`  
+            rng_type &rng)`
 
-        growing the random forest for a given data set  
+        growing the random forest for a given data set
 
         Parameters
         ----------
-        * `data` :  
-            a filled data container  
-        * `rng` :  
-            the random number generator to be used  
+        * `data` :
+            a filled data container
+        * `rng` :
+            the random number generator to be used
 
         """
         return _regression.fanova_forest_prototype_fit(self, data, rng)
@@ -2791,7 +3110,7 @@ class fanova_forest_prototype(object):
     def predict(self, feature_vector):
         r"""
 
-        `predict(const std::vector< num_t > &feature_vector) const -> response_t`  
+        `predict(const std::vector< num_t > &feature_vector) const -> response_t`
 
         """
         return _regression.fanova_forest_prototype_predict(self, feature_vector)
@@ -2800,16 +3119,18 @@ class fanova_forest_prototype(object):
         r"""
 
         `predict_mean_var(const std::vector< num_t > &feature_vector, bool
-            weighted_data=false) -> std::pair< num_t, num_t >`  
+            weighted_data=false) -> std::pair< num_t, num_t >`
 
         """
-        return _regression.fanova_forest_prototype_predict_mean_var(self, feature_vector, weighted_data)
+        return _regression.fanova_forest_prototype_predict_mean_var(
+            self, feature_vector, weighted_data
+        )
 
     def covariance(self, f1, f2):
         r"""
 
         `covariance(const std::vector< num_t > &f1, const std::vector< num_t > &f2) ->
-            num_t`  
+            num_t`
 
         """
         return _regression.fanova_forest_prototype_covariance(self, f1, f2)
@@ -2818,7 +3139,7 @@ class fanova_forest_prototype(object):
         r"""
 
         `kernel(const std::vector< num_t > &f1, const std::vector< num_t > &f2) ->
-            num_t`  
+            num_t`
 
         """
         return _regression.fanova_forest_prototype_kernel(self, f1, f2)
@@ -2827,7 +3148,7 @@ class fanova_forest_prototype(object):
         r"""
 
         `all_leaf_values(const std::vector< num_t > &feature_vector) const ->
-            std::vector< std::vector< num_t > >`  
+            std::vector< std::vector< num_t > >`
 
         """
         return _regression.fanova_forest_prototype_all_leaf_values(self, feature_vector)
@@ -2836,44 +3157,54 @@ class fanova_forest_prototype(object):
         r"""
 
         `predict_marginalized_over_instances(const std::vector< std::vector< num_t >>
-            &feature_matrix, const bool log_y=false) const -> std::vector< num_t >`  
+            &feature_matrix, const bool log_y=false) const -> std::vector< num_t >`
 
         """
-        return _regression.fanova_forest_prototype_predict_marginalized_over_instances(self, feature_matrix, log_y)
+        return _regression.fanova_forest_prototype_predict_marginalized_over_instances(
+            self, feature_matrix, log_y
+        )
 
-    def predict_marginalized_over_instances_batch(self, configuration_matrix, feature_matrix, log_y=False):
+    def predict_marginalized_over_instances_batch(
+        self, configuration_matrix, feature_matrix, log_y=False
+    ):
         r"""
 
         `predict_marginalized_over_instances_batch(const std::vector< std::vector< num_t
             >> configuration_matrix, const std::vector< std::vector< num_t >>
             feature_matrix, const bool log_y=false) const -> std::vector< std::vector<
-            num_t > >`  
+            num_t > >`
 
         """
-        return _regression.fanova_forest_prototype_predict_marginalized_over_instances_batch(self, configuration_matrix, feature_matrix, log_y)
+        return _regression.fanova_forest_prototype_predict_marginalized_over_instances_batch(
+            self, configuration_matrix, feature_matrix, log_y
+        )
 
     def pseudo_update(self, features, response, weight):
         r"""
 
         `pseudo_update(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.fanova_forest_prototype_pseudo_update(self, features, response, weight)
+        return _regression.fanova_forest_prototype_pseudo_update(
+            self, features, response, weight
+        )
 
     def pseudo_downdate(self, features, response, weight):
         r"""
 
         `pseudo_downdate(std::vector< num_t > features, response_t response, num_t
-            weight)`  
+            weight)`
 
         """
-        return _regression.fanova_forest_prototype_pseudo_downdate(self, features, response, weight)
+        return _regression.fanova_forest_prototype_pseudo_downdate(
+            self, features, response, weight
+        )
 
     def out_of_bag_error(self):
         r"""
 
-        `out_of_bag_error() -> num_t`  
+        `out_of_bag_error() -> num_t`
 
         """
         return _regression.fanova_forest_prototype_out_of_bag_error(self)
@@ -2881,7 +3212,7 @@ class fanova_forest_prototype(object):
     def save_to_binary_file(self, filename):
         r"""
 
-        `save_to_binary_file(const std::string filename)`  
+        `save_to_binary_file(const std::string filename)`
 
         """
         return _regression.fanova_forest_prototype_save_to_binary_file(self, filename)
@@ -2889,7 +3220,7 @@ class fanova_forest_prototype(object):
     def load_from_binary_file(self, filename):
         r"""
 
-        `load_from_binary_file(const std::string filename)`  
+        `load_from_binary_file(const std::string filename)`
 
         """
         return _regression.fanova_forest_prototype_load_from_binary_file(self, filename)
@@ -2897,7 +3228,7 @@ class fanova_forest_prototype(object):
     def ascii_string_representation(self):
         r"""
 
-        `ascii_string_representation() -> std::string`  
+        `ascii_string_representation() -> std::string`
 
         """
         return _regression.fanova_forest_prototype_ascii_string_representation(self)
@@ -2905,7 +3236,7 @@ class fanova_forest_prototype(object):
     def load_from_ascii_string(self, str):
         r"""
 
-        `load_from_ascii_string(std::string const &str)`  
+        `load_from_ascii_string(std::string const &str)`
 
         """
         return _regression.fanova_forest_prototype_load_from_ascii_string(self, str)
@@ -2913,15 +3244,17 @@ class fanova_forest_prototype(object):
     def save_latex_representation(self, filename_template):
         r"""
 
-        `save_latex_representation(const std::string filename_template)`  
+        `save_latex_representation(const std::string filename_template)`
 
         """
-        return _regression.fanova_forest_prototype_save_latex_representation(self, filename_template)
+        return _regression.fanova_forest_prototype_save_latex_representation(
+            self, filename_template
+        )
 
     def print_info(self):
         r"""
 
-        `print_info()`  
+        `print_info()`
 
         """
         return _regression.fanova_forest_prototype_print_info(self)
@@ -2929,38 +3262,41 @@ class fanova_forest_prototype(object):
     def num_trees(self):
         r"""
 
-        `num_trees() -> unsigned int`  
+        `num_trees() -> unsigned int`
 
         """
         return _regression.fanova_forest_prototype_num_trees(self)
 
+
 # Register fanova_forest_prototype in _regression:
 _regression.fanova_forest_prototype_swigregister(fanova_forest_prototype)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class fanova_forest(fanova_forest_prototype):
-    r"""
+    r""" """
 
-
-    """
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def __init__(self, *args):
         r"""
 
-        `fANOVA_forest(forest_options< num_t, response_t, index_t > forest_opts)`  
+        `fANOVA_forest(forest_options< num_t, response_t, index_t > forest_opts)`
 
         """
         _regression.fanova_forest_swiginit(self, _regression.new_fanova_forest(*args))
+
     __swig_destroy__ = _regression.delete_fanova_forest
 
     def fit(self, data, rng):
         r"""
 
         `fit(const rfr::data_containers::base< num_t, response_t, index_t > &data, rng_t
-            &rng)`  
+            &rng)`
 
         """
         return _regression.fanova_forest_fit(self, data, rng)
@@ -2968,7 +3304,7 @@ class fanova_forest(fanova_forest_prototype):
     def set_cutoffs(self, lower, upper):
         r"""
 
-        `set_cutoffs(num_t lower, num_t upper)`  
+        `set_cutoffs(num_t lower, num_t upper)`
 
         """
         return _regression.fanova_forest_set_cutoffs(self, lower, upper)
@@ -2976,7 +3312,7 @@ class fanova_forest(fanova_forest_prototype):
     def get_cutoffs(self):
         r"""
 
-        `get_cutoffs() -> std::pair< num_t, num_t >`  
+        `get_cutoffs() -> std::pair< num_t, num_t >`
 
         """
         return _regression.fanova_forest_get_cutoffs(self)
@@ -2984,7 +3320,7 @@ class fanova_forest(fanova_forest_prototype):
     def precompute_marginals(self):
         r"""
 
-        `precompute_marginals()`  
+        `precompute_marginals()`
 
         """
         return _regression.fanova_forest_precompute_marginals(self)
@@ -2992,7 +3328,7 @@ class fanova_forest(fanova_forest_prototype):
     def marginal_mean_prediction(self, feature_vector):
         r"""
 
-        `marginal_mean_prediction(const std::vector< num_t > &feature_vector) -> num_t`  
+        `marginal_mean_prediction(const std::vector< num_t > &feature_vector) -> num_t`
 
         """
         return _regression.fanova_forest_marginal_mean_prediction(self, feature_vector)
@@ -3001,24 +3337,28 @@ class fanova_forest(fanova_forest_prototype):
         r"""
 
         `marginal_mean_variance_prediction(const std::vector< num_t > &feature_vector)
-            -> std::pair< num_t, num_t >`  
+            -> std::pair< num_t, num_t >`
 
         """
-        return _regression.fanova_forest_marginal_mean_variance_prediction(self, feature_vector)
+        return _regression.fanova_forest_marginal_mean_variance_prediction(
+            self, feature_vector
+        )
 
     def marginal_prediction_stat_of_tree(self, tree_index, feature_vector):
         r"""
 
         `marginal_prediction_stat_of_tree(index_t tree_index, const std::vector< num_t >
-            &feature_vector) -> rfr::util::weighted_running_statistics< num_t >`  
+            &feature_vector) -> rfr::util::weighted_running_statistics< num_t >`
 
         """
-        return _regression.fanova_forest_marginal_prediction_stat_of_tree(self, tree_index, feature_vector)
+        return _regression.fanova_forest_marginal_prediction_stat_of_tree(
+            self, tree_index, feature_vector
+        )
 
     def get_trees_total_variances(self):
         r"""
 
-        `get_trees_total_variances() -> std::vector< num_t >`  
+        `get_trees_total_variances() -> std::vector< num_t >`
 
         """
         return _regression.fanova_forest_get_trees_total_variances(self)
@@ -3026,13 +3366,16 @@ class fanova_forest(fanova_forest_prototype):
     def all_split_values(self):
         r"""
 
-        `all_split_values() -> std::vector< std::vector< std::vector< num_t > > >`  
+        `all_split_values() -> std::vector< std::vector< std::vector< num_t > > >`
 
         """
         return _regression.fanova_forest_all_split_values(self)
 
+
 # Register fanova_forest in _regression:
 _regression.fanova_forest_swigregister(fanova_forest)
+
+
 @_swig_add_metaclass(_SwigNonDynamicMeta)
 class binary_mondrian_forest(object):
     r"""
@@ -3040,52 +3383,67 @@ class binary_mondrian_forest(object):
 
     Attributes
     ----------
-    * `options` : `forest_options< num_t, response_t, index_t >`  
+    * `options` : `forest_options< num_t, response_t, index_t >`
 
-    * `internal_index` : `index_t`  
+    * `internal_index` : `index_t`
 
-    * `name` : `std::string`  
+    * `name` : `std::string`
 
     """
 
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __setattr__ = _swig_setattr_nondynamic_instance_variable(object.__setattr__)
     __repr__ = _swig_repr
 
     def get_trees(self):
         r"""
 
-        `get_trees() const -> std::vector< tree_t >`  
+        `get_trees() const -> std::vector< tree_t >`
 
         """
         return _regression.binary_mondrian_forest_get_trees(self)
-    options = property(_regression.binary_mondrian_forest_options_get, _regression.binary_mondrian_forest_options_set)
-    internal_index = property(_regression.binary_mondrian_forest_internal_index_get, _regression.binary_mondrian_forest_internal_index_set)
-    name = property(_regression.binary_mondrian_forest_name_get, _regression.binary_mondrian_forest_name_set)
+
+    options = property(
+        _regression.binary_mondrian_forest_options_get,
+        _regression.binary_mondrian_forest_options_set,
+    )
+    internal_index = property(
+        _regression.binary_mondrian_forest_internal_index_get,
+        _regression.binary_mondrian_forest_internal_index_set,
+    )
+    name = property(
+        _regression.binary_mondrian_forest_name_get,
+        _regression.binary_mondrian_forest_name_set,
+    )
 
     def __init__(self, *args):
         r"""
 
-        `mondrian_forest(forest_options< num_t, response_t, index_t > opts)`  
+        `mondrian_forest(forest_options< num_t, response_t, index_t > opts)`
 
         """
-        _regression.binary_mondrian_forest_swiginit(self, _regression.new_binary_mondrian_forest(*args))
+        _regression.binary_mondrian_forest_swiginit(
+            self, _regression.new_binary_mondrian_forest(*args)
+        )
+
     __swig_destroy__ = _regression.delete_binary_mondrian_forest
 
     def fit(self, data, rng):
         r"""
 
         `fit(const rfr::data_containers::base< num_t, response_t, index_t > &data, rng_t
-            &rng)`  
+            &rng)`
 
-        growing the random forest for a given data set  
+        growing the random forest for a given data set
 
         Parameters
         ----------
-        * `data` :  
-            a filled data container  
-        * `rng` :  
-            the random number generator to be used  
+        * `data` :
+            a filled data container
+        * `rng` :
+            the random number generator to be used
 
         """
         return _regression.binary_mondrian_forest_fit(self, data, rng)
@@ -3094,7 +3452,7 @@ class binary_mondrian_forest(object):
         r"""
 
         `predict_mean_var(const std::vector< num_t > &feature_vector) -> std::pair<
-            num_t, num_t >`  
+            num_t, num_t >`
 
         """
         return _regression.binary_mondrian_forest_predict_mean_var(self, feature_vector)
@@ -3102,7 +3460,7 @@ class binary_mondrian_forest(object):
     def predict(self, feature_vector):
         r"""
 
-        `predict(const std::vector< num_t > &feature_vector) const -> response_t`  
+        `predict(const std::vector< num_t > &feature_vector) const -> response_t`
 
         """
         return _regression.binary_mondrian_forest_predict(self, feature_vector)
@@ -3110,7 +3468,7 @@ class binary_mondrian_forest(object):
     def predict_median(self, feature_vector):
         r"""
 
-        `predict_median(const std::vector< num_t > &feature_vector) -> response_t`  
+        `predict_median(const std::vector< num_t > &feature_vector) -> response_t`
 
         """
         return _regression.binary_mondrian_forest_predict_median(self, feature_vector)
@@ -3119,7 +3477,7 @@ class binary_mondrian_forest(object):
         r"""
 
         `partial_fit(const rfr::data_containers::base< num_t, response_t, index_t >
-            &data, rng_t &rng, index_t point)`  
+            &data, rng_t &rng, index_t point)`
 
         """
         return _regression.binary_mondrian_forest_partial_fit(self, data, rng, point)
@@ -3127,7 +3485,7 @@ class binary_mondrian_forest(object):
     def out_of_bag_error(self):
         r"""
 
-        `out_of_bag_error() -> num_t`  
+        `out_of_bag_error() -> num_t`
 
         """
         return _regression.binary_mondrian_forest_out_of_bag_error(self)
@@ -3135,7 +3493,7 @@ class binary_mondrian_forest(object):
     def save_to_binary_file(self, filename):
         r"""
 
-        `save_to_binary_file(const std::string filename)`  
+        `save_to_binary_file(const std::string filename)`
 
         """
         return _regression.binary_mondrian_forest_save_to_binary_file(self, filename)
@@ -3143,7 +3501,7 @@ class binary_mondrian_forest(object):
     def load_from_binary_file(self, filename):
         r"""
 
-        `load_from_binary_file(const std::string filename)`  
+        `load_from_binary_file(const std::string filename)`
 
         """
         return _regression.binary_mondrian_forest_load_from_binary_file(self, filename)
@@ -3151,7 +3509,7 @@ class binary_mondrian_forest(object):
     def ascii_string_representation(self):
         r"""
 
-        `ascii_string_representation() -> std::string`  
+        `ascii_string_representation() -> std::string`
 
         """
         return _regression.binary_mondrian_forest_ascii_string_representation(self)
@@ -3159,7 +3517,7 @@ class binary_mondrian_forest(object):
     def load_from_ascii_string(self, str):
         r"""
 
-        `load_from_ascii_string(std::string const &str)`  
+        `load_from_ascii_string(std::string const &str)`
 
         """
         return _regression.binary_mondrian_forest_load_from_ascii_string(self, str)
@@ -3167,15 +3525,17 @@ class binary_mondrian_forest(object):
     def save_latex_representation(self, filename_template):
         r"""
 
-        `save_latex_representation(const std::string filename_template)`  
+        `save_latex_representation(const std::string filename_template)`
 
         """
-        return _regression.binary_mondrian_forest_save_latex_representation(self, filename_template)
+        return _regression.binary_mondrian_forest_save_latex_representation(
+            self, filename_template
+        )
 
     def print_info(self):
         r"""
 
-        `print_info()`  
+        `print_info()`
 
         """
         return _regression.binary_mondrian_forest_print_info(self)
@@ -3183,11 +3543,11 @@ class binary_mondrian_forest(object):
     def num_trees(self):
         r"""
 
-        `num_trees() -> unsigned int`  
+        `num_trees() -> unsigned int`
 
         """
         return _regression.binary_mondrian_forest_num_trees(self)
 
+
 # Register binary_mondrian_forest in _regression:
 _regression.binary_mondrian_forest_swigregister(binary_mondrian_forest)
-

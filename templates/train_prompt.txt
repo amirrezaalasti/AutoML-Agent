@@ -6,7 +6,7 @@
 
 ```python
 from ConfigSpace import Configuration
-def train(cfg: Configuration, seed: int, dataset: Any) -> float:
+def train(cfg: Configuration, dataset: Any) -> float:
 ```
 
 ---
@@ -22,7 +22,6 @@ def train(cfg: Configuration, seed: int, dataset: Any) -> float:
 
   * Access primitive values using `cfg.get('key')` (only `int`, `float`, `str`, etc.).
   * **Do not access or manipulate non-primitive hyperparameter objects**.
-  * Set `random_state=seed` or equivalent to ensure reproducibility in your chosen framework.
 
 * The function must return the **average training loss** over 10 epochs.
 

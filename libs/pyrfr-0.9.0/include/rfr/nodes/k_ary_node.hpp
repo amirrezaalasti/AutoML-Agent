@@ -44,7 +44,7 @@ class k_ary_node_minimal{
 	std::array<index_t, k> children;
 	std::array<num_t, k> split_fractions;
 	split_type split;
-	
+
   public:
 
 	virtual ~k_ary_node_minimal () {};
@@ -55,10 +55,10 @@ class k_ary_node_minimal{
 		archive( parent_index, children, split_fractions, split, response_stat);
 	}
 
-  
+
 	/** \brief If the temporary node should be split further, this member turns this node into an internal node.
 	*
-	* 
+	*
 	* \param tmp_node a temporary_node struct containing all the important information. It is not changed in this function.
 	* \param data a refernce to the data object that is used
 	* \param features_to_try vector of allowed features to be used for this split
@@ -69,7 +69,7 @@ class k_ary_node_minimal{
     * \param rng a RNG instance
 	*
 	* \return num_t the loss of the split
-	*/ 
+	*/
 	num_t make_internal_node(const rfr::nodes::temporary_node<num_t, response_t, index_t> &tmp_node,
                              const rfr::data_containers::base<num_t, response_t, index_t> &data,
 							 std::vector<index_t> &features_to_try,
@@ -102,7 +102,7 @@ class k_ary_node_minimal{
 			make_leaf_node(tmp_node, data);
 		return(best_loss);
 	}
-	
+
 	/** \brief  turns this node into a leaf node based on a temporary node.
 	*
 	* \param tmp_node the internal representation for a temporary node.
@@ -130,7 +130,7 @@ class k_ary_node_minimal{
 	}
 
 	/** \brief returns the index of the child into which the provided sample falls
-	 * 
+	 *
 	 * \param feature_vector a feature vector of the appropriate size (not checked!)
 	 *
 	 * \return index_t index of the child
@@ -177,7 +177,7 @@ class k_ary_node_minimal{
 
 	/** \brief get the index of the node's parent */
     virtual index_t parent() const {return(parent_index);}
-	
+
 	/** \brief get indices of all children*/
     virtual std::array<index_t, k> get_children() const {return(children);}
 
@@ -223,19 +223,19 @@ class k_ary_node_minimal{
 	/** \brief generates a label for the node to be used in the LaTeX visualization*/
 	virtual std::string latex_representation( int my_index) const {
 		std::stringstream str;
-			
+
 		if (is_a_leaf()){
 			str << "{i = " << my_index << ": ";
 
 			str << "N = "<<response_stat.sum_of_weights();
 			str <<", mean = "<< response_stat.mean();
 			str <<", variance = " << response_stat.variance_unbiased_frequency()<<"}";
-			
+
 		}
 		else{
 			str << "{ i = " << my_index << "\\nodepart{two} {";
 			str << split.latex_representation() << "}},rectangle split,rectangle split parts=2,draw";
-			
+
 		}
 		return(str.str());
 	}
@@ -244,10 +244,10 @@ class k_ary_node_minimal{
 
 
 /** \brief The node class for regular k-ary trees.
- * 
+ *
  * In a regular k-ary tree, every node has either zero (a leaf) or exactly k-children (an internal node).
  * In this case, one can try to gain some speed by replacing variable length std::vectors by std::arrays.
- * 
+ *
  */
 template <int k, typename split_type, typename num_t = float, typename response_t = float, typename index_t = unsigned int, typename rng_t = std::default_random_engine>
 class k_ary_node_full: public k_ary_node_minimal<k, split_type, num_t, response_t, index_t, rng_t>{
@@ -256,7 +256,7 @@ class k_ary_node_full: public k_ary_node_minimal<k, split_type, num_t, response_
 	std::vector<response_t> response_values;
 	std::vector<num_t> response_weights;
 	typedef k_ary_node_minimal<k, split_type, num_t, response_t, index_t, rng_t> super;
-	
+
   public:
 
 	virtual ~k_ary_node_full () {};
@@ -287,7 +287,7 @@ class k_ary_node_full: public k_ary_node_minimal<k, split_type, num_t, response_
 	 *
 	 * \param r ignored
 	 * \param w ignored
-	 * 
+	 *
 	 */
 	virtual void pop_response_value (response_t r, num_t w){
 
@@ -296,10 +296,10 @@ class k_ary_node_full: public k_ary_node_minimal<k, split_type, num_t, response_
 		response_weights.pop_back();
 	}
 
-	/** \brief get reference to the response values*/	
+	/** \brief get reference to the response values*/
 	std::vector<response_t> const &responses () const { return( (std::vector<response_t> const &) response_values);}
 
-	/** \brief get reference to the response values*/	
+	/** \brief get reference to the response values*/
 	std::vector<num_t> const &weights () const { return( (std::vector<num_t> const &) response_weights);}
 
 	/** \brief prints out some basic information about the node*/

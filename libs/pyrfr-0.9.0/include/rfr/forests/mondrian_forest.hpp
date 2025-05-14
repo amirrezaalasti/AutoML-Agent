@@ -46,9 +46,9 @@ class mondrian_forest{
 	index_t num_features;
 
 	std::vector<std::vector<num_t> > bootstrap_sample_weights;
-	
+
 	num_t oob_error = NAN;
-	
+
 	// the forest needs to remember the data types on which it was trained
 	std::vector<index_t> types;
 
@@ -69,7 +69,7 @@ class mondrian_forest{
 	}
 
 	mondrian_forest(): options()	{}
-	
+
 	//mondrian_forest(mondrian_forest_options<num_t, response_t, index_t> opts): options(opts){}
 	mondrian_forest(forest_options<num_t, response_t, index_t> opts): options(opts){}
 
@@ -77,7 +77,7 @@ class mondrian_forest{
 	virtual ~mondrian_forest()	{};
 
 	/**\brief growing the random forest for a given data set
-	 * 
+	 *
 	 * \param data a filled data container
 	 * \param rng the random number generator to be used
 	 */
@@ -99,14 +99,14 @@ class mondrian_forest{
 		//bounds.resize(data.num_features());
 
 		num_features = data.num_features();
-		
+
 		// catch some stupid things that will make the forest crash when fitting
 		if (options.num_data_points_per_tree == 0)
 			throw std::runtime_error("The number of data points per tree is set to zero!");
-		
+
 		if (options.tree_opts.max_features == 0)
 			throw std::runtime_error("The number of features used for a split is set to zero!");
-		
+
 		bootstrap_sample_weights.clear();
 
 		for (auto &tree : the_trees){
@@ -125,22 +125,22 @@ class mondrian_forest{
                 for (auto i=0u; i < options.num_data_points_per_tree; ++i)
                     ++bssf[data_indices[i]];
 			}
-			
+
 			tree.fit(data, options.tree_opts, bssf, rng);
-			
+
 			// record sample counts for later use
 			if (options.compute_oob_error)
 				bootstrap_sample_weights.push_back(bssf);
 		}
-		
+
 		oob_error = NAN;
 		index_t amount_obb_test = 0;
 		num_t pred;
 		bool bootstrapable = false;
 		if (options.compute_oob_error){
-			
+
 			rfr::util::running_statistics<num_t> oob_error_stat;
-			
+
 			for (auto i=0u; i < data.num_data_points(); i++){
 
 				rfr::util::running_statistics<num_t> prediction_stat;
@@ -156,11 +156,11 @@ class mondrian_forest{
 				}
 				if(bootstrapable){
 					// compute squared error of prediction
-					oob_error_stat.push(std::pow(prediction_stat.mean() - data.response(i), 2));	
+					oob_error_stat.push(std::pow(prediction_stat.mean() - data.response(i), 2));
 					oob_error = std::sqrt(oob_error_stat.mean());
 				}
 				bootstrapable = false;
-				
+
 			}
 			oob_error = std::sqrt(oob_error_stat.mean());
 		}
@@ -169,14 +169,14 @@ class mondrian_forest{
    /* \brief makes a prediction for the mean and a variance estimation
     *
     *
-    * 
+    *
     * Every tree returns the mean and the variance of the leaf the feature vector falls into.
     * These are combined to the forests mean prediction (mean of the means) and a variance estimate
     * (mean of the variance + variance of the means).
-    * 
+    *
     * Use weighted_data = false if the weights assigned to each data point were frequencies, not importance weights.
     * Use this if you haven't assigned any weigths, too.
-    * 
+    *
 	* \param feature_vector a valid feature vector
 	* \param weighted_data whether the data had importance weights
 	* \return std::pair<response_t, num_t> mean and variance prediction
@@ -202,7 +202,7 @@ class mondrian_forest{
 			mean_stats.push(tree.predict(feature_vector));
 		return(mean_stats.mean());
 	}
-    
+
 
 	response_t predict_median( const std::vector<num_t> &feature_vector){
 
@@ -214,7 +214,7 @@ class mondrian_forest{
 			preds.emplace_back(pred);
 
 		}
-		std::sort (preds.begin(), preds.end()); 
+		std::sort (preds.begin(), preds.end());
 
 		if(the_trees.size()%2){
 			return ((preds[the_trees.size()/2] + preds[the_trees.size()/2 + 1])/2);
@@ -243,29 +243,29 @@ class mondrian_forest{
 		//bounds.resize(data.num_features());
 
 		num_features = data.num_features();
-		
+
 		// catch some stupid things that will make the forest crash when fitting
 		if (options.num_data_points_per_tree == 0)
 			throw std::runtime_error("The number of data points per tree is set to zero!");
-		
+
 		if (options.tree_opts.max_features == 0)
 			throw std::runtime_error("The number of features used for a split is set to zero!");
-		
+
 		for (auto &tree : the_trees){
 			tree.partial_fit(data, options.tree_opts, point, rng);
 		}
 		oob_error = NAN;
 	}
-    
+
 
 	// check
 
-    
+
 
 	num_t out_of_bag_error(){return(oob_error);}
 
 	/* \brief writes serialized representation into a binary file
-	 * 
+	 *
 	 * \param filename name of the file to store the forest in. Make sure that the directory exists!
 	 */
 	void save_to_binary_file(const std::string filename){
@@ -276,7 +276,7 @@ class mondrian_forest{
 
 	/* \brief deserialize from a binary file created by save_to_binary_file
 	 *
-	 * \param filename name of the file in which the forest is stored. 
+	 * \param filename name of the file in which the forest is stored.
 	 */
 	void load_from_binary_file(const std::string filename){
 		std::ifstream ifs(filename, std::ios::binary);
@@ -285,7 +285,7 @@ class mondrian_forest{
 	}
 
 	/* serialize into a string; used for Python's pickle.dump
-	 * 
+	 *
 	 * \return std::string a JSON serialization of the forest
 	 */
 	std::string ascii_string_representation(){
@@ -298,7 +298,7 @@ class mondrian_forest{
 	}
 
 	/* \brief deserialize from string; used for Python's pickle.load
-	 * 
+	 *
 	 * \return std::string a JSON serialization of the forest
 	 */
 	void load_from_ascii_string( std::string const &str){
@@ -311,9 +311,9 @@ class mondrian_forest{
 
 
 	/* \brief stores a latex document for every individual tree
-	 * 
+	 *
 	 * \param filename_template a string to specify the location and the naming scheme. Note the directory is not created, so make sure it exists.
-	 * 
+	 *
 	 */
 	void save_latex_representation(const std::string filename_template){
 		for (auto i = 0u; i<the_trees.size(); i++){

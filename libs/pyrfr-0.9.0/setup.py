@@ -7,7 +7,6 @@ from distutils.command.build import build
 from distutils.core import Extension, setup
 
 
-
 # Customize installation according to https://stackoverflow.com/a/21236111
 class CustomBuild(build):
     def run(self):
@@ -22,7 +21,12 @@ class CustomInstall(install):
 
 
 include_dirs = ["./include"]
-extra_compile_args = ['-O2', '-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
+extra_compile_args = [
+    "-O2",
+    "-std=c++11",
+    "-stdlib=libc++",
+    "-mmacosx-version-min=10.7",
+]
 # extra_compile_args = ['-g', '-std=c++11', '-O0', '-Wall']
 
 

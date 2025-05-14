@@ -32,8 +32,8 @@ struct forest_options{
 
 
 	/** (Re)set to default values for the forest.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	void set_default_values(){
 		num_trees = 0;
@@ -57,7 +57,7 @@ struct forest_options{
 	/** Constructor to feed in tree values but leave the forest parameters at their default.*/
 	forest_options(rfr::trees::tree_options<num_t,response_t,index_t> & to): tree_opts(to) { set_default_values();}
 
-	/** Constructor that adjusts to the data. */   
+	/** Constructor that adjusts to the data. */
 	forest_options (rfr::trees::tree_options<num_t,response_t,index_t> & to, rfr::data_containers::base<num_t, response_t, index_t> &data): tree_opts(to){
 		set_default_values();
 		tree_opts.set_default_values();

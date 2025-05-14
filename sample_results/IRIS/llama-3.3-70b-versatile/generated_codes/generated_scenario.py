@@ -1,5 +1,6 @@
 from smac.scenario import Scenario
 
+
 def generate_scenario(cs):
     scenario = Scenario(
         configspace=cs,
@@ -7,6 +8,6 @@ def generate_scenario(cs):
         deterministic=False,
         n_workers=4,
         min_budget=1,
-        max_budget=100
+        max_budget=100,
     )
     return scenario

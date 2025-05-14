@@ -72,7 +72,7 @@ class classification_forest{
 			num_type c;
 
 			c = tree.predict_class(feature_vector);
-			// recompute the sum and the sum of squared response values 
+			// recompute the sum and the sum of squared response values
 			classvector[c - min_class] += 1 ;
 			N++;
 		}
@@ -102,4 +102,3 @@ class classification_forest{
 
 }}//namespace rfr
 #endif
-

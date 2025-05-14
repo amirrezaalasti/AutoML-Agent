@@ -23,7 +23,7 @@ class default_container_with_instances : public rfr::data_containers::base<num_t
 
 	std::vector< std::vector<num_t> > configurations;//!< 2d vector to store the feature values of all configurations
 	std::vector< std::vector<num_t> > instances; 	//!< 2d vector to store the feature values of all instances
-	
+
 	std::vector<std::pair<index_t, index_t> > config_instance_pairs;
 	std::vector<num_t> response_values;
 	std::vector<num_t> weights;
@@ -217,13 +217,13 @@ class default_container_with_instances : public rfr::data_containers::base<num_t
 				}
 			}
 		}
-		
+
 		// index_t t = get_type_of_response();
 		for (auto r: response_values){
 			if (std::isnan(r))
 				throw std::runtime_error("Responses contain a NaN!");
 		}
-		
+
 	}
 
 	virtual index_t get_type_of_response () const{ return(response_type);}
@@ -249,8 +249,8 @@ class default_container_with_instances : public rfr::data_containers::base<num_t
 		return(r);
 	 }
 
-	
-	
+
+
 	/** \brief method to get instance as set_feature for predict_mean_var_of_mean_response_on_set method in regression forest
 	 */
 	virtual std::vector<num_t> get_instance_set(){
@@ -262,7 +262,7 @@ class default_container_with_instances : public rfr::data_containers::base<num_t
 				}
 				for (auto i = 0u; i < instances.size(); ++i){
 						set_feature.emplace_back(instances[i][instance_idx]);
-				}       
+				}
 		}
 		return set_feature;
 	}
@@ -274,7 +274,7 @@ class default_container_with_instances : public rfr::data_containers::base<num_t
 		}
 		for (auto i = 0u; i < instances.size(); ++i){
 				features.emplace_back(NAN);
-		}   
+		}
 		return features;
 	}
 	virtual std::vector<num_t> get_features_by_configuration_and_instance(num_t configuration_index, num_t instance_index){
@@ -285,7 +285,7 @@ class default_container_with_instances : public rfr::data_containers::base<num_t
 		}
 		for (auto i = 0u; i < instances.size(); ++i){
 				features.emplace_back(instances[i][instance_index]);
-		}   
+		}
 		return features;
 	}
 };

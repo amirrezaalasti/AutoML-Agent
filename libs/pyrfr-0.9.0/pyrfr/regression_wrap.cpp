@@ -140,7 +140,7 @@
 # define SWIG_NULLPTR nullptr
 #else
 # define SWIG_NULLPTR NULL
-#endif 
+#endif
 
 /* -----------------------------------------------------------------------------
  * swigcompat.swg
@@ -832,7 +832,7 @@ SWIG_UnpackDataName(const char *c, void *ptr, size_t sz, const char *name) {
 #define PyString_FromString(x) PyUnicode_FromString(x)
 #define PyString_Format(fmt, args)  PyUnicode_Format(fmt, args)
 #define PyString_AsString(str) PyBytes_AsString(str)
-#define PyString_Size(str) PyBytes_Size(str)	
+#define PyString_Size(str) PyBytes_Size(str)
 #define PyString_InternFromString(key) PyUnicode_InternFromString(key)
 #define Py_TPFLAGS_HAVE_CLASS Py_TPFLAGS_BASETYPE
 #define _PyLong_FromSsize_t(x) PyLong_FromSsize_t(x)
@@ -876,7 +876,7 @@ SWIGINTERN PyObject*
 SWIG_Python_str_FromChar(const char *c)
 {
 #if PY_VERSION_HEX >= 0x03000000
-  return PyUnicode_FromString(c); 
+  return PyUnicode_FromString(c);
 #else
   return PyString_FromString(c);
 #endif
@@ -1169,7 +1169,7 @@ typedef struct swig_const_info {
 
 #define SWIG_InternalNewPointerObj(ptr, type, flags)	SWIG_Python_NewPointerObj(NULL, ptr, type, flags)
 
-#define SWIG_CheckImplicit(ty)                          SWIG_Python_CheckImplicit(ty) 
+#define SWIG_CheckImplicit(ty)                          SWIG_Python_CheckImplicit(ty)
 #define SWIG_AcquirePtr(ptr, src)                       SWIG_Python_AcquirePtr(ptr, src)
 #define swig_owntype                                    int
 
@@ -1196,26 +1196,26 @@ typedef struct swig_const_info {
 #define SWIG_SetModule(clientdata, pointer)             SWIG_Python_SetModule(pointer)
 #define SWIG_NewClientData(obj)                         SwigPyClientData_New(obj)
 
-#define SWIG_SetErrorObj                                SWIG_Python_SetErrorObj                            
-#define SWIG_SetErrorMsg                        	SWIG_Python_SetErrorMsg				   
-#define SWIG_ErrorType(code)                    	SWIG_Python_ErrorType(code)                        
-#define SWIG_Error(code, msg)            		SWIG_Python_SetErrorMsg(SWIG_ErrorType(code), msg) 
-#define SWIG_fail                        		goto fail					   
+#define SWIG_SetErrorObj                                SWIG_Python_SetErrorObj
+#define SWIG_SetErrorMsg                        	SWIG_Python_SetErrorMsg
+#define SWIG_ErrorType(code)                    	SWIG_Python_ErrorType(code)
+#define SWIG_Error(code, msg)            		SWIG_Python_SetErrorMsg(SWIG_ErrorType(code), msg)
+#define SWIG_fail                        		goto fail
 
 
 /* Runtime API implementation */
 
 /* Error manipulation */
 
-SWIGINTERN void 
+SWIGINTERN void
 SWIG_Python_SetErrorObj(PyObject *errtype, PyObject *obj) {
-  SWIG_PYTHON_THREAD_BEGIN_BLOCK; 
+  SWIG_PYTHON_THREAD_BEGIN_BLOCK;
   PyErr_SetObject(errtype, obj);
   SWIG_Py_DECREF(obj);
   SWIG_PYTHON_THREAD_END_BLOCK;
 }
 
-SWIGINTERN void 
+SWIGINTERN void
 SWIG_Python_SetErrorMsg(PyObject *errtype, const char *msg) {
   SWIG_PYTHON_THREAD_BEGIN_BLOCK;
   PyErr_SetString(errtype, msg);
@@ -1236,7 +1236,7 @@ SwigPyBuiltin_AddPublicSymbol(PyObject *seq, const char *key) {
 }
 
 SWIGINTERN void
-SWIG_Python_SetConstant(PyObject *d, PyObject *public_interface, const char *name, PyObject *obj) {   
+SWIG_Python_SetConstant(PyObject *d, PyObject *public_interface, const char *name, PyObject *obj) {
   PyDict_SetItemString(d, name, obj);
   SWIG_Py_DECREF(obj);
   if (public_interface)
@@ -1246,7 +1246,7 @@ SWIG_Python_SetConstant(PyObject *d, PyObject *public_interface, const char *nam
 #else
 
 SWIGINTERN void
-SWIG_Python_SetConstant(PyObject *d, const char *name, PyObject *obj) {   
+SWIG_Python_SetConstant(PyObject *d, const char *name, PyObject *obj) {
   PyDict_SetItemString(d, name, obj);
   SWIG_Py_DECREF(obj);
 }
@@ -1288,11 +1288,11 @@ SWIG_Python_UnpackTuple(PyObject *args, const char *name, Py_ssize_t min, Py_ssi
     if (!min && !max) {
       return 1;
     } else {
-      PyErr_Format(PyExc_TypeError, "%s expected %s%d arguments, got none", 
+      PyErr_Format(PyExc_TypeError, "%s expected %s%d arguments, got none",
 		   name, (min == max ? "" : "at least "), (int)min);
       return 0;
     }
-  }  
+  }
   if (!PyTuple_Check(args)) {
     if (min <= 1 && max >= 1) {
       Py_ssize_t i;
@@ -1307,11 +1307,11 @@ SWIG_Python_UnpackTuple(PyObject *args, const char *name, Py_ssize_t min, Py_ssi
   } else {
     Py_ssize_t l = PyTuple_GET_SIZE(args);
     if (l < min) {
-      PyErr_Format(PyExc_TypeError, "%s expected %s%d arguments, got %d", 
+      PyErr_Format(PyExc_TypeError, "%s expected %s%d arguments, got %d",
 		   name, (min == max ? "" : "at least "), (int)min, (int)l);
       return 0;
     } else if (l > max) {
-      PyErr_Format(PyExc_TypeError, "%s expected %s%d arguments, got %d", 
+      PyErr_Format(PyExc_TypeError, "%s expected %s%d arguments, got %d",
 		   name, (min == max ? "" : "at most "), (int)max, (int)l);
       return 0;
     } else {
@@ -1323,7 +1323,7 @@ SWIG_Python_UnpackTuple(PyObject *args, const char *name, Py_ssize_t min, Py_ssi
 	objs[l] = 0;
       }
       return i + 1;
-    }    
+    }
   }
 }
 
@@ -1361,12 +1361,12 @@ extern "C" {
 #define SWIG_newvarlink()                             SWIG_Python_newvarlink()
 #define SWIG_addvarlink(p, name, get_attr, set_attr)  SWIG_Python_addvarlink(p, name, get_attr, set_attr)
 #define SWIG_InstallConstants(d, constants)           SWIG_Python_InstallConstants(d, constants)
- 
+
 /* -----------------------------------------------------------------------------
  * global variable support code.
  * ----------------------------------------------------------------------------- */
- 
-typedef struct swig_globalvar {   
+
+typedef struct swig_globalvar {
   char       *name;                  /* Name of global variable */
   PyObject *(*get_attr)(void);       /* Return the current value */
   int       (*set_attr)(PyObject *); /* Set the value */
@@ -1579,7 +1579,7 @@ SWIG_Python_newvarlink(void) {
   return ((PyObject*) result);
 }
 
-SWIGINTERN void 
+SWIGINTERN void
 SWIG_Python_addvarlink(PyObject *p, const char *name, PyObject *(*get_attr)(void), int (*set_attr)(PyObject *p)) {
   swig_varlinkobject *v = (swig_varlinkobject *) p;
   swig_globalvar *gv = (swig_globalvar *) malloc(sizeof(swig_globalvar));
@@ -1598,7 +1598,7 @@ SWIG_Python_addvarlink(PyObject *p, const char *name, PyObject *(*get_attr)(void
 
 
 static PyObject *Swig_Globals_global = NULL;
-  
+
 SWIGINTERN PyObject *
 SWIG_globals(void) {
   if (Swig_Globals_global == NULL) {
@@ -1630,7 +1630,7 @@ extern "C" {
 
 /* The python void return value */
 
-SWIGRUNTIMEINLINE PyObject * 
+SWIGRUNTIMEINLINE PyObject *
 SWIG_Py_Void(void)
 {
   PyObject *none = Py_None;
@@ -1650,7 +1650,7 @@ typedef struct {
   PyTypeObject *pytype;
 } SwigPyClientData;
 
-SWIGRUNTIMEINLINE int 
+SWIGRUNTIMEINLINE int
 SWIG_Python_CheckImplicit(swig_type_info *ty)
 {
   SwigPyClientData *data = (SwigPyClientData *)ty->clientdata;
@@ -1668,7 +1668,7 @@ SWIG_Python_ExceptionType(swig_type_info *desc) {
 }
 
 
-SWIGRUNTIME SwigPyClientData * 
+SWIGRUNTIME SwigPyClientData *
 SwigPyClientData_New(PyObject* obj)
 {
   if (!obj) {
@@ -1718,7 +1718,7 @@ SwigPyClientData_New(PyObject* obj)
   }
 }
 
-SWIGRUNTIME void 
+SWIGRUNTIME void
 SwigPyClientData_Del(SwigPyClientData *data)
 {
   SWIG_Py_XDECREF(data->klass);
@@ -1853,7 +1853,7 @@ SwigPyObject_richcompare(SwigPyObject *v, SwigPyObject *w, int op)
     }
     res = PyBool_FromLong( (SwigPyObject_compare(v, w)==0) == (op == Py_EQ) ? 1 : 0);
   }
-  return res;  
+  return res;
 }
 
 
@@ -1930,7 +1930,7 @@ SwigPyObject_dealloc(PyObject *v)
          StopIteration will be active right now, and this needs to
          remain true upon return from SwigPyObject_dealloc.  So save
          and restore. */
-      
+
       PyObject *type = NULL, *value = NULL, *traceback = NULL;
       PyErr_Fetch(&type, &value, &traceback);
 
@@ -1954,7 +1954,7 @@ SwigPyObject_dealloc(PyObject *v)
       PyErr_Restore(type, value, traceback);
 
       SWIG_Py_XDECREF(res);
-    } 
+    }
 #if !defined(SWIG_PYTHON_SILENT_MEMLEAK)
     else {
       const char *name = SWIG_TypePrettyName(ty);
@@ -1970,7 +1970,7 @@ SwigPyObject_dealloc(PyObject *v)
   PyObject_Free(v);
 }
 
-SWIGRUNTIME PyObject* 
+SWIGRUNTIME PyObject*
 SwigPyObject_append(PyObject* v, PyObject* next)
 {
   SwigPyObject *sobj = (SwigPyObject *) v;
@@ -1984,11 +1984,11 @@ SwigPyObject_append(PyObject* v, PyObject* next)
   return SWIG_Py_Void();
 }
 
-SWIGRUNTIME PyObject* 
+SWIGRUNTIME PyObject*
 SwigPyObject_next(PyObject* v, PyObject *SWIGUNUSEDPARM(args))
 {
   SwigPyObject *sobj = (SwigPyObject *) v;
-  if (sobj->next) {    
+  if (sobj->next) {
     SWIG_Py_INCREF(sobj->next);
     return sobj->next;
   } else {
@@ -2027,7 +2027,7 @@ SwigPyObject_own(PyObject *v, PyObject *args)
       } else {
         SWIG_Py_DECREF(SwigPyObject_disown(v,args));
       }
-    } 
+    }
     return obj;
   }
 }
@@ -2040,7 +2040,7 @@ swigobject_methods[] = {
   {"append",  SwigPyObject_append,  METH_O,       "appends another 'this' object"},
   {"next",    SwigPyObject_next,    METH_NOARGS,  "returns the next 'this' object"},
   {"__repr__",SwigPyObject_repr2,   METH_NOARGS,  "returns object representation"},
-  {0, 0, 0, 0}  
+  {0, 0, 0, 0}
 };
 
 SWIGRUNTIME PyTypeObject*
@@ -2247,7 +2247,7 @@ SwigPyPacked_repr(SwigPyPacked *v)
     return SWIG_Python_str_FromFormat("<Swig Packed at %s%s>", result, v->ty->name);
   } else {
     return SWIG_Python_str_FromFormat("<Swig Packed %s>", v->ty->name);
-  }  
+  }
 }
 
 SWIGRUNTIME PyObject *
@@ -2258,7 +2258,7 @@ SwigPyPacked_str(SwigPyPacked *v)
     return SWIG_Python_str_FromFormat("%s%s", result, v->ty->name);
   } else {
     return SWIG_Python_str_FromChar(v->ty->name);
-  }  
+  }
 }
 
 SWIGRUNTIME int
@@ -2476,11 +2476,11 @@ SWIG_This(void)
 
 /* TODO: I don't know how to implement the fast getset in Python 3 right now */
 #if PY_VERSION_HEX>=0x03000000
-#define SWIG_PYTHON_SLOW_GETSET_THIS 
+#define SWIG_PYTHON_SLOW_GETSET_THIS
 #endif
 
 SWIGRUNTIME SwigPyObject *
-SWIG_Python_GetSwigThis(PyObject *pyobj) 
+SWIG_Python_GetSwigThis(PyObject *pyobj)
 {
   PyObject *obj;
 
@@ -2508,7 +2508,7 @@ SWIG_Python_GetSwigThis(PyObject *pyobj)
 
 #if !defined(SWIG_PYTHON_SLOW_GETSET_THIS)
   if (PyInstance_Check(pyobj)) {
-    obj = _PyInstance_Lookup(pyobj, SWIG_This());      
+    obj = _PyInstance_Lookup(pyobj, SWIG_This());
   } else {
     PyObject **dictptr = _PyObject_GetDictPtr(pyobj);
     if (dictptr != NULL) {
@@ -2541,7 +2541,7 @@ SWIG_Python_GetSwigThis(PyObject *pyobj)
 #endif
   if (obj && !SwigPyObject_Check(obj)) {
     /* a PyObject is called 'this', try to get the 'real this'
-       SwigPyObject from it */ 
+       SwigPyObject from it */
     return SWIG_Python_GetSwigThis(obj);
   }
   return (SwigPyObject *)obj;
@@ -2655,7 +2655,7 @@ SWIG_Python_ConvertPtrAndOwn(PyObject *obj, void **ptr, swig_type_info *ty, int 
                   res = SWIG_AddCast(res);
                   res = SWIG_AddNewMask(res);
                 } else {
-                  res = SWIG_AddCast(res);		    
+                  res = SWIG_AddCast(res);
                 }
               }
             }
@@ -2728,7 +2728,7 @@ SWIG_Python_ConvertPacked(PyObject *obj, void *ptr, size_t sz, swig_type_info *t
     }
   }
   return SWIG_OK;
-}  
+}
 
 /* -----------------------------------------------------------------------------
  * Create a new pointer object
@@ -2739,7 +2739,7 @@ SWIG_Python_ConvertPacked(PyObject *obj, void *ptr, size_t sz, swig_type_info *t
   'this' attribute.
 */
 
-SWIGRUNTIME PyObject* 
+SWIGRUNTIME PyObject*
 SWIG_Python_NewShadowInstance(SwigPyClientData *data, PyObject *swig_this)
 {
   PyObject *inst = 0;
@@ -2824,7 +2824,7 @@ SWIG_Python_SetSwigThis(PyObject *inst, PyObject *swig_this)
   }
 #endif
   return PyObject_SetAttr(inst, SWIG_This(), swig_this);
-} 
+}
 
 
 SWIGINTERN PyObject *
@@ -2913,7 +2913,7 @@ SWIG_Python_NewPackedObj(void *ptr, size_t sz, swig_type_info *type) {
 }
 
 /* -----------------------------------------------------------------------------*
- *  Get type list 
+ *  Get type list
  * -----------------------------------------------------------------------------*/
 
 #ifdef SWIG_LINK_RUNTIME
@@ -3003,7 +3003,7 @@ SWIGRUNTIME swig_type_info *
 SWIG_Python_TypeQuery(const char *type)
 {
   PyObject *cache = SWIG_Python_TypeCache();
-  PyObject *key = SWIG_Python_str_FromChar(type); 
+  PyObject *key = SWIG_Python_str_FromChar(type);
   PyObject *obj = PyDict_GetItem(cache, key);
   swig_type_info *descriptor;
   if (obj) {
@@ -3023,7 +3023,7 @@ SWIG_Python_TypeQuery(const char *type)
   return descriptor;
 }
 
-/* 
+/*
    For backward compatibility only
 */
 #define SWIG_POINTER_EXCEPTION  0
@@ -3032,7 +3032,7 @@ SWIG_Python_TypeQuery(const char *type)
 
 SWIGRUNTIME int
 SWIG_Python_AddErrMesg(const char* mesg, int infront)
-{  
+{
   if (PyErr_Occurred()) {
     PyObject *type = 0;
     PyObject *value = 0;
@@ -3058,7 +3058,7 @@ SWIG_Python_AddErrMesg(const char* mesg, int infront)
     return 0;
   }
 }
-  
+
 SWIGRUNTIME int
 SWIG_Python_ArgFail(int argnum)
 {
@@ -3093,12 +3093,12 @@ SWIG_Python_TypeError(const char *type, PyObject *obj)
 		     type, otype);
 	return;
       }
-    } else 
-#endif      
+    } else
+#endif
     {
 #ifndef Py_LIMITED_API
       /* tp_name is not accessible */
-      const char *otype = (obj ? obj->ob_type->tp_name : 0); 
+      const char *otype = (obj ? obj->ob_type->tp_name : 0);
       if (otype) {
 	PyObject *str = PyObject_Str(obj);
 	PyObject *bytes = NULL;
@@ -3115,7 +3115,7 @@ SWIG_Python_TypeError(const char *type, PyObject *obj)
 	return;
       }
 #endif
-    }   
+    }
     PyErr_Format(PyExc_TypeError, "a '%s' is expected", type);
   } else {
     PyErr_Format(PyExc_TypeError, "unexpected type is received");
@@ -3181,7 +3181,7 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
   } else {
     res = f(descr, obj, value);
   }
-  
+
   done:
   SWIG_Py_DECREF(name);
   return res;
@@ -3195,13 +3195,13 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 
 
-#define SWIG_exception_fail(code, msg) do { SWIG_Error(code, msg); SWIG_fail; } while(0) 
+#define SWIG_exception_fail(code, msg) do { SWIG_Error(code, msg); SWIG_fail; } while(0)
 
-#define SWIG_contract_assert(expr, msg) do { if (!(expr)) { SWIG_Error(SWIG_RuntimeError, msg); SWIG_fail; } } while (0) 
+#define SWIG_contract_assert(expr, msg) do { if (!(expr)) { SWIG_Error(SWIG_RuntimeError, msg); SWIG_fail; } } while (0)
 
 
 
-  #define SWIG_exception(code, msg) do { SWIG_Error(code, msg); SWIG_fail;; } while(0) 
+  #define SWIG_exception(code, msg) do { SWIG_Error(code, msg); SWIG_fail;; } while(0)
 
 
 /* -------- TYPES TABLE (BEGIN) -------- */
@@ -3308,11 +3308,11 @@ public:
 
 /*
  * SwigValueInit() is a generic initialisation solution as the following approach:
- * 
+ *
  *       T c_result = T();
- * 
+ *
  * doesn't compile for all types for example:
- * 
+ *
  *       unsigned int c_result = unsigned int();
  */
 template <typename T> T SwigValueInit() {
@@ -3328,8 +3328,8 @@ template <typename T> T SwigValueInit() {
 #endif
 
 
-#define SWIG_as_voidptr(a) const_cast< void * >(static_cast< const void * >(a)) 
-#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),reinterpret_cast< void** >(a)) 
+#define SWIG_as_voidptr(a) const_cast< void * >(static_cast< const void * >(a))
+#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),reinterpret_cast< void** >(a))
 
 
 #include <stdexcept>
@@ -3351,7 +3351,7 @@ namespace swig {
       SWIG_Py_XINCREF(_obj);
       SWIG_PYTHON_THREAD_END_BLOCK;
     }
-    
+
     SwigPtr_PyObject(PyObject *obj, bool initial_ref = true) :_obj(obj)
     {
       if (initial_ref) {
@@ -3360,24 +3360,24 @@ namespace swig {
         SWIG_PYTHON_THREAD_END_BLOCK;
       }
     }
-    
-    SwigPtr_PyObject & operator=(const SwigPtr_PyObject& item) 
+
+    SwigPtr_PyObject & operator=(const SwigPtr_PyObject& item)
     {
       SWIG_PYTHON_THREAD_BEGIN_BLOCK;
       SWIG_Py_XINCREF(item._obj);
       SWIG_Py_XDECREF(_obj);
       _obj = item._obj;
       SWIG_PYTHON_THREAD_END_BLOCK;
-      return *this;      
+      return *this;
     }
-    
-    ~SwigPtr_PyObject() 
+
+    ~SwigPtr_PyObject()
     {
       SWIG_PYTHON_THREAD_BEGIN_BLOCK;
       SWIG_Py_XDECREF(_obj);
       SWIG_PYTHON_THREAD_END_BLOCK;
     }
-    
+
     operator PyObject *() const
     {
       return _obj;
@@ -3394,12 +3394,12 @@ namespace swig {
 namespace swig {
   struct SwigVar_PyObject : SwigPtr_PyObject {
     SwigVar_PyObject(PyObject* obj = 0) : SwigPtr_PyObject(obj, false) { }
-    
+
     SwigVar_PyObject & operator = (PyObject* obj)
     {
       SWIG_Py_XDECREF(_obj);
       _obj = obj;
-      return *this;      
+      return *this;
     }
   };
 }
@@ -3532,7 +3532,7 @@ SWIG_CanCastAsInteger(double *d, double min, double max) {
 
 
 SWIGINTERN int
-SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val) 
+SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val)
 {
 #if PY_VERSION_HEX < 0x03000000
   if (PyInt_Check(obj)) {
@@ -3594,7 +3594,7 @@ SWIG_AsVal_unsigned_SS_int (PyObject * obj, unsigned int *val)
     } else {
       if (val) *val = static_cast< unsigned int >(v);
     }
-  }  
+  }
   return res;
 }
 
@@ -3637,7 +3637,7 @@ namespace swig {
     SwigPyIterator(PyObject *seq) : _seq(seq)
     {
     }
-      
+
   public:
     virtual ~SwigPyIterator() {}
 
@@ -3646,7 +3646,7 @@ namespace swig {
 
     // Forward iterator method, required by Python
     virtual SwigPyIterator *incr(size_t n = 1) = 0;
-    
+
     // Backward iterator method, very common in C++, but not required in Python
     virtual SwigPyIterator *decr(size_t /*n*/ = 1)
     {
@@ -3663,17 +3663,17 @@ namespace swig {
     {
       throw std::invalid_argument("operation not supported");
     }
-    
+
     // C++ common/needed methods
     virtual SwigPyIterator *copy() const = 0;
 
-    PyObject *next()     
+    PyObject *next()
     {
-      SWIG_PYTHON_THREAD_BEGIN_BLOCK; // disable threads       
+      SWIG_PYTHON_THREAD_BEGIN_BLOCK; // disable threads
       PyObject *obj = value();
-      incr();       
+      incr();
       SWIG_PYTHON_THREAD_END_BLOCK; // re-enable threads
-      return obj;     
+      return obj;
     }
 
     /* Make an alias for Python 3.x */
@@ -3684,10 +3684,10 @@ namespace swig {
 
     PyObject *previous()
     {
-      SWIG_PYTHON_THREAD_BEGIN_BLOCK; // disable threads       
+      SWIG_PYTHON_THREAD_BEGIN_BLOCK; // disable threads
       decr();
       PyObject *obj = value();
-      SWIG_PYTHON_THREAD_END_BLOCK; // re-enable threads       
+      SWIG_PYTHON_THREAD_END_BLOCK; // re-enable threads
       return obj;
     }
 
@@ -3695,17 +3695,17 @@ namespace swig {
     {
       return  (n > 0) ?  incr(n) : decr(-n);
     }
-      
+
     bool operator == (const SwigPyIterator& x)  const
     {
       return equal(x);
     }
-      
+
     bool operator != (const SwigPyIterator& x) const
     {
       return ! operator==(x);
     }
-      
+
     SwigPyIterator& operator += (ptrdiff_t n)
     {
       return *advance(n);
@@ -3715,7 +3715,7 @@ namespace swig {
     {
       return *advance(-n);
     }
-      
+
     SwigPyIterator* operator + (ptrdiff_t n) const
     {
       return copy()->advance(n);
@@ -3725,16 +3725,16 @@ namespace swig {
     {
       return copy()->advance(-n);
     }
-      
+
     ptrdiff_t operator - (const SwigPyIterator& x) const
     {
       return x.distance(*this);
     }
-      
+
     static swig_type_info* descriptor() {
       static swig_type_info* desc = SWIG_TypeQuery("swig::SwigPyIterator *");
       return desc;
-    }    
+    }
   };
 
 #if defined(SWIGPYTHON_BUILTIN)
@@ -3814,11 +3814,11 @@ SWIG_AsVal_size_t (PyObject * obj, size_t *val)
 }
 
 
-  #define SWIG_From_long   PyInt_FromLong 
+  #define SWIG_From_long   PyInt_FromLong
 
 
 #ifdef SWIG_LONG_LONG_AVAILABLE
-SWIGINTERNINLINE PyObject* 
+SWIGINTERNINLINE PyObject*
 SWIG_From_long_SS_long  (long long value)
 {
   return ((value < LONG_MIN) || (value > LONG_MAX)) ?
@@ -3829,7 +3829,7 @@ SWIG_From_long_SS_long  (long long value)
 
 SWIGINTERNINLINE PyObject *
 SWIG_From_ptrdiff_t  (ptrdiff_t value)
-{    
+{
 #ifdef SWIG_LONG_LONG_AVAILABLE
   if (sizeof(ptrdiff_t) <= sizeof(long)) {
 #endif
@@ -4052,7 +4052,7 @@ namespace swig {
 }
 
 
-namespace swig {  
+namespace swig {
   /*
     Traits that provides the from method
   */
@@ -4095,7 +4095,7 @@ namespace swig {
     Traits that provides the asval/as/check method
   */
   template <class Type>
-  struct traits_asptr {   
+  struct traits_asptr {
     static int asptr(PyObject *obj, Type **val) {
       int res = SWIG_ERROR;
       swig_type_info *descriptor = type_info<Type>();
@@ -4114,20 +4114,20 @@ namespace swig {
       }
       return res;
     }
-  }; 
+  };
 
   template <class Type>
   inline int asptr(PyObject *obj, Type **vptr) {
     return traits_asptr<Type>::asptr(obj, vptr);
   }
 
-  template <class Type> 
+  template <class Type>
   struct traits_asval {
     static int asval(PyObject *obj, Type *val) {
       if (val) {
 	Type *p = 0;
 	int res = traits_asptr<Type>::asptr(obj, &p);
-	if (!SWIG_IsOK(res)) return res;	
+	if (!SWIG_IsOK(res)) return res;
 	if (p) {
 	  typedef typename noconst_traits<Type>::noconst_type noconst_type;
 	  *(const_cast<noconst_type*>(val)) = *p;
@@ -4160,13 +4160,13 @@ namespace swig {
       }
     }
   };
-  
+
   template <class Type>
   inline int asval(PyObject *obj, Type *val) {
     return traits_asval<Type>::asval(obj, val);
   }
 
-  template <class Type> 
+  template <class Type>
   struct traits_as<Type, value_category> {
     static Type as(PyObject *obj) {
       Type v;
@@ -4181,10 +4181,10 @@ namespace swig {
     }
   };
 
-  template <class Type> 
+  template <class Type>
   struct traits_as<Type, pointer_category> {
     static Type as(PyObject *obj) {
-      Type *v = 0;      
+      Type *v = 0;
       int res = (obj ? traits_asptr<Type>::asptr(obj, &v) : SWIG_ERROR);
       if (SWIG_IsOK(res) && v) {
 	if (SWIG_IsNewObj(res)) {
@@ -4203,10 +4203,10 @@ namespace swig {
     }
   };
 
-  template <class Type> 
+  template <class Type>
   struct traits_as<Type*, pointer_category> {
     static Type* as(PyObject *obj) {
-      Type *v = 0;      
+      Type *v = 0;
       int res = (obj ? traits_asptr<Type>::asptr(obj, &v) : SWIG_ERROR);
       if (SWIG_IsOK(res)) {
 	return v;
@@ -4218,13 +4218,13 @@ namespace swig {
       }
     }
   };
-    
+
   template <class Type>
   inline Type as(PyObject *obj) {
     return traits_as<Type, typename traits<Type>::category>::as(obj);
   }
 
-  template <class Type> 
+  template <class Type>
   struct traits_check<Type, value_category> {
     static bool check(PyObject *obj) {
       int res = obj ? asval(obj, (Type *)(0)) : SWIG_ERROR;
@@ -4232,7 +4232,7 @@ namespace swig {
     }
   };
 
-  template <class Type> 
+  template <class Type>
   struct traits_check<Type, pointer_category> {
     static bool check(PyObject *obj) {
       int res = obj ? asptr(obj, (Type **)(0)) : SWIG_ERROR;
@@ -4295,7 +4295,7 @@ namespace swig {
   {
   public:
     typedef OutIterator out_iterator;
-    typedef typename std::iterator_traits<out_iterator>::value_type value_type;    
+    typedef typename std::iterator_traits<out_iterator>::value_type value_type;
     typedef SwigPyIterator_T<out_iterator> self_type;
 
     SwigPyIterator_T(out_iterator curr, PyObject *seq)
@@ -4308,7 +4308,7 @@ namespace swig {
       return current;
     }
 
-    
+
     bool equal (const SwigPyIterator &iter) const
     {
       const self_type *iters = dynamic_cast<const self_type *>(&iter);
@@ -4318,7 +4318,7 @@ namespace swig {
 	throw std::invalid_argument("bad iterator type");
       }
     }
-    
+
     ptrdiff_t distance(const SwigPyIterator &iter) const
     {
       const self_type *iters = dynamic_cast<const self_type *>(&iter);
@@ -4327,14 +4327,14 @@ namespace swig {
       } else {
 	throw std::invalid_argument("bad iterator type");
       }
-    }    
-    
+    }
+
   protected:
     out_iterator current;
   };
-  
+
   template <class ValueType>
-  struct from_oper 
+  struct from_oper
   {
     typedef const ValueType& argument_type;
     typedef PyObject *result_type;
@@ -4344,7 +4344,7 @@ namespace swig {
     }
   };
 
-  template<typename OutIterator, 
+  template<typename OutIterator,
 	   typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
 	   typename FromOper = from_oper<ValueType> >
   class SwigPyForwardIteratorOpen_T :  public SwigPyIterator_T<OutIterator>
@@ -4355,16 +4355,16 @@ namespace swig {
     typedef ValueType value_type;
     typedef SwigPyIterator_T<out_iterator>  base;
     typedef SwigPyForwardIteratorOpen_T<OutIterator, ValueType, FromOper> self_type;
-    
+
     SwigPyForwardIteratorOpen_T(out_iterator curr, PyObject *seq)
       : SwigPyIterator_T<OutIterator>(curr, seq)
     {
     }
-    
+
     PyObject *value() const {
       return from(static_cast<const value_type&>(*(base::current)));
     }
-    
+
     SwigPyIterator *copy() const
     {
       return new self_type(*this);
@@ -4380,7 +4380,7 @@ namespace swig {
 
   };
 
-  template<typename OutIterator, 
+  template<typename OutIterator,
 	   typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
 	   typename FromOper = from_oper<ValueType> >
   class SwigPyIteratorOpen_T :  public SwigPyForwardIteratorOpen_T<OutIterator, ValueType, FromOper>
@@ -4391,7 +4391,7 @@ namespace swig {
     typedef ValueType value_type;
     typedef SwigPyIterator_T<out_iterator>  base;
     typedef SwigPyIteratorOpen_T<OutIterator, ValueType, FromOper> self_type;
-    
+
     SwigPyIteratorOpen_T(out_iterator curr, PyObject *seq)
       : SwigPyForwardIteratorOpen_T<OutIterator>(curr, seq)
     {
@@ -4406,7 +4406,7 @@ namespace swig {
     }
   };
 
-  template<typename OutIterator, 
+  template<typename OutIterator,
 	   typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
 	   typename FromOper = from_oper<ValueType> >
   class SwigPyForwardIteratorClosed_T :  public SwigPyIterator_T<OutIterator>
@@ -4415,14 +4415,14 @@ namespace swig {
     FromOper from;
     typedef OutIterator out_iterator;
     typedef ValueType value_type;
-    typedef SwigPyIterator_T<out_iterator>  base;    
+    typedef SwigPyIterator_T<out_iterator>  base;
     typedef SwigPyForwardIteratorClosed_T<OutIterator, ValueType, FromOper> self_type;
-    
+
     SwigPyForwardIteratorClosed_T(out_iterator curr, out_iterator first, out_iterator last, PyObject *seq)
       : SwigPyIterator_T<OutIterator>(curr, seq), begin(first), end(last)
     {
     }
-    
+
     PyObject *value() const {
       if (base::current == end) {
 	throw stop_iteration();
@@ -4430,7 +4430,7 @@ namespace swig {
 	return from(static_cast<const value_type&>(*(base::current)));
       }
     }
-    
+
     SwigPyIterator *copy() const
     {
       return new self_type(*this);
@@ -4453,7 +4453,7 @@ namespace swig {
     out_iterator end;
   };
 
-  template<typename OutIterator, 
+  template<typename OutIterator,
 	   typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
 	   typename FromOper = from_oper<ValueType> >
   class SwigPyIteratorClosed_T :  public SwigPyForwardIteratorClosed_T<OutIterator,ValueType,FromOper>
@@ -4465,7 +4465,7 @@ namespace swig {
     typedef SwigPyIterator_T<out_iterator>  base;
     typedef SwigPyForwardIteratorClosed_T<OutIterator, ValueType, FromOper> base0;
     typedef SwigPyIteratorClosed_T<OutIterator, ValueType, FromOper> self_type;
-    
+
     SwigPyIteratorClosed_T(out_iterator curr, out_iterator first, out_iterator last, PyObject *seq)
       : SwigPyForwardIteratorClosed_T<OutIterator,ValueType,FromOper>(curr, first, last, seq)
     {
@@ -4516,7 +4516,7 @@ namespace swig {
 }
 
 
-  #define SWIG_From_double   PyFloat_FromDouble 
+  #define SWIG_From_double   PyFloat_FromDouble
 
 
 namespace swig {
@@ -4547,7 +4547,7 @@ namespace std {
   {
     bool
     operator()(PyObject * v, PyObject *w) const
-    { 
+    {
       bool res;
       SWIG_PYTHON_THREAD_BEGIN_BLOCK;
       res = PyObject_RichCompareBool(v, w, Py_LT) ? true : false;
@@ -4593,9 +4593,9 @@ namespace swig {
   template <> struct traits<PyObject *> {
     typedef value_category category;
     static const char* type_name() { return "PyObject *"; }
-  };  
+  };
 
-  template <>  struct traits_asval<PyObject * > {   
+  template <>  struct traits_asval<PyObject * > {
     typedef PyObject * value_type;
     static int asval(PyObject *obj, value_type *val) {
       if (val) *val = obj;
@@ -4603,7 +4603,7 @@ namespace swig {
     }
   };
 
-  template <> 
+  template <>
   struct traits_check<PyObject *, value_category> {
     static bool check(PyObject *) {
       return true;
@@ -4617,7 +4617,7 @@ namespace swig {
       return val;
     }
   };
-  
+
 }
 
 namespace swig {
@@ -4729,7 +4729,7 @@ namespace swig {
             it++;
         }
         return sequence;
-      } 
+      }
     } else {
       Sequence *sequence = new Sequence();
       swig::traits_reserve<Sequence>::reserve(*sequence, (ii - jj - step - 1) / -step);
@@ -4966,7 +4966,7 @@ namespace swig {
 	return traits_asptr_stdseq<std::vector<T> >::asptr(obj, vec);
       }
     };
-    
+
     template <class T>
     struct traits_from<std::vector<T> > {
       static PyObject *from(const std::vector<T>& vec) {
@@ -4984,7 +4984,7 @@ namespace swig {
 	  }
 	};
       }
-    
+
 SWIGINTERN swig::SwigPyIterator *std_vector_Sl_num_t_Sg__iterator(std::vector< num_t > *self,PyObject **PYTHON_SELF){
       return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
     }
@@ -4998,7 +4998,7 @@ SWIGINTERN std::vector< double >::size_type std_vector_Sl_num_t_Sg____len__(std:
       return self->size();
     }
 
-SWIGINTERNINLINE PyObject* 
+SWIGINTERNINLINE PyObject*
 SWIG_From_unsigned_SS_long  (unsigned long value)
 {
   return (value > LONG_MAX) ?
@@ -5007,7 +5007,7 @@ SWIG_From_unsigned_SS_long  (unsigned long value)
 
 
 #ifdef SWIG_LONG_LONG_AVAILABLE
-SWIGINTERNINLINE PyObject* 
+SWIGINTERNINLINE PyObject*
 SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
 {
   return (value > LONG_MAX) ?
@@ -5018,7 +5018,7 @@ SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
 
 SWIGINTERNINLINE PyObject *
 SWIG_From_size_t  (size_t value)
-{    
+{
 #ifdef SWIG_LONG_LONG_AVAILABLE
   if (sizeof(size_t) <= sizeof(unsigned long)) {
 #endif
@@ -5110,9 +5110,9 @@ namespace swig {
   };
 
   template <>
-  struct container_owner<swig::pointer_category> {  
+  struct container_owner<swig::pointer_category> {
     /*
-     * Call to add a back-reference to the owning object when returning a 
+     * Call to add a back-reference to the owning object when returning a
      * reference from a container.  Will only set the reference if child
      * is a SWIG wrapper object that does not own the pointer.
      *
@@ -5181,7 +5181,7 @@ namespace swig {
 	  }
 	};
       }
-    
+
 SWIGINTERN swig::SwigPyIterator *std_vector_Sl_index_t_Sg__iterator(std::vector< index_t > *self,PyObject **PYTHON_SELF){
       return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
     }
@@ -5282,7 +5282,7 @@ SWIGINTERN void std_vector_Sl_index_t_Sg__insert__SWIG_1(std::vector< index_t > 
 	  }
 	};
       }
-    
+
 SWIGINTERN swig::SwigPyIterator *std_vector_Sl_std_vector_Sl_num_t_Sg__Sg__iterator(std::vector< std::vector< num_t > > *self,PyObject **PYTHON_SELF){
       return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
     }
@@ -5383,7 +5383,7 @@ SWIGINTERN void std_vector_Sl_std_vector_Sl_num_t_Sg__Sg__insert__SWIG_1(std::ve
 	  }
 	};
       }
-    
+
 SWIGINTERN swig::SwigPyIterator *std_vector_Sl_std_vector_Sl_std_vector_Sl_num_t_Sg__Sg__Sg__iterator(std::vector< std::vector< std::vector< num_t > > > *self,PyObject **PYTHON_SELF){
       return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
     }
@@ -5532,7 +5532,7 @@ SWIGINTERN void std_vector_Sl_std_vector_Sl_std_vector_Sl_num_t_Sg__Sg__Sg__inse
       typedef std::pair<T,U> value_type;
 
       static int get_pair(PyObject* first, PyObject* second,
-			  std::pair<T,U> **val) 
+			  std::pair<T,U> **val)
       {
 	if (val) {
 	  value_type *vp = (new std::pair<T,U>());
@@ -5639,7 +5639,7 @@ SWIGINTERN void std_vector_Sl_std_vector_Sl_std_vector_Sl_num_t_Sg__Sg__Sg__inse
 	  }
 	};
       }
-    
+
 
       namespace swig {
 	template <>  struct traits<std::vector< std::pair< num_t,num_t >, std::allocator< std::pair< num_t,num_t > > > > {
@@ -5649,7 +5649,7 @@ SWIGINTERN void std_vector_Sl_std_vector_Sl_std_vector_Sl_num_t_Sg__Sg__Sg__inse
 	  }
 	};
       }
-    
+
 SWIGINTERN swig::SwigPyIterator *std_vector_Sl_std_pair_Sl_num_t_Sc_num_t_Sg__Sg__iterator(std::vector< std::pair< num_t,num_t > > *self,PyObject **PYTHON_SELF){
       return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
     }
@@ -5764,7 +5764,7 @@ SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, int *alloc)
 #else
   if (PyUnicode_Check(obj))
 #endif
-#else  
+#else
   if (PyString_Check(obj))
 #endif
   {
@@ -5841,7 +5841,7 @@ SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, int *alloc)
 
 
 SWIGINTERN int
-SWIG_AsPtr_std_string (PyObject * obj, std::string **val) 
+SWIG_AsPtr_std_string (PyObject * obj, std::string **val)
 {
   char* buf = 0 ; size_t size = 0; int alloc = SWIG_OLDOBJ;
   if (SWIG_IsOK((SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
@@ -5907,7 +5907,7 @@ SWIG_AsVal_bool (PyObject *obj, bool *val)
 	  }
 	};
       }
-    
+
 SWIGINTERN swig::SwigPyIterator *std_vector_Sl_binary_full_tree_rss_t_Sg__iterator(std::vector< binary_full_tree_rss_t > *self,PyObject **PYTHON_SELF){
       return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
     }
@@ -6006,7 +6006,7 @@ SWIG_FromCharPtrAndSize(const char* carray, size_t size)
   if (carray) {
     if (size > INT_MAX) {
       swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
-      return pchar_descriptor ? 
+      return pchar_descriptor ?
 	SWIG_InternalNewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : SWIG_Py_Void();
     } else {
 #if PY_VERSION_HEX >= 0x03000000
@@ -6037,7 +6037,7 @@ extern "C" {
 SWIGINTERN PyObject *_wrap_new_default_random_engine__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::default_random_engine *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -6062,13 +6062,13 @@ SWIGINTERN PyObject *_wrap_new_default_random_engine__SWIG_1(PyObject *self, Py_
   unsigned int val1 ;
   int ecode1 = 0 ;
   std::default_random_engine *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_unsigned_SS_int(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_default_random_engine" "', argument " "1"" of type '" "unsigned int""'");
-  } 
+  }
   arg1 = static_cast< unsigned int >(val1);
   {
     try {
@@ -6091,7 +6091,7 @@ SWIGINTERN PyObject *_wrap_new_default_random_engine(PyObject *self, PyObject *a
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_default_random_engine", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -6107,7 +6107,7 @@ SWIGINTERN PyObject *_wrap_new_default_random_engine(PyObject *self, PyObject *a
       return _wrap_new_default_random_engine__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_default_random_engine'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -6126,18 +6126,18 @@ SWIGINTERN PyObject *_wrap_default_random_engine_seed(PyObject *self, PyObject *
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_random_engine_seed", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__default_random_engine, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_random_engine_seed" "', argument " "1"" of type '" "std::default_random_engine *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_random_engine_seed" "', argument " "1"" of type '" "std::default_random_engine *""'");
   }
   arg1 = reinterpret_cast< std::default_random_engine * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_random_engine_seed" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -6161,13 +6161,13 @@ SWIGINTERN PyObject *_wrap_delete_default_random_engine(PyObject *self, PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__default_random_engine, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_default_random_engine" "', argument " "1"" of type '" "std::default_random_engine *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_default_random_engine" "', argument " "1"" of type '" "std::default_random_engine *""'");
   }
   arg1 = reinterpret_cast< std::default_random_engine * >(argp1);
   {
@@ -6203,13 +6203,13 @@ SWIGINTERN PyObject *_wrap_delete_SwigPyIterator(PyObject *self, PyObject *args)
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_SwigPyIterator" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_SwigPyIterator" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6235,13 +6235,13 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_value(PyObject *self, PyObject *args) 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   PyObject *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_value" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_value" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6277,18 +6277,18 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_0(PyObject *self, Py_ssize_
   size_t val2 ;
   int ecode2 = 0 ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_incr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_incr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator_incr" "', argument " "2"" of type '" "size_t""'");
-  } 
+  }
   arg2 = static_cast< size_t >(val2);
   {
     try {
@@ -6320,12 +6320,12 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_1(PyObject *self, Py_ssize_
   void *argp1 = 0 ;
   int res1 = 0 ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_incr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_incr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6357,7 +6357,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_incr(PyObject *self, PyObject *args) {
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "SwigPyIterator_incr", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 1) {
@@ -6384,7 +6384,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_incr(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SwigPyIterator_incr'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -6403,18 +6403,18 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_decr__SWIG_0(PyObject *self, Py_ssize_
   size_t val2 ;
   int ecode2 = 0 ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_decr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_decr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator_decr" "', argument " "2"" of type '" "size_t""'");
-  } 
+  }
   arg2 = static_cast< size_t >(val2);
   {
     try {
@@ -6446,12 +6446,12 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_decr__SWIG_1(PyObject *self, Py_ssize_
   void *argp1 = 0 ;
   int res1 = 0 ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_decr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_decr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6483,7 +6483,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_decr(PyObject *self, PyObject *args) {
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "SwigPyIterator_decr", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 1) {
@@ -6510,7 +6510,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_decr(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SwigPyIterator_decr'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -6530,20 +6530,20 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_distance(PyObject *self, PyObject *arg
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
   ptrdiff_t result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator_distance", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_distance" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_distance" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_swig__SwigPyIterator,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator_distance" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator_distance" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator_distance" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator_distance" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
   {
@@ -6576,20 +6576,20 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_equal(PyObject *self, PyObject *args) 
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
   bool result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator_equal", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_equal" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_equal" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_swig__SwigPyIterator,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator_equal" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator_equal" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator_equal" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator_equal" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
   {
@@ -6619,13 +6619,13 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_copy(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_copy" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_copy" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6651,13 +6651,13 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_next(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   PyObject *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_next" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_next" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6691,13 +6691,13 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___next__(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   PyObject *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___next__" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___next__" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6731,13 +6731,13 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_previous(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   PyObject *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_previous" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_previous" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   {
@@ -6774,18 +6774,18 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_advance(PyObject *self, PyObject *args
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator_advance", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_advance" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_advance" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator_advance" "', argument " "2"" of type '" "ptrdiff_t""'");
-  } 
+  }
   arg2 = static_cast< ptrdiff_t >(val2);
   {
     try {
@@ -6821,20 +6821,20 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___eq__(PyObject *self, PyObject *args)
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
   bool result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator___eq__", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___eq__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___eq__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_swig__SwigPyIterator,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___eq__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___eq__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator___eq__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator___eq__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
   {
@@ -6868,20 +6868,20 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___ne__(PyObject *self, PyObject *args)
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
   bool result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator___ne__", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___ne__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___ne__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_swig__SwigPyIterator,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___ne__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___ne__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator___ne__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator___ne__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
   {
@@ -6915,18 +6915,18 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___iadd__(PyObject *self, PyObject *arg
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator___iadd__", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___iadd__" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___iadd__" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___iadd__" "', argument " "2"" of type '" "ptrdiff_t""'");
-  } 
+  }
   arg2 = static_cast< ptrdiff_t >(val2);
   {
     try {
@@ -6962,18 +6962,18 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___isub__(PyObject *self, PyObject *arg
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator___isub__", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___isub__" "', argument " "1"" of type '" "swig::SwigPyIterator *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___isub__" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___isub__" "', argument " "2"" of type '" "ptrdiff_t""'");
-  } 
+  }
   arg2 = static_cast< ptrdiff_t >(val2);
   {
     try {
@@ -7009,18 +7009,18 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___add__(PyObject *self, PyObject *args
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator___add__", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___add__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___add__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___add__" "', argument " "2"" of type '" "ptrdiff_t""'");
-  } 
+  }
   arg2 = static_cast< ptrdiff_t >(val2);
   {
     try {
@@ -7060,18 +7060,18 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_0(PyObject *self, Py_ssi
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___sub__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___sub__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "ptrdiff_t""'");
-  } 
+  }
   arg2 = static_cast< ptrdiff_t >(val2);
   {
     try {
@@ -7111,20 +7111,20 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_1(PyObject *self, Py_ssi
   void *argp2 = 0 ;
   int res2 = 0 ;
   ptrdiff_t result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___sub__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___sub__" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");
   }
   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_swig__SwigPyIterator,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");
   }
   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
   {
@@ -7153,7 +7153,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___sub__(PyObject *self, PyObject *args
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "SwigPyIterator___sub__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -7184,7 +7184,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___sub__(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Py_INCREF(Py_NotImplemented);
   return Py_NotImplemented;
@@ -7206,14 +7206,14 @@ SWIGINTERN PyObject *_wrap_num_vector_iterator(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   arg2 = &swig_obj[0];
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_iterator" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_iterator" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7239,13 +7239,13 @@ SWIGINTERN PyObject *_wrap_num_vector___nonzero__(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___nonzero__" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___nonzero__" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7271,13 +7271,13 @@ SWIGINTERN PyObject *_wrap_num_vector___bool__(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___bool__" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___bool__" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7303,13 +7303,13 @@ SWIGINTERN PyObject *_wrap_num_vector___len__(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___len__" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___len__" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7341,23 +7341,23 @@ SWIGINTERN PyObject *_wrap_num_vector___getslice__(PyObject *self, PyObject *arg
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   std::vector< double,std::allocator< double > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector___getslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___getslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___getslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector___getslice__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector___getslice__" "', argument " "3"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< double >::difference_type >(val3);
   {
     try {
@@ -7392,23 +7392,23 @@ SWIGINTERN PyObject *_wrap_num_vector___setslice____SWIG_0(PyObject *self, Py_ss
   int ecode2 = 0 ;
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector___setslice__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector___setslice__" "', argument " "3"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< double >::difference_type >(val3);
   {
     try {
@@ -7445,32 +7445,32 @@ SWIGINTERN PyObject *_wrap_num_vector___setslice____SWIG_1(PyObject *self, Py_ss
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector___setslice__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector___setslice__" "', argument " "3"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< double >::difference_type >(val3);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector___setslice__" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector___setslice__" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector___setslice__" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector___setslice__" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg4 = ptr;
   }
@@ -7503,7 +7503,7 @@ SWIGINTERN PyObject *_wrap_num_vector___setslice__(PyObject *self, PyObject *arg
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector___setslice__", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -7550,7 +7550,7 @@ SWIGINTERN PyObject *_wrap_num_vector___setslice__(PyObject *self, PyObject *arg
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector___setslice__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -7572,23 +7572,23 @@ SWIGINTERN PyObject *_wrap_num_vector___delslice__(PyObject *self, PyObject *arg
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector___delslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___delslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___delslice__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector___delslice__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector___delslice__" "', argument " "3"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< double >::difference_type >(val3);
   {
     try {
@@ -7620,18 +7620,18 @@ SWIGINTERN PyObject *_wrap_num_vector___delitem____SWIG_0(PyObject *self, Py_ssi
   int res1 = 0 ;
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___delitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___delitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector___delitem__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::difference_type >(val2);
   {
     try {
@@ -7662,12 +7662,12 @@ SWIGINTERN PyObject *_wrap_num_vector___getitem____SWIG_0(PyObject *self, Py_ssi
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< double,std::allocator< double > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___getitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___getitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7706,12 +7706,12 @@ SWIGINTERN PyObject *_wrap_num_vector___setitem____SWIG_0(PyObject *self, Py_ssi
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7724,10 +7724,10 @@ SWIGINTERN PyObject *_wrap_num_vector___setitem____SWIG_0(PyObject *self, Py_ssi
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector___setitem__" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector___setitem__" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector___setitem__" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector___setitem__" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -7761,12 +7761,12 @@ SWIGINTERN PyObject *_wrap_num_vector___setitem____SWIG_1(PyObject *self, Py_ssi
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7803,12 +7803,12 @@ SWIGINTERN PyObject *_wrap_num_vector___delitem____SWIG_1(PyObject *self, Py_ssi
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___delitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___delitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -7844,7 +7844,7 @@ SWIGINTERN PyObject *_wrap_num_vector___delitem__(PyObject *self, PyObject *args
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector___delitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -7874,7 +7874,7 @@ SWIGINTERN PyObject *_wrap_num_vector___delitem__(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector___delitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -7893,18 +7893,18 @@ SWIGINTERN PyObject *_wrap_num_vector___getitem____SWIG_1(PyObject *self, Py_ssi
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   std::vector< double >::value_type *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___getitem__" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___getitem__" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector___getitem__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::difference_type >(val2);
   {
     try {
@@ -7932,7 +7932,7 @@ SWIGINTERN PyObject *_wrap_num_vector___getitem__(PyObject *self, PyObject *args
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector___getitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -7962,7 +7962,7 @@ SWIGINTERN PyObject *_wrap_num_vector___getitem__(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector___getitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -7984,23 +7984,23 @@ SWIGINTERN PyObject *_wrap_num_vector___setitem____SWIG_2(PyObject *self, Py_ssi
   std::vector< double >::value_type temp3 ;
   double val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector___setitem__" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector___setitem__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::difference_type >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector___setitem__" "', argument " "3"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< double >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -8028,7 +8028,7 @@ SWIGINTERN PyObject *_wrap_num_vector___setitem__(PyObject *self, PyObject *args
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector___setitem__", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -8081,7 +8081,7 @@ SWIGINTERN PyObject *_wrap_num_vector___setitem__(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector___setitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -8099,13 +8099,13 @@ SWIGINTERN PyObject *_wrap_num_vector_pop(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double >::value_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_pop" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_pop" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8138,18 +8138,18 @@ SWIGINTERN PyObject *_wrap_num_vector_append(PyObject *self, PyObject *args) {
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_append", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_append" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_append" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_append" "', argument " "2"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp2 = static_cast< std::vector< double >::value_type >(val2);
   arg2 = &temp2;
   {
@@ -8171,7 +8171,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_num_vector__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::vector< num_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -8195,17 +8195,17 @@ SWIGINTERN PyObject *_wrap_new_num_vector__SWIG_1(PyObject *self, Py_ssize_t nob
   std::vector< num_t > *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   std::vector< num_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res1 = swig::asptr(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_vector" "', argument " "1"" of type '" "std::vector< num_t > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_vector" "', argument " "1"" of type '" "std::vector< num_t > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector" "', argument " "1"" of type '" "std::vector< num_t > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector" "', argument " "1"" of type '" "std::vector< num_t > const &""'");
     }
     arg1 = ptr;
   }
@@ -8234,13 +8234,13 @@ SWIGINTERN PyObject *_wrap_num_vector_empty(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_empty" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_empty" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8266,13 +8266,13 @@ SWIGINTERN PyObject *_wrap_num_vector_size(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_size" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_size" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8300,20 +8300,20 @@ SWIGINTERN PyObject *_wrap_num_vector_swap(PyObject *self, PyObject *args) {
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_swap", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_swap" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_swap" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_num_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_swap" "', argument " "2"" of type '" "std::vector< num_t > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_swap" "', argument " "2"" of type '" "std::vector< num_t > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_swap" "', argument " "2"" of type '" "std::vector< num_t > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_swap" "', argument " "2"" of type '" "std::vector< num_t > &""'");
   }
   arg2 = reinterpret_cast< std::vector< num_t > * >(argp2);
   {
@@ -8339,13 +8339,13 @@ SWIGINTERN PyObject *_wrap_num_vector_begin(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< double >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_begin" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_begin" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8372,13 +8372,13 @@ SWIGINTERN PyObject *_wrap_num_vector_end(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< double >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_end" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_end" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8405,13 +8405,13 @@ SWIGINTERN PyObject *_wrap_num_vector_rbegin(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< double >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_rbegin" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_rbegin" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8438,13 +8438,13 @@ SWIGINTERN PyObject *_wrap_num_vector_rend(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< double >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_rend" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_rend" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8470,13 +8470,13 @@ SWIGINTERN PyObject *_wrap_num_vector_clear(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_clear" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_clear" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8502,13 +8502,13 @@ SWIGINTERN PyObject *_wrap_num_vector_get_allocator(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< double > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_get_allocator" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_get_allocator" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8533,13 +8533,13 @@ SWIGINTERN PyObject *_wrap_new_num_vector__SWIG_2(PyObject *self, Py_ssize_t nob
   size_t val1 ;
   int ecode1 = 0 ;
   std::vector< num_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_vector" "', argument " "1"" of type '" "std::vector< double >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< double >::size_type >(val1);
   {
     try {
@@ -8563,13 +8563,13 @@ SWIGINTERN PyObject *_wrap_num_vector_pop_back(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_pop_back" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_pop_back" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8596,18 +8596,18 @@ SWIGINTERN PyObject *_wrap_num_vector_resize__SWIG_0(PyObject *self, Py_ssize_t 
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_resize" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_resize" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_resize" "', argument " "2"" of type '" "std::vector< double >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::size_type >(val2);
   {
     try {
@@ -8634,12 +8634,12 @@ SWIGINTERN PyObject *_wrap_num_vector_erase__SWIG_0(PyObject *self, Py_ssize_t n
   swig::SwigPyIterator *iter2 = 0 ;
   int res2 ;
   SwigValueWrapper< std::vector< double >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_erase" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_erase" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -8682,12 +8682,12 @@ SWIGINTERN PyObject *_wrap_num_vector_erase__SWIG_1(PyObject *self, Py_ssize_t n
   swig::SwigPyIterator *iter3 = 0 ;
   int res3 ;
   SwigValueWrapper< std::vector< double >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_erase" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_erase" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -8734,7 +8734,7 @@ SWIGINTERN PyObject *_wrap_num_vector_erase(PyObject *self, PyObject *args) {
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_erase", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -8768,7 +8768,7 @@ SWIGINTERN PyObject *_wrap_num_vector_erase(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_erase'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -8788,18 +8788,18 @@ SWIGINTERN PyObject *_wrap_new_num_vector__SWIG_3(PyObject *self, Py_ssize_t nob
   double val2 ;
   int ecode2 = 0 ;
   std::vector< num_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_vector" "', argument " "1"" of type '" "std::vector< double >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< double >::size_type >(val1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_num_vector" "', argument " "2"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp2 = static_cast< std::vector< double >::value_type >(val2);
   arg2 = &temp2;
   {
@@ -8823,7 +8823,7 @@ SWIGINTERN PyObject *_wrap_new_num_vector(PyObject *self, PyObject *args) {
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_num_vector", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -8863,7 +8863,7 @@ SWIGINTERN PyObject *_wrap_new_num_vector(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_num_vector'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -8885,18 +8885,18 @@ SWIGINTERN PyObject *_wrap_num_vector_push_back(PyObject *self, PyObject *args) 
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_push_back", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_push_back" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_push_back" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_push_back" "', argument " "2"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp2 = static_cast< std::vector< double >::value_type >(val2);
   arg2 = &temp2;
   {
@@ -8922,13 +8922,13 @@ SWIGINTERN PyObject *_wrap_num_vector_front(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_front" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_front" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8955,13 +8955,13 @@ SWIGINTERN PyObject *_wrap_num_vector_back(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_back" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_back" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -8994,23 +8994,23 @@ SWIGINTERN PyObject *_wrap_num_vector_assign(PyObject *self, PyObject *args) {
   double val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_assign", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_assign" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_assign" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_assign" "', argument " "2"" of type '" "std::vector< double >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::size_type >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_assign" "', argument " "3"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< double >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -9041,23 +9041,23 @@ SWIGINTERN PyObject *_wrap_num_vector_resize__SWIG_1(PyObject *self, Py_ssize_t 
   std::vector< double >::value_type temp3 ;
   double val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_resize" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_resize" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_resize" "', argument " "2"" of type '" "std::vector< double >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::size_type >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_resize" "', argument " "3"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< double >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -9081,7 +9081,7 @@ SWIGINTERN PyObject *_wrap_num_vector_resize(PyObject *self, PyObject *args) {
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_resize", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -9118,7 +9118,7 @@ SWIGINTERN PyObject *_wrap_num_vector_resize(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_resize'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -9141,12 +9141,12 @@ SWIGINTERN PyObject *_wrap_num_vector_insert__SWIG_0(PyObject *self, Py_ssize_t 
   double val3 ;
   int ecode3 = 0 ;
   SwigValueWrapper< std::vector< double >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_insert" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_insert" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -9163,7 +9163,7 @@ SWIGINTERN PyObject *_wrap_num_vector_insert__SWIG_0(PyObject *self, Py_ssize_t 
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_insert" "', argument " "3"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< double >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -9198,12 +9198,12 @@ SWIGINTERN PyObject *_wrap_num_vector_insert__SWIG_1(PyObject *self, Py_ssize_t 
   std::vector< double >::value_type temp4 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_insert" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_insert" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -9220,12 +9220,12 @@ SWIGINTERN PyObject *_wrap_num_vector_insert__SWIG_1(PyObject *self, Py_ssize_t 
   ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_insert" "', argument " "3"" of type '" "std::vector< double >::size_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< double >::size_type >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "num_vector_insert" "', argument " "4"" of type '" "std::vector< double >::value_type""'");
-  } 
+  }
   temp4 = static_cast< std::vector< double >::value_type >(val4);
   arg4 = &temp4;
   {
@@ -9249,7 +9249,7 @@ SWIGINTERN PyObject *_wrap_num_vector_insert(PyObject *self, PyObject *args) {
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_insert", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -9296,7 +9296,7 @@ SWIGINTERN PyObject *_wrap_num_vector_insert(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_insert'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -9315,18 +9315,18 @@ SWIGINTERN PyObject *_wrap_num_vector_reserve(PyObject *self, PyObject *args) {
   size_t val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_reserve", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_reserve" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_reserve" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_reserve" "', argument " "2"" of type '" "std::vector< double >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< double >::size_type >(val2);
   {
     try {
@@ -9351,13 +9351,13 @@ SWIGINTERN PyObject *_wrap_num_vector_capacity(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_capacity" "', argument " "1"" of type '" "std::vector< num_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_capacity" "', argument " "1"" of type '" "std::vector< num_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -9382,13 +9382,13 @@ SWIGINTERN PyObject *_wrap_delete_num_vector(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_num_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_vector" "', argument " "1"" of type '" "std::vector< num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_vector" "', argument " "1"" of type '" "std::vector< num_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< num_t > * >(argp1);
   {
@@ -9426,14 +9426,14 @@ SWIGINTERN PyObject *_wrap_idx_vector_iterator(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   arg2 = &swig_obj[0];
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_iterator" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_iterator" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -9459,13 +9459,13 @@ SWIGINTERN PyObject *_wrap_idx_vector___nonzero__(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___nonzero__" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___nonzero__" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -9491,13 +9491,13 @@ SWIGINTERN PyObject *_wrap_idx_vector___bool__(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___bool__" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___bool__" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -9523,13 +9523,13 @@ SWIGINTERN PyObject *_wrap_idx_vector___len__(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< unsigned int >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___len__" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___len__" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -9561,23 +9561,23 @@ SWIGINTERN PyObject *_wrap_idx_vector___getslice__(PyObject *self, PyObject *arg
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   std::vector< unsigned int,std::allocator< unsigned int > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "idx_vector___getslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___getslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___getslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector___getslice__" "', argument " "2"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector___getslice__" "', argument " "3"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< unsigned int >::difference_type >(val3);
   {
     try {
@@ -9612,23 +9612,23 @@ SWIGINTERN PyObject *_wrap_idx_vector___setslice____SWIG_0(PyObject *self, Py_ss
   int ecode2 = 0 ;
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector___setslice__" "', argument " "2"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector___setslice__" "', argument " "3"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< unsigned int >::difference_type >(val3);
   {
     try {
@@ -9665,32 +9665,32 @@ SWIGINTERN PyObject *_wrap_idx_vector___setslice____SWIG_1(PyObject *self, Py_ss
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector___setslice__" "', argument " "2"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector___setslice__" "', argument " "3"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< unsigned int >::difference_type >(val3);
   {
     std::vector< unsigned int,std::allocator< unsigned int > > *ptr = (std::vector< unsigned int,std::allocator< unsigned int > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "idx_vector___setslice__" "', argument " "4"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "idx_vector___setslice__" "', argument " "4"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "idx_vector___setslice__" "', argument " "4"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "idx_vector___setslice__" "', argument " "4"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     arg4 = ptr;
   }
@@ -9723,7 +9723,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___setslice__(PyObject *self, PyObject *arg
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "idx_vector___setslice__", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -9770,7 +9770,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___setslice__(PyObject *self, PyObject *arg
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'idx_vector___setslice__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -9792,23 +9792,23 @@ SWIGINTERN PyObject *_wrap_idx_vector___delslice__(PyObject *self, PyObject *arg
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "idx_vector___delslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___delslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___delslice__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector___delslice__" "', argument " "2"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector___delslice__" "', argument " "3"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< unsigned int >::difference_type >(val3);
   {
     try {
@@ -9840,18 +9840,18 @@ SWIGINTERN PyObject *_wrap_idx_vector___delitem____SWIG_0(PyObject *self, Py_ssi
   int res1 = 0 ;
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___delitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___delitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector___delitem__" "', argument " "2"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::difference_type >(val2);
   {
     try {
@@ -9882,12 +9882,12 @@ SWIGINTERN PyObject *_wrap_idx_vector___getitem____SWIG_0(PyObject *self, Py_ssi
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< unsigned int,std::allocator< unsigned int > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___getitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___getitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -9926,12 +9926,12 @@ SWIGINTERN PyObject *_wrap_idx_vector___setitem____SWIG_0(PyObject *self, Py_ssi
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -9944,10 +9944,10 @@ SWIGINTERN PyObject *_wrap_idx_vector___setitem____SWIG_0(PyObject *self, Py_ssi
     std::vector< unsigned int,std::allocator< unsigned int > > *ptr = (std::vector< unsigned int,std::allocator< unsigned int > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "idx_vector___setitem__" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "idx_vector___setitem__" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "idx_vector___setitem__" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "idx_vector___setitem__" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     arg3 = ptr;
   }
@@ -9981,12 +9981,12 @@ SWIGINTERN PyObject *_wrap_idx_vector___setitem____SWIG_1(PyObject *self, Py_ssi
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10023,12 +10023,12 @@ SWIGINTERN PyObject *_wrap_idx_vector___delitem____SWIG_1(PyObject *self, Py_ssi
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___delitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___delitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10064,7 +10064,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___delitem__(PyObject *self, PyObject *args
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "idx_vector___delitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -10094,7 +10094,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___delitem__(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'idx_vector___delitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -10113,18 +10113,18 @@ SWIGINTERN PyObject *_wrap_idx_vector___getitem____SWIG_1(PyObject *self, Py_ssi
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   std::vector< unsigned int >::value_type *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___getitem__" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___getitem__" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector___getitem__" "', argument " "2"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::difference_type >(val2);
   {
     try {
@@ -10152,7 +10152,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___getitem__(PyObject *self, PyObject *args
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "idx_vector___getitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -10182,7 +10182,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___getitem__(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'idx_vector___getitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -10204,23 +10204,23 @@ SWIGINTERN PyObject *_wrap_idx_vector___setitem____SWIG_2(PyObject *self, Py_ssi
   std::vector< unsigned int >::value_type temp3 ;
   unsigned int val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector___setitem__" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector___setitem__" "', argument " "2"" of type '" "std::vector< unsigned int >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::difference_type >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector___setitem__" "', argument " "3"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< unsigned int >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -10248,7 +10248,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___setitem__(PyObject *self, PyObject *args
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "idx_vector___setitem__", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -10301,7 +10301,7 @@ SWIGINTERN PyObject *_wrap_idx_vector___setitem__(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'idx_vector___setitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -10319,13 +10319,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_pop(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< unsigned int >::value_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_pop" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_pop" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10358,18 +10358,18 @@ SWIGINTERN PyObject *_wrap_idx_vector_append(PyObject *self, PyObject *args) {
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "idx_vector_append", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_append" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_append" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector_append" "', argument " "2"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp2 = static_cast< std::vector< unsigned int >::value_type >(val2);
   arg2 = &temp2;
   {
@@ -10391,7 +10391,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_idx_vector__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::vector< index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -10415,17 +10415,17 @@ SWIGINTERN PyObject *_wrap_new_idx_vector__SWIG_1(PyObject *self, Py_ssize_t nob
   std::vector< index_t > *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   std::vector< index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     std::vector< unsigned int,std::allocator< unsigned int > > *ptr = (std::vector< unsigned int,std::allocator< unsigned int > > *)0;
     res1 = swig::asptr(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_idx_vector" "', argument " "1"" of type '" "std::vector< index_t > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_idx_vector" "', argument " "1"" of type '" "std::vector< index_t > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_idx_vector" "', argument " "1"" of type '" "std::vector< index_t > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_idx_vector" "', argument " "1"" of type '" "std::vector< index_t > const &""'");
     }
     arg1 = ptr;
   }
@@ -10454,13 +10454,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_empty(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_empty" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_empty" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10486,13 +10486,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_size(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< unsigned int >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_size" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_size" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10520,20 +10520,20 @@ SWIGINTERN PyObject *_wrap_idx_vector_swap(PyObject *self, PyObject *args) {
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "idx_vector_swap", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_swap" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_swap" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_index_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "idx_vector_swap" "', argument " "2"" of type '" "std::vector< index_t > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "idx_vector_swap" "', argument " "2"" of type '" "std::vector< index_t > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "idx_vector_swap" "', argument " "2"" of type '" "std::vector< index_t > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "idx_vector_swap" "', argument " "2"" of type '" "std::vector< index_t > &""'");
   }
   arg2 = reinterpret_cast< std::vector< index_t > * >(argp2);
   {
@@ -10559,13 +10559,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_begin(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< unsigned int >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_begin" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_begin" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10592,13 +10592,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_end(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< unsigned int >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_end" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_end" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10625,13 +10625,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_rbegin(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< unsigned int >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_rbegin" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_rbegin" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10658,13 +10658,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_rend(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< unsigned int >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_rend" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_rend" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10690,13 +10690,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_clear(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_clear" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_clear" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10722,13 +10722,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_get_allocator(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< unsigned int > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_get_allocator" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_get_allocator" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10753,13 +10753,13 @@ SWIGINTERN PyObject *_wrap_new_idx_vector__SWIG_2(PyObject *self, Py_ssize_t nob
   size_t val1 ;
   int ecode1 = 0 ;
   std::vector< index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_idx_vector" "', argument " "1"" of type '" "std::vector< unsigned int >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< unsigned int >::size_type >(val1);
   {
     try {
@@ -10783,13 +10783,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_pop_back(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_pop_back" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_pop_back" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -10816,18 +10816,18 @@ SWIGINTERN PyObject *_wrap_idx_vector_resize__SWIG_0(PyObject *self, Py_ssize_t 
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_resize" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_resize" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector_resize" "', argument " "2"" of type '" "std::vector< unsigned int >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::size_type >(val2);
   {
     try {
@@ -10854,12 +10854,12 @@ SWIGINTERN PyObject *_wrap_idx_vector_erase__SWIG_0(PyObject *self, Py_ssize_t n
   swig::SwigPyIterator *iter2 = 0 ;
   int res2 ;
   SwigValueWrapper< std::vector< unsigned int >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_erase" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_erase" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -10902,12 +10902,12 @@ SWIGINTERN PyObject *_wrap_idx_vector_erase__SWIG_1(PyObject *self, Py_ssize_t n
   swig::SwigPyIterator *iter3 = 0 ;
   int res3 ;
   SwigValueWrapper< std::vector< unsigned int >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_erase" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_erase" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -10954,7 +10954,7 @@ SWIGINTERN PyObject *_wrap_idx_vector_erase(PyObject *self, PyObject *args) {
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "idx_vector_erase", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -10988,7 +10988,7 @@ SWIGINTERN PyObject *_wrap_idx_vector_erase(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'idx_vector_erase'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -11008,18 +11008,18 @@ SWIGINTERN PyObject *_wrap_new_idx_vector__SWIG_3(PyObject *self, Py_ssize_t nob
   unsigned int val2 ;
   int ecode2 = 0 ;
   std::vector< index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_idx_vector" "', argument " "1"" of type '" "std::vector< unsigned int >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< unsigned int >::size_type >(val1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_idx_vector" "', argument " "2"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp2 = static_cast< std::vector< unsigned int >::value_type >(val2);
   arg2 = &temp2;
   {
@@ -11043,7 +11043,7 @@ SWIGINTERN PyObject *_wrap_new_idx_vector(PyObject *self, PyObject *args) {
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_idx_vector", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -11083,7 +11083,7 @@ SWIGINTERN PyObject *_wrap_new_idx_vector(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_idx_vector'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -11105,18 +11105,18 @@ SWIGINTERN PyObject *_wrap_idx_vector_push_back(PyObject *self, PyObject *args) 
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "idx_vector_push_back", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_push_back" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_push_back" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector_push_back" "', argument " "2"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp2 = static_cast< std::vector< unsigned int >::value_type >(val2);
   arg2 = &temp2;
   {
@@ -11142,13 +11142,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_front(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< unsigned int >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_front" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_front" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -11175,13 +11175,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_back(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< unsigned int >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_back" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_back" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -11214,23 +11214,23 @@ SWIGINTERN PyObject *_wrap_idx_vector_assign(PyObject *self, PyObject *args) {
   unsigned int val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "idx_vector_assign", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_assign" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_assign" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector_assign" "', argument " "2"" of type '" "std::vector< unsigned int >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::size_type >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector_assign" "', argument " "3"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< unsigned int >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -11261,23 +11261,23 @@ SWIGINTERN PyObject *_wrap_idx_vector_resize__SWIG_1(PyObject *self, Py_ssize_t 
   std::vector< unsigned int >::value_type temp3 ;
   unsigned int val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_resize" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_resize" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector_resize" "', argument " "2"" of type '" "std::vector< unsigned int >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::size_type >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector_resize" "', argument " "3"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< unsigned int >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -11301,7 +11301,7 @@ SWIGINTERN PyObject *_wrap_idx_vector_resize(PyObject *self, PyObject *args) {
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "idx_vector_resize", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -11338,7 +11338,7 @@ SWIGINTERN PyObject *_wrap_idx_vector_resize(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'idx_vector_resize'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -11361,12 +11361,12 @@ SWIGINTERN PyObject *_wrap_idx_vector_insert__SWIG_0(PyObject *self, Py_ssize_t 
   unsigned int val3 ;
   int ecode3 = 0 ;
   SwigValueWrapper< std::vector< unsigned int >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_insert" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_insert" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -11383,7 +11383,7 @@ SWIGINTERN PyObject *_wrap_idx_vector_insert__SWIG_0(PyObject *self, Py_ssize_t 
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector_insert" "', argument " "3"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp3 = static_cast< std::vector< unsigned int >::value_type >(val3);
   arg3 = &temp3;
   {
@@ -11418,12 +11418,12 @@ SWIGINTERN PyObject *_wrap_idx_vector_insert__SWIG_1(PyObject *self, Py_ssize_t 
   std::vector< unsigned int >::value_type temp4 ;
   unsigned int val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_insert" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_insert" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -11440,12 +11440,12 @@ SWIGINTERN PyObject *_wrap_idx_vector_insert__SWIG_1(PyObject *self, Py_ssize_t 
   ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "idx_vector_insert" "', argument " "3"" of type '" "std::vector< unsigned int >::size_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< unsigned int >::size_type >(val3);
   ecode4 = SWIG_AsVal_unsigned_SS_int(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "idx_vector_insert" "', argument " "4"" of type '" "std::vector< unsigned int >::value_type""'");
-  } 
+  }
   temp4 = static_cast< std::vector< unsigned int >::value_type >(val4);
   arg4 = &temp4;
   {
@@ -11469,7 +11469,7 @@ SWIGINTERN PyObject *_wrap_idx_vector_insert(PyObject *self, PyObject *args) {
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "idx_vector_insert", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -11516,7 +11516,7 @@ SWIGINTERN PyObject *_wrap_idx_vector_insert(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'idx_vector_insert'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -11535,18 +11535,18 @@ SWIGINTERN PyObject *_wrap_idx_vector_reserve(PyObject *self, PyObject *args) {
   size_t val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "idx_vector_reserve", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_reserve" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_reserve" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "idx_vector_reserve" "', argument " "2"" of type '" "std::vector< unsigned int >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< unsigned int >::size_type >(val2);
   {
     try {
@@ -11571,13 +11571,13 @@ SWIGINTERN PyObject *_wrap_idx_vector_capacity(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< unsigned int >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_capacity" "', argument " "1"" of type '" "std::vector< index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "idx_vector_capacity" "', argument " "1"" of type '" "std::vector< index_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -11602,13 +11602,13 @@ SWIGINTERN PyObject *_wrap_delete_idx_vector(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_index_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_idx_vector" "', argument " "1"" of type '" "std::vector< index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_idx_vector" "', argument " "1"" of type '" "std::vector< index_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< index_t > * >(argp1);
   {
@@ -11646,14 +11646,14 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_iterator(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   arg2 = &swig_obj[0];
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_iterator" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_iterator" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -11679,13 +11679,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___nonzero__(PyObject *self, PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___nonzero__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___nonzero__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -11711,13 +11711,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___bool__(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___bool__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___bool__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -11743,13 +11743,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___len__(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< double > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___len__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___len__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -11781,23 +11781,23 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___getslice__(PyObject *self, PyObje
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector___getslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___getslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___getslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector___getslice__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector___getslice__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3);
   {
     try {
@@ -11832,23 +11832,23 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setslice____SWIG_0(PyObject *self
   int ecode2 = 0 ;
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector___setslice__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector___setslice__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3);
   {
     try {
@@ -11885,32 +11885,32 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setslice____SWIG_1(PyObject *self
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector___setslice__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector___setslice__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg4 = ptr;
   }
@@ -11943,7 +11943,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setslice__(PyObject *self, PyObje
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector___setslice__", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -11990,7 +11990,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setslice__(PyObject *self, PyObje
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector___setslice__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -12012,23 +12012,23 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___delslice__(PyObject *self, PyObje
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector___delslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___delslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___delslice__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector___delslice__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector___delslice__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3);
   {
     try {
@@ -12060,18 +12060,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___delitem____SWIG_0(PyObject *self,
   int res1 = 0 ;
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector___delitem__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   {
     try {
@@ -12102,12 +12102,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___getitem____SWIG_0(PyObject *self,
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12146,12 +12146,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setitem____SWIG_0(PyObject *self,
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12164,10 +12164,10 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setitem____SWIG_0(PyObject *self,
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg3 = ptr;
   }
@@ -12201,12 +12201,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setitem____SWIG_1(PyObject *self,
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12243,12 +12243,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___delitem____SWIG_1(PyObject *self,
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12284,7 +12284,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___delitem__(PyObject *self, PyObjec
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector___delitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -12314,7 +12314,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___delitem__(PyObject *self, PyObjec
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector___delitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -12333,18 +12333,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___getitem____SWIG_1(PyObject *self,
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   std::vector< std::vector< double > >::value_type *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector___getitem__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   {
     try {
@@ -12372,7 +12372,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___getitem__(PyObject *self, PyObjec
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector___getitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -12402,7 +12402,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___getitem__(PyObject *self, PyObjec
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector___getitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -12422,27 +12422,27 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setitem____SWIG_2(PyObject *self,
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector___setitem__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -12473,7 +12473,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setitem__(PyObject *self, PyObjec
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector___setitem__", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -12524,7 +12524,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector___setitem__(PyObject *self, PyObjec
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector___setitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -12542,13 +12542,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_pop(PyObject *self, PyObject *args)
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< double > >::value_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_pop" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_pop" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12579,22 +12579,22 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_append(PyObject *self, PyObject *ar
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_append", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_append" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_append" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -12619,7 +12619,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_num_vector_vector__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::vector< std::vector< num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -12643,17 +12643,17 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector__SWIG_1(PyObject *self, Py_ssiz
   std::vector< std::vector< num_t,std::allocator< num_t > > > *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   std::vector< std::vector< num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res1 = swig::asptr(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > const &""'");
     }
     arg1 = ptr;
   }
@@ -12682,13 +12682,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_empty(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_empty" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_empty" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12714,13 +12714,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_size(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< double > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_size" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_size" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12748,20 +12748,20 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_swap(PyObject *self, PyObject *args
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_swap", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_swap" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_swap" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > > > &""'");
   }
   arg2 = reinterpret_cast< std::vector< std::vector< num_t,std::allocator< num_t > > > * >(argp2);
   {
@@ -12787,13 +12787,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_begin(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< double > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_begin" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_begin" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12820,13 +12820,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_end(PyObject *self, PyObject *args)
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< double > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_end" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_end" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12853,13 +12853,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_rbegin(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< double > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_rbegin" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_rbegin" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12886,13 +12886,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_rend(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< double > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_rend" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_rend" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12918,13 +12918,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_clear(PyObject *self, PyObject *arg
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_clear" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_clear" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12950,13 +12950,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_get_allocator(PyObject *self, PyObj
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< std::vector< double,std::allocator< double > > > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_get_allocator" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_get_allocator" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -12981,13 +12981,13 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector__SWIG_2(PyObject *self, Py_ssiz
   size_t val1 ;
   int ecode1 = 0 ;
   std::vector< std::vector< num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< double > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< std::vector< double > >::size_type >(val1);
   {
     try {
@@ -13011,13 +13011,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_pop_back(PyObject *self, PyObject *
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_pop_back" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_pop_back" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -13044,18 +13044,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_resize__SWIG_0(PyObject *self, Py_s
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_resize" "', argument " "2"" of type '" "std::vector< std::vector< double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2);
   {
     try {
@@ -13082,12 +13082,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_erase__SWIG_0(PyObject *self, Py_ss
   swig::SwigPyIterator *iter2 = 0 ;
   int res2 ;
   SwigValueWrapper< std::vector< std::vector< double > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -13130,12 +13130,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_erase__SWIG_1(PyObject *self, Py_ss
   swig::SwigPyIterator *iter3 = 0 ;
   int res3 ;
   SwigValueWrapper< std::vector< std::vector< double > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -13182,7 +13182,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_erase(PyObject *self, PyObject *arg
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_erase", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -13216,7 +13216,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_erase(PyObject *self, PyObject *arg
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_erase'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -13234,22 +13234,22 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector__SWIG_3(PyObject *self, Py_ssiz
   int ecode1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::vector< std::vector< num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< double > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< std::vector< double > >::size_type >(val1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_num_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_num_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -13276,7 +13276,7 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector(PyObject *self, PyObject *args)
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_num_vector_vector", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -13314,7 +13314,7 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector(PyObject *self, PyObject *args)
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_num_vector_vector'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -13334,22 +13334,22 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_push_back(PyObject *self, PyObject 
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_push_back", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_push_back" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_push_back" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -13378,13 +13378,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_front(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< double > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_front" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_front" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -13411,13 +13411,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_back(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< double > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_back" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_back" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -13448,27 +13448,27 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_assign(PyObject *self, PyObject *ar
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_assign", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_assign" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_assign" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_assign" "', argument " "2"" of type '" "std::vector< std::vector< double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -13500,27 +13500,27 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_resize__SWIG_1(PyObject *self, Py_s
   size_t val2 ;
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_resize" "', argument " "2"" of type '" "std::vector< std::vector< double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -13547,7 +13547,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_resize(PyObject *self, PyObject *ar
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_resize", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -13582,7 +13582,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_resize(PyObject *self, PyObject *ar
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_resize'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -13603,12 +13603,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_insert__SWIG_0(PyObject *self, Py_s
   int res2 ;
   int res3 = SWIG_OLDOBJ ;
   SwigValueWrapper< std::vector< std::vector< double > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -13626,10 +13626,10 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_insert__SWIG_0(PyObject *self, Py_s
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -13665,12 +13665,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_insert__SWIG_1(PyObject *self, Py_s
   size_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -13687,16 +13687,16 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_insert__SWIG_1(PyObject *self, Py_s
   ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< double > >::size_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< double > >::size_type >(val3);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< double > >::value_type const &""'");
     }
     arg4 = ptr;
   }
@@ -13723,7 +13723,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_insert(PyObject *self, PyObject *ar
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_insert", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -13766,7 +13766,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_insert(PyObject *self, PyObject *ar
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_insert'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -13785,18 +13785,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_reserve(PyObject *self, PyObject *a
   size_t val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_reserve", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_reserve" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_reserve" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_reserve" "', argument " "2"" of type '" "std::vector< std::vector< double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2);
   {
     try {
@@ -13821,13 +13821,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_capacity(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< double > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_capacity" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_capacity" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -13852,13 +13852,13 @@ SWIGINTERN PyObject *_wrap_delete_num_vector_vector(PyObject *self, PyObject *ar
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< num_t > > * >(argp1);
   {
@@ -13896,14 +13896,14 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_iterator(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   arg2 = &swig_obj[0];
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_iterator" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_iterator" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -13929,13 +13929,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___nonzero__(PyObject *self, 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___nonzero__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___nonzero__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -13961,13 +13961,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___bool__(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___bool__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___bool__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -13993,13 +13993,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___len__(PyObject *self, PyOb
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< std::vector< double > > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___len__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___len__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14031,23 +14031,23 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___getslice__(PyObject *self,
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_vector___getslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___getslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___getslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector___getslice__" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector_vector___getslice__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val3);
   {
     try {
@@ -14082,23 +14082,23 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setslice____SWIG_0(PyObjec
   int ecode2 = 0 ;
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector___setslice__" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector_vector___setslice__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val3);
   {
     try {
@@ -14135,32 +14135,32 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setslice____SWIG_1(PyObjec
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector___setslice__" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector_vector___setslice__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val3);
   {
     std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *ptr = (std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'");
     }
     arg4 = ptr;
   }
@@ -14193,7 +14193,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setslice__(PyObject *self,
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_vector___setslice__", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -14240,7 +14240,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setslice__(PyObject *self,
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_vector___setslice__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -14262,23 +14262,23 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___delslice__(PyObject *self,
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_vector___delslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___delslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___delslice__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector___delslice__" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector_vector___delslice__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val3);
   {
     try {
@@ -14310,18 +14310,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___delitem____SWIG_0(PyObject
   int res1 = 0 ;
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector___delitem__" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val2);
   {
     try {
@@ -14352,12 +14352,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___getitem____SWIG_0(PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14396,12 +14396,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setitem____SWIG_0(PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14414,10 +14414,10 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setitem____SWIG_0(PyObject
     std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *ptr = (std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > const &""'");
     }
     arg3 = ptr;
   }
@@ -14451,12 +14451,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setitem____SWIG_1(PyObject
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14493,12 +14493,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___delitem____SWIG_1(PyObject
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14534,7 +14534,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___delitem__(PyObject *self, 
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_vector___delitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -14564,7 +14564,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___delitem__(PyObject *self, 
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_vector___delitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -14583,18 +14583,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___getitem____SWIG_1(PyObject
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   std::vector< std::vector< std::vector< double > > >::value_type *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector___getitem__" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val2);
   {
     try {
@@ -14622,7 +14622,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___getitem__(PyObject *self, 
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_vector___getitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -14652,7 +14652,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___getitem__(PyObject *self, 
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_vector___getitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -14672,27 +14672,27 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setitem____SWIG_2(PyObject
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector___setitem__" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::difference_type >(val2);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -14723,7 +14723,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setitem__(PyObject *self, 
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_vector___setitem__", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -14774,7 +14774,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector___setitem__(PyObject *self, 
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_vector___setitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -14792,13 +14792,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_pop(PyObject *self, PyObject
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< std::vector< double > > >::value_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_pop" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_pop" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14829,22 +14829,22 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_append(PyObject *self, PyObj
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_append", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_append" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_append" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_append" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -14869,7 +14869,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_num_vector_vector_vector__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::vector< std::vector< std::vector< num_t > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -14893,17 +14893,17 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector_vector__SWIG_1(PyObject *self, 
   std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   std::vector< std::vector< std::vector< num_t > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *ptr = (std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > *)0;
     res1 = swig::asptr(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > const &""'");
     }
     arg1 = ptr;
   }
@@ -14932,13 +14932,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_empty(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_empty" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_empty" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14964,13 +14964,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_size(PyObject *self, PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< std::vector< double > > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_size" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_size" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -14998,20 +14998,20 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_swap(PyObject *self, PyObjec
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_swap", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_swap" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_swap" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_swap" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > &""'");
   }
   arg2 = reinterpret_cast< std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > * >(argp2);
   {
@@ -15037,13 +15037,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_begin(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< std::vector< double > > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_begin" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_begin" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15070,13 +15070,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_end(PyObject *self, PyObject
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< std::vector< double > > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_end" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_end" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15103,13 +15103,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_rbegin(PyObject *self, PyObj
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< std::vector< double > > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_rbegin" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_rbegin" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15136,13 +15136,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_rend(PyObject *self, PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::vector< std::vector< double > > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_rend" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_rend" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15168,13 +15168,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_clear(PyObject *self, PyObje
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_clear" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_clear" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15200,13 +15200,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_get_allocator(PyObject *self
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_get_allocator" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_get_allocator" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15231,13 +15231,13 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector_vector__SWIG_2(PyObject *self, 
   size_t val1 ;
   int ecode1 = 0 ;
   std::vector< std::vector< std::vector< num_t > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< double > > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< std::vector< std::vector< double > > >::size_type >(val1);
   {
     try {
@@ -15261,13 +15261,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_pop_back(PyObject *self, PyO
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_pop_back" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_pop_back" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15294,18 +15294,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_resize__SWIG_0(PyObject *sel
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector_resize" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::size_type >(val2);
   {
     try {
@@ -15332,12 +15332,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_erase__SWIG_0(PyObject *self
   swig::SwigPyIterator *iter2 = 0 ;
   int res2 ;
   SwigValueWrapper< std::vector< std::vector< std::vector< double > > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -15380,12 +15380,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_erase__SWIG_1(PyObject *self
   swig::SwigPyIterator *iter3 = 0 ;
   int res3 ;
   SwigValueWrapper< std::vector< std::vector< std::vector< double > > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_erase" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -15432,7 +15432,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_erase(PyObject *self, PyObje
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_erase", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -15466,7 +15466,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_erase(PyObject *self, PyObje
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_vector_erase'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -15484,22 +15484,22 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector_vector__SWIG_3(PyObject *self, 
   int ecode1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::vector< std::vector< std::vector< num_t > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< double > > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< std::vector< std::vector< double > > >::size_type >(val1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_num_vector_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_num_vector_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_vector_vector_vector" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -15526,7 +15526,7 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector_vector(PyObject *self, PyObject
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_num_vector_vector_vector", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -15564,7 +15564,7 @@ SWIGINTERN PyObject *_wrap_new_num_vector_vector_vector(PyObject *self, PyObject
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_num_vector_vector_vector'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -15584,22 +15584,22 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_push_back(PyObject *self, Py
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_push_back", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_push_back" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_push_back" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_vector_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -15628,13 +15628,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_front(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< std::vector< double > > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_front" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_front" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15661,13 +15661,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_back(PyObject *self, PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< std::vector< double > > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_back" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_back" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -15698,27 +15698,27 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_assign(PyObject *self, PyObj
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_assign", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_assign" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_assign" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector_assign" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::size_type >(val2);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_assign" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -15750,27 +15750,27 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_resize__SWIG_1(PyObject *sel
   size_t val2 ;
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_resize" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector_resize" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::size_type >(val2);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_resize" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -15797,7 +15797,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_resize(PyObject *self, PyObj
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_resize", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -15832,7 +15832,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_resize(PyObject *self, PyObj
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_vector_resize'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -15853,12 +15853,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_insert__SWIG_0(PyObject *sel
   int res2 ;
   int res3 = SWIG_OLDOBJ ;
   SwigValueWrapper< std::vector< std::vector< std::vector< double > > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -15876,10 +15876,10 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_insert__SWIG_0(PyObject *sel
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_vector_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -15915,12 +15915,12 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_insert__SWIG_1(PyObject *sel
   size_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_insert" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -15937,16 +15937,16 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_insert__SWIG_1(PyObject *sel
   ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_vector_vector_vector_insert" "', argument " "3"" of type '" "std::vector< std::vector< std::vector< double > > >::size_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::vector< std::vector< double > > >::size_type >(val3);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_vector_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_vector_vector_vector_insert" "', argument " "4"" of type '" "std::vector< std::vector< std::vector< double > > >::value_type const &""'");
     }
     arg4 = ptr;
   }
@@ -15973,7 +15973,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_insert(PyObject *self, PyObj
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_insert", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -16016,7 +16016,7 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_insert(PyObject *self, PyObj
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_vector_vector_vector_insert'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -16035,18 +16035,18 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_reserve(PyObject *self, PyOb
   size_t val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_vector_vector_vector_reserve", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_reserve" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_reserve" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_vector_vector_vector_reserve" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< double > > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::vector< std::vector< double > > >::size_type >(val2);
   {
     try {
@@ -16071,13 +16071,13 @@ SWIGINTERN PyObject *_wrap_num_vector_vector_vector_capacity(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< std::vector< double > > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_capacity" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_vector_vector_vector_capacity" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -16102,13 +16102,13 @@ SWIGINTERN PyObject *_wrap_delete_num_vector_vector_vector(PyObject *self, PyObj
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_vector_vector_vector" "', argument " "1"" of type '" "std::vector< std::vector< std::vector< num_t > > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::vector< std::vector< num_t > > > * >(argp1);
   {
@@ -16141,7 +16141,7 @@ SWIGINTERN PyObject *num_vector_vector_vector_swiginit(PyObject *SWIGUNUSEDPARM(
 SWIGINTERN PyObject *_wrap_new_num_num_pair__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::pair< num_t,num_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -16169,18 +16169,18 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair__SWIG_1(PyObject *self, Py_ssize_t n
   double val2 ;
   int ecode2 = 0 ;
   std::pair< num_t,num_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_num_pair" "', argument " "1"" of type '" "double""'");
-  } 
+  }
   arg1 = static_cast< double >(val1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_num_num_pair" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   {
     try {
@@ -16203,17 +16203,17 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair__SWIG_2(PyObject *self, Py_ssize_t n
   std::pair< num_t,num_t > *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   std::pair< num_t,num_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res1 = swig::asptr(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_num_pair" "', argument " "1"" of type '" "std::pair< num_t,num_t > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_num_pair" "', argument " "1"" of type '" "std::pair< num_t,num_t > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_num_pair" "', argument " "1"" of type '" "std::pair< num_t,num_t > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_num_pair" "', argument " "1"" of type '" "std::pair< num_t,num_t > const &""'");
     }
     arg1 = ptr;
   }
@@ -16240,7 +16240,7 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair(PyObject *self, PyObject *args) {
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_num_num_pair", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -16270,7 +16270,7 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_num_num_pair'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -16290,18 +16290,18 @@ SWIGINTERN PyObject *_wrap_num_num_pair_first_set(PyObject *self, PyObject *args
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_first_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_num_t_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_first_set" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_first_set" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'");
   }
   arg1 = reinterpret_cast< std::pair< num_t,num_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_first_set" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   if (arg1) (arg1)->first = arg2;
   resultobj = SWIG_Py_Void();
@@ -16318,13 +16318,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_first_get(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_num_t_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_first_get" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_first_get" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'");
   }
   arg1 = reinterpret_cast< std::pair< num_t,num_t > * >(argp1);
   result = (double) ((arg1)->first);
@@ -16344,18 +16344,18 @@ SWIGINTERN PyObject *_wrap_num_num_pair_second_set(PyObject *self, PyObject *arg
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_second_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_num_t_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_second_set" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_second_set" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'");
   }
   arg1 = reinterpret_cast< std::pair< num_t,num_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_second_set" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   if (arg1) (arg1)->second = arg2;
   resultobj = SWIG_Py_Void();
@@ -16372,13 +16372,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_second_get(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_num_t_num_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_second_get" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_second_get" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'");
   }
   arg1 = reinterpret_cast< std::pair< num_t,num_t > * >(argp1);
   result = (double) ((arg1)->second);
@@ -16395,13 +16395,13 @@ SWIGINTERN PyObject *_wrap_delete_num_num_pair(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_num_t_num_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_num_pair" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_num_pair" "', argument " "1"" of type '" "std::pair< num_t,num_t > *""'");
   }
   arg1 = reinterpret_cast< std::pair< num_t,num_t > * >(argp1);
   {
@@ -16439,14 +16439,14 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_iterator(PyObject *self, PyObject
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   arg2 = &swig_obj[0];
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_iterator" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_iterator" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -16472,13 +16472,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___nonzero__(PyObject *self, PyObj
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___nonzero__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___nonzero__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -16504,13 +16504,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___bool__(PyObject *self, PyObject
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___bool__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___bool__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -16536,13 +16536,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___len__(PyObject *self, PyObject 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::pair< double,double > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___len__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___len__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -16574,23 +16574,23 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___getslice__(PyObject *self, PyOb
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_vector___getslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___getslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___getslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector___getslice__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_num_pair_vector___getslice__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val3);
   {
     try {
@@ -16625,23 +16625,23 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setslice____SWIG_0(PyObject *se
   int ecode2 = 0 ;
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector___setslice__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_num_pair_vector___setslice__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val3);
   {
     try {
@@ -16678,32 +16678,32 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setslice____SWIG_1(PyObject *se
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector___setslice__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_num_pair_vector___setslice__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val3);
   {
     std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *ptr = (std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_num_pair_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_num_pair_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector___setslice__" "', argument " "4"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'");
     }
     arg4 = ptr;
   }
@@ -16736,7 +16736,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setslice__(PyObject *self, PyOb
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_num_pair_vector___setslice__", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -16783,7 +16783,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setslice__(PyObject *self, PyOb
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_num_pair_vector___setslice__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -16805,23 +16805,23 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___delslice__(PyObject *self, PyOb
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_vector___delslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___delslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___delslice__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector___delslice__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_num_pair_vector___delslice__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val3);
   {
     try {
@@ -16853,18 +16853,18 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___delitem____SWIG_0(PyObject *sel
   int res1 = 0 ;
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector___delitem__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
   {
     try {
@@ -16895,12 +16895,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___getitem____SWIG_0(PyObject *sel
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -16939,12 +16939,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setitem____SWIG_0(PyObject *sel
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -16957,10 +16957,10 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setitem____SWIG_0(PyObject *sel
     std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *ptr = (std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > const &""'");
     }
     arg3 = ptr;
   }
@@ -16994,12 +16994,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setitem____SWIG_1(PyObject *sel
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17036,12 +17036,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___delitem____SWIG_1(PyObject *sel
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___delitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17077,7 +17077,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___delitem__(PyObject *self, PyObj
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_num_pair_vector___delitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -17107,7 +17107,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___delitem__(PyObject *self, PyObj
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_num_pair_vector___delitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -17126,18 +17126,18 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___getitem____SWIG_1(PyObject *sel
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   std::vector< std::pair< double,double > >::value_type *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___getitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector___getitem__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
   {
     try {
@@ -17165,7 +17165,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___getitem__(PyObject *self, PyObj
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_num_pair_vector___getitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -17195,7 +17195,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___getitem__(PyObject *self, PyObj
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_num_pair_vector___getitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -17215,27 +17215,27 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setitem____SWIG_2(PyObject *sel
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector___setitem__" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector___setitem__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -17266,7 +17266,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setitem__(PyObject *self, PyObj
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_num_pair_vector___setitem__", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -17317,7 +17317,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector___setitem__(PyObject *self, PyObj
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_num_pair_vector___setitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -17335,13 +17335,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_pop(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::pair< double,double > >::value_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_pop" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_pop" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17372,22 +17372,22 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_append(PyObject *self, PyObject *
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_vector_append", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_append" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_append" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_num_pair_vector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_num_pair_vector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -17412,7 +17412,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_num_num_pair_vector__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::vector< std::pair< num_t,num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -17436,17 +17436,17 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair_vector__SWIG_1(PyObject *self, Py_ss
   std::vector< std::pair< num_t,num_t > > *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   std::vector< std::pair< num_t,num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *ptr = (std::vector< std::pair< num_t,num_t >,std::allocator< std::pair< num_t,num_t > > > *)0;
     res1 = swig::asptr(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const &""'");
     }
     arg1 = ptr;
   }
@@ -17475,13 +17475,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_empty(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_empty" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_empty" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17507,13 +17507,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_size(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::pair< double,double > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_size" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_size" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17541,20 +17541,20 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_swap(PyObject *self, PyObject *ar
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_vector_swap", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_swap" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_swap" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_num_pair_vector_swap" "', argument " "2"" of type '" "std::vector< std::pair< num_t,num_t > > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_num_pair_vector_swap" "', argument " "2"" of type '" "std::vector< std::pair< num_t,num_t > > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_swap" "', argument " "2"" of type '" "std::vector< std::pair< num_t,num_t > > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_swap" "', argument " "2"" of type '" "std::vector< std::pair< num_t,num_t > > &""'");
   }
   arg2 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp2);
   {
@@ -17580,13 +17580,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_begin(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::pair< double,double > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_begin" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_begin" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17613,13 +17613,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_end(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::pair< double,double > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_end" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_end" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17646,13 +17646,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_rbegin(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::pair< double,double > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_rbegin" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_rbegin" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17679,13 +17679,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_rend(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< std::pair< double,double > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_rend" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_rend" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17711,13 +17711,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_clear(PyObject *self, PyObject *a
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_clear" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_clear" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17743,13 +17743,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_get_allocator(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< std::pair< double,double > > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_get_allocator" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_get_allocator" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17774,13 +17774,13 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair_vector__SWIG_2(PyObject *self, Py_ss
   size_t val1 ;
   int ecode1 = 0 ;
   std::vector< std::pair< num_t,num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< std::pair< double,double > >::size_type >(val1);
   {
     try {
@@ -17804,13 +17804,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_pop_back(PyObject *self, PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_pop_back" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_pop_back" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -17837,18 +17837,18 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_resize__SWIG_0(PyObject *self, Py
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_resize" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_resize" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector_resize" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::size_type >(val2);
   {
     try {
@@ -17875,12 +17875,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_erase__SWIG_0(PyObject *self, Py_
   swig::SwigPyIterator *iter2 = 0 ;
   int res2 ;
   SwigValueWrapper< std::vector< std::pair< double,double > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_erase" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_erase" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -17923,12 +17923,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_erase__SWIG_1(PyObject *self, Py_
   swig::SwigPyIterator *iter3 = 0 ;
   int res3 ;
   SwigValueWrapper< std::vector< std::pair< double,double > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_erase" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_erase" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -17975,7 +17975,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_erase(PyObject *self, PyObject *a
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_num_pair_vector_erase", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -18009,7 +18009,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_erase(PyObject *self, PyObject *a
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_num_pair_vector_erase'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -18027,22 +18027,22 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair_vector__SWIG_3(PyObject *self, Py_ss
   int ecode1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::vector< std::pair< num_t,num_t > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< std::pair< double,double > >::size_type >(val1);
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_num_num_pair_vector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_num_num_pair_vector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_num_pair_vector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_num_num_pair_vector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -18069,7 +18069,7 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair_vector(PyObject *self, PyObject *arg
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_num_num_pair_vector", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -18107,7 +18107,7 @@ SWIGINTERN PyObject *_wrap_new_num_num_pair_vector(PyObject *self, PyObject *arg
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_num_num_pair_vector'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -18127,22 +18127,22 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_push_back(PyObject *self, PyObjec
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_vector_push_back", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_push_back" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_push_back" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_num_pair_vector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "num_num_pair_vector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg2 = ptr;
   }
@@ -18171,13 +18171,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_front(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::pair< double,double > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_front" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_front" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -18204,13 +18204,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_back(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::pair< double,double > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_back" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_back" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -18241,27 +18241,27 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_assign(PyObject *self, PyObject *
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_vector_assign", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_assign" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_assign" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector_assign" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::size_type >(val2);
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -18293,27 +18293,27 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_resize__SWIG_1(PyObject *self, Py
   size_t val2 ;
   int ecode2 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_resize" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_resize" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector_resize" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::size_type >(val2);
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -18340,7 +18340,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_resize(PyObject *self, PyObject *
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_num_pair_vector_resize", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -18375,7 +18375,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_resize(PyObject *self, PyObject *
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_num_pair_vector_resize'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -18396,12 +18396,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_insert__SWIG_0(PyObject *self, Py
   int res2 ;
   int res3 = SWIG_OLDOBJ ;
   SwigValueWrapper< std::vector< std::pair< double,double > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_insert" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_insert" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -18419,10 +18419,10 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_insert__SWIG_0(PyObject *self, Py
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "num_num_pair_vector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg3 = ptr;
   }
@@ -18458,12 +18458,12 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_insert__SWIG_1(PyObject *self, Py
   size_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_insert" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_insert" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -18480,16 +18480,16 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_insert__SWIG_1(PyObject *self, Py
   ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "num_num_pair_vector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< std::pair< double,double > >::size_type >(val3);
   {
     std::pair< double,double > *ptr = (std::pair< double,double > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_num_pair_vector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "num_num_pair_vector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "num_num_pair_vector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'");
     }
     arg4 = ptr;
   }
@@ -18516,7 +18516,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_insert(PyObject *self, PyObject *
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "num_num_pair_vector_insert", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -18559,7 +18559,7 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_insert(PyObject *self, PyObject *
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'num_num_pair_vector_insert'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -18578,18 +18578,18 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_reserve(PyObject *self, PyObject 
   size_t val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "num_num_pair_vector_reserve", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_reserve" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_reserve" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "num_num_pair_vector_reserve" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< std::pair< double,double > >::size_type >(val2);
   {
     try {
@@ -18614,13 +18614,13 @@ SWIGINTERN PyObject *_wrap_num_num_pair_vector_capacity(PyObject *self, PyObject
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::pair< double,double > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_capacity" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "num_num_pair_vector_capacity" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -18645,13 +18645,13 @@ SWIGINTERN PyObject *_wrap_delete_num_num_pair_vector(PyObject *self, PyObject *
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__pairT_num_t_num_t_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_num_num_pair_vector" "', argument " "1"" of type '" "std::vector< std::pair< num_t,num_t > > *""'");
   }
   arg1 = reinterpret_cast< std::vector< std::pair< num_t,num_t > > * >(argp1);
   {
@@ -18687,13 +18687,13 @@ SWIGINTERN PyObject *_wrap_delete_data_base(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_data_base" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_data_base" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   {
@@ -18725,23 +18725,23 @@ SWIGINTERN PyObject *_wrap_data_base_feature(PyObject *self, PyObject *args) {
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "data_base_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -18771,27 +18771,27 @@ SWIGINTERN PyObject *_wrap_data_base_features(PyObject *self, PyObject *args) {
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_features", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_features" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_features" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_features" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     std::vector< unsigned int,std::allocator< unsigned int > > *ptr = (std::vector< unsigned int,std::allocator< unsigned int > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "data_base_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "data_base_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "data_base_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "data_base_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     arg3 = ptr;
   }
@@ -18823,18 +18823,18 @@ SWIGINTERN PyObject *_wrap_data_base_response(PyObject *self, PyObject *args) {
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_response", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_response" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_response" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_response" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -18862,18 +18862,18 @@ SWIGINTERN PyObject *_wrap_data_base_predict_value(PyObject *self, PyObject *arg
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_predict_value", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_predict_value" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_predict_value" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_predict_value" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -18901,18 +18901,18 @@ SWIGINTERN PyObject *_wrap_data_base_weight(PyObject *self, PyObject *args) {
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_weight", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_weight" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_weight" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_weight" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -18942,19 +18942,19 @@ SWIGINTERN PyObject *_wrap_data_base_add_data_point__SWIG_0(PyObject *self, Py_s
   int ecode3 = 0 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "data_base_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "data_base_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -18962,12 +18962,12 @@ SWIGINTERN PyObject *_wrap_data_base_add_data_point__SWIG_0(PyObject *self, Py_s
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "data_base_add_data_point" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "data_base_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -18995,19 +18995,19 @@ SWIGINTERN PyObject *_wrap_data_base_add_data_point__SWIG_1(PyObject *self, Py_s
   int res1 = 0 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "data_base_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "data_base_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19016,7 +19016,7 @@ SWIGINTERN PyObject *_wrap_data_base_add_data_point__SWIG_1(PyObject *self, Py_s
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "data_base_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "data_base_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19024,7 +19024,7 @@ SWIGINTERN PyObject *_wrap_data_base_add_data_point__SWIG_1(PyObject *self, Py_s
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "data_base_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -19047,7 +19047,7 @@ SWIGINTERN PyObject *_wrap_data_base_add_data_point(PyObject *self, PyObject *ar
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "data_base_add_data_point", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 4) {
@@ -19098,7 +19098,7 @@ SWIGINTERN PyObject *_wrap_data_base_add_data_point(PyObject *self, PyObject *ar
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'data_base_add_data_point'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -19118,18 +19118,18 @@ SWIGINTERN PyObject *_wrap_data_base_retrieve_data_point(PyObject *self, PyObjec
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_retrieve_data_point", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_retrieve_data_point" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_retrieve_data_point" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_retrieve_data_point" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -19157,18 +19157,18 @@ SWIGINTERN PyObject *_wrap_data_base_get_type_of_feature(PyObject *self, PyObjec
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_get_type_of_feature", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_get_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_get_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_get_type_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -19193,13 +19193,13 @@ SWIGINTERN PyObject *_wrap_data_base_get_type_of_response(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_get_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_get_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   {
@@ -19230,23 +19230,23 @@ SWIGINTERN PyObject *_wrap_data_base_set_type_of_feature(PyObject *self, PyObjec
   unsigned int val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_set_type_of_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_set_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_set_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_set_type_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "data_base_set_type_of_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -19273,18 +19273,18 @@ SWIGINTERN PyObject *_wrap_data_base_set_type_of_response(PyObject *self, PyObje
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_set_type_of_response", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_set_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_set_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_set_type_of_response" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -19317,28 +19317,28 @@ SWIGINTERN PyObject *_wrap_data_base_set_bounds_of_feature(PyObject *self, PyObj
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_set_bounds_of_feature", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_set_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_set_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_set_bounds_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "data_base_set_bounds_of_feature" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "data_base_set_bounds_of_feature" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -19366,18 +19366,18 @@ SWIGINTERN PyObject *_wrap_data_base_get_bounds_of_feature(PyObject *self, PyObj
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "data_base_get_bounds_of_feature", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_get_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_get_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "data_base_get_bounds_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -19402,13 +19402,13 @@ SWIGINTERN PyObject *_wrap_data_base_num_features(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_num_features" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_num_features" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   {
@@ -19434,13 +19434,13 @@ SWIGINTERN PyObject *_wrap_data_base_num_data_points(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_num_data_points" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "data_base_num_data_points" "', argument " "1"" of type '" "rfr::data_containers::base< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< num_t,response_t,index_t > * >(argp1);
   {
@@ -19473,14 +19473,14 @@ SWIGINTERN PyObject *_wrap_new_default_data_container(PyObject *self, PyObject *
   int ecode1 = 0 ;
   PyObject *swig_obj[1] ;
   rfr::data_containers::default_container< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   ecode1 = SWIG_AsVal_unsigned_SS_int(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_default_data_container" "', argument " "1"" of type '" "unsigned int""'");
-  } 
+  }
   arg1 = static_cast< unsigned int >(val1);
   {
     try {
@@ -19507,18 +19507,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_init_protected(PyObject *self,
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_init_protected", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_init_protected" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_init_protected" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_init_protected" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -19549,23 +19549,23 @@ SWIGINTERN PyObject *_wrap_default_data_container_feature(PyObject *self, PyObje
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -19595,27 +19595,27 @@ SWIGINTERN PyObject *_wrap_default_data_container_features(PyObject *self, PyObj
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_features", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_features" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_features" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_features" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     std::vector< unsigned int,std::allocator< unsigned int > > *ptr = (std::vector< unsigned int,std::allocator< unsigned int > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     arg3 = ptr;
   }
@@ -19647,18 +19647,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_response(PyObject *self, PyObj
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_response", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_response" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_response" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_response" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -19686,18 +19686,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_predict_value(PyObject *self, 
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_predict_value", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_predict_value" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_predict_value" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_predict_value" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -19727,19 +19727,19 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_0(PyObjec
   int ecode3 = 0 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19747,12 +19747,12 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_0(PyObjec
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_add_data_point" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -19779,19 +19779,19 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_1(PyObjec
   int res1 = 0 ;
   double val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19799,7 +19799,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_1(PyObjec
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_add_data_point" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   {
     try {
@@ -19827,19 +19827,19 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_2(PyObjec
   int res1 = 0 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19848,7 +19848,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_2(PyObjec
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19856,7 +19856,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_2(PyObjec
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -19881,19 +19881,19 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_3(PyObjec
   std::vector< double,std::allocator< double > > arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19902,7 +19902,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point__SWIG_3(PyObjec
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -19928,7 +19928,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point(PyObject *self,
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "default_data_container_add_data_point", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -20015,7 +20015,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_add_data_point(PyObject *self,
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'default_data_container_add_data_point'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -20037,18 +20037,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_retrieve_data_point(PyObject *
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_retrieve_data_point", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_retrieve_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_retrieve_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_retrieve_data_point" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -20076,18 +20076,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_weight(PyObject *self, PyObjec
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_weight", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_weight" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_weight" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_weight" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -20115,18 +20115,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_get_type_of_feature(PyObject *
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_get_type_of_feature", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_get_type_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -20156,23 +20156,23 @@ SWIGINTERN PyObject *_wrap_default_data_container_set_type_of_feature(PyObject *
   unsigned int val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_set_type_of_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_set_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_set_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_set_type_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_set_type_of_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -20197,13 +20197,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_num_features(PyObject *self, P
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_num_features" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_num_features" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20229,13 +20229,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_num_data_points(PyObject *self
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_num_data_points" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_num_data_points" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20261,13 +20261,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_get_type_of_response(PyObject 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20295,18 +20295,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_set_type_of_response(PyObject 
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_set_type_of_response", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_set_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_set_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_set_type_of_response" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -20339,28 +20339,28 @@ SWIGINTERN PyObject *_wrap_default_data_container_set_bounds_of_feature(PyObject
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_set_bounds_of_feature", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_set_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_set_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_set_bounds_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_set_bounds_of_feature" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_set_bounds_of_feature" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -20388,18 +20388,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_get_bounds_of_feature(PyObject
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_get_bounds_of_feature", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_get_bounds_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -20427,18 +20427,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_get_min_max_of_feature(PyObjec
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_get_min_max_of_feature", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_min_max_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_get_min_max_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_get_min_max_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -20462,13 +20462,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_guess_bounds_from_data(PyObjec
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_guess_bounds_from_data" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_guess_bounds_from_data" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20493,13 +20493,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_normalize_data(PyObject *self,
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_normalize_data" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_normalize_data" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20529,22 +20529,22 @@ SWIGINTERN PyObject *_wrap_default_data_container_import_csv_files__SWIG_0(PyObj
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int result;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_import_csv_files" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_import_csv_files" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'");
     }
     arg2 = ptr;
   }
@@ -20552,10 +20552,10 @@ SWIGINTERN PyObject *_wrap_default_data_container_import_csv_files__SWIG_0(PyObj
     std::string *ptr = (std::string *)0;
     res3 = SWIG_AsPtr_std_string(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'");
     }
     arg3 = ptr;
   }
@@ -20563,7 +20563,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_import_csv_files__SWIG_0(PyObj
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_import_csv_files" "', argument " "4"" of type '" "std::string""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_import_csv_files" "', argument " "4"" of type '" "std::string""'");
     }
     arg4 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -20598,22 +20598,22 @@ SWIGINTERN PyObject *_wrap_default_data_container_import_csv_files__SWIG_1(PyObj
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_import_csv_files" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_import_csv_files" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "2"" of type '" "std::string const &""'");
     }
     arg2 = ptr;
   }
@@ -20621,10 +20621,10 @@ SWIGINTERN PyObject *_wrap_default_data_container_import_csv_files__SWIG_1(PyObj
     std::string *ptr = (std::string *)0;
     res3 = SWIG_AsPtr_std_string(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_import_csv_files" "', argument " "3"" of type '" "std::string const &""'");
     }
     arg3 = ptr;
   }
@@ -20653,7 +20653,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_import_csv_files(PyObject *sel
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "default_data_container_import_csv_files", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -20694,7 +20694,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_import_csv_files(PyObject *sel
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'default_data_container_import_csv_files'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -20711,13 +20711,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_check_consistency(PyObject *se
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_check_consistency" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_check_consistency" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20742,13 +20742,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_print_data(PyObject *self, PyO
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_print_data" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_print_data" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20773,13 +20773,13 @@ SWIGINTERN PyObject *_wrap_delete_default_data_container(PyObject *self, PyObjec
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_containerT_num_t_response_t_index_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_default_data_container" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_default_data_container" "', argument " "1"" of type '" "rfr::data_containers::default_container< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container< num_t,response_t,index_t > * >(argp1);
   {
@@ -20812,7 +20812,7 @@ SWIGINTERN PyObject *default_data_container_swiginit(PyObject *SWIGUNUSEDPARM(se
 SWIGINTERN PyObject *_wrap_new_default_data_container_with_instances__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -20840,18 +20840,18 @@ SWIGINTERN PyObject *_wrap_new_default_data_container_with_instances__SWIG_1(PyO
   unsigned int val2 ;
   int ecode2 = 0 ;
   rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_unsigned_SS_int(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_default_data_container_with_instances" "', argument " "1"" of type '" "unsigned int""'");
-  } 
+  }
   arg1 = static_cast< unsigned int >(val1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_default_data_container_with_instances" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -20874,7 +20874,7 @@ SWIGINTERN PyObject *_wrap_new_default_data_container_with_instances(PyObject *s
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_default_data_container_with_instances", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -20896,7 +20896,7 @@ SWIGINTERN PyObject *_wrap_new_default_data_container_with_instances(PyObject *s
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_default_data_container_with_instances'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -20919,23 +20919,23 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_feature(PyObjec
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -20965,27 +20965,27 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_features(PyObje
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_features", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_features" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_features" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_features" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     std::vector< unsigned int,std::allocator< unsigned int > > *ptr = (std::vector< unsigned int,std::allocator< unsigned int > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_with_instances_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "default_data_container_with_instances_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_with_instances_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_with_instances_features" "', argument " "3"" of type '" "std::vector< unsigned int,std::allocator< unsigned int > > const &""'");
     }
     arg3 = ptr;
   }
@@ -21017,18 +21017,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_response(PyObje
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_response", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_response" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_response" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_response" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -21056,18 +21056,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_predict_value(P
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_predict_value", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_predict_value" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_predict_value" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_predict_value" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -21097,19 +21097,19 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point_
   int ecode3 = 0 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -21117,12 +21117,12 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point_
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -21150,19 +21150,19 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point_
   int res1 = 0 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -21171,7 +21171,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point_
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -21179,7 +21179,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point_
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -21214,33 +21214,33 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point_
   int ecode4 = 0 ;
   double val5 ;
   int ecode5 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 5) || (nobjs > 5)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   ecode5 = SWIG_AsVal_double(swig_obj[4], &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "5"" of type '" "double""'");
-  } 
+  }
   arg5 = static_cast< double >(val5);
   {
     try {
@@ -21272,28 +21272,28 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point_
   int ecode3 = 0 ;
   double val4 ;
   int ecode4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_with_instances_add_data_point" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -21316,7 +21316,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point(
   PyObject *argv[6] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_add_data_point", 0, 5, argv))) SWIG_fail;
   --argc;
   if (argc == 4) {
@@ -21427,7 +21427,7 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_data_point(
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'default_data_container_with_instances_add_data_point'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -21449,18 +21449,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_weight(PyObject
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_weight", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_weight" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_weight" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_weight" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -21485,13 +21485,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_num_configurati
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_configurations" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_configurations" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -21517,13 +21517,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_num_instances(P
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_instances" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_instances" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -21551,22 +21551,22 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_configurati
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_add_configuration", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_configuration" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_configuration" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "default_data_container_with_instances_add_configuration" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "default_data_container_with_instances_add_configuration" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_with_instances_add_configuration" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "default_data_container_with_instances_add_configuration" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -21596,19 +21596,19 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_add_instance(Py
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_add_instance", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_instance" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_add_instance" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_instance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "default_data_container_with_instances_add_instance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -21639,18 +21639,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_retrieve_data_p
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_retrieve_data_point", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_retrieve_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_retrieve_data_point" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_retrieve_data_point" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -21678,18 +21678,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_get_type_of_fea
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_get_type_of_feature", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_get_type_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -21719,23 +21719,23 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_set_type_of_con
   unsigned int val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_set_type_of_configuration_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_configuration_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_configuration_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_set_type_of_configuration_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_set_type_of_configuration_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -21765,23 +21765,23 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_set_type_of_ins
   unsigned int val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_set_type_of_instance_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_instance_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_instance_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_set_type_of_instance_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_set_type_of_instance_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -21811,23 +21811,23 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_set_type_of_fea
   unsigned int val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_set_type_of_feature", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_set_type_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_set_type_of_feature" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -21852,13 +21852,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_num_features(Py
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_features" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_features" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -21884,13 +21884,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_num_data_points
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_data_points" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_num_data_points" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -21915,13 +21915,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_check_consisten
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_check_consistency" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_check_consistency" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -21947,13 +21947,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_get_type_of_res
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -21981,18 +21981,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_set_type_of_res
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_set_type_of_response", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_type_of_response" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_set_type_of_response" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -22025,28 +22025,28 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_set_bounds_of_f
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_set_bounds_of_feature", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_set_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_set_bounds_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_set_bounds_of_feature" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "default_data_container_with_instances_set_bounds_of_feature" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -22074,18 +22074,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_get_bounds_of_f
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_get_bounds_of_feature", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_bounds_of_feature" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_get_bounds_of_feature" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -22110,13 +22110,13 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_get_instance_se
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_instance_set" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_instance_set" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -22145,18 +22145,18 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_get_configurati
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_get_configuration_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_configuration_set" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_configuration_set" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_get_configuration_set" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   {
     try {
@@ -22187,23 +22187,23 @@ SWIGINTERN PyObject *_wrap_default_data_container_with_instances_get_features_by
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "default_data_container_with_instances_get_features_by_configuration_and_instance", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_features_by_configuration_and_instance" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "default_data_container_with_instances_get_features_by_configuration_and_instance" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "default_data_container_with_instances_get_features_by_configuration_and_instance" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "default_data_container_with_instances_get_features_by_configuration_and_instance" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   {
     try {
@@ -22227,13 +22227,13 @@ SWIGINTERN PyObject *_wrap_delete_default_data_container_with_instances(PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__data_containers__default_container_with_instancesT_num_t_response_t_index_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_default_data_container_with_instances" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_default_data_container_with_instances" "', argument " "1"" of type '" "rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::default_container_with_instances< num_t,response_t,index_t > * >(argp1);
   {
@@ -22269,13 +22269,13 @@ SWIGINTERN PyObject *_wrap_delete_bindary_node(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_bindary_node" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_bindary_node" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22306,23 +22306,23 @@ SWIGINTERN PyObject *_wrap_bindary_node_push_response_value(PyObject *self, PyOb
   double val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "bindary_node_push_response_value", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_push_response_value" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_push_response_value" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "bindary_node_push_response_value" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "bindary_node_push_response_value" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   {
     try {
@@ -22352,23 +22352,23 @@ SWIGINTERN PyObject *_wrap_bindary_node_pop_response_value(PyObject *self, PyObj
   double val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "bindary_node_pop_response_value", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_pop_response_value" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_pop_response_value" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "bindary_node_pop_response_value" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "bindary_node_pop_response_value" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   {
     try {
@@ -22393,13 +22393,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_responses(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double,std::allocator< double > > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_responses" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_responses" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22425,13 +22425,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_weights(PyObject *self, PyObject *args) 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double,std::allocator< double > > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_weights" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_weights" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22456,13 +22456,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_print_info(PyObject *self, PyObject *arg
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_print_info" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_print_info" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22490,22 +22490,22 @@ SWIGINTERN PyObject *_wrap_bindary_node_falls_into_child(PyObject *self, PyObjec
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "bindary_node_falls_into_child", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_falls_into_child" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_falls_into_child" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "bindary_node_falls_into_child" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "bindary_node_falls_into_child" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "bindary_node_falls_into_child" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "bindary_node_falls_into_child" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -22534,13 +22534,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_is_a_leaf(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_is_a_leaf" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_is_a_leaf" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22566,13 +22566,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_parent(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_parent" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_parent" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22598,13 +22598,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_get_children(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::array< unsigned int,2 > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_children" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_children" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22633,18 +22633,18 @@ SWIGINTERN PyObject *_wrap_bindary_node_get_child_index(PyObject *self, PyObject
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "bindary_node_get_child_index", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_child_index" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_child_index" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "bindary_node_get_child_index" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -22669,13 +22669,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_get_depth(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_depth" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_depth" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22701,13 +22701,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_get_feature_index(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_feature_index" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_feature_index" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22733,13 +22733,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_get_num_split_value(PyObject *self, PyOb
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_num_split_value" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_num_split_value" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22765,13 +22765,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_get_cat_split(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_cat_split" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_cat_split" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22797,13 +22797,13 @@ SWIGINTERN PyObject *_wrap_bindary_node_get_num_data(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_num_data" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bindary_node_get_num_data" "', argument " "1"" of type '" "rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -22825,7 +22825,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_bindary_node(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< num_t,response_t,index_t,rng_t,128 >,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "new_bindary_node", 0, 0, 0)) SWIG_fail;
   {
@@ -22864,18 +22864,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_features_set(PyObject *self, PyObject *
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_max_features_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_features_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_features_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_max_features_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->max_features = arg2;
   resultobj = SWIG_Py_Void();
@@ -22892,13 +22892,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_features_get(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_features_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_features_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->max_features);
@@ -22918,18 +22918,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_depth_set(PyObject *self, PyObject *arg
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_max_depth_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_depth_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_depth_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_max_depth_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->max_depth = arg2;
   resultobj = SWIG_Py_Void();
@@ -22946,13 +22946,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_depth_get(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_depth_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_depth_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->max_depth);
@@ -22972,18 +22972,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_samples_to_split_set(PyObject *self, Py
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_min_samples_to_split_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_to_split_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_to_split_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_min_samples_to_split_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->min_samples_to_split = arg2;
   resultobj = SWIG_Py_Void();
@@ -23000,13 +23000,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_samples_to_split_get(PyObject *self, Py
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_to_split_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_to_split_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->min_samples_to_split);
@@ -23026,18 +23026,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_weight_to_split_set(PyObject *self, PyO
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_min_weight_to_split_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_to_split_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_to_split_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_min_weight_to_split_set" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   if (arg1) (arg1)->min_weight_to_split = arg2;
   resultobj = SWIG_Py_Void();
@@ -23054,13 +23054,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_weight_to_split_get(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_to_split_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_to_split_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (double) ((arg1)->min_weight_to_split);
@@ -23080,18 +23080,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_samples_in_leaf_set(PyObject *self, PyO
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_min_samples_in_leaf_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_in_leaf_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_in_leaf_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_min_samples_in_leaf_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->min_samples_in_leaf = arg2;
   resultobj = SWIG_Py_Void();
@@ -23108,13 +23108,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_samples_in_leaf_get(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_in_leaf_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_samples_in_leaf_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->min_samples_in_leaf);
@@ -23134,18 +23134,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_weight_in_leaf_set(PyObject *self, PyOb
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_min_weight_in_leaf_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_in_leaf_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_in_leaf_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_min_weight_in_leaf_set" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   if (arg1) (arg1)->min_weight_in_leaf = arg2;
   resultobj = SWIG_Py_Void();
@@ -23162,13 +23162,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_min_weight_in_leaf_get(PyObject *self, PyOb
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_in_leaf_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_min_weight_in_leaf_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (double) ((arg1)->min_weight_in_leaf);
@@ -23188,18 +23188,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_num_nodes_set(PyObject *self, PyObject 
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_max_num_nodes_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_nodes_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_nodes_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_max_num_nodes_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->max_num_nodes = arg2;
   resultobj = SWIG_Py_Void();
@@ -23216,13 +23216,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_num_nodes_get(PyObject *self, PyObject 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_nodes_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_nodes_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->max_num_nodes);
@@ -23242,18 +23242,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_num_leaves_set(PyObject *self, PyObject
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_max_num_leaves_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_leaves_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_leaves_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_max_num_leaves_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->max_num_leaves = arg2;
   resultobj = SWIG_Py_Void();
@@ -23270,13 +23270,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_max_num_leaves_get(PyObject *self, PyObject
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_leaves_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_max_num_leaves_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->max_num_leaves);
@@ -23296,18 +23296,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_epsilon_purity_set(PyObject *self, PyObject
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_epsilon_purity_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_epsilon_purity_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_epsilon_purity_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_epsilon_purity_set" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   if (arg1) (arg1)->epsilon_purity = arg2;
   resultobj = SWIG_Py_Void();
@@ -23324,13 +23324,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_epsilon_purity_get(PyObject *self, PyObject
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_epsilon_purity_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_epsilon_purity_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (double) ((arg1)->epsilon_purity);
@@ -23350,18 +23350,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_life_time_set(PyObject *self, PyObject *arg
   double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_life_time_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_life_time_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_life_time_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_life_time_set" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   if (arg1) (arg1)->life_time = arg2;
   resultobj = SWIG_Py_Void();
@@ -23378,13 +23378,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_life_time_get(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_life_time_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_life_time_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (double) ((arg1)->life_time);
@@ -23404,18 +23404,18 @@ SWIGINTERN PyObject *_wrap_tree_opts_hierarchical_smoothing_set(PyObject *self, 
   bool val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_hierarchical_smoothing_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_hierarchical_smoothing_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_hierarchical_smoothing_set" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "tree_opts_hierarchical_smoothing_set" "', argument " "2"" of type '" "bool""'");
-  } 
+  }
   arg2 = static_cast< bool >(val2);
   if (arg1) (arg1)->hierarchical_smoothing = arg2;
   resultobj = SWIG_Py_Void();
@@ -23432,13 +23432,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_hierarchical_smoothing_get(PyObject *self, 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_hierarchical_smoothing_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_hierarchical_smoothing_get" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   result = (bool) ((arg1)->hierarchical_smoothing);
@@ -23455,13 +23455,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_set_default_values(PyObject *self, PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_set_default_values" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_set_default_values" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   {
@@ -23483,7 +23483,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_tree_opts__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::trees::tree_options< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -23508,15 +23508,15 @@ SWIGINTERN PyObject *_wrap_new_tree_opts__SWIG_1(PyObject *self, Py_ssize_t nobj
   void *argp1 = 0 ;
   int res1 = 0 ;
   rfr::trees::tree_options< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_tree_opts" "', argument " "1"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_tree_opts" "', argument " "1"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'");
   }
   if (!argp1) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_tree_opts" "', argument " "1"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_tree_opts" "', argument " "1"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'");
   }
   arg1 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp1);
   {
@@ -23540,7 +23540,7 @@ SWIGINTERN PyObject *_wrap_new_tree_opts(PyObject *self, PyObject *args) {
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_tree_opts", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -23555,7 +23555,7 @@ SWIGINTERN PyObject *_wrap_new_tree_opts(PyObject *self, PyObject *args) {
       return _wrap_new_tree_opts__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_tree_opts'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -23574,20 +23574,20 @@ SWIGINTERN PyObject *_wrap_tree_opts_adjust_limits_to_data(PyObject *self, PyObj
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "tree_opts_adjust_limits_to_data", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_adjust_limits_to_data" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_adjust_limits_to_data" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "tree_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "tree_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "tree_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "tree_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   {
@@ -23612,13 +23612,13 @@ SWIGINTERN PyObject *_wrap_tree_opts_print_info(PyObject *self, PyObject *args) 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_print_info" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "tree_opts_print_info" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   {
@@ -23643,13 +23643,13 @@ SWIGINTERN PyObject *_wrap_delete_tree_opts(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_tree_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_tree_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< num_t,response_t,index_t > * >(argp1);
   {
@@ -23685,13 +23685,13 @@ SWIGINTERN PyObject *_wrap_delete_base_tree(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_base_tree" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_base_tree" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -23724,27 +23724,27 @@ SWIGINTERN PyObject *_wrap_base_tree_fit__SWIG_0(PyObject *self, Py_ssize_t nobj
   int res3 = 0 ;
   void *argp4 = 0 ;
   int res4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_fit" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_fit" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   {
     res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "base_tree_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "base_tree_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'");
+    }
     if (!argp3) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'");
     } else {
@@ -23755,10 +23755,10 @@ SWIGINTERN PyObject *_wrap_base_tree_fit__SWIG_0(PyObject *self, Py_ssize_t nobj
   }
   res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::default_random_engine &""'");
   }
   if (!argp4) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::default_random_engine &""'");
   }
   arg4 = reinterpret_cast< std::default_random_engine * >(argp4);
   {
@@ -23793,27 +23793,27 @@ SWIGINTERN PyObject *_wrap_base_tree_fit__SWIG_1(PyObject *self, Py_ssize_t nobj
   int res4 = SWIG_OLDOBJ ;
   void *argp5 = 0 ;
   int res5 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 5) || (nobjs > 5)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_fit" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_fit" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   {
     res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "base_tree_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "base_tree_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'");
+    }
     if (!argp3) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'");
     } else {
@@ -23826,19 +23826,19 @@ SWIGINTERN PyObject *_wrap_base_tree_fit__SWIG_1(PyObject *self, Py_ssize_t nobj
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg4 = ptr;
   }
   res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "base_tree_fit" "', argument " "5"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "base_tree_fit" "', argument " "5"" of type '" "std::default_random_engine &""'");
   }
   if (!argp5) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "5"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_fit" "', argument " "5"" of type '" "std::default_random_engine &""'");
   }
   arg5 = reinterpret_cast< std::default_random_engine * >(argp5);
   {
@@ -23864,7 +23864,7 @@ SWIGINTERN PyObject *_wrap_base_tree_fit(PyObject *self, PyObject *args) {
   PyObject *argv[6] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "base_tree_fit", 0, 5, argv))) SWIG_fail;
   --argc;
   if (argc == 4) {
@@ -23915,7 +23915,7 @@ SWIGINTERN PyObject *_wrap_base_tree_fit(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'base_tree_fit'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -23934,22 +23934,22 @@ SWIGINTERN PyObject *_wrap_base_tree_predict(PyObject *self, PyObject *args) {
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "base_tree_predict", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_predict" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_predict" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -23980,22 +23980,22 @@ SWIGINTERN PyObject *_wrap_base_tree_leaf_entries(PyObject *self, PyObject *args
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   std::vector< double,std::allocator< double > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "base_tree_leaf_entries", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_leaf_entries" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_leaf_entries" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "base_tree_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "base_tree_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -24024,13 +24024,13 @@ SWIGINTERN PyObject *_wrap_base_tree_number_of_nodes(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_number_of_nodes" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_number_of_nodes" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -24056,13 +24056,13 @@ SWIGINTERN PyObject *_wrap_base_tree_number_of_leafs(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_number_of_leafs" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_number_of_leafs" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -24088,13 +24088,13 @@ SWIGINTERN PyObject *_wrap_base_tree_depth(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_depth" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_depth" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -24123,12 +24123,12 @@ SWIGINTERN PyObject *_wrap_base_tree_save_latex_representation(PyObject *self, P
   char *buf2 = 0 ;
   int alloc2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "base_tree_save_latex_representation", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__tree_baseT_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_save_latex_representation" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "base_tree_save_latex_representation" "', argument " "1"" of type '" "rfr::trees::tree_base< num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_base< num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
@@ -24164,7 +24164,7 @@ SWIGINTERN PyObject *base_tree_swigregister(PyObject *SWIGUNUSEDPARM(self), PyOb
 SWIGINTERN PyObject *_wrap_new_binary_full_tree_rss(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "new_binary_full_tree_rss", 0, 0, 0)) SWIG_fail;
   {
@@ -24189,13 +24189,13 @@ SWIGINTERN PyObject *_wrap_delete_binary_full_tree_rss(PyObject *self, PyObject 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_full_tree_rss" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_full_tree_rss" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -24231,27 +24231,27 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_fit(PyObject *self, PyObject *ar
   void *argp5 = 0 ;
   int res5 = 0 ;
   PyObject *swig_obj[5] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_fit", 5, 5, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_fit" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_fit" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   {
     res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_full_tree_rss_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_full_tree_rss_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'");
+    }
     if (!argp3) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_fit" "', argument " "3"" of type '" "rfr::trees::tree_options< double,double,unsigned int >""'");
     } else {
@@ -24264,19 +24264,19 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_fit(PyObject *self, PyObject *ar
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "binary_full_tree_rss_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "binary_full_tree_rss_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_fit" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg4 = ptr;
   }
   res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "binary_full_tree_rss_fit" "', argument " "5"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "binary_full_tree_rss_fit" "', argument " "5"" of type '" "std::default_random_engine &""'");
   }
   if (!argp5) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_fit" "', argument " "5"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_fit" "', argument " "5"" of type '" "std::default_random_engine &""'");
   }
   arg5 = reinterpret_cast< std::default_random_engine * >(argp5);
   {
@@ -24306,22 +24306,22 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_find_leaf_index(PyObject *self, 
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   unsigned int result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_find_leaf_index", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_find_leaf_index" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_find_leaf_index" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_find_leaf_index" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_find_leaf_index" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_find_leaf_index" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_find_leaf_index" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -24352,22 +24352,22 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_get_leaf(PyObject *self, PyObjec
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_get_leaf", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_get_leaf" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_get_leaf" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_get_leaf" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_get_leaf" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_get_leaf" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_get_leaf" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -24398,22 +24398,22 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_leaf_entries(PyObject *self, PyO
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   std::vector< double,std::allocator< double > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_leaf_entries", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_leaf_entries" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_leaf_entries" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_leaf_entries" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -24444,22 +24444,22 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_leaf_statistic(PyObject *self, P
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   rfr::util::weighted_running_statistics< double > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_leaf_statistic", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_leaf_statistic" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_leaf_statistic" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_leaf_statistic" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_leaf_statistic" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_leaf_statistic" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_leaf_statistic" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -24490,22 +24490,22 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_predict(PyObject *self, PyObject
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_predict", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_predict" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_predict" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -24538,29 +24538,29 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_marginalized_mean_prediction__SW
   unsigned int val3 ;
   int ecode3 = 0 ;
   double result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
   ecode3 = SWIG_AsVal_unsigned_SS_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "3"" of type '" "unsigned int""'");
-  } 
+  }
   arg3 = static_cast< unsigned int >(val3);
   {
     try {
@@ -24588,22 +24588,22 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_marginalized_mean_prediction__SW
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   double result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_marginalized_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -24630,7 +24630,7 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_marginalized_mean_prediction(PyO
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_marginalized_mean_prediction", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -24665,7 +24665,7 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_marginalized_mean_prediction(PyO
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_full_tree_rss_marginalized_mean_prediction'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -24682,13 +24682,13 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_number_of_nodes(PyObject *self, 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_number_of_nodes" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_number_of_nodes" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -24714,13 +24714,13 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_number_of_leafs(PyObject *self, 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_number_of_leafs" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_number_of_leafs" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -24746,13 +24746,13 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_depth(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_depth" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_depth" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -24781,18 +24781,18 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_get_node(PyObject *self, PyObjec
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_get_node", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_get_node" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_get_node" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_full_tree_rss_get_node" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -24825,34 +24825,34 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_partition_recursor(PyObject *sel
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_partition_recursor", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__vectorT_std__vectorT_num_t_t_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "2"" of type '" "std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > &""'");
   }
   arg2 = reinterpret_cast< std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > * >(argp2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__vectorT_std__vectorT_num_t_t_t,  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > &""'");
   }
   arg3 = reinterpret_cast< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > * >(argp3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "binary_full_tree_rss_partition_recursor" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -24878,19 +24878,19 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_partition(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
   std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_partition", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_partition" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_partition" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_full_tree_rss_partition" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_full_tree_rss_partition" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -24921,18 +24921,18 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_total_weight_in_subtree(PyObject
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_total_weight_in_subtree", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_total_weight_in_subtree" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_total_weight_in_subtree" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_full_tree_rss_total_weight_in_subtree" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     try {
@@ -24959,18 +24959,18 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_check_split_fractions__SWIG_0(Py
   double val2 ;
   int ecode2 = 0 ;
   bool result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_check_split_fractions" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_check_split_fractions" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_full_tree_rss_check_split_fractions" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   {
     try {
@@ -24994,12 +24994,12 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_check_split_fractions__SWIG_1(Py
   void *argp1 = 0 ;
   int res1 = 0 ;
   bool result;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_check_split_fractions" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_check_split_fractions" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -25023,7 +25023,7 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_check_split_fractions(PyObject *
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_check_split_fractions", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 1) {
@@ -25050,7 +25050,7 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_check_split_fractions(PyObject *
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_full_tree_rss_check_split_fractions'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -25073,19 +25073,19 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_pseudo_update(PyObject *self, Py
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_pseudo_update", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_pseudo_update" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_pseudo_update" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_full_tree_rss_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_full_tree_rss_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -25093,12 +25093,12 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_pseudo_update(PyObject *self, Py
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_full_tree_rss_pseudo_update" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "binary_full_tree_rss_pseudo_update" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -25129,19 +25129,19 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_pseudo_downdate(PyObject *self, 
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_pseudo_downdate", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_pseudo_downdate" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_pseudo_downdate" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_full_tree_rss_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_full_tree_rss_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -25149,12 +25149,12 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_pseudo_downdate(PyObject *self, 
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_full_tree_rss_pseudo_downdate" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "binary_full_tree_rss_pseudo_downdate" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -25178,13 +25178,13 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_print_info(PyObject *self, PyObj
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_print_info" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_print_info" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -25213,12 +25213,12 @@ SWIGINTERN PyObject *_wrap_binary_full_tree_rss_save_latex_representation(PyObje
   char *buf2 = 0 ;
   int alloc2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_full_tree_rss_save_latex_representation", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_save_latex_representation" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_full_tree_rss_save_latex_representation" "', argument " "1"" of type '" "rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
@@ -25263,14 +25263,14 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_iterator(PyObject *self, PyObject 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ;
-  
+
   arg2 = &swig_obj[0];
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_iterator" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_iterator" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25296,13 +25296,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___nonzero__(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___nonzero__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___nonzero__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25328,13 +25328,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___bool__(PyObject *self, PyObject 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___bool__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___bool__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25360,13 +25360,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___len__(PyObject *self, PyObject *
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___len__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___len__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25398,23 +25398,23 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___getslice__(PyObject *self, PyObj
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > *result = 0 ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_vectors___getslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___getslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___getslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors___getslice__" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_vectors___getslice__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val3);
   {
     try {
@@ -25449,23 +25449,23 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setslice____SWIG_0(PyObject *sel
   int ecode2 = 0 ;
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors___setslice__" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_vectors___setslice__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val3);
   {
     try {
@@ -25502,32 +25502,32 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setslice____SWIG_1(PyObject *sel
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   int res4 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors___setslice__" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_vectors___setslice__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val3);
   {
     std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine >,std::allocator< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > *ptr = (std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine >,std::allocator< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > *)0;
     res4 = swig::asptr(swig_obj[3], &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "binary_rss_vectors___setslice__" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "binary_rss_vectors___setslice__" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors___setslice__" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors___setslice__" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'");
     }
     arg4 = ptr;
   }
@@ -25560,7 +25560,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setslice__(PyObject *self, PyObj
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_vectors___setslice__", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -25607,7 +25607,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setslice__(PyObject *self, PyObj
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_vectors___setslice__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -25629,23 +25629,23 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___delslice__(PyObject *self, PyObj
   ptrdiff_t val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_vectors___delslice__", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___delslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___delslice__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors___delslice__" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_vectors___delslice__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val3);
   {
     try {
@@ -25677,18 +25677,18 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___delitem____SWIG_0(PyObject *self
   int res1 = 0 ;
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___delitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___delitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors___delitem__" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val2);
   {
     try {
@@ -25719,12 +25719,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___getitem____SWIG_0(PyObject *self
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___getitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___getitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25763,12 +25763,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setitem____SWIG_0(PyObject *self
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res3 = SWIG_OLDOBJ ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25781,10 +25781,10 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setitem____SWIG_0(PyObject *self
     std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine >,std::allocator< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > *ptr = (std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine >,std::allocator< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > const &""'");
     }
     arg3 = ptr;
   }
@@ -25818,12 +25818,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setitem____SWIG_1(PyObject *self
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25860,12 +25860,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___delitem____SWIG_1(PyObject *self
   SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___delitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___delitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -25901,7 +25901,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___delitem__(PyObject *self, PyObje
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_vectors___delitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -25931,7 +25931,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___delitem__(PyObject *self, PyObje
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_vectors___delitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -25950,18 +25950,18 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___getitem____SWIG_1(PyObject *self
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
   std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___getitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___getitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors___getitem__" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val2);
   {
     try {
@@ -25989,7 +25989,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___getitem__(PyObject *self, PyObje
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_vectors___getitem__", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -26019,7 +26019,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___getitem__(PyObject *self, PyObje
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_vectors___getitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -26040,25 +26040,25 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setitem____SWIG_2(PyObject *self
   int ecode2 = 0 ;
   void *argp3 = 0 ;
   int res3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors___setitem__" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors___setitem__" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::difference_type >(val2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors___setitem__" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg3 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp3);
   {
@@ -26086,7 +26086,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setitem__(PyObject *self, PyObje
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_vectors___setitem__", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -26137,7 +26137,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors___setitem__(PyObject *self, PyObje
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_vectors___setitem__'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -26155,13 +26155,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_pop(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_pop" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_pop" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26193,20 +26193,20 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_append(PyObject *self, PyObject *a
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_vectors_append", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_append" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_append" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_vectors_append" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_vectors_append" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_append" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_append" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg2 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp2);
   {
@@ -26228,7 +26228,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_binary_rss_vectors__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   std::vector< binary_full_tree_rss_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -26252,17 +26252,17 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_vectors__SWIG_1(PyObject *self, Py_ssi
   std::vector< binary_full_tree_rss_t > *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   std::vector< binary_full_tree_rss_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine >,std::allocator< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > *ptr = (std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine >,std::allocator< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > *)0;
     res1 = swig::asptr(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const &""'");
     }
     arg1 = ptr;
   }
@@ -26291,13 +26291,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_empty(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_empty" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_empty" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26323,13 +26323,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_size(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_size" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_size" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26357,20 +26357,20 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_swap(PyObject *self, PyObject *arg
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_vectors_swap", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_swap" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_swap" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_vectors_swap" "', argument " "2"" of type '" "std::vector< binary_full_tree_rss_t > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_vectors_swap" "', argument " "2"" of type '" "std::vector< binary_full_tree_rss_t > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_swap" "', argument " "2"" of type '" "std::vector< binary_full_tree_rss_t > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_swap" "', argument " "2"" of type '" "std::vector< binary_full_tree_rss_t > &""'");
   }
   arg2 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp2);
   {
@@ -26396,13 +26396,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_begin(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_begin" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_begin" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26429,13 +26429,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_end(PyObject *self, PyObject *args
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_end" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_end" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26462,13 +26462,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_rbegin(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_rbegin" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_rbegin" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26495,13 +26495,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_rend(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::reverse_iterator > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_rend" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_rend" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26527,13 +26527,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_clear(PyObject *self, PyObject *ar
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_clear" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_clear" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26559,13 +26559,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_get_allocator(PyObject *self, PyOb
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_get_allocator" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_get_allocator" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26590,13 +26590,13 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_vectors__SWIG_2(PyObject *self, Py_ssi
   size_t val1 ;
   int ecode1 = 0 ;
   std::vector< binary_full_tree_rss_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type >(val1);
   {
     try {
@@ -26620,13 +26620,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_pop_back(PyObject *self, PyObject 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_pop_back" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_pop_back" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -26653,18 +26653,18 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_resize__SWIG_0(PyObject *self, Py_
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_resize" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_resize" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors_resize" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type >(val2);
   {
     try {
@@ -26691,12 +26691,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_erase__SWIG_0(PyObject *self, Py_s
   swig::SwigPyIterator *iter2 = 0 ;
   int res2 ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_erase" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_erase" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -26739,12 +26739,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_erase__SWIG_1(PyObject *self, Py_s
   swig::SwigPyIterator *iter3 = 0 ;
   int res3 ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_erase" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_erase" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -26791,7 +26791,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_erase(PyObject *self, PyObject *ar
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_vectors_erase", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -26825,7 +26825,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_erase(PyObject *self, PyObject *ar
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_vectors_erase'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -26844,20 +26844,20 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_vectors__SWIG_3(PyObject *self, Py_ssi
   void *argp2 = 0 ;
   int res2 = 0 ;
   std::vector< binary_full_tree_rss_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type""'");
-  } 
+  }
   arg1 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type >(val1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_binary_rss_vectors" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_binary_rss_vectors" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_binary_rss_vectors" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_binary_rss_vectors" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg2 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp2);
   {
@@ -26881,7 +26881,7 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_vectors(PyObject *self, PyObject *args
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_binary_rss_vectors", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -26919,7 +26919,7 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_vectors(PyObject *self, PyObject *args
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_binary_rss_vectors'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -26940,20 +26940,20 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_push_back(PyObject *self, PyObject
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_vectors_push_back", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_push_back" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_push_back" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_vectors_push_back" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_vectors_push_back" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_push_back" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_push_back" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg2 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp2);
   {
@@ -26979,13 +26979,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_front(PyObject *self, PyObject *ar
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_front" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_front" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -27012,13 +27012,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_back(PyObject *self, PyObject *arg
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_back" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_back" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -27050,25 +27050,25 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_assign(PyObject *self, PyObject *a
   void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_vectors_assign", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_assign" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_assign" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors_assign" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type >(val2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors_assign" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors_assign" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_assign" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_assign" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg3 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp3);
   {
@@ -27098,25 +27098,25 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_resize__SWIG_1(PyObject *self, Py_
   int ecode2 = 0 ;
   void *argp3 = 0 ;
   int res3 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_resize" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_resize" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors_resize" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type >(val2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors_resize" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors_resize" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_resize" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_resize" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg3 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp3);
   {
@@ -27140,7 +27140,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_resize(PyObject *self, PyObject *a
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_vectors_resize", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -27175,7 +27175,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_resize(PyObject *self, PyObject *a
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_vectors_resize'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -27197,12 +27197,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_insert__SWIG_0(PyObject *self, Py_
   void *argp3 = 0 ;
   int res3 = 0 ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::iterator > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_insert" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_insert" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -27218,10 +27218,10 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_insert__SWIG_0(PyObject *self, Py_
   }
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors_insert" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_vectors_insert" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_insert" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_insert" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg3 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp3);
   {
@@ -27255,12 +27255,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_insert__SWIG_1(PyObject *self, Py_
   int ecode3 = 0 ;
   void *argp4 = 0 ;
   int res4 = 0 ;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_insert" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_insert" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
@@ -27277,14 +27277,14 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_insert__SWIG_1(PyObject *self, Py_
   ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_vectors_insert" "', argument " "3"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type""'");
-  } 
+  }
   arg3 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type >(val3);
   res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_rfr__trees__k_ary_random_treeT_2_rfr__nodes__k_ary_node_fullT_2_rfr__splits__binary_split_one_feature_rss_lossT_num_t_response_t_index_t_rng_t_128_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t,  0  | 0);
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "binary_rss_vectors_insert" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "binary_rss_vectors_insert" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   if (!argp4) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_insert" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_vectors_insert" "', argument " "4"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type const &""'");
   }
   arg4 = reinterpret_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::value_type * >(argp4);
   {
@@ -27308,7 +27308,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_insert(PyObject *self, PyObject *a
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_vectors_insert", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -27351,7 +27351,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_insert(PyObject *self, PyObject *a
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_vectors_insert'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -27370,18 +27370,18 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_reserve(PyObject *self, PyObject *
   size_t val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_vectors_reserve", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_reserve" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_reserve" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_rss_vectors_reserve" "', argument " "2"" of type '" "std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type""'");
-  } 
+  }
   arg2 = static_cast< std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type >(val2);
   {
     try {
@@ -27406,13 +27406,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_vectors_capacity(PyObject *self, PyObject 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,rfr::nodes::k_ary_node_full< 2,rfr::splits::binary_split_one_feature_rss_loss< double,double,unsigned int,std::default_random_engine,128 >,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > >::size_type result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_capacity" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_vectors_capacity" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > const *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -27437,13 +27437,13 @@ SWIGINTERN PyObject *_wrap_delete_binary_rss_vectors(PyObject *self, PyObject *a
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_std__allocatorT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_rss_vectors" "', argument " "1"" of type '" "std::vector< binary_full_tree_rss_t > *""'");
   }
   arg1 = reinterpret_cast< std::vector< binary_full_tree_rss_t > * >(argp1);
   {
@@ -27482,18 +27482,18 @@ SWIGINTERN PyObject *_wrap_forest_opts_num_trees_set(PyObject *self, PyObject *a
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "forest_opts_num_trees_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_trees_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_trees_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "forest_opts_num_trees_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->num_trees = arg2;
   resultobj = SWIG_Py_Void();
@@ -27510,13 +27510,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_num_trees_get(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_trees_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_trees_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->num_trees);
@@ -27536,18 +27536,18 @@ SWIGINTERN PyObject *_wrap_forest_opts_num_data_points_per_tree_set(PyObject *se
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "forest_opts_num_data_points_per_tree_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_data_points_per_tree_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_data_points_per_tree_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "forest_opts_num_data_points_per_tree_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->num_data_points_per_tree = arg2;
   resultobj = SWIG_Py_Void();
@@ -27564,13 +27564,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_num_data_points_per_tree_get(PyObject *se
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_data_points_per_tree_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_num_data_points_per_tree_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   result = (unsigned int) ((arg1)->num_data_points_per_tree);
@@ -27590,18 +27590,18 @@ SWIGINTERN PyObject *_wrap_forest_opts_do_bootstrapping_set(PyObject *self, PyOb
   bool val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "forest_opts_do_bootstrapping_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_do_bootstrapping_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_do_bootstrapping_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "forest_opts_do_bootstrapping_set" "', argument " "2"" of type '" "bool""'");
-  } 
+  }
   arg2 = static_cast< bool >(val2);
   if (arg1) (arg1)->do_bootstrapping = arg2;
   resultobj = SWIG_Py_Void();
@@ -27618,13 +27618,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_do_bootstrapping_get(PyObject *self, PyOb
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_do_bootstrapping_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_do_bootstrapping_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   result = (bool) ((arg1)->do_bootstrapping);
@@ -27644,18 +27644,18 @@ SWIGINTERN PyObject *_wrap_forest_opts_compute_oob_error_set(PyObject *self, PyO
   bool val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "forest_opts_compute_oob_error_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_oob_error_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_oob_error_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "forest_opts_compute_oob_error_set" "', argument " "2"" of type '" "bool""'");
-  } 
+  }
   arg2 = static_cast< bool >(val2);
   if (arg1) (arg1)->compute_oob_error = arg2;
   resultobj = SWIG_Py_Void();
@@ -27672,13 +27672,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_compute_oob_error_get(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_oob_error_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_oob_error_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   result = (bool) ((arg1)->compute_oob_error);
@@ -27698,18 +27698,18 @@ SWIGINTERN PyObject *_wrap_forest_opts_compute_law_of_total_variance_set(PyObjec
   bool val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "forest_opts_compute_law_of_total_variance_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_law_of_total_variance_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_law_of_total_variance_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "forest_opts_compute_law_of_total_variance_set" "', argument " "2"" of type '" "bool""'");
-  } 
+  }
   arg2 = static_cast< bool >(val2);
   if (arg1) (arg1)->compute_law_of_total_variance = arg2;
   resultobj = SWIG_Py_Void();
@@ -27726,13 +27726,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_compute_law_of_total_variance_get(PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   bool result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_law_of_total_variance_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_compute_law_of_total_variance_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   result = (bool) ((arg1)->compute_law_of_total_variance);
@@ -27752,17 +27752,17 @@ SWIGINTERN PyObject *_wrap_forest_opts_tree_opts_set(PyObject *self, PyObject *a
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "forest_opts_tree_opts_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_tree_opts_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_tree_opts_set" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "forest_opts_tree_opts_set" "', argument " "2"" of type '" "rfr::trees::tree_options< double,double,unsigned int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "forest_opts_tree_opts_set" "', argument " "2"" of type '" "rfr::trees::tree_options< double,double,unsigned int > *""'");
   }
   arg2 = reinterpret_cast< rfr::trees::tree_options< double,double,unsigned int > * >(argp2);
   if (arg1) (arg1)->tree_opts = *arg2;
@@ -27780,13 +27780,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_tree_opts_get(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   rfr::trees::tree_options< double,double,unsigned int > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_tree_opts_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_tree_opts_get" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   result = (rfr::trees::tree_options< double,double,unsigned int > *)& ((arg1)->tree_opts);
@@ -27803,13 +27803,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_set_default_values(PyObject *self, PyObje
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_set_default_values" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_set_default_values" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   {
@@ -27837,20 +27837,20 @@ SWIGINTERN PyObject *_wrap_forest_opts_adjust_limits_to_data(PyObject *self, PyO
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "forest_opts_adjust_limits_to_data", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_adjust_limits_to_data" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_adjust_limits_to_data" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "forest_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "forest_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "forest_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "forest_opts_adjust_limits_to_data" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   {
@@ -27872,7 +27872,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_forest_opts__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::forests::forest_options< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -27897,15 +27897,15 @@ SWIGINTERN PyObject *_wrap_new_forest_opts__SWIG_1(PyObject *self, Py_ssize_t no
   void *argp1 = 0 ;
   int res1 = 0 ;
   rfr::forests::forest_options< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t,  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'");
   }
   if (!argp1) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< double,double,unsigned int > * >(argp1);
   {
@@ -27933,23 +27933,23 @@ SWIGINTERN PyObject *_wrap_new_forest_opts__SWIG_2(PyObject *self, Py_ssize_t no
   void *argp2 = 0 ;
   int res2 = 0 ;
   rfr::forests::forest_options< num_t,response_t,index_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__trees__tree_optionsT_num_t_response_t_index_t_t,  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'");
   }
   if (!argp1) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_forest_opts" "', argument " "1"" of type '" "rfr::trees::tree_options< double,double,unsigned int > &""'");
   }
   arg1 = reinterpret_cast< rfr::trees::tree_options< double,double,unsigned int > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_forest_opts" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_forest_opts" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_forest_opts" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_forest_opts" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   {
@@ -27973,7 +27973,7 @@ SWIGINTERN PyObject *_wrap_new_forest_opts(PyObject *self, PyObject *args) {
   PyObject *argv[3] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_forest_opts", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -28002,7 +28002,7 @@ SWIGINTERN PyObject *_wrap_new_forest_opts(PyObject *self, PyObject *args) {
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_forest_opts'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -28020,13 +28020,13 @@ SWIGINTERN PyObject *_wrap_forest_opts_to_string(PyObject *self, PyObject *args)
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::string result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_to_string" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "forest_opts_to_string" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   {
@@ -28051,13 +28051,13 @@ SWIGINTERN PyObject *_wrap_delete_forest_opts(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_forest_opts" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_forest_opts" "', argument " "1"" of type '" "rfr::forests::forest_options< num_t,response_t,index_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::forest_options< num_t,response_t,index_t > * >(argp1);
   {
@@ -28096,17 +28096,17 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_options_set(PyObject *self, PyObjec
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_options_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_options_set" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_options_set" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'");
   }
   arg2 = reinterpret_cast< rfr::forests::forest_options< double,double,unsigned int > * >(argp2);
   if (arg1) (arg1)->options = *arg2;
@@ -28124,13 +28124,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_options_get(PyObject *self, PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   rfr::forests::forest_options< double,double,unsigned int > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_options_get" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_options_get" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   result = (rfr::forests::forest_options< double,double,unsigned int > *)& ((arg1)->options);
@@ -28144,7 +28144,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_binary_rss_forest__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -28169,14 +28169,14 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_forest__SWIG_1(PyObject *self, Py_ssiz
   void *argp1 ;
   int res1 = 0 ;
   rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_binary_rss_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_binary_rss_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
+    }
     if (!argp1) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_binary_rss_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
     } else {
@@ -28206,7 +28206,7 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_forest(PyObject *self, PyObject *args)
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_binary_rss_forest", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -28220,7 +28220,7 @@ SWIGINTERN PyObject *_wrap_new_binary_rss_forest(PyObject *self, PyObject *args)
       return _wrap_new_binary_rss_forest__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_binary_rss_forest'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -28236,13 +28236,13 @@ SWIGINTERN PyObject *_wrap_delete_binary_rss_forest(PyObject *self, PyObject *ar
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_rss_forest" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_rss_forest" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -28273,28 +28273,28 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_fit(PyObject *self, PyObject *args)
   void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_fit", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_fit" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_fit" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   arg3 = reinterpret_cast< std::default_random_engine * >(argp3);
   {
@@ -28322,22 +28322,22 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict(PyObject *self, PyObject *a
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_predict", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -28370,29 +28370,29 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_mean_var__SWIG_0(PyObject *
   bool val3 ;
   int ecode3 = 0 ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
   ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "3"" of type '" "bool""'");
-  } 
+  }
   arg3 = static_cast< bool >(val3);
   {
     try {
@@ -28420,22 +28420,22 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_mean_var__SWIG_1(PyObject *
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -28462,7 +28462,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_mean_var(PyObject *self, Py
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_forest_predict_mean_var", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -28497,7 +28497,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_mean_var(PyObject *self, Py
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_forest_predict_mean_var'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -28518,22 +28518,22 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_covariance(PyObject *self, PyObject
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_covariance", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_covariance" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_covariance" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -28541,10 +28541,10 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_covariance(PyObject *self, PyObject
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_forest_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_forest_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -28579,22 +28579,22 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_kernel(PyObject *self, PyObject *ar
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_kernel", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_kernel" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_kernel" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -28602,10 +28602,10 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_kernel(PyObject *self, PyObject *ar
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_forest_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_rss_forest_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -28636,13 +28636,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_get_all_trees(PyObject *self, PyObj
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t >,std::allocator< rfr::trees::k_ary_random_tree< 2,binary_full_node_rss_t,num_t,response_t,index_t,rng_t > > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_get_all_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_get_all_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -28670,22 +28670,22 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_all_leaf_values(PyObject *self, PyO
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_all_leaf_values", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_all_leaf_values" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_all_leaf_values" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -28718,29 +28718,29 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
   bool val3 ;
   int ecode3 = 0 ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg2 = ptr;
   }
   ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "3"" of type '" "bool""'");
-  } 
+  }
   arg3 = static_cast< bool >(val3);
   {
     try {
@@ -28768,22 +28768,22 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg2 = ptr;
   }
@@ -28810,7 +28810,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_forest_predict_marginalized_over_instances", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -28845,7 +28845,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_forest_predict_marginalized_over_instances'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -28866,19 +28866,19 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
   bool val4 ;
   int ecode4 = 0 ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -28887,7 +28887,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -28895,7 +28895,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
   ecode4 = SWIG_AsVal_bool(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "4"" of type '" "bool""'");
-  } 
+  }
   arg4 = static_cast< bool >(val4);
   {
     try {
@@ -28921,19 +28921,19 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -28942,7 +28942,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -28968,7 +28968,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "binary_rss_forest_predict_marginalized_over_instances_batch", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -29011,7 +29011,7 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_predict_marginalized_over_instances
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'binary_rss_forest_predict_marginalized_over_instances_batch'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -29034,19 +29034,19 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_pseudo_update(PyObject *self, PyObj
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_pseudo_update", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_pseudo_update" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_pseudo_update" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -29054,12 +29054,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_pseudo_update(PyObject *self, PyObj
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_forest_pseudo_update" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "binary_rss_forest_pseudo_update" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -29090,19 +29090,19 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_pseudo_downdate(PyObject *self, PyO
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_pseudo_downdate", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_pseudo_downdate" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_pseudo_downdate" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -29110,12 +29110,12 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_pseudo_downdate(PyObject *self, PyO
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "binary_rss_forest_pseudo_downdate" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "binary_rss_forest_pseudo_downdate" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -29140,13 +29140,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_out_of_bag_error(PyObject *self, Py
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -29172,19 +29172,19 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_save_to_binary_file(PyObject *self,
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_save_to_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -29212,19 +29212,19 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_load_from_binary_file(PyObject *sel
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_load_from_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -29252,13 +29252,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_ascii_string_representation(PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::string result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -29285,22 +29285,22 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_load_from_ascii_string(PyObject *se
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_load_from_ascii_string", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_rss_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_rss_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     arg2 = ptr;
   }
@@ -29329,19 +29329,19 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_save_latex_representation(PyObject 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_rss_forest_save_latex_representation", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_save_latex_representation" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_rss_forest_save_latex_representation" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -29368,13 +29368,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_print_info(PyObject *self, PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_print_info" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_print_info" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -29400,13 +29400,13 @@ SWIGINTERN PyObject *_wrap_binary_rss_forest_num_trees(PyObject *self, PyObject 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_rfr__trees__k_ary_random_treeT_2_binary_full_node_rss_t_num_t_response_t_index_t_rng_t_t_double_double_unsigned_int_std__default_random_engine_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_num_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_rss_forest_num_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -29445,17 +29445,17 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_options_set(PyObject *self, PyObj
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_options_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_options_set" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_options_set" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'");
   }
   arg2 = reinterpret_cast< rfr::forests::forest_options< double,double,unsigned int > * >(argp2);
   if (arg1) (arg1)->options = *arg2;
@@ -29473,13 +29473,13 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_options_get(PyObject *self, PyObj
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   rfr::forests::forest_options< double,double,unsigned int > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_options_get" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_options_get" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   result = (rfr::forests::forest_options< double,double,unsigned int > *)& ((arg1)->options);
@@ -29493,7 +29493,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_qr_forest_prototype__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -29518,14 +29518,14 @@ SWIGINTERN PyObject *_wrap_new_qr_forest_prototype__SWIG_1(PyObject *self, Py_ss
   void *argp1 ;
   int res1 = 0 ;
   rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_qr_forest_prototype" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_qr_forest_prototype" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
+    }
     if (!argp1) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_qr_forest_prototype" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
     } else {
@@ -29555,7 +29555,7 @@ SWIGINTERN PyObject *_wrap_new_qr_forest_prototype(PyObject *self, PyObject *arg
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_qr_forest_prototype", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -29569,7 +29569,7 @@ SWIGINTERN PyObject *_wrap_new_qr_forest_prototype(PyObject *self, PyObject *arg
       return _wrap_new_qr_forest_prototype__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_qr_forest_prototype'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -29585,13 +29585,13 @@ SWIGINTERN PyObject *_wrap_delete_qr_forest_prototype(PyObject *self, PyObject *
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_qr_forest_prototype" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_qr_forest_prototype" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -29622,28 +29622,28 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_fit(PyObject *self, PyObject *arg
   void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_fit", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_fit" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_fit" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "qr_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "qr_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   arg3 = reinterpret_cast< std::default_random_engine * >(argp3);
   {
@@ -29671,22 +29671,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict(PyObject *self, PyObject 
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_predict", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -29719,29 +29719,29 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_mean_var__SWIG_0(PyObject
   bool val3 ;
   int ecode3 = 0 ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
   ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "3"" of type '" "bool""'");
-  } 
+  }
   arg3 = static_cast< bool >(val3);
   {
     try {
@@ -29769,22 +29769,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_mean_var__SWIG_1(PyObject
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -29811,7 +29811,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_mean_var(PyObject *self, 
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "qr_forest_prototype_predict_mean_var", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -29846,7 +29846,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_mean_var(PyObject *self, 
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'qr_forest_prototype_predict_mean_var'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -29867,22 +29867,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_covariance(PyObject *self, PyObje
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_covariance", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_covariance" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_covariance" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -29890,10 +29890,10 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_covariance(PyObject *self, PyObje
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "qr_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "qr_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -29928,22 +29928,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_kernel(PyObject *self, PyObject *
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_kernel", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_kernel" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_kernel" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -29951,10 +29951,10 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_kernel(PyObject *self, PyObject *
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "qr_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "qr_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -29987,22 +29987,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_all_leaf_values(PyObject *self, P
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_all_leaf_values", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_all_leaf_values" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_all_leaf_values" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -30035,29 +30035,29 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
   bool val3 ;
   int ecode3 = 0 ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg2 = ptr;
   }
   ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "3"" of type '" "bool""'");
-  } 
+  }
   arg3 = static_cast< bool >(val3);
   {
     try {
@@ -30085,22 +30085,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg2 = ptr;
   }
@@ -30127,7 +30127,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "qr_forest_prototype_predict_marginalized_over_instances", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -30162,7 +30162,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'qr_forest_prototype_predict_marginalized_over_instances'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -30183,19 +30183,19 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
   bool val4 ;
   int ecode4 = 0 ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30204,7 +30204,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30212,7 +30212,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
   ecode4 = SWIG_AsVal_bool(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "4"" of type '" "bool""'");
-  } 
+  }
   arg4 = static_cast< bool >(val4);
   {
     try {
@@ -30238,19 +30238,19 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30259,7 +30259,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30285,7 +30285,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "qr_forest_prototype_predict_marginalized_over_instances_batch", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -30328,7 +30328,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_predict_marginalized_over_instanc
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'qr_forest_prototype_predict_marginalized_over_instances_batch'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -30351,19 +30351,19 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_pseudo_update(PyObject *self, PyO
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_pseudo_update", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_pseudo_update" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_pseudo_update" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30371,12 +30371,12 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_pseudo_update(PyObject *self, PyO
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "qr_forest_prototype_pseudo_update" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "qr_forest_prototype_pseudo_update" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -30407,19 +30407,19 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_pseudo_downdate(PyObject *self, P
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_pseudo_downdate", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_pseudo_downdate" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_pseudo_downdate" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30427,12 +30427,12 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_pseudo_downdate(PyObject *self, P
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "qr_forest_prototype_pseudo_downdate" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "qr_forest_prototype_pseudo_downdate" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -30457,13 +30457,13 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_out_of_bag_error(PyObject *self, 
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -30489,19 +30489,19 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_save_to_binary_file(PyObject *sel
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_save_to_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30529,19 +30529,19 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_load_from_binary_file(PyObject *s
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_load_from_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30569,13 +30569,13 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_ascii_string_representation(PyObj
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::string result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -30602,22 +30602,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_load_from_ascii_string(PyObject *
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_load_from_ascii_string", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     arg2 = ptr;
   }
@@ -30646,19 +30646,19 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_save_latex_representation(PyObjec
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_prototype_save_latex_representation", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_save_latex_representation" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_prototype_save_latex_representation" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30685,13 +30685,13 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_print_info(PyObject *self, PyObje
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_print_info" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_print_info" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -30717,13 +30717,13 @@ SWIGINTERN PyObject *_wrap_qr_forest_prototype_num_trees(PyObject *self, PyObjec
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_num_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_prototype_num_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -30756,7 +30756,7 @@ SWIGINTERN PyObject *qr_forest_prototype_swiginit(PyObject *SWIGUNUSEDPARM(self)
 SWIGINTERN PyObject *_wrap_new_qr_forest__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -30781,14 +30781,14 @@ SWIGINTERN PyObject *_wrap_new_qr_forest__SWIG_1(PyObject *self, Py_ssize_t nobj
   void *argp1 ;
   int res1 = 0 ;
   rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_qr_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_qr_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
+    }
     if (!argp1) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_qr_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
     } else {
@@ -30818,7 +30818,7 @@ SWIGINTERN PyObject *_wrap_new_qr_forest(PyObject *self, PyObject *args) {
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_qr_forest", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -30832,7 +30832,7 @@ SWIGINTERN PyObject *_wrap_new_qr_forest(PyObject *self, PyObject *args) {
       return _wrap_new_qr_forest__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_qr_forest'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -30848,13 +30848,13 @@ SWIGINTERN PyObject *_wrap_delete_qr_forest(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__quantile_regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_qr_forest" "', argument " "1"" of type '" "rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_qr_forest" "', argument " "1"" of type '" "rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -30883,22 +30883,22 @@ SWIGINTERN PyObject *_wrap_qr_forest_predict_quantiles(PyObject *self, PyObject 
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "qr_forest_predict_quantiles", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__quantile_regression_forestT_binary_full_tree_rss_t__num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_predict_quantiles" "', argument " "1"" of type '" "rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "qr_forest_predict_quantiles" "', argument " "1"" of type '" "rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::quantile_regression_forest< binary_full_tree_rss_t_,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_predict_quantiles" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "qr_forest_predict_quantiles" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_predict_quantiles" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "qr_forest_predict_quantiles" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -30906,7 +30906,7 @@ SWIGINTERN PyObject *_wrap_qr_forest_predict_quantiles(PyObject *self, PyObject 
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_predict_quantiles" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "qr_forest_predict_quantiles" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -30949,17 +30949,17 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_options_set(PyObject *self, P
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_options_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_options_set" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_options_set" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'");
   }
   arg2 = reinterpret_cast< rfr::forests::forest_options< double,double,unsigned int > * >(argp2);
   if (arg1) (arg1)->options = *arg2;
@@ -30977,13 +30977,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_options_get(PyObject *self, P
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   rfr::forests::forest_options< double,double,unsigned int > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_options_get" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_options_get" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   result = (rfr::forests::forest_options< double,double,unsigned int > *)& ((arg1)->options);
@@ -30997,7 +30997,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_fanova_forest_prototype__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -31022,14 +31022,14 @@ SWIGINTERN PyObject *_wrap_new_fanova_forest_prototype__SWIG_1(PyObject *self, P
   void *argp1 ;
   int res1 = 0 ;
   rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_fanova_forest_prototype" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_fanova_forest_prototype" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
+    }
     if (!argp1) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_fanova_forest_prototype" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
     } else {
@@ -31059,7 +31059,7 @@ SWIGINTERN PyObject *_wrap_new_fanova_forest_prototype(PyObject *self, PyObject 
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_fanova_forest_prototype", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -31073,7 +31073,7 @@ SWIGINTERN PyObject *_wrap_new_fanova_forest_prototype(PyObject *self, PyObject 
       return _wrap_new_fanova_forest_prototype__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_fanova_forest_prototype'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -31089,13 +31089,13 @@ SWIGINTERN PyObject *_wrap_delete_fanova_forest_prototype(PyObject *self, PyObje
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_fanova_forest_prototype" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_fanova_forest_prototype" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -31126,28 +31126,28 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_fit(PyObject *self, PyObject 
   void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_fit", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_fit" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_fit" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   arg3 = reinterpret_cast< std::default_random_engine * >(argp3);
   {
@@ -31175,22 +31175,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict(PyObject *self, PyObj
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_predict", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -31223,29 +31223,29 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_mean_var__SWIG_0(PyOb
   bool val3 ;
   int ecode3 = 0 ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
   ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "3"" of type '" "bool""'");
-  } 
+  }
   arg3 = static_cast< bool >(val3);
   {
     try {
@@ -31273,22 +31273,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_mean_var__SWIG_1(PyOb
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -31315,7 +31315,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_mean_var(PyObject *se
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_predict_mean_var", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -31350,7 +31350,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_mean_var(PyObject *se
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'fanova_forest_prototype_predict_mean_var'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -31371,22 +31371,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_covariance(PyObject *self, Py
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_covariance", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_covariance" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_covariance" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_covariance" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -31394,10 +31394,10 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_covariance(PyObject *self, Py
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_covariance" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -31432,22 +31432,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_kernel(PyObject *self, PyObje
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_kernel", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_kernel" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_kernel" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_kernel" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -31455,10 +31455,10 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_kernel(PyObject *self, PyObje
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_kernel" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -31491,22 +31491,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_all_leaf_values(PyObject *sel
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_all_leaf_values", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_all_leaf_values" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_all_leaf_values" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_all_leaf_values" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -31539,29 +31539,29 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
   bool val3 ;
   int ecode3 = 0 ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg2 = ptr;
   }
   ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "3"" of type '" "bool""'");
-  } 
+  }
   arg3 = static_cast< bool >(val3);
   {
     try {
@@ -31589,22 +31589,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_predict_marginalized_over_instances" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const &""'");
     }
     arg2 = ptr;
   }
@@ -31631,7 +31631,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
   PyObject *argv[4] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_predict_marginalized_over_instances", 0, 3, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
@@ -31666,7 +31666,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'fanova_forest_prototype_predict_marginalized_over_instances'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -31687,19 +31687,19 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
   bool val4 ;
   int ecode4 = 0 ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -31708,7 +31708,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -31716,7 +31716,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
   ecode4 = SWIG_AsVal_bool(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "4"" of type '" "bool""'");
-  } 
+  }
   arg4 = static_cast< bool >(val4);
   {
     try {
@@ -31742,19 +31742,19 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > result;
-  
+
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "2"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -31763,7 +31763,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
     std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *ptr = (std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > *)0;
     int res = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_predict_marginalized_over_instances_batch" "', argument " "3"" of type '" "std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > const""'");
     }
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -31789,7 +31789,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
   PyObject *argv[5] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_predict_marginalized_over_instances_batch", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 3) {
@@ -31832,7 +31832,7 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_predict_marginalized_over_ins
       }
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'fanova_forest_prototype_predict_marginalized_over_instances_batch'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -31855,19 +31855,19 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_pseudo_update(PyObject *self,
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_pseudo_update", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_pseudo_update" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_pseudo_update" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_pseudo_update" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -31875,12 +31875,12 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_pseudo_update(PyObject *self,
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fanova_forest_prototype_pseudo_update" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "fanova_forest_prototype_pseudo_update" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -31911,19 +31911,19 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_pseudo_downdate(PyObject *sel
   double val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_pseudo_downdate", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_pseudo_downdate" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_pseudo_downdate" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_pseudo_downdate" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > >""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -31931,12 +31931,12 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_pseudo_downdate(PyObject *sel
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fanova_forest_prototype_pseudo_downdate" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "fanova_forest_prototype_pseudo_downdate" "', argument " "4"" of type '" "double""'");
-  } 
+  }
   arg4 = static_cast< double >(val4);
   {
     try {
@@ -31961,13 +31961,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_out_of_bag_error(PyObject *se
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -31993,19 +31993,19 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_save_to_binary_file(PyObject 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_save_to_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -32033,19 +32033,19 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_load_from_binary_file(PyObjec
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_load_from_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -32073,13 +32073,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_ascii_string_representation(P
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::string result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32106,22 +32106,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_load_from_ascii_string(PyObje
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_load_from_ascii_string", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_prototype_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     arg2 = ptr;
   }
@@ -32150,19 +32150,19 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_save_latex_representation(PyO
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_prototype_save_latex_representation", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_save_latex_representation" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "fanova_forest_prototype_save_latex_representation" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -32189,13 +32189,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_print_info(PyObject *self, Py
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_print_info" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_print_info" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32221,13 +32221,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_prototype_num_trees(PyObject *self, PyO
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__regression_forestT_binary_fanova_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_num_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_prototype_num_trees" "', argument " "1"" of type '" "rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::regression_forest< binary_fanova_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32260,7 +32260,7 @@ SWIGINTERN PyObject *fanova_forest_prototype_swiginit(PyObject *SWIGUNUSEDPARM(s
 SWIGINTERN PyObject *_wrap_new_fanova_forest__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -32285,14 +32285,14 @@ SWIGINTERN PyObject *_wrap_new_fanova_forest__SWIG_1(PyObject *self, Py_ssize_t 
   void *argp1 ;
   int res1 = 0 ;
   rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_fanova_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_fanova_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
+    }
     if (!argp1) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_fanova_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
     } else {
@@ -32322,7 +32322,7 @@ SWIGINTERN PyObject *_wrap_new_fanova_forest(PyObject *self, PyObject *args) {
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_fanova_forest", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -32336,7 +32336,7 @@ SWIGINTERN PyObject *_wrap_new_fanova_forest(PyObject *self, PyObject *args) {
       return _wrap_new_fanova_forest__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_fanova_forest'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -32352,13 +32352,13 @@ SWIGINTERN PyObject *_wrap_delete_fanova_forest(PyObject *self, PyObject *args) 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_fanova_forest" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_fanova_forest" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32389,28 +32389,28 @@ SWIGINTERN PyObject *_wrap_fanova_forest_fit(PyObject *self, PyObject *args) {
   void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_fit", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_fit" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_fit" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   arg3 = reinterpret_cast< std::default_random_engine * >(argp3);
   {
@@ -32441,23 +32441,23 @@ SWIGINTERN PyObject *_wrap_fanova_forest_set_cutoffs(PyObject *self, PyObject *a
   double val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_set_cutoffs", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_set_cutoffs" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_set_cutoffs" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fanova_forest_set_cutoffs" "', argument " "2"" of type '" "double""'");
-  } 
+  }
   arg2 = static_cast< double >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fanova_forest_set_cutoffs" "', argument " "3"" of type '" "double""'");
-  } 
+  }
   arg3 = static_cast< double >(val3);
   {
     try {
@@ -32482,13 +32482,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_get_cutoffs(PyObject *self, PyObject *a
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_get_cutoffs" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_get_cutoffs" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32513,13 +32513,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_precompute_marginals(PyObject *self, Py
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_precompute_marginals" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_precompute_marginals" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32547,22 +32547,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_marginal_mean_prediction(PyObject *self
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_marginal_mean_prediction", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_marginal_mean_prediction" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_marginal_mean_prediction" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_marginal_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_marginal_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_marginal_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_marginal_mean_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -32593,22 +32593,22 @@ SWIGINTERN PyObject *_wrap_fanova_forest_marginal_mean_variance_prediction(PyObj
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_marginal_mean_variance_prediction", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_marginal_mean_variance_prediction" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_marginal_mean_variance_prediction" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_marginal_mean_variance_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fanova_forest_marginal_mean_variance_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_marginal_mean_variance_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_marginal_mean_variance_prediction" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -32642,27 +32642,27 @@ SWIGINTERN PyObject *_wrap_fanova_forest_marginal_prediction_stat_of_tree(PyObje
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
   rfr::util::weighted_running_statistics< double > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "fanova_forest_marginal_prediction_stat_of_tree", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_marginal_prediction_stat_of_tree" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_marginal_prediction_stat_of_tree" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fanova_forest_marginal_prediction_stat_of_tree" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res3 = swig::asptr(swig_obj[2], &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_marginal_prediction_stat_of_tree" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fanova_forest_marginal_prediction_stat_of_tree" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_marginal_prediction_stat_of_tree" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "fanova_forest_marginal_prediction_stat_of_tree" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg3 = ptr;
   }
@@ -32691,13 +32691,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_get_trees_total_variances(PyObject *sel
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< double,std::allocator< double > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_get_trees_total_variances" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_get_trees_total_variances" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32723,13 +32723,13 @@ SWIGINTERN PyObject *_wrap_fanova_forest_all_split_values(PyObject *self, PyObje
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::vector< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > >,std::allocator< std::vector< std::vector< num_t,std::allocator< num_t > >,std::allocator< std::vector< num_t,std::allocator< num_t > > > > > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__fANOVA_forestT_binary_rss_split_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_all_split_values" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fanova_forest_all_split_values" "', argument " "1"" of type '" "rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::fANOVA_forest< binary_rss_split_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32766,13 +32766,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_get_trees(PyObject *self, PyOb
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   SwigValueWrapper< std::vector< rfr::trees::k_ary_mondrian_tree< 2,rfr::nodes::k_ary_mondrian_node_full< 2,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine >,std::allocator< rfr::trees::k_ary_mondrian_tree< 2,rfr::nodes::k_ary_mondrian_node_full< 2,double,double,unsigned int,std::default_random_engine >,double,double,unsigned int,std::default_random_engine > > > > result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_get_trees" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_get_trees" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -32800,17 +32800,17 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_options_set(PyObject *self, Py
   void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_options_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_options_set" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_options_set" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_options_set" "', argument " "2"" of type '" "rfr::forests::forest_options< double,double,unsigned int > *""'");
   }
   arg2 = reinterpret_cast< rfr::forests::forest_options< double,double,unsigned int > * >(argp2);
   if (arg1) (arg1)->options = *arg2;
@@ -32828,13 +32828,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_options_get(PyObject *self, Py
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   rfr::forests::forest_options< double,double,unsigned int > *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_options_get" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_options_get" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   result = (rfr::forests::forest_options< double,double,unsigned int > *)& ((arg1)->options);
@@ -32854,18 +32854,18 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_internal_index_set(PyObject *s
   unsigned int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_internal_index_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_internal_index_set" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_internal_index_set" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "binary_mondrian_forest_internal_index_set" "', argument " "2"" of type '" "unsigned int""'");
-  } 
+  }
   arg2 = static_cast< unsigned int >(val2);
   if (arg1) (arg1)->internal_index = arg2;
   resultobj = SWIG_Py_Void();
@@ -32882,13 +32882,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_internal_index_get(PyObject *s
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_internal_index_get" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_internal_index_get" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   result = (unsigned int) ((arg1)->internal_index);
@@ -32907,22 +32907,22 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_name_set(PyObject *self, PyObj
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_name_set", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_name_set" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_name_set" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_name_set" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_name_set" "', argument " "2"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_name_set" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_name_set" "', argument " "2"" of type '" "std::string const &""'");
     }
     arg2 = ptr;
   }
@@ -32943,13 +32943,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_name_get(PyObject *self, PyObj
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::string *result = 0 ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_name_get" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_name_get" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   result = (std::string *) & ((arg1)->name);
@@ -32963,7 +32963,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_binary_mondrian_forest__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
@@ -32988,14 +32988,14 @@ SWIGINTERN PyObject *_wrap_new_binary_mondrian_forest__SWIG_1(PyObject *self, Py
   void *argp1 ;
   int res1 = 0 ;
   rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *result = 0 ;
-  
+
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_rfr__forests__forest_optionsT_num_t_response_t_index_t_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_binary_mondrian_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'"); 
-    }  
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_binary_mondrian_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
+    }
     if (!argp1) {
       SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_binary_mondrian_forest" "', argument " "1"" of type '" "rfr::forests::forest_options< double,double,unsigned int >""'");
     } else {
@@ -33025,7 +33025,7 @@ SWIGINTERN PyObject *_wrap_new_binary_mondrian_forest(PyObject *self, PyObject *
   PyObject *argv[2] = {
     0
   };
-  
+
   if (!(argc = SWIG_Python_UnpackTuple(args, "new_binary_mondrian_forest", 0, 1, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
@@ -33039,7 +33039,7 @@ SWIGINTERN PyObject *_wrap_new_binary_mondrian_forest(PyObject *self, PyObject *
       return _wrap_new_binary_mondrian_forest__SWIG_1(self, argc, argv);
     }
   }
-  
+
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_binary_mondrian_forest'.\n"
     "  Possible C/C++ prototypes are:\n"
@@ -33055,13 +33055,13 @@ SWIGINTERN PyObject *_wrap_delete_binary_mondrian_forest(PyObject *self, PyObjec
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_mondrian_forest" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_binary_mondrian_forest" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -33092,28 +33092,28 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_fit(PyObject *self, PyObject *
   void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject *swig_obj[3] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_fit", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_fit" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_fit" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_mondrian_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_mondrian_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   arg3 = reinterpret_cast< std::default_random_engine * >(argp3);
   {
@@ -33141,22 +33141,22 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_predict_mean_var(PyObject *sel
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   std::pair< double,double > result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_predict_mean_var", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_predict_mean_var" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_predict_mean_var" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -33187,22 +33187,22 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_predict(PyObject *self, PyObje
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_predict", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_predict" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_predict" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > const *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_predict" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -33233,22 +33233,22 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_predict_median(PyObject *self,
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
   double result;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_predict_median", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_predict_median" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_predict_median" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     res2 = swig::asptr(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_predict_median" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_predict_median" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_predict_median" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_predict_median" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const &""'");
     }
     arg2 = ptr;
   }
@@ -33285,34 +33285,34 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_partial_fit(PyObject *self, Py
   unsigned int val4 ;
   int ecode4 = 0 ;
   PyObject *swig_obj[4] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_partial_fit", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_partial_fit" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_partial_fit" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_rfr__data_containers__baseT_num_t_response_t_index_t_t,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_partial_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_partial_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_partial_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_partial_fit" "', argument " "2"" of type '" "rfr::data_containers::base< double,double,unsigned int > const &""'");
   }
   arg2 = reinterpret_cast< rfr::data_containers::base< double,double,unsigned int > * >(argp2);
   res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__default_random_engine,  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_mondrian_forest_partial_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "binary_mondrian_forest_partial_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_partial_fit" "', argument " "3"" of type '" "std::default_random_engine &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_partial_fit" "', argument " "3"" of type '" "std::default_random_engine &""'");
   }
   arg3 = reinterpret_cast< std::default_random_engine * >(argp3);
   ecode4 = SWIG_AsVal_unsigned_SS_int(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "binary_mondrian_forest_partial_fit" "', argument " "4"" of type '" "unsigned int""'");
-  } 
+  }
   arg4 = static_cast< unsigned int >(val4);
   {
     try {
@@ -33337,13 +33337,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_out_of_bag_error(PyObject *sel
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   double result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_out_of_bag_error" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -33369,19 +33369,19 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_save_to_binary_file(PyObject *
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_save_to_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_save_to_binary_file" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_mondrian_forest_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_mondrian_forest_save_to_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -33409,19 +33409,19 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_load_from_binary_file(PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_load_from_binary_file", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_load_from_binary_file" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_mondrian_forest_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_mondrian_forest_load_from_binary_file" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -33449,13 +33449,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_ascii_string_representation(Py
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   std::string result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_ascii_string_representation" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -33482,22 +33482,22 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_load_from_ascii_string(PyObjec
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_load_from_ascii_string", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_load_from_ascii_string" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "binary_mondrian_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "binary_mondrian_forest_load_from_ascii_string" "', argument " "2"" of type '" "std::string const &""'");
     }
     arg2 = ptr;
   }
@@ -33526,19 +33526,19 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_save_latex_representation(PyOb
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[2] ;
-  
+
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "binary_mondrian_forest_save_latex_representation", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_save_latex_representation" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_mondrian_forest_save_latex_representation" "', argument " "2"" of type '" "std::string const""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "binary_mondrian_forest_save_latex_representation" "', argument " "2"" of type '" "std::string const""'");
     }
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -33565,13 +33565,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_print_info(PyObject *self, PyO
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_print_info" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_print_info" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -33597,13 +33597,13 @@ SWIGINTERN PyObject *_wrap_binary_mondrian_forest_num_trees(PyObject *self, PyOb
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
   unsigned int result;
-  
+
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_rfr__forests__mondrian_forestT_binary_mondrian_tree_t_num_t_response_t_index_t_rng_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_num_trees" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "binary_mondrian_forest_num_trees" "', argument " "1"" of type '" "rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > *""'");
   }
   arg1 = reinterpret_cast< rfr::forests::mondrian_forest< binary_mondrian_tree_t,num_t,response_t,index_t,rng_t > * >(argp1);
   {
@@ -35753,7 +35753,7 @@ SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
   size_t i;
   swig_module_info *module_head, *iter;
   int init;
-  
+
   /* check to see if the circular list has been setup, if not, set it up */
   if (swig_module.next==0) {
     /* Initialize the swig_module */
@@ -35764,7 +35764,7 @@ SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
   } else {
     init = 0;
   }
-  
+
   /* Try and load any already created modules */
   module_head = SWIG_GetModule(clientdata);
   if (!module_head) {
@@ -35781,18 +35781,18 @@ SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
       }
       iter=iter->next;
     } while (iter!= module_head);
-    
+
     /* otherwise we must add our module into the list */
     swig_module.next = module_head->next;
     module_head->next = &swig_module;
   }
-  
+
   /* When multiple interpreters are used, a module could have already been initialized in
        a different interpreter, but not yet have a pointer in this interpreter.
        In this case, we do not want to continue adding types... everything should be
        set up already */
   if (init == 0) return;
-  
+
   /* Now work on filling in swig_module.types */
 #ifdef SWIGRUNTIME_DEBUG
   printf("SWIG_InitializeModule: size %lu\n", (unsigned long)swig_module.size);
@@ -35801,11 +35801,11 @@ SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
     swig_type_info *type = 0;
     swig_type_info *ret;
     swig_cast_info *cast;
-    
+
 #ifdef SWIGRUNTIME_DEBUG
     printf("SWIG_InitializeModule: type %lu %s\n", (unsigned long)i, swig_module.type_initial[i]->name);
 #endif
-    
+
     /* if there is another module already loaded */
     if (swig_module.next != &swig_module) {
       type = SWIG_MangledTypeQueryModule(swig_module.next, &swig_module, swig_module.type_initial[i]->name);
@@ -35824,7 +35824,7 @@ SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
     } else {
       type = swig_module.type_initial[i];
     }
-    
+
     /* Insert casting types */
     cast = swig_module.cast_initial[i];
     while (cast->type) {
@@ -35855,7 +35855,7 @@ SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
           if (!ocast) ret = 0;
         }
       }
-      
+
       if (!ret) {
 #ifdef SWIGRUNTIME_DEBUG
         printf("SWIG_InitializeModule: adding cast %s\n", cast->type->name);
@@ -35872,7 +35872,7 @@ SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
     swig_module.types[i] = type;
   }
   swig_module.types[i] = 0;
-  
+
 #ifdef SWIGRUNTIME_DEBUG
   printf("**** SWIG_InitializeModule: Cast List ******\n");
   for (i = 0; i < swig_module.size; ++i) {
@@ -35900,10 +35900,10 @@ SWIG_PropagateClientData(void) {
   size_t i;
   swig_cast_info *equiv;
   static int init_run = 0;
-  
+
   if (init_run) return;
   init_run = 1;
-  
+
   for (i = 0; i < swig_module.size; i++) {
     if (swig_module.types[i]->clientdata) {
       equiv = swig_module.types[i]->cast;
@@ -35931,11 +35931,11 @@ SWIG_PropagateClientData(void) {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
+
   /* -----------------------------------------------------------------------------
    * constants/methods manipulation
    * ----------------------------------------------------------------------------- */
-  
+
   /* Install Constants */
   SWIGINTERN void
   SWIG_Python_InstallConstants(PyObject *d, swig_const_info constants[]) {
@@ -35959,11 +35959,11 @@ extern "C" {
       }
     }
   }
-  
+
   /* -----------------------------------------------------------------------------
    * Patch %callback methods' docstrings to hold the callback ptrs
    * -----------------------------------------------------------------------------*/
-  
+
   SWIGINTERN void
   SWIG_Python_FixMethods(PyMethodDef *methods, const swig_const_info *const_table, swig_type_info **types, swig_type_info **types_initial) {
     size_t i;
@@ -35976,7 +35976,7 @@ extern "C" {
         const swig_const_info *ci = 0;
         const char *name = c + 10;
         for (j = 0; const_table[j].type; ++j) {
-          if (strncmp(const_table[j].name, name, 
+          if (strncmp(const_table[j].name, name,
               strlen(const_table[j].name)) == 0) {
             ci = &(const_table[j]);
             break;
@@ -36003,8 +36003,8 @@ extern "C" {
         }
       }
     }
-  } 
-  
+  }
+
 #ifdef __cplusplus
 }
 #endif
@@ -36020,7 +36020,7 @@ extern "C" {
 extern "C"
 #endif
 
-SWIGEXPORT 
+SWIGEXPORT
 #if PY_VERSION_HEX >= 0x03000000
 PyObject*
 #else
@@ -36028,7 +36028,7 @@ void
 #endif
 SWIG_init(void) {
   PyObject *m, *d, *md, *globals;
-  
+
 #if PY_VERSION_HEX >= 0x03000000
   static struct PyModuleDef SWIG_module = {
     PyModuleDef_HEAD_INIT,
@@ -36042,7 +36042,7 @@ SWIG_init(void) {
     NULL
   };
 #endif
-  
+
 #if defined(SWIGPYTHON_BUILTIN)
   static SwigPyClientData SwigPyObject_clientdata = {
     0, 0, 0, 0, 0, 0, 0
@@ -36070,21 +36070,21 @@ SWIG_init(void) {
   PyObject *thisown_descr;
   PyObject *self = 0;
   int i;
-  
+
   (void)builtin_pytype;
   (void)builtin_base_count;
   (void)builtin_basetype;
   (void)tuple;
   (void)static_getset;
   (void)self;
-  
+
   /* Metaclass is used to implement static member variables */
   metatype = SwigPyObjectType();
   assert(metatype);
 #endif
-  
+
   (void)globals;
-  
+
   /* Create singletons now to avoid potential deadlocks with multi-threaded usage after module initialization */
   SWIG_This();
   SWIG_Python_TypeCache();
@@ -36092,24 +36092,24 @@ SWIG_init(void) {
 #ifndef SWIGPYTHON_BUILTIN
   SwigPyObject_type();
 #endif
-  
+
   /* Fix SwigMethods to carry the callback ptrs when needed */
   SWIG_Python_FixMethods(SwigMethods, swig_const_table, swig_types, swig_type_initial);
-  
+
 #if PY_VERSION_HEX >= 0x03000000
   m = PyModule_Create(&SWIG_module);
 #else
   m = Py_InitModule(SWIG_name, SwigMethods);
 #endif
-  
+
   md = d = PyModule_GetDict(m);
   (void)md;
-  
+
   SWIG_InitializeModule(0);
-  
+
 #ifdef SWIGPYTHON_BUILTIN
   swigpyobject = SwigPyObject_TypeOnce();
-  
+
   SwigPyObject_stype = SWIG_MangledTypeQuery("_p_SwigPyObject");
   assert(SwigPyObject_stype);
   cd = (SwigPyClientData*) SwigPyObject_stype->clientdata;
@@ -36124,19 +36124,19 @@ SWIG_init(void) {
     return;
 # endif
   }
-  
+
   /* All objects have a 'this' attribute */
   this_descr = PyDescr_NewGetSet(SwigPyObject_type(), &this_getset_def);
   (void)this_descr;
-  
+
   /* All objects have a 'thisown' attribute */
   thisown_descr = PyDescr_NewGetSet(SwigPyObject_type(), &thisown_getset_def);
   (void)thisown_descr;
-  
+
   public_interface = PyList_New(0);
   public_symbol = 0;
   (void)public_symbol;
-  
+
   PyDict_SetItemString(md, "__all__", public_interface);
   SWIG_Py_DECREF(public_interface);
   for (i = 0; SwigMethods[i].ml_name != NULL; ++i)
@@ -36144,17 +36144,16 @@ SWIG_init(void) {
   for (i = 0; swig_const_table[i].name != 0; ++i)
   SwigPyBuiltin_AddPublicSymbol(public_interface, swig_const_table[i].name);
 #endif
-  
+
   SWIG_InstallConstants(d,swig_const_table);
-  
-  
+
+
   // thread safe initialization
   swig::container_owner_attribute();
-  
+
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else
   return;
 #endif
 }
-

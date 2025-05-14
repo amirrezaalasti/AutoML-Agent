@@ -5,7 +5,7 @@ import re
 from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
 )
-from smac import RunHistory, Scenario
+from smac import Scenario
 
 
 def extract_code_block(code: str) -> str:
@@ -19,9 +19,7 @@ class AutoMLAgent:
     MAX_RETRIES_PROMPT = 5
     MAX_RETRIES_ABORT = 20
 
-    def __init__(
-        self, dataset: Any, llm_client: LLMClient, dataset_type: str, ui_agent: Any
-    ):
+    def __init__(self, dataset: Any, llm_client: LLMClient, dataset_type: str, ui_agent: Any):
         self.dataset = format_dataset(dataset)
         self.llm = llm_client
         self.dataset_type = dataset_type
@@ -73,13 +71,9 @@ class AutoMLAgent:
         print("self.scenario", self.scenario)
         print("self.train_function", self.train_function)
         # Save outputs
-        save_code(
-            self.config_space, "scripts/generated_codes/generated_config_space.py"
-        )
+        save_code(self.config_space, "scripts/generated_codes/generated_config_space.py")
         save_code(self.scenario, "scripts/generated_codes/generated_scenario.py")
-        save_code(
-            self.train_function, "scripts/generated_codes/generated_train_function.py"
-        )
+        save_code(self.train_function, "scripts/generated_codes/generated_train_function.py")
 
         from scripts.generated_codes.generated_train_function import train
 
@@ -131,7 +125,7 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     train_fn = self.namespace["train"]
                     sampled = cfg.sample_configuration()
-                    loss = train_fn(cfg=sampled, seed=42, dataset=self.dataset)
+                    loss = train_fn(cfg=sampled, dataset=self.dataset)
                     self.train_function = source
                     self.last_loss = loss
                     log_message(f"Training executed, loss: {loss}")
@@ -148,26 +142,20 @@ class AutoMLAgent:
 
                 # Abort after too many retries
                 if self.error_counters[component] > self.MAX_RETRIES_ABORT:
-                    log_message(
-                        f"Max abort retries reached for {component}. Using last generated code."
-                    )
+                    log_message(f"Max abort retries reached for {component}. Using last generated code.")
                     if component == "train_function":
                         self.last_loss = getattr(self, "last_loss", None)
                     return
 
                 # Refresh code from original prompt after threshold
                 if retry_count == self.MAX_RETRIES_PROMPT:
-                    log_message(
-                        f"Retry limit reached for {component}. Fetching fresh code from LLM."
-                    )
+                    log_message(f"Retry limit reached for {component}. Fetching fresh code from LLM.")
                     fresh = self.llm.generate(self.prompts[component])
                     setattr(self, code_attr, fresh)
                     retry_count = 0
                 else:
                     # Ask LLM to fix errors with history of recent issues
-                    recent_errors = "\n".join(
-                        self.error_history[component][-self.MAX_RETRIES_PROMPT :]
-                    )
+                    recent_errors = "\n".join(self.error_history[component][-self.MAX_RETRIES_PROMPT :])
                     fix_prompt = self._create_fix_prompt(recent_errors, raw_code)
                     fixed = self.llm.generate(fix_prompt)
                     setattr(self, code_attr, fixed)
@@ -198,7 +186,7 @@ class AutoMLAgent:
 
         def smac_train_function(seed) -> float:
             """Wrapper function to call the training function with the correct parameters"""
-            return train_fn(cfg=cfg, seed=42, dataset=dataset)
+            return train_fn(cfg=cfg, dataset=dataset)
 
         smac = HPOFacade(
             scenario,

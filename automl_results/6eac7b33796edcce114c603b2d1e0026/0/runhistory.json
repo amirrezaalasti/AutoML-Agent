@@ -1,0 +1,2364 @@
+{
+  "stats": {
+    "submitted": 102,
+    "finished": 51,
+    "running": 51
+  },
+  "data": [
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 2,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 4,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 5,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 6,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.833006,
+      "status": 2,
+      "starttime": 1747240023.069043,
+      "endtime": 1747240023.070807,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 7,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.833294,
+      "status": 2,
+      "starttime": 1747240023.06905,
+      "endtime": 1747240023.0708039,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 8,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.82137,
+      "status": 2,
+      "starttime": 1747240023.069079,
+      "endtime": 1747240023.070805,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 9,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.805915,
+      "status": 2,
+      "starttime": 1747240023.069078,
+      "endtime": 1747240023.070814,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 6,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 10,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.849496,
+      "status": 2,
+      "starttime": 1747240023.158271,
+      "endtime": 1747240023.159136,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 11,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 12,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.839158,
+      "status": 2,
+      "starttime": 1747240023.254891,
+      "endtime": 1747240023.2557619,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 13,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 14,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.853503,
+      "status": 2,
+      "starttime": 1747240023.327611,
+      "endtime": 1747240023.3285482,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 15,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 16,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.827572,
+      "status": 2,
+      "starttime": 1747240023.415744,
+      "endtime": 1747240023.416802,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 17,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 18,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.844298,
+      "status": 2,
+      "starttime": 1747240023.485551,
+      "endtime": 1747240023.486593,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 19,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 20,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.862513,
+      "status": 2,
+      "starttime": 1747240023.5541,
+      "endtime": 1747240023.5550442,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 21,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 22,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.879918,
+      "status": 2,
+      "starttime": 1747240023.613085,
+      "endtime": 1747240023.614044,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 23,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 24,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.896197,
+      "status": 2,
+      "starttime": 1747240023.677411,
+      "endtime": 1747240023.678354,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 25,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 26,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.911584,
+      "status": 2,
+      "starttime": 1747240023.744001,
+      "endtime": 1747240023.744975,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 27,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 28,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.927332,
+      "status": 2,
+      "starttime": 1747240023.7988422,
+      "endtime": 1747240023.799895,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 29,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 30,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.946972,
+      "status": 2,
+      "starttime": 1747240023.903587,
+      "endtime": 1747240023.904696,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 31,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 32,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.966649,
+      "status": 2,
+      "starttime": 1747240023.9786382,
+      "endtime": 1747240023.979746,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 33,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 34,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.981856,
+      "status": 2,
+      "starttime": 1747240024.042006,
+      "endtime": 1747240024.043233,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 35,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 36,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.998483,
+      "status": 2,
+      "starttime": 1747240024.1206322,
+      "endtime": 1747240024.121699,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 37,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 38,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.014211,
+      "status": 2,
+      "starttime": 1747240024.190804,
+      "endtime": 1747240024.191862,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 39,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 40,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.034089,
+      "status": 2,
+      "starttime": 1747240024.558271,
+      "endtime": 1747240024.559239,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 41,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 42,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.049073,
+      "status": 2,
+      "starttime": 1747240024.6393468,
+      "endtime": 1747240024.640312,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 43,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 44,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.063567,
+      "status": 2,
+      "starttime": 1747240024.705046,
+      "endtime": 1747240024.7059798,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 45,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 46,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.079405,
+      "status": 2,
+      "starttime": 1747240024.783355,
+      "endtime": 1747240024.784332,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 47,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 48,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.093467,
+      "status": 2,
+      "starttime": 1747240024.852536,
+      "endtime": 1747240024.853506,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 49,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 50,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.108282,
+      "status": 2,
+      "starttime": 1747240024.9380128,
+      "endtime": 1747240024.9389682,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 51,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 52,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.120562,
+      "status": 2,
+      "starttime": 1747240025.0105338,
+      "endtime": 1747240025.011578,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 53,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 54,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.137413,
+      "status": 2,
+      "starttime": 1747240025.089608,
+      "endtime": 1747240025.090594,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 55,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 56,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.162103,
+      "status": 2,
+      "starttime": 1747240025.578325,
+      "endtime": 1747240025.579369,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 57,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 58,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.178029,
+      "status": 2,
+      "starttime": 1747240025.6648269,
+      "endtime": 1747240025.6658702,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 59,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 60,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.195268,
+      "status": 2,
+      "starttime": 1747240025.75015,
+      "endtime": 1747240025.7511628,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 61,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 62,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.212756,
+      "status": 2,
+      "starttime": 1747240025.844385,
+      "endtime": 1747240025.845398,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 63,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 64,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.231068,
+      "status": 2,
+      "starttime": 1747240025.930022,
+      "endtime": 1747240025.930961,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 65,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 66,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.247442,
+      "status": 2,
+      "starttime": 1747240026.019268,
+      "endtime": 1747240026.020297,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 67,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 68,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.260633,
+      "status": 2,
+      "starttime": 1747240026.1020741,
+      "endtime": 1747240026.103033,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 69,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 70,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.277762,
+      "status": 2,
+      "starttime": 1747240026.197015,
+      "endtime": 1747240026.1992729,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 71,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 72,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.295223,
+      "status": 2,
+      "starttime": 1747240026.299049,
+      "endtime": 1747240026.30002,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 73,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 74,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.319939,
+      "status": 2,
+      "starttime": 1747240026.896968,
+      "endtime": 1747240026.898703,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 75,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 76,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.338331,
+      "status": 2,
+      "starttime": 1747240027.001226,
+      "endtime": 1747240027.002387,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 77,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 78,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.351394,
+      "status": 2,
+      "starttime": 1747240027.076222,
+      "endtime": 1747240027.077219,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 79,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 80,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.368263,
+      "status": 2,
+      "starttime": 1747240027.18804,
+      "endtime": 1747240027.189111,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 81,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 82,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.383418,
+      "status": 2,
+      "starttime": 1747240027.264417,
+      "endtime": 1747240027.2653599,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 83,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 84,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.40119,
+      "status": 2,
+      "starttime": 1747240027.3932538,
+      "endtime": 1747240027.394301,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 85,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 86,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.420885,
+      "status": 2,
+      "starttime": 1747240027.516118,
+      "endtime": 1747240027.517098,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 87,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 88,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.434733,
+      "status": 2,
+      "starttime": 1747240027.580726,
+      "endtime": 1747240027.582316,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 89,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 90,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 91,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 4.927128,
+      "status": 2,
+      "starttime": 1747240028.15284,
+      "endtime": 1747240028.153986,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 92,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 93,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.58507,
+      "status": 2,
+      "starttime": 1747240028.053917,
+      "endtime": 1747240028.185028,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 94,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.600762,
+      "status": 2,
+      "starttime": 1747240028.269359,
+      "endtime": 1747240028.270253,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 95,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 96,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.612827,
+      "status": 2,
+      "starttime": 1747240028.319844,
+      "endtime": 1747240028.320815,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 97,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 98,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.627092,
+      "status": 2,
+      "starttime": 1747240028.466597,
+      "endtime": 1747240028.467564,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 99,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": 2147483647.0,
+      "time": 0.0,
+      "cpu_time": 0.0,
+      "status": 0,
+      "starttime": 0.0,
+      "endtime": 0.0,
+      "additional_info": {}
+    },
+    {
+      "config_id": 100,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.645386,
+      "status": 2,
+      "starttime": 1747240028.6153548,
+      "endtime": 1747240028.6163,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 101,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.664034,
+      "status": 2,
+      "starttime": 1747240028.681841,
+      "endtime": 1747240028.68282,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\nTypeError: AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\n",
+        "error": "TypeError(\"AutoMLAgent.run_scenario.<locals>.smac_train_function() got multiple values for argument 'seed'\")"
+      }
+    }
+  ],
+  "configs": {
+    "1": {
+      "batch_size": 56,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 99,
+      "optimizer": "adam"
+    },
+    "2": {
+      "batch_size": 121,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 352,
+      "optimizer": "sgd",
+      "eta0": 0.0338844994153
+    },
+    "3": {
+      "batch_size": 46,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 274,
+      "optimizer": "adam",
+      "eta0": 1.69479878e-05
+    },
+    "4": {
+      "batch_size": 34,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 187,
+      "optimizer": "adam"
+    },
+    "5": {
+      "batch_size": 210,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 149,
+      "optimizer": "sgd",
+      "eta0": 0.0133203123383
+    },
+    "6": {
+      "batch_size": 56,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 99,
+      "optimizer": "adam"
+    },
+    "7": {
+      "batch_size": 121,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 352,
+      "optimizer": "sgd",
+      "eta0": 0.0338844994153
+    },
+    "8": {
+      "batch_size": 46,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 274,
+      "optimizer": "adam",
+      "eta0": 1.69479878e-05
+    },
+    "9": {
+      "batch_size": 34,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 187,
+      "optimizer": "adam"
+    },
+    "10": {
+      "batch_size": 210,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 149,
+      "optimizer": "sgd",
+      "eta0": 0.0133203123383
+    },
+    "11": {
+      "batch_size": 79,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 68,
+      "optimizer": "adam",
+      "eta0": 4.32887357e-05
+    },
+    "12": {
+      "batch_size": 56,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 99,
+      "optimizer": "adam"
+    },
+    "13": {
+      "batch_size": 109,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 210,
+      "optimizer": "adam",
+      "eta0": 0.0016376503953
+    },
+    "14": {
+      "batch_size": 79,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 68,
+      "optimizer": "adam",
+      "eta0": 4.32887357e-05
+    },
+    "15": {
+      "batch_size": 255,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 77,
+      "optimizer": "adam"
+    },
+    "16": {
+      "batch_size": 109,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 210,
+      "optimizer": "adam",
+      "eta0": 0.0016376503953
+    },
+    "17": {
+      "batch_size": 41,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 461,
+      "optimizer": "sgd",
+      "eta0": 0.0003518539884
+    },
+    "18": {
+      "batch_size": 255,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 77,
+      "optimizer": "adam"
+    },
+    "19": {
+      "batch_size": 179,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 88,
+      "optimizer": "adam",
+      "eta0": 0.0048086756531
+    },
+    "20": {
+      "batch_size": 41,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 461,
+      "optimizer": "sgd",
+      "eta0": 0.0003518539884
+    },
+    "21": {
+      "batch_size": 149,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 241,
+      "optimizer": "adam"
+    },
+    "22": {
+      "batch_size": 179,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 88,
+      "optimizer": "adam",
+      "eta0": 0.0048086756531
+    },
+    "23": {
+      "batch_size": 68,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 114,
+      "optimizer": "sgd",
+      "eta0": 0.000119239985
+    },
+    "24": {
+      "batch_size": 149,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 241,
+      "optimizer": "adam"
+    },
+    "25": {
+      "batch_size": 62,
+      "learning_rate": "adaptive",
+      "num_layers": 2,
+      "num_units": 429,
+      "optimizer": "adam"
+    },
+    "26": {
+      "batch_size": 68,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 114,
+      "optimizer": "sgd",
+      "eta0": 0.000119239985
+    },
+    "27": {
+      "batch_size": 136,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 72,
+      "optimizer": "sgd",
+      "eta0": 8.94900859e-05
+    },
+    "28": {
+      "batch_size": 62,
+      "learning_rate": "adaptive",
+      "num_layers": 2,
+      "num_units": 429,
+      "optimizer": "adam"
+    },
+    "29": {
+      "batch_size": 52,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 158,
+      "optimizer": "adam",
+      "eta0": 0.0202934485449
+    },
+    "30": {
+      "batch_size": 136,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 72,
+      "optimizer": "sgd",
+      "eta0": 8.94900859e-05
+    },
+    "31": {
+      "batch_size": 37,
+      "learning_rate": "adaptive",
+      "num_layers": 2,
+      "num_units": 139,
+      "optimizer": "adam"
+    },
+    "32": {
+      "batch_size": 52,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 158,
+      "optimizer": "adam",
+      "eta0": 0.0202934485449
+    },
+    "33": {
+      "batch_size": 227,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 294,
+      "optimizer": "sgd",
+      "eta0": 2.63956596e-05
+    },
+    "34": {
+      "batch_size": 37,
+      "learning_rate": "adaptive",
+      "num_layers": 2,
+      "num_units": 139,
+      "optimizer": "adam"
+    },
+    "35": {
+      "batch_size": 86,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 378,
+      "optimizer": "adam",
+      "eta0": 0.0690825112008
+    },
+    "36": {
+      "batch_size": 227,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 294,
+      "optimizer": "sgd",
+      "eta0": 2.63956596e-05
+    },
+    "37": {
+      "batch_size": 159,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 76,
+      "optimizer": "sgd",
+      "eta0": 0.0224510971627
+    },
+    "38": {
+      "batch_size": 86,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 378,
+      "optimizer": "adam",
+      "eta0": 0.0690825112008
+    },
+    "39": {
+      "batch_size": 96,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 64,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "40": {
+      "batch_size": 159,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 76,
+      "optimizer": "sgd",
+      "eta0": 0.0224510971627
+    },
+    "41": {
+      "batch_size": 38,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 208,
+      "optimizer": "adam",
+      "eta0": 4.76652717e-05
+    },
+    "42": {
+      "batch_size": 96,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 64,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "43": {
+      "batch_size": 119,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 394,
+      "optimizer": "adam"
+    },
+    "44": {
+      "batch_size": 38,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 208,
+      "optimizer": "adam",
+      "eta0": 4.76652717e-05
+    },
+    "45": {
+      "batch_size": 34,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 118,
+      "optimizer": "adam"
+    },
+    "46": {
+      "batch_size": 119,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 394,
+      "optimizer": "adam"
+    },
+    "47": {
+      "batch_size": 174,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 149,
+      "optimizer": "adam",
+      "eta0": 0.0096150714852
+    },
+    "48": {
+      "batch_size": 34,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 118,
+      "optimizer": "adam"
+    },
+    "49": {
+      "batch_size": 150,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 86,
+      "optimizer": "sgd",
+      "eta0": 0.0001577053908
+    },
+    "50": {
+      "batch_size": 174,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 149,
+      "optimizer": "adam",
+      "eta0": 0.0096150714852
+    },
+    "51": {
+      "batch_size": 107,
+      "learning_rate": "adaptive",
+      "num_layers": 2,
+      "num_units": 142,
+      "optimizer": "adam"
+    },
+    "52": {
+      "batch_size": 150,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 86,
+      "optimizer": "sgd",
+      "eta0": 0.0001577053908
+    },
+    "53": {
+      "batch_size": 97,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 164,
+      "optimizer": "adam"
+    },
+    "54": {
+      "batch_size": 107,
+      "learning_rate": "adaptive",
+      "num_layers": 2,
+      "num_units": 142,
+      "optimizer": "adam"
+    },
+    "55": {
+      "batch_size": 39,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 99,
+      "optimizer": "adam",
+      "eta0": 0.0011904983406
+    },
+    "56": {
+      "batch_size": 97,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 164,
+      "optimizer": "adam"
+    },
+    "57": {
+      "batch_size": 114,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 71,
+      "optimizer": "adam"
+    },
+    "58": {
+      "batch_size": 39,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 99,
+      "optimizer": "adam",
+      "eta0": 0.0011904983406
+    },
+    "59": {
+      "batch_size": 129,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 266,
+      "optimizer": "sgd",
+      "eta0": 0.0090133416439
+    },
+    "60": {
+      "batch_size": 114,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 71,
+      "optimizer": "adam"
+    },
+    "61": {
+      "batch_size": 43,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 292,
+      "optimizer": "adam",
+      "eta0": 0.0008851028896
+    },
+    "62": {
+      "batch_size": 129,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 266,
+      "optimizer": "sgd",
+      "eta0": 0.0090133416439
+    },
+    "63": {
+      "batch_size": 78,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 131,
+      "optimizer": "adam"
+    },
+    "64": {
+      "batch_size": 43,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 292,
+      "optimizer": "adam",
+      "eta0": 0.0008851028896
+    },
+    "65": {
+      "batch_size": 100,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 203,
+      "optimizer": "adam",
+      "eta0": 1.65527944e-05
+    },
+    "66": {
+      "batch_size": 78,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 131,
+      "optimizer": "adam"
+    },
+    "67": {
+      "batch_size": 69,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 199,
+      "optimizer": "adam"
+    },
+    "68": {
+      "batch_size": 100,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 203,
+      "optimizer": "adam",
+      "eta0": 1.65527944e-05
+    },
+    "69": {
+      "batch_size": 241,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 330,
+      "optimizer": "adam"
+    },
+    "70": {
+      "batch_size": 69,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 199,
+      "optimizer": "adam"
+    },
+    "71": {
+      "batch_size": 45,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 184,
+      "optimizer": "sgd",
+      "eta0": 0.000939404432
+    },
+    "72": {
+      "batch_size": 241,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 330,
+      "optimizer": "adam"
+    },
+    "73": {
+      "batch_size": 172,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 121,
+      "optimizer": "sgd",
+      "eta0": 0.0678085568661
+    },
+    "74": {
+      "batch_size": 45,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 184,
+      "optimizer": "sgd",
+      "eta0": 0.000939404432
+    },
+    "75": {
+      "batch_size": 104,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 66,
+      "optimizer": "adam",
+      "eta0": 0.0095313304177
+    },
+    "76": {
+      "batch_size": 172,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 121,
+      "optimizer": "sgd",
+      "eta0": 0.0678085568661
+    },
+    "77": {
+      "batch_size": 114,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 73,
+      "optimizer": "adam"
+    },
+    "78": {
+      "batch_size": 104,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 66,
+      "optimizer": "adam",
+      "eta0": 0.0095313304177
+    },
+    "79": {
+      "batch_size": 97,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 258,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "80": {
+      "batch_size": 114,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 73,
+      "optimizer": "adam"
+    },
+    "81": {
+      "batch_size": 97,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 164,
+      "optimizer": "sgd",
+      "eta0": 0.0012105734984
+    },
+    "82": {
+      "batch_size": 97,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 258,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "83": {
+      "batch_size": 55,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 154,
+      "optimizer": "adam"
+    },
+    "84": {
+      "batch_size": 97,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 164,
+      "optimizer": "sgd",
+      "eta0": 0.0012105734984
+    },
+    "85": {
+      "batch_size": 170,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 65,
+      "optimizer": "sgd",
+      "eta0": 0.007955815952
+    },
+    "86": {
+      "batch_size": 55,
+      "learning_rate": "adaptive",
+      "num_layers": 3,
+      "num_units": 154,
+      "optimizer": "adam"
+    },
+    "87": {
+      "batch_size": 43,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 238,
+      "optimizer": "adam",
+      "eta0": 0.0095772183858
+    },
+    "88": {
+      "batch_size": 170,
+      "learning_rate": "constant",
+      "num_layers": 1,
+      "num_units": 65,
+      "optimizer": "sgd",
+      "eta0": 0.007955815952
+    },
+    "89": {
+      "batch_size": 66,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 203,
+      "optimizer": "adam"
+    },
+    "90": {
+      "batch_size": 172,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 97,
+      "optimizer": "adam"
+    },
+    "91": {
+      "batch_size": 66,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 203,
+      "optimizer": "adam"
+    },
+    "92": {
+      "batch_size": 86,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 116,
+      "optimizer": "sgd",
+      "eta0": 0.0012105734984
+    },
+    "93": {
+      "batch_size": 43,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 238,
+      "optimizer": "adam",
+      "eta0": 0.0095772183858
+    },
+    "94": {
+      "batch_size": 172,
+      "learning_rate": "adaptive",
+      "num_layers": 1,
+      "num_units": 97,
+      "optimizer": "adam"
+    },
+    "95": {
+      "batch_size": 155,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 272,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "96": {
+      "batch_size": 86,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 116,
+      "optimizer": "sgd",
+      "eta0": 0.0012105734984
+    },
+    "97": {
+      "batch_size": 107,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 109,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "98": {
+      "batch_size": 155,
+      "learning_rate": "constant",
+      "num_layers": 2,
+      "num_units": 272,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "99": {
+      "batch_size": 179,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 76,
+      "optimizer": "sgd",
+      "eta0": 0.0005303205905
+    },
+    "100": {
+      "batch_size": 107,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 109,
+      "optimizer": "adam",
+      "eta0": 0.001
+    },
+    "101": {
+      "batch_size": 179,
+      "learning_rate": "constant",
+      "num_layers": 3,
+      "num_units": 76,
+      "optimizer": "sgd",
+      "eta0": 0.0005303205905
+    }
+  },
+  "config_origins": {
+    "1": "Initial Design: Sobol",
+    "2": "Initial Design: Sobol",
+    "3": "Initial Design: Sobol",
+    "4": "Initial Design: Sobol",
+    "5": "Initial Design: Sobol",
+    "6": "Initial Design: Sobol",
+    "7": "Initial Design: Sobol",
+    "8": "Initial Design: Sobol",
+    "9": "Initial Design: Sobol",
+    "10": "Initial Design: Sobol",
+    "11": "Initial Design: Sobol",
+    "12": "Initial Design: Sobol",
+    "13": "Initial Design: Sobol",
+    "14": "Initial Design: Sobol",
+    "15": "Initial Design: Sobol",
+    "16": "Initial Design: Sobol",
+    "17": "Initial Design: Sobol",
+    "18": "Initial Design: Sobol",
+    "19": "Initial Design: Sobol",
+    "20": "Initial Design: Sobol",
+    "21": "Initial Design: Sobol",
+    "22": "Initial Design: Sobol",
+    "23": "Initial Design: Sobol",
+    "24": "Initial Design: Sobol",
+    "25": "Initial Design: Sobol",
+    "26": "Initial Design: Sobol",
+    "27": "Initial Design: Sobol",
+    "28": "Initial Design: Sobol",
+    "29": "Initial Design: Sobol",
+    "30": "Initial Design: Sobol",
+    "31": "Initial Design: Sobol",
+    "32": "Initial Design: Sobol",
+    "33": "Initial Design: Sobol",
+    "34": "Initial Design: Sobol",
+    "35": "Initial Design: Sobol",
+    "36": "Initial Design: Sobol",
+    "37": "Acquisition Function Maximizer: Local Search",
+    "38": "Initial Design: Sobol",
+    "39": "Acquisition Function Maximizer: Local Search",
+    "40": "Acquisition Function Maximizer: Local Search",
+    "41": "Acquisition Function Maximizer: Local Search",
+    "42": "Acquisition Function Maximizer: Local Search",
+    "43": "Acquisition Function Maximizer: Local Search",
+    "44": "Acquisition Function Maximizer: Local Search",
+    "45": "Acquisition Function Maximizer: Local Search",
+    "46": "Acquisition Function Maximizer: Local Search",
+    "47": "Acquisition Function Maximizer: Local Search",
+    "48": "Acquisition Function Maximizer: Local Search",
+    "49": "Acquisition Function Maximizer: Local Search",
+    "50": "Acquisition Function Maximizer: Local Search",
+    "51": "Acquisition Function Maximizer: Local Search",
+    "52": "Acquisition Function Maximizer: Local Search",
+    "53": "Acquisition Function Maximizer: Local Search",
+    "54": "Acquisition Function Maximizer: Local Search",
+    "55": "Acquisition Function Maximizer: Local Search",
+    "56": "Acquisition Function Maximizer: Local Search",
+    "57": "Acquisition Function Maximizer: Local Search",
+    "58": "Acquisition Function Maximizer: Local Search",
+    "59": "Acquisition Function Maximizer: Local Search",
+    "60": "Acquisition Function Maximizer: Local Search",
+    "61": "Acquisition Function Maximizer: Local Search",
+    "62": "Acquisition Function Maximizer: Local Search",
+    "63": "Acquisition Function Maximizer: Local Search",
+    "64": "Acquisition Function Maximizer: Local Search",
+    "65": "Random Search",
+    "66": "Acquisition Function Maximizer: Local Search",
+    "67": "Random Search",
+    "68": "Random Search",
+    "69": "Random Search",
+    "70": "Random Search",
+    "71": "Acquisition Function Maximizer: Local Search",
+    "72": "Random Search",
+    "73": "Acquisition Function Maximizer: Local Search",
+    "74": "Acquisition Function Maximizer: Local Search",
+    "75": "Acquisition Function Maximizer: Local Search",
+    "76": "Acquisition Function Maximizer: Local Search",
+    "77": "Acquisition Function Maximizer: Local Search",
+    "78": "Acquisition Function Maximizer: Local Search",
+    "79": "Acquisition Function Maximizer: Local Search",
+    "80": "Acquisition Function Maximizer: Local Search",
+    "81": "Acquisition Function Maximizer: Local Search",
+    "82": "Acquisition Function Maximizer: Local Search",
+    "83": "Acquisition Function Maximizer: Local Search",
+    "84": "Acquisition Function Maximizer: Local Search",
+    "85": "Random Search",
+    "86": "Acquisition Function Maximizer: Local Search",
+    "87": "Acquisition Function Maximizer: Local Search",
+    "88": "Random Search",
+    "89": "Random Search",
+    "90": "Acquisition Function Maximizer: Local Search",
+    "91": "Random Search",
+    "92": "Acquisition Function Maximizer: Local Search",
+    "93": "Acquisition Function Maximizer: Local Search",
+    "94": "Acquisition Function Maximizer: Local Search",
+    "95": "Acquisition Function Maximizer: Local Search",
+    "96": "Acquisition Function Maximizer: Local Search",
+    "97": "Acquisition Function Maximizer: Local Search",
+    "98": "Acquisition Function Maximizer: Local Search",
+    "99": "Acquisition Function Maximizer: Local Search",
+    "100": "Acquisition Function Maximizer: Local Search",
+    "101": "Acquisition Function Maximizer: Local Search"
+  }
+}

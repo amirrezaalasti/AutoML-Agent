@@ -1,933 +1,946 @@
 Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-    
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', bounds=(0.0, 1.0), default=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-    
-    alpha = Float('alpha', bounds=(1e-6, 1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    
-    penalty = Categorical('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'l1'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(invalid_combination)
-    
-    return cs
-
-Error in config (#1): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-    
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', (0.0,1.0), default=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-    
-    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    
-    penalty = Categorical('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
-    )
-    cs.add_forbidden_clause(invalid_combination)
-    
-    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
-    cs.add_condition(cond1)
-    cond2 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond2)
-    cond3 = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond3)
-    cond4 = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond4)
-    cond5 = EqualsCondition(alpha, classifier, 'MultinomialNB')
-    cs.add_condition(cond5)
-    cond6 = EqualsCondition(alpha, classifier, 'SVC')
-    cs.add_condition(cond6)
-    
-    return cs
-
-Error in config (#2): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-    
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', (0.0,1.0), default=0.01)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-    
-    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    
-    penalty = Categorical('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
-    )
-    cs.add_forbidden_clause(invalid_combination)
-    
-    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
-    cs.add_condition(cond1)
-    cond2 = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond2)
-    cond3 = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond3)
-    cond4 = EqualsCondition(alpha, classifier, 'MultinomialNB')
-    cs.add_condition(cond4)
-    cond5 = EqualsCondition(alpha, classifier, 'SVC')
-    cs.add_condition(cond5)
-    
-    return cs
-
-Error in config (#3): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-    
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', (0.0,1.0), default=0.01)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-    
-    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    
-    penalty = Categorical('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
-    )
-    cs.add_forbidden_clause(invalid_combination)
-    
-    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
-    cs.add_condition(cond1)
-    cond2 = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond2)
-    cond3 = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond3)
-    cond4 = EqualsCondition(alpha, classifier, 'MultinomialNB')
-    cs.add_condition(cond4)
-    cond5 = EqualsCondition(alpha, classifier, 'SVC')
-    cs.add_condition(cond5)
-    
-    return cs
-
-Error in config (#4): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
-Running config code:
-from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-    
-    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', (0.0,1.0), default=0.01)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-    
-    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    
-    penalty = CategoricalHyperparameter('penalty', ['l2', 'l1']) # changed order
-    cs.add_hyperparameter(penalty)
-    loss = CategoricalHyperparameter('loss', ['log_loss', 'modified_huber', 'hinge']) # changed order
-    cs.add_hyperparameter(loss)
-    
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
-    )
-    cs.add_forbidden_clause(invalid_combination)
-    
-    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
-    cs.add_condition(cond1)
-    cond2 = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond2)
-    cond3 = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond3)
-    cond4 = EqualsCondition(alpha, classifier, 'MultinomialNB')
-    cs.add_condition(cond4)
-    cond5 = EqualsCondition(alpha, classifier, 'SVC')
-    cs.add_condition(cond5)
-    
-    return cs
-
-Error in config (#5): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
-Already inserted: alpha | classifier == 'MultinomialNB'
-New one: alpha | classifier == 'SVC'
-Retry limit reached for config. Fetching fresh code from LLM.
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-    
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-    
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', bounds=(0.0, 1.0), default=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-    
-    alpha = Float('alpha', bounds=(1e-6, 1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    
-    penalty = Categorical('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'l1'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(invalid_combination)
-    
-    return cs
-
-Error in config (#1): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, InCondition
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenAndConjunction, ForbiddenEqualsClause
 
 def get_configspace():
     cs = ConfigurationSpace(seed=1234)
 
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
+    # Define hyperparameters
+    optimizer = Categorical("optimizer", ["sgd", "adam"], default="adam")
+    learning_rate = Categorical("learning_rate", ["constant", "adaptive"], default="constant")
+    eta0 = Float("eta0", (1e-5, 1e-1), default=1e-3, log=True)
+    batch_size = Integer("batch_size", (32, 256), default=64, log=True)
+    num_layers = Integer("num_layers", (1, 3), default=2)
+    num_units = Integer("num_units", (64, 512), default=128, log=True)
 
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', bounds=(0.0,1.0), default=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, classifier, 'SGDClassifier')
-    cond_eta0_2 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-    cs.add_condition(cond_eta0_2)
+    # Add hyperparameters to the configuration space
+    cs.add([optimizer, learning_rate, eta0, batch_size, num_layers, num_units])
 
-    alpha = Float('alpha', bounds=(1e-6,1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    cond_alpha_1 = InCondition(alpha, classifier, ['MultinomialNB', 'SGDClassifier'])
-    cs.add_condition(cond_alpha_1)
+    # Add conditions
+    condition_eta0 = EqualsCondition(eta0, learning_rate, "constant")
+    cs.add_condition(condition_eta0)
 
-    penalty = Categorical('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond_penalty)
-
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond_loss)
-
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "sgd"),
+        ForbiddenEqualsClause(learning_rate, "adaptive")
     )
-    cs.add_forbidden_clause(invalid_combination)
+    cs.add_forbidden_clause(forbidden_clause)
 
     return cs
 
-Error in config (#2): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
-Already inserted: eta0 | classifier == 'SGDClassifier'
-New one: eta0 | learning_rate == 'constant'
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, AndConjunction
+Configuration space generated: Configuration space object:
+  Hyperparameters:
+    batch_size, Type: UniformInteger, Range: [32, 256], Default: 64, on log-scale
+    eta0, Type: UniformFloat, Range: [1e-05, 0.1], Default: 0.001, on log-scale
+    learning_rate, Type: Categorical, Choices: {constant, adaptive}, Default: constant
+    num_layers, Type: UniformInteger, Range: [1, 3], Default: 2
+    num_units, Type: UniformInteger, Range: [64, 512], Default: 128, on log-scale
+    optimizer, Type: Categorical, Choices: {sgd, adam}, Default: adam
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: optimizer == 'sgd' && Forbidden: learning_rate == 'adaptive')
 
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
+Running scenario code:
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
 
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', bounds=(0.0,1.0), default=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0_1 = EqualsCondition(eta0, classifier, 'SGDClassifier')
-    cond_eta0_2 = EqualsCondition(eta0, learning_rate, 'constant')
-    cond_eta0 = AndConjunction(cond_eta0_1, cond_eta0_2)
-    cs.add_condition(cond_eta0)
-
-    alpha = Float('alpha', bounds=(1e-6,1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    cond_alpha_1 = EqualsCondition(alpha, classifier, 'MultinomialNB')
-    cond_alpha_2 = EqualsCondition(alpha, classifier, 'SGDClassifier')
-    cond_alpha = OrConjunction(cond_alpha_1, cond_alpha_2)
-    cs.add_condition(cond_alpha)
-
-    penalty = Categorical('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond_penalty)
-
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond_loss)
-
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=100
     )
-    cs.add_forbidden_clause(invalid_combination)
+    return scenario
 
-    return cs
+Scenario generated: Scenario(configspace=Configuration space object:
+  Hyperparameters:
+    batch_size, Type: UniformInteger, Range: [32, 256], Default: 64, on log-scale
+    eta0, Type: UniformFloat, Range: [1e-05, 0.1], Default: 0.001, on log-scale
+    learning_rate, Type: Categorical, Choices: {constant, adaptive}, Default: constant
+    num_layers, Type: UniformInteger, Range: [1, 3], Default: 2
+    num_units, Type: UniformInteger, Range: [64, 512], Default: 128, on log-scale
+    optimizer, Type: Categorical, Choices: {sgd, adam}, Default: adam
+  Conditions:
+    eta0 | learning_rate == 'constant'
+  Forbidden Clauses:
+    (Forbidden: optimizer == 'sgd' && Forbidden: learning_rate == 'adaptive')
+, name=None, output_directory='./automl_results', deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=1, max_budget=100, seed=0, n_workers=4)
+Generated training function code:
+```python
+from typing import Any
 
-Error in config (#3): name 'OrConjunction' is not defined
-Running config code:
-from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, FloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, OrConjunction
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from ConfigSpace import Configuration
+from torch.utils.data import DataLoader, TensorDataset
 
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
 
-    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the provided dataset using the given configuration.
 
-    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = FloatHyperparameter('eta0', (0.0,1.0), default_value=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0_1 = EqualsCondition(eta0, classifier, 'SGDClassifier')
-    cond_eta0_2 = EqualsCondition(eta0, learning_rate, 'constant')
-    cond_eta0 = AndConjunction(cond_eta0_1, cond_eta0_2)
-    cs.add_condition(cond_eta0)
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing hyperparameters.
+        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
 
-    alpha = FloatHyperparameter('alpha', (1e-6,1e-1), default_value=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    cond_alpha_1 = EqualsCondition(alpha, classifier, 'MultinomialNB')
-    cond_alpha_2 = EqualsCondition(alpha, classifier, 'SVC')
-    cond_alpha = OrConjunction(cond_alpha_1, cond_alpha_2)
-    cs.add_condition(cond_alpha)
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
 
-    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond_penalty)
+    X = dataset['X']
+    y = dataset['y']
 
-    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond_loss)
+    # Infer input and output dimensions dynamically
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
 
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
-    )
-    cs.add_forbidden_clause(invalid_combination)
+    # Determine if dataset is image-shaped
+    if len(X.shape) == 4:
+        # Already image shaped
+        pass
+    else:
+        # Reshape if not image shaped, assuming square images if CNN is used
+        side = int(np.sqrt(input_size))
+        if side * side != input_size:
+            raise ValueError(
+                "Input size is not a perfect square, cannot reshape for CNN. "
+                "Consider using a different model or dataset."
+            )
+        X = X.reshape(-1, 1, side, side)
 
-    return cs
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
 
-Error in config (#4): cannot import name 'FloatHyperparameter' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
-Running config code:
-from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, UniformFloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, OrConjunction, AndConjunction
+    # Create DataLoader
+    batch_size = cfg.get("batch_size")
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes):
+            super(SimpleCNN, self).__init__()
+            side_len = int(np.sqrt(input_size))  # Side length of input image (assuming square)
 
-    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
+            self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+            self.relu2 = nn.ReLU()
+            self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
 
-    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = UniformFloatHyperparameter('eta0', lower=0.0, upper=1.0, default_value=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0_1 = EqualsCondition(eta0, classifier, 'SGDClassifier')
-    cond_eta0_2 = EqualsCondition(learning_rate, 'constant', 'constant')
-    cond_eta0 = AndConjunction(cond_eta0_1, cond_eta0_2)
-    cs.add_condition(cond_eta0)
+            # Calculate the output size after the convolutional layers
+            side_len = side_len // 4 # Two max pool layers of size 2 each
+            linear_input_size = side_len * side_len * 32
+            self.fc = nn.Linear(linear_input_size, num_classes)
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = torch.flatten(x, 1) # Flatten the tensor
+            x = self.fc(x)
+            return x
 
-    alpha = UniformFloatHyperparameter('alpha', lower=1e-6, upper=1e-1, default_value=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    cond_alpha_1 = EqualsCondition(alpha, classifier, 'MultinomialNB')
-    cond_alpha_2 = EqualsCondition(alpha, classifier, 'SVC')
-    cond_alpha = OrConjunction(cond_alpha_1, cond_alpha_2)
-    cs.add_condition(cond_alpha)
+    class SimpleMLP(nn.Module):
+        def __init__(self, input_size, num_classes, num_layers, num_units):
+            super(SimpleMLP, self).__init__()
+            layers = []
+            layers.append(nn.Linear(input_size, num_units))
+            layers.append(nn.ReLU())
+            for _ in range(num_layers - 1):
+                layers.append(nn.Linear(num_units, num_units))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(num_units, num_classes))
+            self.layers = nn.Sequential(*layers)
 
-    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2'])
-    cs.add_hyperparameter(penalty)
-    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond_penalty)
+        def forward(self, x):
+            return self.layers(x)
 
-    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond_loss)
+    #Use CNN if dataset has images
+    if len(X.shape) == 4:
+       model = SimpleCNN(num_classes=num_classes)
+    else:
+        num_layers = cfg.get("num_layers")
+        num_units = cfg.get("num_units")
+        model = SimpleMLP(input_size, num_classes, num_layers, num_units)
 
-    invalid_combination = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(loss, 'hinge'),
-        ForbiddenEqualsClause(penalty, 'l1')
-    )
-    cs.add_forbidden_clause(invalid_combination)
 
-    return cs
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate_type = cfg.get("learning_rate")
+    eta0 = cfg.get("eta0")
 
-Error in config (#5): 'str' object has no attribute 'legal_value'
-Retry limit reached for config. Fetching fresh code from LLM.
-Running config code:
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+    if optimizer_name == "sgd":
+        if learning_rate_type == "constant":
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+        elif learning_rate_type == "adaptive":
+            optimizer = optim.Adam(model.parameters(), lr=eta0)
+    elif optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
 
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
 
-    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            # Zero the parameter gradients
+            optimizer.zero_grad()
 
-    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = Float('eta0', bounds=(0.0, 1.0), default=0.0)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
+            # Forward + backward + optimize
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
 
-    alpha = Float('alpha', bounds=(1e-6, 1e-1), default=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
+            epoch_loss += loss.item()
 
-    penalty = Categorical('penalty', ['l1', 'l2', 'elasticnet'])
-    cs.add_hyperparameter(penalty)
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
 
-    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
+    avg_loss = total_loss / num_epochs
 
-    forbidden_clause_1 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'l1'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(forbidden_clause_1)
-
-    forbidden_clause_2 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'elasticnet'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(forbidden_clause_2)
-
-    return cs
-
-Error in config (#1): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
-Running config code:
-from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, FloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, InCondition, OrConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-
-    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = FloatHyperparameter('eta0', lower=0.0, upper=1.0, default_value=0.01)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = OrConjunction(EqualsCondition(eta0, classifier, 'SGDClassifier'), EqualsCondition(eta0, learning_rate, 'constant'))
-    cs.add_condition(cond_eta0)
-
-    alpha = FloatHyperparameter('alpha', lower=1e-6, upper=1e-1, default_value=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    cond_alpha = InCondition(alpha, classifier, ['MultinomialNB', 'SGDClassifier'])
-    cs.add_condition(cond_alpha)
-
-    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2', 'elasticnet'])
-    cs.add_hyperparameter(penalty)
-    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond_penalty)
-
-    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond_loss)
-
-    forbidden_clause_1 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'l1'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(forbidden_clause_1)
-
-    forbidden_clause_2 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'elasticnet'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(forbidden_clause_2)
-
-    return cs
-
-Error in config (#2): cannot import name 'FloatHyperparameter' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
-Running config code:
-from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, UniformFloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, InCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
-    cs.add_hyperparameter(classifier)
-
-    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    cs.add_hyperparameter(learning_rate)
-    eta0 = UniformFloatHyperparameter('eta0', lower=0.0, upper=1.0, default_value=0.01)
-    cs.add_hyperparameter(eta0)
-    cond_eta0 = EqualsCondition(eta0, classifier, 'SGDClassifier')
-    cs.add_condition(cond_eta0)
-
-    alpha = UniformFloatHyperparameter('alpha', lower=1e-6, upper=1e-1, default_value=1e-4, log=True)
-    cs.add_hyperparameter(alpha)
-    cond_alpha = InCondition(alpha, classifier, ['MultinomialNB', 'SGDClassifier'])
-    cs.add_condition(cond_alpha)
-
-    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2', 'elasticnet'])
-    cs.add_hyperparameter(penalty)
-    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
-    cs.add_condition(cond_penalty)
-
-    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
-    cs.add_hyperparameter(loss)
-    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
-    cs.add_condition(cond_loss)
-
-    forbidden_clause_1 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'l1'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(forbidden_clause_1)
-
-    forbidden_clause_2 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(penalty, 'elasticnet'),
-        ForbiddenEqualsClause(loss, 'hinge')
-    )
-    cs.add_forbidden_clause(forbidden_clause_2)
-
-    cond_eta0_learning_rate = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0_learning_rate)
-
-    return cs
-
-Error in config (#3): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
-Running config code:
+    return float(avg_loss)
 ```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 'eta0')
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#1): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#2): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#3): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#4): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(eta0, 0.1),
-        ForbiddenEqualsClause(learning_rate, 'invscaling')
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#5): invalid syntax (<string>, line 1)
-Retry limit reached for config. Fetching fresh code from LLM.
-Running config code:
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 'eta0')
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#1): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#2): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#3): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#4): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#5): invalid syntax (<string>, line 1)
-Retry limit reached for config. Fetching fresh code from LLM.
-Running config code:
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 'eta0')
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#1): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#2): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#3): invalid syntax (<string>, line 1)
-Running config code:
-Here is the corrected function code:
-
-```
-from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
-
-def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
-
-    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
-    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
-    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
-
-    cs.add_hyperparameters([learning_rate, eta0, power_t])
-
-    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
-    cs.add_condition(cond_eta0)
-
-    forbidden_eta0 = ForbiddenAndConjunction(
-        ForbiddenEqualsClause(learning_rate, 'invscaling'),
-        ForbiddenEqualsClause(eta0, 0.1)
-    )
-    cs.add_forbidden_clause(forbidden_eta0)
-
-    return cs
-```
-Error in config (#4): invalid syntax (<string>, line 1)
+Running train_function code:
+from typing import Any
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from ConfigSpace import Configuration
+from torch.utils.data import DataLoader, TensorDataset
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the provided dataset using the given configuration.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing hyperparameters.
+        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions dynamically
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    # Determine if dataset is image-shaped
+    if len(X.shape) == 4:
+        # Already image shaped
+        pass
+    else:
+        # Reshape if not image shaped, assuming square images if CNN is used
+        side = int(np.sqrt(input_size))
+        if side * side != input_size:
+            raise ValueError(
+                "Input size is not a perfect square, cannot reshape for CNN. "
+                "Consider using a different model or dataset."
+            )
+        X = X.reshape(-1, 1, side, side)
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get("batch_size")
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes):
+            super(SimpleCNN, self).__init__()
+            side_len = int(np.sqrt(input_size))  # Side length of input image (assuming square)
+
+            self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+            self.relu2 = nn.ReLU()
+            self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+
+            # Calculate the output size after the convolutional layers
+            side_len = side_len // 4 # Two max pool layers of size 2 each
+            linear_input_size = side_len * side_len * 32
+            self.fc = nn.Linear(linear_input_size, num_classes)
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = torch.flatten(x, 1) # Flatten the tensor
+            x = self.fc(x)
+            return x
+
+    class SimpleMLP(nn.Module):
+        def __init__(self, input_size, num_classes, num_layers, num_units):
+            super(SimpleMLP, self).__init__()
+            layers = []
+            layers.append(nn.Linear(input_size, num_units))
+            layers.append(nn.ReLU())
+            for _ in range(num_layers - 1):
+                layers.append(nn.Linear(num_units, num_units))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(num_units, num_classes))
+            self.layers = nn.Sequential(*layers)
+
+        def forward(self, x):
+            return self.layers(x)
+
+    #Use CNN if dataset has images
+    if len(X.shape) == 4:
+       model = SimpleCNN(num_classes=num_classes)
+    else:
+        num_layers = cfg.get("num_layers")
+        num_units = cfg.get("num_units")
+        model = SimpleMLP(input_size, num_classes, num_layers, num_units)
+
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate_type = cfg.get("learning_rate")
+    eta0 = cfg.get("eta0")
+
+    if optimizer_name == "sgd":
+        if learning_rate_type == "constant":
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+        elif learning_rate_type == "adaptive":
+            optimizer = optim.Adam(model.parameters(), lr=eta0)
+    elif optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+
+            # Forward + backward + optimize
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+Error in train_function (#1): 'DataFrame' object has no attribute 'reshape'
+Running train_function code:
+from typing import Any
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from ConfigSpace import Configuration
+from torch.utils.data import DataLoader, TensorDataset
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the provided dataset using the given configuration.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing hyperparameters.
+        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions dynamically
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    # Determine if dataset is image-shaped
+    if len(X.shape) == 4:
+        # Already image shaped
+        pass
+    else:
+        # Reshape if not image shaped, assuming square images if CNN is used
+        side = int(np.sqrt(input_size))
+        if side * side != input_size:
+            pass
+            #raise ValueError(
+            #    "Input size is not a perfect square, cannot reshape for CNN. "
+            #    "Consider using a different model or dataset."
+            #)
+        else:
+            X = X.reshape(-1, 1, side, side)
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get("batch_size")
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes):
+            super(SimpleCNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+            self.relu2 = nn.ReLU()
+            self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.fc = nn.Linear(32 * 7 * 7, num_classes)
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = torch.flatten(x, 1) # Flatten the tensor
+            x = self.fc(x)
+            return x
+
+    class SimpleMLP(nn.Module):
+        def __init__(self, input_size, num_classes, num_layers, num_units):
+            super(SimpleMLP, self).__init__()
+            layers = []
+            layers.append(nn.Linear(input_size, num_units))
+            layers.append(nn.ReLU())
+            for _ in range(num_layers - 1):
+                layers.append(nn.Linear(num_units, num_units))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(num_units, num_classes))
+            self.layers = nn.Sequential(*layers)
+
+        def forward(self, x):
+            return self.layers(x)
+
+    #Use CNN if dataset has images
+    if len(X.shape) == 4:
+       model = SimpleCNN(num_classes=num_classes)
+    else:
+        num_layers = cfg.get("num_layers")
+        num_units = cfg.get("num_units")
+        model = SimpleMLP(input_size, num_classes, num_layers, num_units)
+
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate_type = cfg.get("learning_rate")
+    eta0 = cfg.get("eta0")
+
+    if optimizer_name == "sgd":
+        if learning_rate_type == "constant":
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+        elif learning_rate_type == "adaptive":
+            optimizer = optim.Adam(model.parameters(), lr=eta0)
+        else:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+    else:
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+
+            # Forward + backward + optimize
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+Error in train_function (#2): 'DataFrame' object has no attribute 'reshape'
+Running train_function code:
+from typing import Any
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from ConfigSpace import Configuration
+from torch.utils.data import DataLoader, TensorDataset
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the provided dataset using the given configuration.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing hyperparameters.
+        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions dynamically
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.Series):
+        y = y.values
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    # Determine if dataset is image-shaped
+    if len(X.shape) == 4:
+        # Already image shaped
+        pass
+    else:
+        # Reshape if not image shaped, assuming square images if CNN is used
+        side = int(np.sqrt(input_size))
+        if side * side != input_size:
+            pass
+            #raise ValueError(
+            #    "Input size is not a perfect square, cannot reshape for CNN. "
+            #    "Consider using a different model or dataset."
+            #)
+        else:
+            X = X.reshape(-1, 1, side, side)
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get("batch_size")
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes):
+            super(SimpleCNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+            self.relu2 = nn.ReLU()
+            self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.fc = nn.Linear(32 * 7 * 7, num_classes)
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = torch.flatten(x, 1) # Flatten the tensor
+            x = self.fc(x)
+            return x
+
+    class SimpleMLP(nn.Module):
+        def __init__(self, input_size, num_classes, num_layers, num_units):
+            super(SimpleMLP, self).__init__()
+            layers = []
+            layers.append(nn.Linear(input_size, num_units))
+            layers.append(nn.ReLU())
+            for _ in range(num_layers - 1):
+                layers.append(nn.Linear(num_units, num_units))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(num_units, num_classes))
+            self.layers = nn.Sequential(*layers)
+
+        def forward(self, x):
+            return self.layers(x)
+
+    #Use CNN if dataset has images
+    if len(X.shape) == 4:
+       model = SimpleCNN(num_classes=num_classes)
+    else:
+        num_layers = cfg.get("num_layers")
+        num_units = cfg.get("num_units")
+        model = SimpleMLP(input_size, num_classes, num_layers, num_units)
+
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate_type = cfg.get("learning_rate")
+    eta0 = cfg.get("eta0")
+
+    if optimizer_name == "sgd":
+        if learning_rate_type == "constant":
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+        elif learning_rate_type == "adaptive":
+            optimizer = optim.Adam(model.parameters(), lr=eta0)
+        else:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+    else:
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+
+            # Forward + backward + optimize
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+Error in train_function (#3): '<=' not supported between instances of 'float' and 'NoneType'
+Running train_function code:
+from typing import Any
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from ConfigSpace import Configuration
+from torch.utils.data import DataLoader, TensorDataset
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the provided dataset using the given configuration.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing hyperparameters.
+        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions dynamically
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.Series):
+        y = y.values
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    # Determine if dataset is image-shaped
+    if len(X.shape) == 4:
+        # Already image shaped
+        pass
+    else:
+        # Reshape if not image shaped, assuming square images if CNN is used
+        side = int(np.sqrt(input_size))
+        if side * side != input_size:
+            pass
+            #raise ValueError(
+            #    "Input size is not a perfect square, cannot reshape for CNN. "
+            #    "Consider using a different model or dataset."
+            #)
+        else:
+            X = X.reshape(-1, 1, side, side)
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get("batch_size")
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes):
+            super(SimpleCNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+            self.relu2 = nn.ReLU()
+            self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.fc = nn.Linear(32 * 7 * 7, num_classes)
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = torch.flatten(x, 1) # Flatten the tensor
+            x = self.fc(x)
+            return x
+
+    class SimpleMLP(nn.Module):
+        def __init__(self, input_size, num_classes, num_layers, num_units):
+            super(SimpleMLP, self).__init__()
+            layers = []
+            layers.append(nn.Linear(input_size, num_units))
+            layers.append(nn.ReLU())
+            for _ in range(num_layers - 1):
+                layers.append(nn.Linear(num_units, num_units))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(num_units, num_classes))
+            self.layers = nn.Sequential(*layers)
+
+        def forward(self, x):
+            return self.layers(x)
+
+    #Use CNN if dataset has images
+    if len(X.shape) == 4:
+       model = SimpleCNN(num_classes=num_classes)
+    else:
+        num_layers = cfg.get("num_layers")
+        num_units = cfg.get("num_units")
+        model = SimpleMLP(input_size, num_classes, num_layers, num_units)
+
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate_type = cfg.get("learning_rate")
+    eta0 = cfg.get("eta0")
+
+    if optimizer_name == "sgd":
+        if learning_rate_type == "constant":
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+        elif learning_rate_type == "adaptive":
+            optimizer = optim.Adam(model.parameters(), lr=eta0)
+        else:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+    else:
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+
+            # Forward + backward + optimize
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+Error in train_function (#4): '<=' not supported between instances of 'float' and 'NoneType'
+Running train_function code:
+from typing import Any
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from ConfigSpace import Configuration
+from torch.utils.data import DataLoader, TensorDataset
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the provided dataset using the given configuration.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing hyperparameters.
+        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions dynamically
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.Series):
+        y = y.values
+    input_size = X.shape[1] if len(X.shape) > 1 else 1
+    num_classes = len(np.unique(y))
+
+    # Determine if dataset is image-shaped
+    if len(X.shape) == 4:
+        # Already image shaped
+        pass
+    else:
+        # Reshape if not image shaped, assuming square images if CNN is used
+        side = int(np.sqrt(input_size))
+        if side * side != input_size:
+            pass
+            #raise ValueError(
+            #    "Input size is not a perfect square, cannot reshape for CNN. "
+            #    "Consider using a different model or dataset."
+            #)
+        else:
+            X = X.reshape(-1, 1, side, side)
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get("batch_size")
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes):
+            super(SimpleCNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+            self.relu2 = nn.ReLU()
+            self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.fc = nn.Linear(32 * 7 * 7, num_classes)
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = torch.flatten(x, 1) # Flatten the tensor
+            x = self.fc(x)
+            return x
+
+    class SimpleMLP(nn.Module):
+        def __init__(self, input_size, num_classes, num_layers, num_units):
+            super(SimpleMLP, self).__init__()
+            layers = []
+            layers.append(nn.Linear(input_size, num_units))
+            layers.append(nn.ReLU())
+            for _ in range(num_layers - 1):
+                layers.append(nn.Linear(num_units, num_units))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(num_units, num_classes))
+            self.layers = nn.Sequential(*layers)
+
+        def forward(self, x):
+            return self.layers(x)
+
+    #Use CNN if dataset has images
+    if len(X.shape) == 4:
+       model = SimpleCNN(num_classes=num_classes)
+    else:
+        num_layers = cfg.get("num_layers", 2)
+        num_units = cfg.get("num_units", 64)
+        model = SimpleMLP(input_size, num_classes, num_layers, num_units)
+
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer", "adam")
+    learning_rate_type = cfg.get("learning_rate", "constant")
+    eta0 = cfg.get("eta0", 1e-3)
+
+    if optimizer_name == "sgd":
+        if learning_rate_type == "constant":
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+        elif learning_rate_type == "adaptive":
+            optimizer = optim.Adam(model.parameters(), lr=eta0)
+        else:
+            optimizer = optim.SGD(model.parameters(), lr=eta0)
+    elif optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+    else:
+        optimizer = optim.Adam(model.parameters(), lr=eta0)
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+
+            # Forward + backward + optimize
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+Training executed, loss: 0.06329858987775572

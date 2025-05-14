@@ -32,13 +32,13 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 	 * In both cases the split is computed as efficiently as possible exploiting properties of the RSS loss (optimal split for categoricals
 	 * can be found in polynomial rather than exponential time in the number of possible values).
 	 * The constructor assumes that the data should be split. Testing whether the number of points and their values allow further splitting is checked by the tree
-	 * 
+	 *
 	 * \param data the container holding the training data
 	 * \param features_to_try a vector with the indices of all the features that can be considered for this split
 	 * \param indices a vector containing the subset of data point indices to be considered (output!)
 	 * \param an iterator into this vector that says where to split the data for the two children
 	 * \param rng a pseudo random number generator instance
-	 * 
+	 *
 	 */
 	 virtual num_t find_best_split(	const rfr::data_containers::data_container_base<num_t, response_t, index_t> &data,
 						const std::vector<index_t> &features_to_try,
@@ -94,9 +94,9 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 	}
 
 	/** \brief this operator tells into which child the given feature vector falls
-	 * 
+	 *
 	 * \param feature_vector an array containing a valid (in terms of size and values!) feature vector
-	 * 
+	 *
 	 * \return int whether the feature_vector falls into the left (true) or right (false) child
 	 */
 	virtual index_t operator() (num_t *feature_vector) {
@@ -116,14 +116,14 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 	}
 
 	/** \brief member function to find the best possible split for a single (continuous) feature
-	 * 
-	 * 
+	 *
+	 *
 	 * \param data pointer to the the data container
 	 * \param fi the index of the feature to be used
 	 * \param split_criterion_copy a reference to store the split criterion
 	 * \param indices_copy a const reference to the indices (const b/c it has already been sorted)
 	 * \param split_indices_it_copy an iterator that will point to the first element of indices_copy that would go into the right child
-	 * 
+	 *
 	 * \return the gini criterion of this split
 	 */
 	num_t best_split_continuous( const rfr::data_containers::data_container_base<num_t, response_t, index_t> &data,
@@ -131,7 +131,7 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 									std::vector<num_t> &split_criterion_copy,
 									std::vector<index_t> &indices_copy,
 									typename std::vector<index_t>::iterator &split_indices_it_copy){
-		
+
 
 		// Splitting criteria = Gini criterion
 		// first some temporary variables
@@ -164,7 +164,7 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 		gini = N_R * gini;
 
 		// splits (best slit is the one with the highest purity/gini)
-		
+
 		typename std::vector<index_t>::iterator psii = indices_copy.begin(); // potential split index iterator
 		// now we can increase the splitting value to move data points from the right to the left child
 		// this way we do not consider a split with everything in the right child
@@ -189,7 +189,7 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 					gini_r += p_kr[i]*(1-p_kr[i]);
 					gini_l += p_kl[i]*(1-p_kl[i]);
 				}
-				
+
 				psii++;
 			}
 			// stop if all data points are now in the left child as this is not a meaningful split
@@ -205,20 +205,20 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 				split_indices_it_copy = psii;
 			}
 		}
-		return(best_gini);		
-		
+		return(best_gini);
+
 	}
 
 	/** \brief member function to find the best possible split for a single (categorical) feature
-	 * 
-	 * 
+	 *
+	 *
 	 * \param data pointer to the the data container
 	 * \param fi the index of the feature to be used
 	 * \param num_categories how many different values this variable can take
 	 * \param split_criterion_copy a reference to store the split criterion
 	 * \param indices_copy a const reference to the indices (const b/c it has already been sorted)
 	 * \param split_indices_it_copy an iterator that will point to the first element of indices_copy that would go into the right child
-	 * 
+	 *
 	 * \return float the loss of this split
 	 */
 	num_t best_split_categorical(const rfr::data_containers::data_container_base<num_t, response_t, index_t> &data,
@@ -267,7 +267,7 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 		std::vector<num_t> p_kl (length);
 		float gini_l = 0;
 		float gini_r = 0;
-		float gini = 0;	
+		float gini = 0;
 
 		// put one category in the left node
 		auto it_best_split = category_ranking.begin();
@@ -283,7 +283,7 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 		}
 		// resulting gini index for left node:
 		gini = N_left * gini_l;
-	    
+
 		it_best_split++;
 
 
@@ -300,12 +300,12 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 				gini_r += p_kr[i]*(1-p_kr[i]);
 		}
 		// gini index for that node:
-		gini = N_right * gini_r;           
+		gini = N_right * gini_r;
 
 		// it can happen that the node is not pure wrt the response, but the
 		// feature at hand takes only one value in this node. By setting the
 		// best_gini to the largest possible value, this split will not be chosen.
-		// It also yields 
+		// It also yields
 		if ( (N_right == 0) || (N_left == 0) )
 			best_gini = std::numeric_limits<num_t>::max();
 		else
@@ -366,7 +366,7 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 		split_indices_it_copy = std::partition(
 					indices_copy.begin(), indices_copy.end(),
 					[&](size_t i){return(std::find(++split_criterion_copy.begin(), split_criterion_copy.end(), data.feature(fi, i)) != split_criterion_copy.end());});
-		
+
 		return(best_gini);
 	}
 
@@ -382,7 +382,7 @@ class binary_split_one_feature_gini: public rfr::splits::k_ary_split_base<2,rng_
 		}
 	}
 	/** \brief member function to create a string representing the split criterion
-	 * 
+	 *
 	 * \return std::string a label that characterizes the split
 	 */
 	virtual std::string latex_representation(){
