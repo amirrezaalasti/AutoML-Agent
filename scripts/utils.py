@@ -43,6 +43,20 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
         description += "Features:\n"
         description += "\n".join([f"- {col}" for col in X.columns])
 
+        description += "\n\n### Time Series Handling Requirements\n"
+        description += "- Assume `dataset['X']` is a 3D array or tensor with shape `(num_samples, sequence_length, num_features)`.\n"
+        description += "- If `dataset['X']` is 2D, raise a `ValueError` if the model is RNN-based (`LSTM`, `GRU`, `RNN`).\n"
+        description += "- Do **not** flatten the input when using RNN-based models.\n"
+        description += "- Use `batch_first=True` in all recurrent models to maintain `(batch, seq_len, features)` format.\n"
+        description += "- Dynamically infer sequence length as `X.shape[1]` and feature dimension as `X.shape[2]`.\n"
+        description += "- If `X.ndim != 3` and a sequential model is selected, raise a clear error with shape info.\n"
+        description += "- Example input validation check:\n"
+        description += "  ```python\n"
+        description += "  if model_type in ['LSTM', 'GRU', 'RNN'] and X_tensor.ndim != 3:\n"
+        description += "      raise ValueError(f\"Expected 3D input (batch, seq_len, features) for {model_type}, got {X_tensor.shape}\")\n"
+        description += "  ```\n"
+        description += "- Time index or datetime values can be logged but should not be used in the model unless specified.\n"
+
     elif dataset_type == "image":
         description += "This is an image dataset.\n"
         if hasattr(X, "__getitem__"):
