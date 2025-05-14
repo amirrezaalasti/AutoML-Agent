@@ -1,6 +1,6 @@
 from scripts.LLMClient import LLMClient
 from typing import Any
-from scripts.utils import describe_dataset, log_message, save_code
+from scripts.utils import describe_dataset, log_message, save_code, format_dataset
 import re
 from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
@@ -22,10 +22,10 @@ class AutoMLAgent:
     def __init__(
         self, dataset: Any, llm_client: LLMClient, dataset_type: str, ui_agent: Any
     ):
-        self.dataset = dataset
+        self.dataset = format_dataset(dataset)
         self.llm = llm_client
         self.dataset_type = dataset_type
-        self.dataset_description = describe_dataset(dataset, dataset_type)
+        self.dataset_description = describe_dataset(self.dataset, dataset_type)
 
         self.config_code = None
         self.scenario_code = None
@@ -73,13 +73,17 @@ class AutoMLAgent:
         print("self.scenario", self.scenario)
         print("self.train_function", self.train_function)
         # Save outputs
-        save_code(self.config_space, "scripts/generated_codes/generated_config_space.py")
+        save_code(
+            self.config_space, "scripts/generated_codes/generated_config_space.py"
+        )
         save_code(self.scenario, "scripts/generated_codes/generated_scenario.py")
-        save_code(self.train_function, "scripts/generated_codes/generated_train_function.py")
+        save_code(
+            self.train_function, "scripts/generated_codes/generated_train_function.py"
+        )
 
         from scripts.generated_codes.generated_train_function import train
 
-        self.run_scenario(self.scenario_obj, train)
+        self.run_scenario(self.scenario_obj, train, self.dataset, self.config_space_obj)
 
         # log_message(f"Best configuration: {best_config}")
         # log_message(f"Best loss: {best_loss}")
@@ -189,11 +193,16 @@ class AutoMLAgent:
         with open("templates/fix_prompt.txt", "r") as f:
             return f.read().format(code=code, errors=errors)
 
-    def run_scenario(self, scenario: Scenario, train_fn: Any):
+    def run_scenario(self, scenario: Scenario, train_fn: Any, dataset: Any, cfg: Any):
         """Run the scenario code and return the results"""
+
+        def smac_train_function(seed) -> float:
+            """Wrapper function to call the training function with the correct parameters"""
+            return train_fn(cfg=cfg, seed=42, dataset=dataset)
+
         smac = HPOFacade(
             scenario,
-            train_fn,  # We pass the target function here
+            smac_train_function,  # We pass the target function here
             overwrite=True,  # Overrides any previous results that are found that are inconsistent with the meta-data
         )
-        smac.optimize()        
+        smac.optimize()

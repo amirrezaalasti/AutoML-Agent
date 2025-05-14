@@ -19,26 +19,17 @@ Generate a **Python function** named `generate_scenario(cs)` that returns a vali
 
 * The input `cs` is a `ConfigurationSpace` object.
 * Return a `Scenario` configured with the following:
-
-  * Objective: minimize **validation loss**
   * `output_directory`: `"./automl_results"`
   * `deterministic`: `False` (enable variability)
   * `n_workers`: greater than 1 (to enable parallel optimization)
   * `min_budget` and `max_budget`: set appropriately for multi-fidelity tuning (e.g., training epochs)
-  * Must be compatible with cloud-parallel execution
-
----
-
-**Strict Parameter Usage:**
-
-* Do not use any parameters other than the ones explicitly listed in this prompt.
-
 ---
 
 **Reminder:** The output must be limited to:
 
 * Valid `import` statements
 * A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
+* Do not use any parameters other than the ones explicitly listed in this prompt.
 
 ---
 

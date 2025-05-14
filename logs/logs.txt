@@ -1,0 +1,933 @@
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+    
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+    
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', bounds=(0.0, 1.0), default=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+    
+    alpha = Float('alpha', bounds=(1e-6, 1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    
+    penalty = Categorical('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'l1'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+    
+    return cs
+
+Error in config (#1): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+    
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+    
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', (0.0,1.0), default=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+    
+    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    
+    penalty = Categorical('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+    
+    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
+    cs.add_condition(cond1)
+    cond2 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond2)
+    cond3 = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond3)
+    cond4 = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond4)
+    cond5 = EqualsCondition(alpha, classifier, 'MultinomialNB')
+    cs.add_condition(cond5)
+    cond6 = EqualsCondition(alpha, classifier, 'SVC')
+    cs.add_condition(cond6)
+    
+    return cs
+
+Error in config (#2): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+    
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+    
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', (0.0,1.0), default=0.01)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+    
+    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    
+    penalty = Categorical('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+    
+    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
+    cs.add_condition(cond1)
+    cond2 = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond2)
+    cond3 = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond3)
+    cond4 = EqualsCondition(alpha, classifier, 'MultinomialNB')
+    cs.add_condition(cond4)
+    cond5 = EqualsCondition(alpha, classifier, 'SVC')
+    cs.add_condition(cond5)
+    
+    return cs
+
+Error in config (#3): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+    
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+    
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', (0.0,1.0), default=0.01)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+    
+    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    
+    penalty = Categorical('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+    
+    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
+    cs.add_condition(cond1)
+    cond2 = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond2)
+    cond3 = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond3)
+    cond4 = EqualsCondition(alpha, classifier, 'MultinomialNB')
+    cs.add_condition(cond4)
+    cond5 = EqualsCondition(alpha, classifier, 'SVC')
+    cs.add_condition(cond5)
+    
+    return cs
+
+Error in config (#4): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
+Running config code:
+from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+    
+    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+    
+    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', (0.0,1.0), default=0.01)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+    
+    alpha = Float('alpha', (1e-6,1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    
+    penalty = CategoricalHyperparameter('penalty', ['l2', 'l1']) # changed order
+    cs.add_hyperparameter(penalty)
+    loss = CategoricalHyperparameter('loss', ['log_loss', 'modified_huber', 'hinge']) # changed order
+    cs.add_hyperparameter(loss)
+    
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+    
+    cond1 = EqualsCondition(learning_rate, classifier, 'SGDClassifier')
+    cs.add_condition(cond1)
+    cond2 = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond2)
+    cond3 = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond3)
+    cond4 = EqualsCondition(alpha, classifier, 'MultinomialNB')
+    cs.add_condition(cond4)
+    cond5 = EqualsCondition(alpha, classifier, 'SVC')
+    cs.add_condition(cond5)
+    
+    return cs
+
+Error in config (#5): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: alpha | classifier == 'MultinomialNB'
+New one: alpha | classifier == 'SVC'
+Retry limit reached for config. Fetching fresh code from LLM.
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+    
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+    
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', bounds=(0.0, 1.0), default=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+    
+    alpha = Float('alpha', bounds=(1e-6, 1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    
+    penalty = Categorical('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'l1'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+    
+    return cs
+
+Error in config (#1): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, InCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', bounds=(0.0,1.0), default=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, classifier, 'SGDClassifier')
+    cond_eta0_2 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+    cs.add_condition(cond_eta0_2)
+
+    alpha = Float('alpha', bounds=(1e-6,1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    cond_alpha_1 = InCondition(alpha, classifier, ['MultinomialNB', 'SGDClassifier'])
+    cs.add_condition(cond_alpha_1)
+
+    penalty = Categorical('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond_penalty)
+
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond_loss)
+
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+
+    return cs
+
+Error in config (#2): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: eta0 | classifier == 'SGDClassifier'
+New one: eta0 | learning_rate == 'constant'
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, AndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', bounds=(0.0,1.0), default=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0_1 = EqualsCondition(eta0, classifier, 'SGDClassifier')
+    cond_eta0_2 = EqualsCondition(eta0, learning_rate, 'constant')
+    cond_eta0 = AndConjunction(cond_eta0_1, cond_eta0_2)
+    cs.add_condition(cond_eta0)
+
+    alpha = Float('alpha', bounds=(1e-6,1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    cond_alpha_1 = EqualsCondition(alpha, classifier, 'MultinomialNB')
+    cond_alpha_2 = EqualsCondition(alpha, classifier, 'SGDClassifier')
+    cond_alpha = OrConjunction(cond_alpha_1, cond_alpha_2)
+    cs.add_condition(cond_alpha)
+
+    penalty = Categorical('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond_penalty)
+
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond_loss)
+
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+
+    return cs
+
+Error in config (#3): name 'OrConjunction' is not defined
+Running config code:
+from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, FloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, OrConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+
+    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = FloatHyperparameter('eta0', (0.0,1.0), default_value=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0_1 = EqualsCondition(eta0, classifier, 'SGDClassifier')
+    cond_eta0_2 = EqualsCondition(eta0, learning_rate, 'constant')
+    cond_eta0 = AndConjunction(cond_eta0_1, cond_eta0_2)
+    cs.add_condition(cond_eta0)
+
+    alpha = FloatHyperparameter('alpha', (1e-6,1e-1), default_value=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    cond_alpha_1 = EqualsCondition(alpha, classifier, 'MultinomialNB')
+    cond_alpha_2 = EqualsCondition(alpha, classifier, 'SVC')
+    cond_alpha = OrConjunction(cond_alpha_1, cond_alpha_2)
+    cs.add_condition(cond_alpha)
+
+    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond_penalty)
+
+    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond_loss)
+
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+
+    return cs
+
+Error in config (#4): cannot import name 'FloatHyperparameter' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+Running config code:
+from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, UniformFloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, OrConjunction, AndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+
+    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = UniformFloatHyperparameter('eta0', lower=0.0, upper=1.0, default_value=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0_1 = EqualsCondition(eta0, classifier, 'SGDClassifier')
+    cond_eta0_2 = EqualsCondition(learning_rate, 'constant', 'constant')
+    cond_eta0 = AndConjunction(cond_eta0_1, cond_eta0_2)
+    cs.add_condition(cond_eta0)
+
+    alpha = UniformFloatHyperparameter('alpha', lower=1e-6, upper=1e-1, default_value=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    cond_alpha_1 = EqualsCondition(alpha, classifier, 'MultinomialNB')
+    cond_alpha_2 = EqualsCondition(alpha, classifier, 'SVC')
+    cond_alpha = OrConjunction(cond_alpha_1, cond_alpha_2)
+    cs.add_condition(cond_alpha)
+
+    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2'])
+    cs.add_hyperparameter(penalty)
+    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond_penalty)
+
+    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond_loss)
+
+    invalid_combination = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(loss, 'hinge'),
+        ForbiddenEqualsClause(penalty, 'l1')
+    )
+    cs.add_forbidden_clause(invalid_combination)
+
+    return cs
+
+Error in config (#5): 'str' object has no attribute 'legal_value'
+Retry limit reached for config. Fetching fresh code from LLM.
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    classifier = Categorical('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = Float('eta0', bounds=(0.0, 1.0), default=0.0)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    alpha = Float('alpha', bounds=(1e-6, 1e-1), default=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+
+    penalty = Categorical('penalty', ['l1', 'l2', 'elasticnet'])
+    cs.add_hyperparameter(penalty)
+
+    loss = Categorical('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+
+    forbidden_clause_1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'l1'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(forbidden_clause_1)
+
+    forbidden_clause_2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'elasticnet'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(forbidden_clause_2)
+
+    return cs
+
+Error in config (#1): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
+Running config code:
+from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, FloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, InCondition, OrConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+
+    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = FloatHyperparameter('eta0', lower=0.0, upper=1.0, default_value=0.01)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = OrConjunction(EqualsCondition(eta0, classifier, 'SGDClassifier'), EqualsCondition(eta0, learning_rate, 'constant'))
+    cs.add_condition(cond_eta0)
+
+    alpha = FloatHyperparameter('alpha', lower=1e-6, upper=1e-1, default_value=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    cond_alpha = InCondition(alpha, classifier, ['MultinomialNB', 'SGDClassifier'])
+    cs.add_condition(cond_alpha)
+
+    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2', 'elasticnet'])
+    cs.add_hyperparameter(penalty)
+    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond_penalty)
+
+    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond_loss)
+
+    forbidden_clause_1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'l1'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(forbidden_clause_1)
+
+    forbidden_clause_2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'elasticnet'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(forbidden_clause_2)
+
+    return cs
+
+Error in config (#2): cannot import name 'FloatHyperparameter' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+Running config code:
+from ConfigSpace import ConfigurationSpace, CategoricalHyperparameter, UniformFloatHyperparameter, EqualsCondition, ForbiddenEqualsClause, ForbiddenAndConjunction, InCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    classifier = CategoricalHyperparameter('classifier', ['SGDClassifier', 'MultinomialNB', 'SVC'])
+    cs.add_hyperparameter(classifier)
+
+    learning_rate = CategoricalHyperparameter('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
+    cs.add_hyperparameter(learning_rate)
+    eta0 = UniformFloatHyperparameter('eta0', lower=0.0, upper=1.0, default_value=0.01)
+    cs.add_hyperparameter(eta0)
+    cond_eta0 = EqualsCondition(eta0, classifier, 'SGDClassifier')
+    cs.add_condition(cond_eta0)
+
+    alpha = UniformFloatHyperparameter('alpha', lower=1e-6, upper=1e-1, default_value=1e-4, log=True)
+    cs.add_hyperparameter(alpha)
+    cond_alpha = InCondition(alpha, classifier, ['MultinomialNB', 'SGDClassifier'])
+    cs.add_condition(cond_alpha)
+
+    penalty = CategoricalHyperparameter('penalty', ['l1', 'l2', 'elasticnet'])
+    cs.add_hyperparameter(penalty)
+    cond_penalty = EqualsCondition(penalty, classifier, 'SGDClassifier')
+    cs.add_condition(cond_penalty)
+
+    loss = CategoricalHyperparameter('loss', ['hinge', 'log_loss', 'modified_huber'])
+    cs.add_hyperparameter(loss)
+    cond_loss = EqualsCondition(loss, classifier, 'SGDClassifier')
+    cs.add_condition(cond_loss)
+
+    forbidden_clause_1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'l1'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(forbidden_clause_1)
+
+    forbidden_clause_2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(penalty, 'elasticnet'),
+        ForbiddenEqualsClause(loss, 'hinge')
+    )
+    cs.add_forbidden_clause(forbidden_clause_2)
+
+    cond_eta0_learning_rate = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0_learning_rate)
+
+    return cs
+
+Error in config (#3): Given vector violates forbidden clause: (Forbidden: loss == 'hinge' && Forbidden: penalty == 'l1')
+Running config code:
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 'eta0')
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#1): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#2): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#3): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#4): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(eta0, 0.1),
+        ForbiddenEqualsClause(learning_rate, 'invscaling')
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#5): invalid syntax (<string>, line 1)
+Retry limit reached for config. Fetching fresh code from LLM.
+Running config code:
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 'eta0')
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#1): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#2): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#3): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#4): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#5): invalid syntax (<string>, line 1)
+Retry limit reached for config. Fetching fresh code from LLM.
+Running config code:
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, Constant, EqualsCondition, ForbiddenAndConjunction
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 'eta0')
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#1): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#2): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#3): invalid syntax (<string>, line 1)
+Running config code:
+Here is the corrected function code:
+
+```
+from ConfigSpace import ConfigurationSpace, Categorical, Float, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    learning_rate = Categorical('learning_rate', ['constant', 'invscaling'])
+    eta0 = Float('eta0', lower=0.01, upper=0.1, default=0.1)
+    power_t = Float('power_t', lower=0.1, upper=0.5, default=0.5)
+
+    cs.add_hyperparameters([learning_rate, eta0, power_t])
+
+    cond_eta0 = EqualsCondition(eta0, learning_rate, 'constant')
+    cs.add_condition(cond_eta0)
+
+    forbidden_eta0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(learning_rate, 'invscaling'),
+        ForbiddenEqualsClause(eta0, 0.1)
+    )
+    cs.add_forbidden_clause(forbidden_eta0)
+
+    return cs
+```
+Error in config (#4): invalid syntax (<string>, line 1)

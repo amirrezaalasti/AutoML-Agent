@@ -134,3 +134,43 @@ def run_smac(
         n_trials=n_trials,
     )
     return smac.get_best_configuration()
+
+def format_dataset(dataset: Any) -> dict:
+    """
+    Format the dataset into a dictionary with 'X' and 'y' keys,
+    ensuring both are pandas DataFrame/Series.
+
+    Args:
+        dataset (Any): The dataset to format.
+
+    Returns:
+        dict: A dictionary with 'X' and 'y' keys as pandas objects.
+    """
+    if isinstance(dataset, pd.DataFrame):
+        if "target" not in dataset.columns:
+            raise ValueError("DataFrame must include a 'target' column.")
+        X = dataset.drop(columns=["target"])
+        y = dataset["target"]
+
+    elif isinstance(dataset, dict):
+        X = dataset["X"]
+        y = dataset["y"]
+
+        # Convert to pandas if they're NumPy arrays
+        if isinstance(X, np.ndarray):
+            X = pd.DataFrame(X)
+        if isinstance(y, np.ndarray):
+            y = pd.Series(y)
+
+    elif isinstance(dataset, np.ndarray):
+        # Single feature case
+        if dataset.ndim == 1:
+            X = pd.DataFrame(dataset.reshape(-1, 1))
+        else:
+            X = pd.DataFrame(dataset)
+        y = None  # No labels provided
+
+    else:
+        raise ValueError("Unsupported dataset format")
+
+    return {"X": X, "y": y}
