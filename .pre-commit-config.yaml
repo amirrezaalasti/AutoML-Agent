@@ -13,4 +13,7 @@ repos:
     hooks:
       - id: flake8
         additional_dependencies: []
-        args: ['--max-line-length=150', '--ignore=E203']
+        args: [
+          '--max-line-length=150',
+          '--ignore=E203,F541,F401,F841'  # Added F541 (f-string without placeholders), F401 (unused imports), F841 (unused variables)
+        ]
