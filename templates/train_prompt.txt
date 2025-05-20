@@ -25,11 +25,11 @@ def train(cfg: Configuration, dataset: Any) -> float:
 
 * The function must return the **average training loss** over 10 epochs.
 
-* You must check whether dataset['X'] is already image-shaped (e.g., len(X.shape) == 4). If not, and CNN is used, reshape carefully and raise a ValueError if the input size is not a perfect square.
-
-* Do not assume dataset['X'] has a specific shape. Always verify input dimensions before reshaping.
-
-* If using a CNN model, you must validate that reshaping is safe and explain your assumption.
+* You must carefully read and follow the dataset description provided, which includes:
+  * Data format and dimensions
+  * Required preprocessing steps
+  * Special handling requirements
+  * Framework-specific considerations
 
 ```python
 return loss  # float
@@ -47,30 +47,9 @@ You may choose **PyTorch**, **TensorFlow**, or **scikit-learn**, depending on th
 
 ### **Model Requirements**
 
-* Infer input and output dimensions dynamically from the dataset:
-
-  ```python
-  input_size = dataset['X'].shape[1]
-  num_classes = len(np.unique(dataset['y']))
-  ```
-
----
-
-### **Optimizer Logic**
-
-If `learning_rate` is specified in `cfg`, use:
-
-* `'constant'`:
-
-  * Use SGD with `lr=eta0` (supported in all frameworks)
-* `'invscaling'`:
-
-  * Use SGD with `lr=eta0` and `momentum=power_t` (if supported, otherwise fall back gracefully)
-* `'adaptive'`:
-
-  * Use Adam or equivalent with `lr=eta0`
-
-- Only use valid parameters for each optimizer. Do **not** use unsupported arguments (e.g., `eta0` in PyTorch ASGD or `AdaptiveASGD`).
+* Infer input and output dimensions dynamically from the dataset
+* Follow the data format requirements specified in the dataset description
+* Handle any necessary data transformations as described in the dataset description
 
 ---
 
@@ -84,6 +63,7 @@ If `learning_rate` is specified in `cfg`, use:
 
 ### **Additional Instructions**
 
-* The code must not hardcode dataset dimensions like `784` or class count `10`.
-* The function must be runnable and not assume unavailable classes or modules.
-* You must only output the `def train(...)` function and nothing else.
+* The code must not hardcode dataset dimensions
+* The function must be runnable and not assume unavailable classes or modules
+* You must only output the `def train(...)` function and nothing else
+* Always check dataset description for format hints and requirements before processing

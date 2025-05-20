@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 from smac import HyperparameterOptimizationFacade, Scenario
-
+import warnings
 from typing import Any
+from .logger import Logger
 
 
 def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
@@ -57,19 +58,52 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
 
     elif dataset_type == "image":
         description += "This is an image dataset.\n"
-        if hasattr(X, "__getitem__"):
-            sample = X[0]
-            if isinstance(sample, tuple) and len(sample) > 0:
-                img = sample[0]
-                description += f"Sample image shape: {img.shape}\n"
-        description += f"Number of images: {len(X)}\n"
-        description += f"Labels available: {len(y)}\n"
+        if isinstance(X, np.ndarray):
+            if X.ndim == 4:
+                n, c, h, w = X.shape if X.shape[1] <= 3 else (X.shape[0], X.shape[3], X.shape[1], X.shape[2])
+                description += f"Image format: (N={n}, C={c}, H={h}, W={w})\n"
+                description += "Note: Images are in (batch, channels, height, width) format.\n"
+            elif X.ndim == 3:
+                n, h, w = X.shape
+                description += f"Image format: (N={n}, H={h}, W={w})\n"
+                description += "Note: Images are single-channel in (batch, height, width) format.\n"
+            elif X.ndim == 2:
+                n, pixels = X.shape
+                height = int(np.sqrt(pixels))
+                if height * height == pixels:
+                    description += f"Image format: Flattened {height}x{height} images\n"
+                    description += f"Shape: (N={n}, pixels={pixels})\n"
+                    description += "Note: Images are flattened. Must be reshaped for processing.\n"
+                else:
+                    description += f"Shape: (N={n}, features={pixels})\n"
+                    description += "Warning: Feature count is not a perfect square.\n"
 
-        description += f"Raw feature shape: {X.shape}\n"
-        if isinstance(X, np.ndarray) and X.ndim == 2:
-            description += "Note: images are likely flattened (e.g., 28x28 → 784)."
-        elif isinstance(X, np.ndarray) and X.ndim == 4:
-            description += "Note: images are likely in (N, C, H, W) format."
+        if hasattr(y, "nunique"):
+            description += f"\nNumber of classes: {y.nunique()}\n"
+            description += "Class distribution:\n"
+            description += str(y.value_counts())
+
+        # Add specific handling requirements for image data
+        description += "\n\nImage Data Handling Requirements:\n"
+        description += "1. Input Format Requirements:\n"
+        description += "   - For CNN models: Input must be in (batch, channels, height, width) format\n"
+        description += "   - For dense/linear layers: Input should be flattened\n\n"
+        description += "2. Data Processing Steps:\n"
+        description += "   a) For flattened input (2D):\n"
+        description += "      - Calculate dimensions: height = width = int(sqrt(n_features))\n"
+        description += "      - Verify square dimensions: height * height == n_features\n"
+        description += "      - Reshape to (N, 1, H, W) for CNNs\n"
+        description += "   b) For 3D input (N, H, W):\n"
+        description += "      - Add channel dimension: reshape to (N, 1, H, W)\n"
+        description += "   c) For 4D input:\n"
+        description += "      - Verify channel order matches framework requirements\n\n"
+        description += "3. Framework-Specific Format:\n"
+        description += "   - PyTorch: (N, C, H, W)\n"
+        description += "   - TensorFlow: (N, H, W, C)\n"
+        description += "   - Convert between formats if necessary\n\n"
+        description += "4. Normalization:\n"
+        description += "   - Scale pixel values to [0, 1] by dividing by 255.0\n"
+        description += "   - Or standardize to mean=0, std=1\n"
 
     elif dataset_type == "categorical":
         description += "This is a categorical dataset.\n"
@@ -79,6 +113,14 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
             description += f"- {col}: {X[col].nunique()} unique values\n"
         if hasattr(y, "nunique"):
             description += f"\nTarget variable has {y.nunique()} unique classes."
+        description += "\n\nCategorical Data Handling Requirements:\n"
+        description += "1. Preprocessing Steps:\n"
+        description += "   - Encode categorical variables (one-hot or label encoding)\n"
+        description += "   - Handle missing values\n"
+        description += "   - Check for cardinality of categorical variables\n\n"
+        description += "2. Model Considerations:\n"
+        description += "   - Use appropriate encoding for model type\n"
+        description += "   - Handle high cardinality features appropriately\n"
 
     elif dataset_type == "text":
         description += "This is a text dataset.\n"
@@ -88,6 +130,21 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
         if hasattr(y, "nunique"):
             description += f"\nTarget variable has {y.nunique()} unique classes."
 
+        # Add specific handling requirements for text data
+        description += "\n\nText Data Handling Requirements:\n"
+        description += "1. Preprocessing Steps:\n"
+        description += "   - Tokenization\n"
+        description += "   - Convert to lowercase\n"
+        description += "   - Remove special characters if needed\n"
+        description += "   - Handle missing values\n\n"
+        description += "2. Feature Extraction:\n"
+        description += "   - Use TF-IDF or word embeddings\n"
+        description += "   - Consider max sequence length\n"
+        description += "   - Handle vocabulary size\n\n"
+        description += "3. Model-Specific Requirements:\n"
+        description += "   - For neural networks: Use appropriate padding/truncation\n"
+        description += "   - For traditional ML: Convert to fixed-size features\n"
+
     else:
         description += "Dataset type not recognized. Please provide a valid dataset type."
 
@@ -96,12 +153,18 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
 
 def log_message(message: str, log_file: str = "./logs/logs.txt"):
     """
+    DEPRECATED: Use the Logger class instead.
     Log a message to a specified log file.
 
     Args:
         message (str): The message to log.
         log_file (str): The path to the log file. Default is "./logs/logs.txt".
     """
+    warnings.warn(
+        "This function is deprecated. Please use the Logger class from logger.py instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     with open(log_file, "a") as log:
         log.write(message + "\n")
 

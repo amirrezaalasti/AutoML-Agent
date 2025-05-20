@@ -1,0 +1,414 @@
+[2025-05-20 12:09:47] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["svm", "random_forest"], default="svm")
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical("svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_C = Float("svm_C", (0.001, 1000), default=1.0, log=True)
+    svm_gamma = Float("svm_gamma", (0.0001, 10), default=0.1, log=True)
+    svm_degree = Integer("svm_degree", (2, 5), default=3)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # Random Forest hyperparameters
+    rf_n_estimators = Integer("rf_n_estimators", (10, 200), default=100)
+    rf_max_depth = Integer("rf_max_depth", (2, 10), default=None)
+    rf_min_samples_split = Integer("rf_min_samples_split", (2, 10), default=2)
+    rf_min_samples_leaf = Integer("rf_min_samples_leaf", (1, 10), default=1)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf])
+
+    # Add conditions
+    # cond_svm = EqualsCondition(svm_kernel, classifier, "svm")
+    # cond_rf = EqualsCondition(rf_n_estimators, classifier, "random_forest")
+    # cs.add_conditions([cond_svm, cond_rf])
+
+    # Add forbidden clauses
+    forbidden_svm_degree = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_svm_gamma = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_svm_C = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_svm_kernel = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_rf_n_estimators = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+
+    forbidden_rf_max_depth = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+
+    forbidden_rf_min_samples_split = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+
+    forbidden_rf_min_samples_leaf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+    cs.add_forbidden_clauses([forbidden_svm_degree, forbidden_svm_gamma, forbidden_svm_C, forbidden_svm_kernel, forbidden_rf_n_estimators, forbidden_rf_max_depth, forbidden_rf_min_samples_split, forbidden_rf_min_samples_leaf])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:47] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["svm", "random_forest"], default="svm")
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical("svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_C = Float("svm_C", (0.001, 1000), default=1.0, log=True)
+    svm_gamma = Float("svm_gamma", (0.0001, 10), default=0.1, log=True)
+    svm_degree = Integer("svm_degree", (2, 5), default=3)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # Random Forest hyperparameters
+    rf_n_estimators = Integer("rf_n_estimators", (10, 200), default=100)
+    rf_max_depth = Integer("rf_max_depth", (2, 10), default=None)
+    rf_min_samples_split = Integer("rf_min_samples_split", (2, 10), default=2)
+    rf_min_samples_leaf = Integer("rf_min_samples_leaf", (1, 10), default=1)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf])
+
+    # Add conditions
+    # cond_svm = EqualsCondition(svm_kernel, classifier, "svm")
+    # cond_rf = EqualsCondition(rf_n_estimators, classifier, "random_forest")
+    # cs.add_conditions([cond_svm, cond_rf])
+
+    # Add forbidden clauses
+    forbidden_svm_degree = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_svm_gamma = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_svm_C = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_svm_kernel = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+    )
+
+    forbidden_rf_n_estimators = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+
+    forbidden_rf_max_depth = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+
+    forbidden_rf_min_samples_split = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+
+    forbidden_rf_min_samples_leaf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+    )
+    cs.add_forbidden_clauses([forbidden_svm_degree, forbidden_svm_gamma, forbidden_svm_C, forbidden_svm_kernel, forbidden_rf_n_estimators, forbidden_rf_max_depth, forbidden_rf_min_samples_split, forbidden_rf_min_samples_leaf])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:47] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Given vector violates forbidden clause: (Forbidden: classifier in {'random_forest', 'random_forest', 'random_forest', 'random_forest', 'svm', 'svm', 'svm', 'svm'})
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:50] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["svm", "random_forest"], default="svm")
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical("svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_C = Float("svm_C", (0.001, 1000), default=1.0, log=True)
+    svm_gamma = Float("svm_gamma", (0.0001, 10), default=0.1, log=True)
+    svm_degree = Integer("svm_degree", (2, 5), default=3)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # Random Forest hyperparameters
+    rf_n_estimators = Integer("rf_n_estimators", (10, 200), default=100)
+    rf_max_depth = Integer("rf_max_depth", (2, 10), default=None)
+    rf_min_samples_split = Integer("rf_min_samples_split", (2, 10), default=2)
+    rf_min_samples_leaf = Integer("rf_min_samples_leaf", (1, 10), default=1)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf])
+
+    # Add conditions
+    cond_svm_kernel = EqualsCondition(svm_kernel, classifier, "svm")
+    cond_svm_C = EqualsCondition(svm_C, classifier, "svm")
+    cond_svm_gamma = EqualsCondition(svm_gamma, classifier, "svm")
+    cond_svm_degree = EqualsCondition(svm_degree, classifier, "svm")
+
+    cond_rf_n_estimators = EqualsCondition(rf_n_estimators, classifier, "random_forest")
+    cond_rf_max_depth = EqualsCondition(rf_max_depth, classifier, "random_forest")
+    cond_rf_min_samples_split = EqualsCondition(rf_min_samples_split, classifier, "random_forest")
+    cond_rf_min_samples_leaf = EqualsCondition(rf_min_samples_leaf, classifier, "random_forest")
+
+
+    cs.add_conditions([cond_svm_kernel, cond_svm_C, cond_svm_gamma, cond_svm_degree, cond_rf_n_estimators, cond_rf_max_depth, cond_rf_min_samples_split, cond_rf_min_samples_leaf])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:50] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["svm", "random_forest"], default="svm")
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical("svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_C = Float("svm_C", (0.001, 1000), default=1.0, log=True)
+    svm_gamma = Float("svm_gamma", (0.0001, 10), default=0.1, log=True)
+    svm_degree = Integer("svm_degree", (2, 5), default=3)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # Random Forest hyperparameters
+    rf_n_estimators = Integer("rf_n_estimators", (10, 200), default=100)
+    rf_max_depth = Integer("rf_max_depth", (2, 10), default=None)
+    rf_min_samples_split = Integer("rf_min_samples_split", (2, 10), default=2)
+    rf_min_samples_leaf = Integer("rf_min_samples_leaf", (1, 10), default=1)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf])
+
+    # Add conditions
+    cond_svm_kernel = EqualsCondition(svm_kernel, classifier, "svm")
+    cond_svm_C = EqualsCondition(svm_C, classifier, "svm")
+    cond_svm_gamma = EqualsCondition(svm_gamma, classifier, "svm")
+    cond_svm_degree = EqualsCondition(svm_degree, classifier, "svm")
+
+    cond_rf_n_estimators = EqualsCondition(rf_n_estimators, classifier, "random_forest")
+    cond_rf_max_depth = EqualsCondition(rf_max_depth, classifier, "random_forest")
+    cond_rf_min_samples_split = EqualsCondition(rf_min_samples_split, classifier, "random_forest")
+    cond_rf_min_samples_leaf = EqualsCondition(rf_min_samples_leaf, classifier, "random_forest")
+
+
+    cs.add_conditions([cond_svm_kernel, cond_svm_C, cond_svm_gamma, cond_svm_degree, cond_rf_n_estimators, cond_rf_max_depth, cond_rf_min_samples_split, cond_rf_min_samples_leaf])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:50] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:51] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=100,
+        n_workers=4
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:51] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=100,
+        n_workers=4
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:51] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:55] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+from ConfigSpace import Configuration
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data.
+                       dataset['X']: Feature matrix.
+                       dataset['y']: Label vector.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "svm":
+        kernel = cfg.get("svm_kernel")
+        C = cfg.get("svm_C")
+        gamma = cfg.get("svm_gamma")
+        degree = cfg.get("svm_degree")
+
+        model = SVC(kernel=kernel, C=C, gamma=gamma, degree=degree, probability=True)
+    elif classifier_name == "random_forest":
+        n_estimators = cfg.get("rf_n_estimators")
+        max_depth = cfg.get("rf_max_depth")
+        min_samples_split = cfg.get("rf_min_samples_split")
+        min_samples_leaf = cfg.get("rf_min_samples_leaf")
+
+        model = RandomForestClassifier(
+            n_estimators=n_estimators,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            random_state=42  # For reproducibility
+        )
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    losses = []
+    for epoch in range(10):
+        model.fit(X, y)  # Train on the entire dataset each epoch for simplicity
+
+        # Calculate log loss
+        if hasattr(model, "predict_proba"):
+            y_pred_proba = model.predict_proba(X)
+            loss = log_loss(y, y_pred_proba)
+        else:
+            y_pred = model.predict(X)
+            # log loss need probability
+            y_pred_proba = np.zeros((len(y), num_classes))
+            for i in range(len(y)):
+                y_pred_proba[i, y_pred[i]] = 1
+            loss = log_loss(y, y_pred_proba)
+
+        losses.append(loss)
+        # Print loss value after each epoch for debug purpose.
+        #print(f"Epoch {epoch+1}: Log Loss = {loss}")
+
+
+    return np.mean(losses)
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:55] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+from ConfigSpace import Configuration
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data.
+                       dataset['X']: Feature matrix.
+                       dataset['y']: Label vector.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "svm":
+        kernel = cfg.get("svm_kernel")
+        C = cfg.get("svm_C")
+        gamma = cfg.get("svm_gamma")
+        degree = cfg.get("svm_degree")
+
+        model = SVC(kernel=kernel, C=C, gamma=gamma, degree=degree, probability=True)
+    elif classifier_name == "random_forest":
+        n_estimators = cfg.get("rf_n_estimators")
+        max_depth = cfg.get("rf_max_depth")
+        min_samples_split = cfg.get("rf_min_samples_split")
+        min_samples_leaf = cfg.get("rf_min_samples_leaf")
+
+        model = RandomForestClassifier(
+            n_estimators=n_estimators,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            random_state=42  # For reproducibility
+        )
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    losses = []
+    for epoch in range(10):
+        model.fit(X, y)  # Train on the entire dataset each epoch for simplicity
+
+        # Calculate log loss
+        if hasattr(model, "predict_proba"):
+            y_pred_proba = model.predict_proba(X)
+            loss = log_loss(y, y_pred_proba)
+        else:
+            y_pred = model.predict(X)
+            # log loss need probability
+            y_pred_proba = np.zeros((len(y), num_classes))
+            for i in range(len(y)):
+                y_pred_proba[i, y_pred[i]] = 1
+            loss = log_loss(y, y_pred_proba)
+
+        losses.append(loss)
+        # Print loss value after each epoch for debug purpose.
+        #print(f"Epoch {epoch+1}: Log Loss = {loss}")
+
+
+    return np.mean(losses)
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:09:57] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 0.09850998044644954}] Training executed successfully, loss: 0.09850998044644954
+--------------------------------------------------------------------------------

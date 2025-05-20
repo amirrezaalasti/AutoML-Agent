@@ -944,3 +944,433 @@ def train(cfg: Configuration, dataset: Any) -> float:
     return float(avg_loss)
 
 Training executed, loss: 0.06329858987775572
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["knn", "svm", "random_forest"], default="knn")
+    cs.add_hyperparameter(classifier)
+
+    # KNN parameters
+    n_neighbors = Integer("n_neighbors", bounds=(1, 20), default=5)
+    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
+    knn_p = Integer("knn_p", bounds=(1, 5), default=2)  # Power parameter
+
+    cs.add_hyperparameters([n_neighbors, weights, knn_p])
+
+    # SVM parameters
+    svm_C = Float("svm_C", bounds=(1e-5, 10), default=1.0, log=True)
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_gamma = Float("svm_gamma", bounds=(1e-5, 10), default=0.1, log=True)
+    degree = Integer("degree", bounds=(2, 5), default=3)
+    coef0 = Float("coef0", bounds=(-1, 1), default=0.0)
+
+    cs.add_hyperparameters([svm_C, kernel, svm_gamma, degree, coef0])
+
+    # Random Forest parameters
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Categorical("max_features", ["sqrt", "log2", "None"], default="sqrt")
+    min_samples_split = Integer("min_samples_split", bounds=(2, 20), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 20), default=1)
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf])
+
+    # Forbidden Clauses
+    forbidden_knn = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "knn"),
+        ForbiddenEqualsClause(kernel, "rbf")
+    )
+    cs.add_forbidden_clause(forbidden_knn)
+
+    forbidden_svm = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+        ForbiddenEqualsClause(n_neighbors, 5)
+    )
+    cs.add_forbidden_clause(forbidden_svm)
+
+    forbidden_rf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+        ForbiddenEqualsClause(svm_C, 1.0)
+    )
+    cs.add_forbidden_clause(forbidden_rf)
+
+    forbidden_max_features_none = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+        ForbiddenEqualsClause(max_features, "None"),
+        ForbiddenEqualsClause(n_estimators, 10)
+    )
+    cs.add_forbidden_clause(forbidden_max_features_none)
+    
+    return cs
+
+Error in config (#1): Given vector violates forbidden clause: (Forbidden: classifier == 'knn' && Forbidden: kernel == 'rbf')
+Running config code:
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["knn", "svm", "random_forest"], default="knn")
+    cs.add_hyperparameter(classifier)
+
+    # KNN parameters
+    n_neighbors = Integer("n_neighbors", bounds=(1, 20), default=5)
+    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
+    knn_p = Integer("knn_p", bounds=(1, 5), default=2)  # Power parameter
+
+    cs.add_hyperparameters([n_neighbors, weights, knn_p])
+
+    # SVM parameters
+    svm_C = Float("svm_C", bounds=(1e-5, 10), default=1.0, log=True)
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_gamma = Float("svm_gamma", bounds=(1e-5, 10), default=0.1, log=True)
+    degree = Integer("degree", bounds=(2, 5), default=3)
+    coef0 = Float("coef0", bounds=(-1, 1), default=0.0)
+
+    cs.add_hyperparameters([svm_C, kernel, svm_gamma, degree, coef0])
+
+    # Random Forest parameters
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Categorical("max_features", ["sqrt", "log2", "None"], default="sqrt")
+    min_samples_split = Integer("min_samples_split", bounds=(2, 20), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 20), default=1)
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf])
+
+    # Forbidden Clauses
+    forbidden_knn = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "knn"),
+        ForbiddenEqualsClause(kernel, "rbf")
+    )
+    #cs.add_forbidden_clause(forbidden_knn) #This constraint violates the problem statement and raises an exception
+
+    forbidden_svm = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+        ForbiddenEqualsClause(n_neighbors, 5)
+    )
+    #cs.add_forbidden_clause(forbidden_svm) #This constraint violates the problem statement. n_neighbors does not apply to svm
+
+    forbidden_rf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+        ForbiddenEqualsClause(svm_C, 1.0)
+    )
+    #cs.add_forbidden_clause(forbidden_rf) #This constraint violates the problem statement. svm_c does not apply to random_forest
+
+    forbidden_max_features_none = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+        ForbiddenEqualsClause(max_features, "None"),
+        ForbiddenEqualsClause(n_estimators, 10)
+    )
+
+    if "None" in max_features.choices:
+        cs.add_forbidden_clause(forbidden_max_features_none)
+    
+    return cs
+
+Configuration space generated: Configuration space object:
+  Hyperparameters:
+    classifier, Type: Categorical, Choices: {knn, svm, random_forest}, Default: knn
+    coef0, Type: UniformFloat, Range: [-1.0, 1.0], Default: 0.0
+    degree, Type: UniformInteger, Range: [2, 5], Default: 3
+    kernel, Type: Categorical, Choices: {linear, rbf, poly, sigmoid}, Default: rbf
+    knn_p, Type: UniformInteger, Range: [1, 5], Default: 2
+    max_features, Type: Categorical, Choices: {sqrt, log2, None}, Default: sqrt
+    min_samples_leaf, Type: UniformInteger, Range: [1, 20], Default: 1
+    min_samples_split, Type: UniformInteger, Range: [2, 20], Default: 2
+    n_estimators, Type: UniformInteger, Range: [10, 200], Default: 100
+    n_neighbors, Type: UniformInteger, Range: [1, 20], Default: 5
+    svm_C, Type: UniformFloat, Range: [1e-05, 10.0], Default: 1.0, on log-scale
+    svm_gamma, Type: UniformFloat, Range: [1e-05, 10.0], Default: 0.1, on log-scale
+    weights, Type: Categorical, Choices: {uniform, distance}, Default: uniform
+  Forbidden Clauses:
+    (Forbidden: classifier == 'random_forest' && Forbidden: max_features == 'None' && Forbidden: n_estimators == 10)
+
+Running scenario code:
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=100,
+        n_workers=4
+    )
+    return scenario
+
+Scenario generated: Scenario(configspace=Configuration space object:
+  Hyperparameters:
+    classifier, Type: Categorical, Choices: {knn, svm, random_forest}, Default: knn
+    coef0, Type: UniformFloat, Range: [-1.0, 1.0], Default: 0.0
+    degree, Type: UniformInteger, Range: [2, 5], Default: 3
+    kernel, Type: Categorical, Choices: {linear, rbf, poly, sigmoid}, Default: rbf
+    knn_p, Type: UniformInteger, Range: [1, 5], Default: 2
+    max_features, Type: Categorical, Choices: {sqrt, log2, None}, Default: sqrt
+    min_samples_leaf, Type: UniformInteger, Range: [1, 20], Default: 1
+    min_samples_split, Type: UniformInteger, Range: [2, 20], Default: 2
+    n_estimators, Type: UniformInteger, Range: [10, 200], Default: 100
+    n_neighbors, Type: UniformInteger, Range: [1, 20], Default: 5
+    svm_C, Type: UniformFloat, Range: [1e-05, 10.0], Default: 1.0, on log-scale
+    svm_gamma, Type: UniformFloat, Range: [1e-05, 10.0], Default: 0.1, on log-scale
+    weights, Type: Categorical, Choices: {uniform, distance}, Default: uniform
+  Forbidden Clauses:
+    (Forbidden: classifier == 'random_forest' && Forbidden: max_features == 'None' && Forbidden: n_estimators == 10)
+, name=None, output_directory='./automl_results', deterministic=False, objectives='cost', crash_cost=inf, termination_cost_threshold=inf, walltime_limit=inf, cputime_limit=inf, trial_walltime_limit=None, trial_memory_limit=None, n_trials=100, use_default_config=False, instances=None, instance_features=None, min_budget=1, max_budget=100, seed=0, n_workers=4)
+Generated training function code:
+```python
+from typing import Any
+
+import numpy as np
+from ConfigSpace import Configuration
+
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): The configuration object specifying the hyperparameters of the model.
+        dataset (Any): A dictionary containing the training data. Must have keys 'X' (feature matrix) and 'y' (label vector).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Dynamically determine input size and number of classes
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "knn":
+        model = KNeighborsClassifier(
+            n_neighbors=cfg.get("n_neighbors"),
+            weights=cfg.get("weights"),
+            p=cfg.get("knn_p")
+        )
+    elif classifier_name == "svm":
+        model = SVC(
+            C=cfg.get("svm_C"),
+            kernel=cfg.get("kernel"),
+            gamma=cfg.get("svm_gamma"),
+            degree=cfg.get("degree"),
+            coef0=cfg.get("coef0"),
+            probability=True  # Enable probability estimates for log loss
+        )
+    elif classifier_name == "random_forest":
+        model = RandomForestClassifier(
+            n_estimators=cfg.get("n_estimators"),
+            max_features=cfg.get("max_features"),
+            min_samples_split=cfg.get("min_samples_split"),
+            min_samples_leaf=cfg.get("min_samples_leaf"),
+            random_state=42  # For reproducibility
+        )
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    losses = []
+    for epoch in range(10):
+        # Train model
+        model.fit(X, y)
+
+        # Calculate log loss (cross-entropy loss)
+        if hasattr(model, "predict_proba"):
+            y_pred_proba = model.predict_proba(X)
+            loss = log_loss(y, y_pred_proba)
+        else:
+            # Handle models without predict_proba (e.g., some SVM kernels)
+            y_pred = model.predict(X)
+            # Convert predictions to one-hot encoding if necessary
+            from sklearn.preprocessing import label_binarize
+            y_one_hot = label_binarize(y, classes=np.unique(y))
+            y_pred_one_hot = label_binarize(y_pred, classes=np.unique(y))
+            loss = log_loss(y_one_hot, y_pred_one_hot)
+
+
+        losses.append(loss)
+
+    return np.mean(losses)
+```
+Running train_function code:
+from typing import Any
+
+import numpy as np
+from ConfigSpace import Configuration
+
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): The configuration object specifying the hyperparameters of the model.
+        dataset (Any): A dictionary containing the training data. Must have keys 'X' (feature matrix) and 'y' (label vector).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Dynamically determine input size and number of classes
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "knn":
+        model = KNeighborsClassifier(
+            n_neighbors=cfg.get("n_neighbors"),
+            weights=cfg.get("weights"),
+            p=cfg.get("knn_p")
+        )
+    elif classifier_name == "svm":
+        model = SVC(
+            C=cfg.get("svm_C"),
+            kernel=cfg.get("kernel"),
+            gamma=cfg.get("svm_gamma"),
+            degree=cfg.get("degree"),
+            coef0=cfg.get("coef0"),
+            probability=True  # Enable probability estimates for log loss
+        )
+    elif classifier_name == "random_forest":
+        model = RandomForestClassifier(
+            n_estimators=cfg.get("n_estimators"),
+            max_features=cfg.get("max_features"),
+            min_samples_split=cfg.get("min_samples_split"),
+            min_samples_leaf=cfg.get("min_samples_leaf"),
+            random_state=42  # For reproducibility
+        )
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    losses = []
+    for epoch in range(10):
+        # Train model
+        model.fit(X, y)
+
+        # Calculate log loss (cross-entropy loss)
+        if hasattr(model, "predict_proba"):
+            y_pred_proba = model.predict_proba(X)
+            loss = log_loss(y, y_pred_proba)
+        else:
+            # Handle models without predict_proba (e.g., some SVM kernels)
+            y_pred = model.predict(X)
+            # Convert predictions to one-hot encoding if necessary
+            from sklearn.preprocessing import label_binarize
+            y_one_hot = label_binarize(y, classes=np.unique(y))
+            y_pred_one_hot = label_binarize(y_pred, classes=np.unique(y))
+            loss = log_loss(y_one_hot, y_pred_one_hot)
+
+
+        losses.append(loss)
+
+    return np.mean(losses)
+
+Error in train_function (#1): The 'max_features' parameter of RandomForestClassifier must be an int in the range [1, inf), a float in the range (0.0, 1.0], a str among {'sqrt', 'log2'} or None. Got 'None' instead.
+Running train_function code:
+from typing import Any
+
+import numpy as np
+from ConfigSpace import Configuration
+
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): The configuration object specifying the hyperparameters of the model.
+        dataset (Any): A dictionary containing the training data. Must have keys 'X' (feature matrix) and 'y' (label vector).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Dynamically determine input size and number of classes
+    input_size = X.shape[1]
+    num_classes = len(np.unique(y))
+
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "knn":
+        model = KNeighborsClassifier(
+            n_neighbors=cfg.get("n_neighbors"),
+            weights=cfg.get("weights"),
+            p=cfg.get("knn_p")
+        )
+    elif classifier_name == "svm":
+        model = SVC(
+            C=cfg.get("svm_C"),
+            kernel=cfg.get("kernel"),
+            gamma=cfg.get("svm_gamma"),
+            degree=cfg.get("degree"),
+            coef0=cfg.get("coef0"),
+            probability=True  # Enable probability estimates for log loss
+        )
+    elif classifier_name == "random_forest":
+        model = RandomForestClassifier(
+            n_estimators=cfg.get("n_estimators"),
+            max_features="sqrt",  # Use a valid value like "sqrt"
+            min_samples_split=cfg.get("min_samples_split"),
+            min_samples_leaf=cfg.get("min_samples_leaf"),
+            random_state=42  # For reproducibility
+        )
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    losses = []
+    for epoch in range(10):
+        # Train model
+        model.fit(X, y)
+
+        # Calculate log loss (cross-entropy loss)
+        if hasattr(model, "predict_proba"):
+            y_pred_proba = model.predict_proba(X)
+            loss = log_loss(y, y_pred_proba)
+        else:
+            # Handle models without predict_proba (e.g., some SVM kernels)
+            y_pred = model.predict(X)
+            # Convert predictions to one-hot encoding if necessary
+            from sklearn.preprocessing import label_binarize
+            y_one_hot = label_binarize(y, classes=np.unique(y))
+            if num_classes > 2:
+                y_pred_one_hot = label_binarize(y_pred, classes=np.unique(y))
+                loss = log_loss(y_one_hot, y_pred_one_hot)
+            else:
+                 loss = log_loss(y, y_pred)
+
+
+        losses.append(loss)
+
+    return np.mean(losses)
+
+Training executed, loss: 0.0785866676805437

@@ -1,0 +1,273 @@
+[2025-05-20 12:06:45] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["NaiveBayes", "LogisticRegression", "SVM"])
+    cs.add_hyperparameter(classifier)
+
+    # Naive Bayes hyperparameters (only used if classifier == "NaiveBayes")
+    alpha = Float("alpha", (1e-2, 10.0), default=1.0, log=True)
+    cs.add_hyperparameter(alpha)
+
+    # Logistic Regression hyperparameters (only used if classifier == "LogisticRegression")
+    C = Float("C", (1e-5, 1.0), default=0.1, log=True)
+    cs.add_hyperparameter(C)
+
+    penalty = Categorical("penalty", ["l1", "l2"], default="l2")
+    cs.add_hyperparameter(penalty)
+
+    # SVM hyperparameters (only used if classifier == "SVM")
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    cs.add_hyperparameter(kernel)
+
+    gamma = Float("gamma", (1e-5, 1.0), default=0.1, log=True)
+    cs.add_hyperparameter(gamma)
+
+    degree = Integer("degree", (2, 5), default=3)
+    cs.add_hyperparameter(degree)
+
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "LogisticRegression"),
+        ForbiddenEqualsClause(penalty, "l1"),
+        ForbiddenEqualsClause(C, 1e-05)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:45] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["NaiveBayes", "LogisticRegression", "SVM"])
+    cs.add_hyperparameter(classifier)
+
+    # Naive Bayes hyperparameters (only used if classifier == "NaiveBayes")
+    alpha = Float("alpha", (1e-2, 10.0), default=1.0, log=True)
+    cs.add_hyperparameter(alpha)
+
+    # Logistic Regression hyperparameters (only used if classifier == "LogisticRegression")
+    C = Float("C", (1e-5, 1.0), default=0.1, log=True)
+    cs.add_hyperparameter(C)
+
+    penalty = Categorical("penalty", ["l1", "l2"], default="l2")
+    cs.add_hyperparameter(penalty)
+
+    # SVM hyperparameters (only used if classifier == "SVM")
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    cs.add_hyperparameter(kernel)
+
+    gamma = Float("gamma", (1e-5, 1.0), default=0.1, log=True)
+    cs.add_hyperparameter(gamma)
+
+    degree = Integer("degree", (2, 5), default=3)
+    cs.add_hyperparameter(degree)
+
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "LogisticRegression"),
+        ForbiddenEqualsClause(penalty, "l1"),
+        ForbiddenEqualsClause(C, 1e-05)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:45] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:45] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:45] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:45] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:50] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+import numpy as np
+from ConfigSpace import Configuration
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.metrics import log_loss
+from sklearn.feature_extraction.text import TfidfVectorizer
+import logging
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data with keys 'X' and 'y'.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Initialize the model based on the chosen classifier
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "NaiveBayes":
+        alpha = cfg.get("alpha")
+        model = GaussianNB()  # Naive Bayes has no 'eta0', 'power_t', or 'learning_rate'
+    elif classifier_name == "LogisticRegression":
+        C = cfg.get("C")
+        penalty = cfg.get("penalty")
+        model = LogisticRegression(C=C, penalty=penalty, solver='liblinear', random_state=42)
+    elif classifier_name == "SVM":
+        kernel = cfg.get("kernel")
+        gamma = cfg.get("gamma")
+        degree = cfg.get("degree")
+        model = SVC(kernel=kernel, gamma=gamma, degree=degree, probability=True, random_state=42)  # probability=True needed for log_loss
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    # Train the model and calculate the average loss over 10 epochs
+    num_epochs = 10
+    total_loss = 0.0
+
+    for _ in range(num_epochs):
+        # Split the data into training and validation sets (80/20 split)
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Train the model
+        try:
+            model.fit(X_train, y_train)  # type: ignore # added type ignore as model may not be defined
+        except Exception as e:
+            logging.exception(f"Exception during fit: {e}")
+            return float('inf')  # Return a high loss if training fails
+
+
+        # Calculate the loss on the validation set
+        try:
+            y_pred_proba = model.predict_proba(X_val)  # type: ignore
+            loss = log_loss(y_val, y_pred_proba)  # Use log_loss for multi-class classification
+        except Exception as e:
+            logging.exception(f"Exception during prediction: {e}")
+            return float('inf')  # Return a high loss if prediction fails
+
+
+        total_loss += loss
+
+    average_loss = total_loss / num_epochs
+    return average_loss
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:50] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+import numpy as np
+from ConfigSpace import Configuration
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.metrics import log_loss
+from sklearn.feature_extraction.text import TfidfVectorizer
+import logging
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data with keys 'X' and 'y'.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Initialize the model based on the chosen classifier
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "NaiveBayes":
+        alpha = cfg.get("alpha")
+        model = GaussianNB()  # Naive Bayes has no 'eta0', 'power_t', or 'learning_rate'
+    elif classifier_name == "LogisticRegression":
+        C = cfg.get("C")
+        penalty = cfg.get("penalty")
+        model = LogisticRegression(C=C, penalty=penalty, solver='liblinear', random_state=42)
+    elif classifier_name == "SVM":
+        kernel = cfg.get("kernel")
+        gamma = cfg.get("gamma")
+        degree = cfg.get("degree")
+        model = SVC(kernel=kernel, gamma=gamma, degree=degree, probability=True, random_state=42)  # probability=True needed for log_loss
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    # Train the model and calculate the average loss over 10 epochs
+    num_epochs = 10
+    total_loss = 0.0
+
+    for _ in range(num_epochs):
+        # Split the data into training and validation sets (80/20 split)
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Train the model
+        try:
+            model.fit(X_train, y_train)  # type: ignore # added type ignore as model may not be defined
+        except Exception as e:
+            logging.exception(f"Exception during fit: {e}")
+            return float('inf')  # Return a high loss if training fails
+
+
+        # Calculate the loss on the validation set
+        try:
+            y_pred_proba = model.predict_proba(X_val)  # type: ignore
+            loss = log_loss(y_val, y_pred_proba)  # Use log_loss for multi-class classification
+        except Exception as e:
+            logging.exception(f"Exception during prediction: {e}")
+            return float('inf')  # Return a high loss if prediction fails
+
+
+        total_loss += loss
+
+    average_loss = total_loss / num_epochs
+    return average_loss
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:06:50] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': inf}] Training executed successfully, loss: inf
+--------------------------------------------------------------------------------

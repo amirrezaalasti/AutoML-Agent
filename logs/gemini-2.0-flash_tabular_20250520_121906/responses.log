@@ -1,0 +1,273 @@
+[2025-05-20 12:19:10] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["knn", "svm", "random_forest"], default="knn")
+    cs.add_hyperparameter(classifier)
+
+    # KNN parameters
+    n_neighbors = Integer("n_neighbors", bounds=(1, 20), default=5)
+    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
+    p = Categorical("p", [1, 2], default=2)
+    cs.add_hyperparameters([n_neighbors, weights, p])
+
+    # SVM parameters
+    C = Float("C", bounds=(1e-5, 10), default=1.0, log=True)
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    degree = Integer("degree", bounds=(2, 5), default=3)
+    gamma = Categorical("gamma", ["scale", "auto"], default="scale")
+    cs.add_hyperparameters([C, kernel, degree, gamma])
+
+    # Random Forest parameters
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_depth = Integer("max_depth", bounds=(2, 10), default=None)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
+
+
+    # Add forbidden clauses
+    forbidden_knn = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "knn"),
+        ForbiddenEqualsClause(kernel, "linear")
+    )
+
+    forbidden_svm = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+        ForbiddenEqualsClause(n_neighbors, 5)
+    )
+
+    forbidden_rf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+        ForbiddenEqualsClause(kernel, "rbf")
+    )
+
+    cs.add_forbidden_clause(forbidden_knn)
+    cs.add_forbidden_clause(forbidden_svm)
+    cs.add_forbidden_clause(forbidden_rf)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:10] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["knn", "svm", "random_forest"], default="knn")
+    cs.add_hyperparameter(classifier)
+
+    # KNN parameters
+    n_neighbors = Integer("n_neighbors", bounds=(1, 20), default=5)
+    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
+    p = Categorical("p", [1, 2], default=2)
+    cs.add_hyperparameters([n_neighbors, weights, p])
+
+    # SVM parameters
+    C = Float("C", bounds=(1e-5, 10), default=1.0, log=True)
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    degree = Integer("degree", bounds=(2, 5), default=3)
+    gamma = Categorical("gamma", ["scale", "auto"], default="scale")
+    cs.add_hyperparameters([C, kernel, degree, gamma])
+
+    # Random Forest parameters
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_depth = Integer("max_depth", bounds=(2, 10), default=None)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
+
+
+    # Add forbidden clauses
+    forbidden_knn = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "knn"),
+        ForbiddenEqualsClause(kernel, "linear")
+    )
+
+    forbidden_svm = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "svm"),
+        ForbiddenEqualsClause(n_neighbors, 5)
+    )
+
+    forbidden_rf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "random_forest"),
+        ForbiddenEqualsClause(kernel, "rbf")
+    )
+
+    cs.add_forbidden_clause(forbidden_knn)
+    cs.add_forbidden_clause(forbidden_svm)
+    cs.add_forbidden_clause(forbidden_rf)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:10] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:11] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=10,
+        n_workers=4
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:11] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=10,
+        n_workers=4
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:11] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:14] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss  # Use log loss for multi-class classification
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a machine learning model based on the given configuration and dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data with keys 'X' (features) and 'y' (labels).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Split the data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)  # Using a validation set is important
+
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "knn":
+        model = KNeighborsClassifier(
+            n_neighbors=cfg.get("n_neighbors"),
+            weights=cfg.get("weights"),
+            p=cfg.get("p")
+        )
+    elif classifier_name == "svm":
+        model = SVC(
+            C=cfg.get("C"),
+            kernel=cfg.get("kernel"),
+            degree=cfg.get("degree"),
+            gamma=cfg.get("gamma"),
+            probability=True # Required for log_loss
+        )
+    elif classifier_name == "random_forest":
+        model = RandomForestClassifier(
+            n_estimators=cfg.get("n_estimators"),
+            max_depth=cfg.get("max_depth"),
+            min_samples_split=cfg.get("min_samples_split"),
+            min_samples_leaf=cfg.get("min_samples_leaf"),
+            random_state=42
+        )
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    losses = []
+    for _ in range(10):
+        model.fit(X_train, y_train)
+        y_pred_proba = model.predict_proba(X_val)
+        loss = log_loss(y_val, y_pred_proba)
+        losses.append(loss)
+
+    return np.mean(losses)
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:14] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss  # Use log loss for multi-class classification
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a machine learning model based on the given configuration and dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data with keys 'X' (features) and 'y' (labels).
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Split the data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)  # Using a validation set is important
+
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "knn":
+        model = KNeighborsClassifier(
+            n_neighbors=cfg.get("n_neighbors"),
+            weights=cfg.get("weights"),
+            p=cfg.get("p")
+        )
+    elif classifier_name == "svm":
+        model = SVC(
+            C=cfg.get("C"),
+            kernel=cfg.get("kernel"),
+            degree=cfg.get("degree"),
+            gamma=cfg.get("gamma"),
+            probability=True # Required for log_loss
+        )
+    elif classifier_name == "random_forest":
+        model = RandomForestClassifier(
+            n_estimators=cfg.get("n_estimators"),
+            max_depth=cfg.get("max_depth"),
+            min_samples_split=cfg.get("min_samples_split"),
+            min_samples_leaf=cfg.get("min_samples_leaf"),
+            random_state=42
+        )
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    losses = []
+    for _ in range(10):
+        model.fit(X_train, y_train)
+        y_pred_proba = model.predict_proba(X_val)
+        loss = log_loss(y_val, y_pred_proba)
+        losses.append(loss)
+
+    return np.mean(losses)
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:19:14] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 1.1006471265733162}] Training executed successfully, loss: 1.1006471265733162
+--------------------------------------------------------------------------------

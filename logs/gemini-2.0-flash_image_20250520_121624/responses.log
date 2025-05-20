@@ -1,0 +1,1032 @@
+[2025-05-20 12:16:27] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    optimizer = Categorical("optimizer", ["Adam", "SGD", "RMSprop"], default="Adam")
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    batch_size = Integer("batch_size", (32, 256), default=64, log=True)
+    momentum = Float("momentum", (0.0, 0.99), default=0.9, log=False)
+    beta1 = Float("beta1", (0.0, 0.999), default=0.9, log=False)
+    beta2 = Float("beta2", (0.0, 0.999), default=0.999, log=False)
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([optimizer, learning_rate, batch_size, momentum, beta1, beta2])
+
+    # Define forbidden clauses
+    forbidden_momentum = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "Adam"),
+        ForbiddenEqualsClause(momentum, 0.9)
+    )
+
+    forbidden_beta1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta1, 0.9)
+    )
+
+    forbidden_beta2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta2, 0.999)
+    )
+
+    # Add forbidden clauses to the configuration space
+    cs.add_forbidden_clauses([forbidden_momentum, forbidden_beta1, forbidden_beta2])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:27] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    optimizer = Categorical("optimizer", ["Adam", "SGD", "RMSprop"], default="Adam")
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    batch_size = Integer("batch_size", (32, 256), default=64, log=True)
+    momentum = Float("momentum", (0.0, 0.99), default=0.9, log=False)
+    beta1 = Float("beta1", (0.0, 0.999), default=0.9, log=False)
+    beta2 = Float("beta2", (0.0, 0.999), default=0.999, log=False)
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([optimizer, learning_rate, batch_size, momentum, beta1, beta2])
+
+    # Define forbidden clauses
+    forbidden_momentum = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "Adam"),
+        ForbiddenEqualsClause(momentum, 0.9)
+    )
+
+    forbidden_beta1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta1, 0.9)
+    )
+
+    forbidden_beta2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta2, 0.999)
+    )
+
+    # Add forbidden clauses to the configuration space
+    cs.add_forbidden_clauses([forbidden_momentum, forbidden_beta1, forbidden_beta2])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:27] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Given vector violates forbidden clause: (Forbidden: momentum == 0.9 && Forbidden: optimizer == 'Adam')
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:30] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    optimizer = Categorical("optimizer", ["Adam", "SGD", "RMSprop"], default="Adam")
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    batch_size = Integer("batch_size", (32, 256), default=64, log=True)
+    momentum = Float("momentum", (0.0, 0.99), default=0.9, log=False)
+    beta1 = Float("beta1", (0.0, 0.999), default=0.9, log=False)
+    beta2 = Float("beta2", (0.0, 0.999), default=0.999, log=False)
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([optimizer, learning_rate, batch_size, momentum, beta1, beta2])
+
+    # Define forbidden clauses
+    forbidden_momentum = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "Adam"),
+        ForbiddenEqualsClause(momentum, 0.0)
+    )
+
+    forbidden_beta1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta1, 0.0)
+    )
+
+    forbidden_beta2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta2, 0.0)
+    )
+
+    # Add forbidden clauses to the configuration space
+    cs.add_forbidden_clauses([forbidden_momentum, forbidden_beta1, forbidden_beta2])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:30] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    optimizer = Categorical("optimizer", ["Adam", "SGD", "RMSprop"], default="Adam")
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    batch_size = Integer("batch_size", (32, 256), default=64, log=True)
+    momentum = Float("momentum", (0.0, 0.99), default=0.9, log=False)
+    beta1 = Float("beta1", (0.0, 0.999), default=0.9, log=False)
+    beta2 = Float("beta2", (0.0, 0.999), default=0.999, log=False)
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([optimizer, learning_rate, batch_size, momentum, beta1, beta2])
+
+    # Define forbidden clauses
+    forbidden_momentum = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "Adam"),
+        ForbiddenEqualsClause(momentum, 0.0)
+    )
+
+    forbidden_beta1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta1, 0.0)
+    )
+
+    forbidden_beta2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(beta2, 0.0)
+    )
+
+    # Add forbidden clauses to the configuration space
+    cs.add_forbidden_clauses([forbidden_momentum, forbidden_beta1, forbidden_beta2])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:30] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:31] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=100,
+        n_workers=4
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:31] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=100,
+        n_workers=4
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:31] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:38] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the given dataset.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with keys 'X' and 'y'.
+
+    Returns:
+        float: Average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Image data handling
+    if len(X.shape) == 4:  # Already in (N, C, H, W) or (N, H, W, C)
+        pass  # Use as is, just ensure correct channel format
+    elif len(X.shape) == 3:  # (N, H, W) - Single channel
+        X = X.reshape(X.shape[0], 1, X.shape[1], X.shape[2])
+    elif len(X.shape) == 2:  # Flattened images
+        n_samples, n_features = X.shape
+        height = int(np.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError(f"Flattened image dimensions {n_features} is not a perfect square")
+        X = X.reshape(n_samples, 1, height, height)
+
+    # Determine input dimensions and number of classes
+    if len(X.shape) == 4:  # (N, C, H, W)
+        n_channels = X.shape[1]
+        height = width = X.shape[2]
+    else:  # Flattened images
+        input_size = X.shape[1]
+
+    num_classes = len(np.unique(y))
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get('batch_size')
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    if len(X.shape) == 4:
+        # CNN model for image data
+        class CNN(nn.Module):
+            def __init__(self, n_channels, num_classes):
+                super(CNN, self).__init__()
+                self.conv1 = nn.Conv2d(n_channels, 32, kernel_size=3, padding=1)
+                self.relu1 = nn.ReLU()
+                self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+                self.relu2 = nn.ReLU()
+                self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.flatten = nn.Flatten()
+                self.fc1 = nn.Linear(64 * (X.shape[2] // 4) * (X.shape[3] // 4), 128)
+                self.relu3 = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.maxpool1(self.relu1(self.conv1(x)))
+                x = self.maxpool2(self.relu2(self.conv2(x)))
+                x = self.flatten(x)
+                x = self.relu3(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = CNN(n_channels, num_classes)
+    else:
+        # Simple linear model for flattened data
+        class SimpleNN(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(SimpleNN, self).__init__()
+                self.fc1 = nn.Linear(input_size, 128)
+                self.relu = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.relu(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = SimpleNN(input_size, num_classes)
+
+
+    # Define optimizer
+    optimizer_name = cfg.get('optimizer')
+    learning_rate = cfg.get('learning_rate')
+    if optimizer_name == 'Adam':
+        beta1 = cfg.get('beta1')
+        beta2 = cfg.get('beta2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_name == 'SGD':
+        momentum = cfg.get('momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_name == 'RMSprop':
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item()
+        total_loss += epoch_loss / len(train_loader)  # Average loss per batch
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:38] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the given dataset.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with keys 'X' and 'y'.
+
+    Returns:
+        float: Average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Image data handling
+    if len(X.shape) == 4:  # Already in (N, C, H, W) or (N, H, W, C)
+        pass  # Use as is, just ensure correct channel format
+    elif len(X.shape) == 3:  # (N, H, W) - Single channel
+        X = X.reshape(X.shape[0], 1, X.shape[1], X.shape[2])
+    elif len(X.shape) == 2:  # Flattened images
+        n_samples, n_features = X.shape
+        height = int(np.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError(f"Flattened image dimensions {n_features} is not a perfect square")
+        X = X.reshape(n_samples, 1, height, height)
+
+    # Determine input dimensions and number of classes
+    if len(X.shape) == 4:  # (N, C, H, W)
+        n_channels = X.shape[1]
+        height = width = X.shape[2]
+    else:  # Flattened images
+        input_size = X.shape[1]
+
+    num_classes = len(np.unique(y))
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get('batch_size')
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    if len(X.shape) == 4:
+        # CNN model for image data
+        class CNN(nn.Module):
+            def __init__(self, n_channels, num_classes):
+                super(CNN, self).__init__()
+                self.conv1 = nn.Conv2d(n_channels, 32, kernel_size=3, padding=1)
+                self.relu1 = nn.ReLU()
+                self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+                self.relu2 = nn.ReLU()
+                self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.flatten = nn.Flatten()
+                self.fc1 = nn.Linear(64 * (X.shape[2] // 4) * (X.shape[3] // 4), 128)
+                self.relu3 = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.maxpool1(self.relu1(self.conv1(x)))
+                x = self.maxpool2(self.relu2(self.conv2(x)))
+                x = self.flatten(x)
+                x = self.relu3(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = CNN(n_channels, num_classes)
+    else:
+        # Simple linear model for flattened data
+        class SimpleNN(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(SimpleNN, self).__init__()
+                self.fc1 = nn.Linear(input_size, 128)
+                self.relu = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.relu(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = SimpleNN(input_size, num_classes)
+
+
+    # Define optimizer
+    optimizer_name = cfg.get('optimizer')
+    learning_rate = cfg.get('learning_rate')
+    if optimizer_name == 'Adam':
+        beta1 = cfg.get('beta1')
+        beta2 = cfg.get('beta2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_name == 'SGD':
+        momentum = cfg.get('momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_name == 'RMSprop':
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item()
+        total_loss += epoch_loss / len(train_loader)  # Average loss per batch
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:38] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:44] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the given dataset.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with keys 'X' and 'y'.
+
+    Returns:
+        float: Average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Image data handling
+    if len(X.shape) == 4:  # Already in (N, C, H, W) or (N, H, W, C)
+        pass  # Use as is, just ensure correct channel format
+    elif len(X.shape) == 3:  # (N, H, W) - Single channel
+        X = X.reshape(X.shape[0], 1, X.shape[1], X.shape[2])
+    elif len(X.shape) == 2:  # Flattened images
+        n_samples, n_features = X.shape
+        height = int(np.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError(f"Flattened image dimensions {{n_features}} is not a perfect square")
+        X = X.reshape(n_samples, 1, height, height)
+
+    # Determine input dimensions and number of classes
+    if len(X.shape) == 4:  # (N, C, H, W)
+        n_channels = X.shape[1]
+        height = X.shape[2]
+        width = X.shape[3]
+    else:  # Flattened images
+        input_size = X.shape[1]
+
+    num_classes = len(np.unique(y))
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get('batch_size')
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    if len(X.shape) == 4:
+        # CNN model for image data
+        class CNN(nn.Module):
+            def __init__(self, n_channels, num_classes, img_height, img_width):
+                super(CNN, self).__init__()
+                self.conv1 = nn.Conv2d(n_channels, 32, kernel_size=3, padding=1)
+                self.relu1 = nn.ReLU()
+                self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+                self.relu2 = nn.ReLU()
+                self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.flatten = nn.Flatten()
+                self.fc1 = nn.Linear(64 * (img_height // 4) * (img_width // 4), 128)
+                self.relu3 = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.maxpool1(self.relu1(self.conv1(x)))
+                x = self.maxpool2(self.relu2(self.conv2(x)))
+                x = self.flatten(x)
+                x = self.relu3(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = CNN(n_channels, num_classes, height, width)
+    else:
+        # Simple linear model for flattened data
+        class SimpleNN(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(SimpleNN, self).__init__()
+                self.fc1 = nn.Linear(input_size, 128)
+                self.relu = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.relu(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = SimpleNN(input_size, num_classes)
+
+
+    # Define optimizer
+    optimizer_name = cfg.get('optimizer')
+    learning_rate = cfg.get('learning_rate')
+    if optimizer_name == 'Adam':
+        beta1 = cfg.get('beta1')
+        beta2 = cfg.get('beta2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_name == 'SGD':
+        momentum = cfg.get('momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_name == 'RMSprop':
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {{optimizer_name}}")
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item()
+        total_loss += epoch_loss / len(train_loader)  # Average loss per batch
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:44] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the given dataset.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with keys 'X' and 'y'.
+
+    Returns:
+        float: Average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Image data handling
+    if len(X.shape) == 4:  # Already in (N, C, H, W) or (N, H, W, C)
+        pass  # Use as is, just ensure correct channel format
+    elif len(X.shape) == 3:  # (N, H, W) - Single channel
+        X = X.reshape(X.shape[0], 1, X.shape[1], X.shape[2])
+    elif len(X.shape) == 2:  # Flattened images
+        n_samples, n_features = X.shape
+        height = int(np.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError(f"Flattened image dimensions {{n_features}} is not a perfect square")
+        X = X.reshape(n_samples, 1, height, height)
+
+    # Determine input dimensions and number of classes
+    if len(X.shape) == 4:  # (N, C, H, W)
+        n_channels = X.shape[1]
+        height = X.shape[2]
+        width = X.shape[3]
+    else:  # Flattened images
+        input_size = X.shape[1]
+
+    num_classes = len(np.unique(y))
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get('batch_size')
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    if len(X.shape) == 4:
+        # CNN model for image data
+        class CNN(nn.Module):
+            def __init__(self, n_channels, num_classes, img_height, img_width):
+                super(CNN, self).__init__()
+                self.conv1 = nn.Conv2d(n_channels, 32, kernel_size=3, padding=1)
+                self.relu1 = nn.ReLU()
+                self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+                self.relu2 = nn.ReLU()
+                self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.flatten = nn.Flatten()
+                self.fc1 = nn.Linear(64 * (img_height // 4) * (img_width // 4), 128)
+                self.relu3 = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.maxpool1(self.relu1(self.conv1(x)))
+                x = self.maxpool2(self.relu2(self.conv2(x)))
+                x = self.flatten(x)
+                x = self.relu3(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = CNN(n_channels, num_classes, height, width)
+    else:
+        # Simple linear model for flattened data
+        class SimpleNN(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(SimpleNN, self).__init__()
+                self.fc1 = nn.Linear(input_size, 128)
+                self.relu = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.relu(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = SimpleNN(input_size, num_classes)
+
+
+    # Define optimizer
+    optimizer_name = cfg.get('optimizer')
+    learning_rate = cfg.get('learning_rate')
+    if optimizer_name == 'Adam':
+        beta1 = cfg.get('beta1')
+        beta2 = cfg.get('beta2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_name == 'SGD':
+        momentum = cfg.get('momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_name == 'RMSprop':
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {{optimizer_name}}")
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item()
+        total_loss += epoch_loss / len(train_loader)  # Average loss per batch
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:44] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:51] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the given dataset.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with keys 'X' and 'y'.
+
+    Returns:
+        float: Average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert pandas DataFrames to numpy arrays
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.DataFrame):
+        y = y.values
+
+    # Image data handling
+    if len(X.shape) == 4:  # Already in (N, C, H, W) or (N, H, W, C)
+        pass  # Use as is, just ensure correct channel format
+    elif len(X.shape) == 3:  # (N, H, W) - Single channel
+        X = X.reshape(X.shape[0], 1, X.shape[1], X.shape[2])
+    elif len(X.shape) == 2:  # Flattened images
+        n_samples, n_features = X.shape
+        height = int(np.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError(f"Flattened image dimensions {n_features} is not a perfect square")
+        X = X.reshape(n_samples, 1, height, height)
+
+    # Determine input dimensions and number of classes
+    if len(X.shape) == 4:  # (N, C, H, W)
+        n_channels = X.shape[1]
+        height = X.shape[2]
+        width = X.shape[3]
+    else:  # Flattened images
+        input_size = X.shape[1]
+
+    num_classes = len(np.unique(y))
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get('batch_size')
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    if len(X.shape) == 4:
+        # CNN model for image data
+        class CNN(nn.Module):
+            def __init__(self, n_channels, num_classes, img_height, img_width):
+                super(CNN, self).__init__()
+                self.conv1 = nn.Conv2d(n_channels, 32, kernel_size=3, padding=1)
+                self.relu1 = nn.ReLU()
+                self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+                self.relu2 = nn.ReLU()
+                self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.flatten = nn.Flatten()
+                self.fc1 = nn.Linear(64 * (img_height // 4) * (img_width // 4), 128)
+                self.relu3 = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.maxpool1(self.relu1(self.conv1(x)))
+                x = self.maxpool2(self.relu2(self.conv2(x)))
+                x = self.flatten(x)
+                x = self.relu3(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = CNN(n_channels, num_classes, height, width)
+    else:
+        # Simple linear model for flattened data
+        class SimpleNN(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(SimpleNN, self).__init__()
+                self.fc1 = nn.Linear(input_size, 128)
+                self.relu = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.relu(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = SimpleNN(input_size, num_classes)
+
+
+    # Define optimizer
+    optimizer_name = cfg.get('optimizer')
+    learning_rate = cfg.get('learning_rate')
+    if optimizer_name == 'Adam':
+        beta1 = cfg.get('beta1')
+        beta2 = cfg.get('beta2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_name == 'SGD':
+        momentum = cfg.get('momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_name == 'RMSprop':
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item()
+        total_loss += epoch_loss / len(train_loader)  # Average loss per batch
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+```
+--------------------------------------------------------------------------------
+[2025-05-20 12:16:51] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a PyTorch model on the given dataset.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with keys 'X' and 'y'.
+
+    Returns:
+        float: Average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert pandas DataFrames to numpy arrays
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.DataFrame):
+        y = y.values
+
+    # Image data handling
+    if len(X.shape) == 4:  # Already in (N, C, H, W) or (N, H, W, C)
+        pass  # Use as is, just ensure correct channel format
+    elif len(X.shape) == 3:  # (N, H, W) - Single channel
+        X = X.reshape(X.shape[0], 1, X.shape[1], X.shape[2])
+    elif len(X.shape) == 2:  # Flattened images
+        n_samples, n_features = X.shape
+        height = int(np.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError(f"Flattened image dimensions {n_features} is not a perfect square")
+        X = X.reshape(n_samples, 1, height, height)
+
+    # Determine input dimensions and number of classes
+    if len(X.shape) == 4:  # (N, C, H, W)
+        n_channels = X.shape[1]
+        height = X.shape[2]
+        width = X.shape[3]
+    else:  # Flattened images
+        input_size = X.shape[1]
+
+    num_classes = len(np.unique(y))
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create DataLoader
+    batch_size = cfg.get('batch_size')
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+    # Define the model
+    if len(X.shape) == 4:
+        # CNN model for image data
+        class CNN(nn.Module):
+            def __init__(self, n_channels, num_classes, img_height, img_width):
+                super(CNN, self).__init__()
+                self.conv1 = nn.Conv2d(n_channels, 32, kernel_size=3, padding=1)
+                self.relu1 = nn.ReLU()
+                self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+                self.relu2 = nn.ReLU()
+                self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+                self.flatten = nn.Flatten()
+                self.fc1 = nn.Linear(64 * (img_height // 4) * (img_width // 4), 128)
+                self.relu3 = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.maxpool1(self.relu1(self.conv1(x)))
+                x = self.maxpool2(self.relu2(self.conv2(x)))
+                x = self.flatten(x)
+                x = self.relu3(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = CNN(n_channels, num_classes, height, width)
+    else:
+        # Simple linear model for flattened data
+        class SimpleNN(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(SimpleNN, self).__init__()
+                self.fc1 = nn.Linear(input_size, 128)
+                self.relu = nn.ReLU()
+                self.fc2 = nn.Linear(128, num_classes)
+
+            def forward(self, x):
+                x = self.relu(self.fc1(x))
+                x = self.fc2(x)
+                return x
+
+        model = SimpleNN(input_size, num_classes)
+
+
+    # Define optimizer
+    optimizer_name = cfg.get('optimizer')
+    learning_rate = cfg.get('learning_rate')
+    if optimizer_name == 'Adam':
+        beta1 = cfg.get('beta1')
+        beta2 = cfg.get('beta2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_name == 'SGD':
+        momentum = cfg.get('momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_name == 'RMSprop':
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    for epoch in range(num_epochs):
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item()
+        total_loss += epoch_loss / len(train_loader)  # Average loss per batch
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+
+--------------------------------------------------------------------------------
+[2025-05-20 12:20:31] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 0.060881924117043275}] Training executed successfully, loss: 0.060881924117043275
+--------------------------------------------------------------------------------
