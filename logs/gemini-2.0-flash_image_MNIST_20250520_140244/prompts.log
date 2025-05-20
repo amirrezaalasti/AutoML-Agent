@@ -1,0 +1,1179 @@
+[2025-05-20 14:02:47] [Metadata: {'component': 'config'}] **TASK**
+
+Goal: Write a Python function called `get_configspace()` that returns a valid `ConfigurationSpace` for a classification task.
+
+---
+
+**STRICT OUTPUT RULES**
+
+* Output only the `get_configspace()` function and necessary imports.
+* Do not include any extra text, explanations, or comments.
+* Code must be syntactically correct, executable, and compatible with SMAC.
+
+---
+
+**ALLOWED CLASSES**
+
+**Core Classes**
+
+* `ConfigurationSpace`
+* `Categorical`
+* `Float`
+* `Integer`
+* `Constant`
+
+**Conditions**
+
+* `EqualsCondition`
+* `InCondition`
+* `OrConjunction`
+
+**Forbidden Clauses**
+
+* `ForbiddenEqualsClause`
+* `ForbiddenAndConjunction`
+
+**Distributions (only if needed)**
+
+* `Beta`
+* `Normal`
+
+**Serialization (only if needed)**
+
+* `to_yaml()`
+* `from_yaml()`
+
+---
+
+**ALLOWED OPTIONS**
+
+* `default`
+* `log`
+* `distribution`
+* `seed`
+
+---
+
+**CONSTRAINTS**
+
+* Must include **at least one** `ForbiddenAndConjunction` to block invalid combinations.
+
+---
+
+**CONFIGURATION SPACE REQUIREMENTS**
+
+* Initialize `ConfigurationSpace` with `seed=1234`.
+
+---
+
+**DATASET DESCRIPTION**
+
+* The configuration space must be based on the following information
+This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+.
+* Hyperparameters and model choices must reflect what is appropriate for that dataset type.
+
+---
+
+**IMPORTANT RULE**
+
+* Do **not** use any classes, functions, methods, or modules outside of the **ALLOWED CLASSES**.
+
+[EXAMPLES]
+
+# Example 1: Basic ConfigurationSpace
+```python
+from ConfigSpace import ConfigurationSpace
+
+cs = ConfigurationSpace(
+    space={
+        "C": (-1.0, 1.0),
+        "max_iter": (10, 100),
+    },
+    seed=1234,
+)
+```
+# Example 2: Adding Hyperparameters
+```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+
+kernel_type = Categorical('kernel_type', ['linear', 'poly', 'rbf', 'sigmoid'])
+degree = Integer('degree', bounds=(2, 4), default=2)
+coef0 = Float('coef0', bounds=(0, 1), default=0.0)
+gamma = Float('gamma', bounds=(1e-5, 1e2), default=1, log=True)
+
+cs = ConfigurationSpace()
+cs.add([kernel_type, degree, coef0, gamma])
+```
+# Example 3: Adding Conditions
+```python
+from ConfigSpace import EqualsCondition, InCondition, OrConjunction
+
+cond_1 = EqualsCondition(degree, kernel_type, 'poly')
+cond_2 = OrConjunction(
+    EqualsCondition(coef0, kernel_type, 'poly'),
+    EqualsCondition(coef0, kernel_type, 'sigmoid')
+)
+cond_3 = InCondition(gamma, kernel_type, ['rbf', 'poly', 'sigmoid'])
+```
+# Example 4: Adding Forbidden Clauses
+```pyhon
+from ConfigSpace import ForbiddenEqualsClause, ForbiddenAndConjunction
+
+penalty_and_loss = ForbiddenAndConjunction(
+    ForbiddenEqualsClause(penalty, "l1"),
+    ForbiddenEqualsClause(loss, "hinge")
+)
+constant_penalty_and_loss = ForbiddenAndConjunction(
+    ForbiddenEqualsClause(dual, "False"),
+    ForbiddenEqualsClause(penalty, "l2"),
+    ForbiddenEqualsClause(loss, "hinge")
+)
+penalty_and_dual = ForbiddenAndConjunction(
+    ForbiddenEqualsClause(dual, "False"),
+    ForbiddenEqualsClause(penalty, "l1")
+)
+```
+Example 5: Serialization
+```python
+from pathlib import Path
+from ConfigSpace import ConfigurationSpace
+
+path = Path("configspace.yaml")
+cs = ConfigurationSpace(
+    space={
+        "C": (-1.0, 1.0),
+        "max_iter": (10, 100),
+    },
+    seed=1234,
+)
+cs.to_yaml(path)
+loaded_cs = ConfigurationSpace.from_yaml(path)
+```
+# Example 6: Priors
+```python
+import numpy as np
+from ConfigSpace import ConfigurationSpace, Float, Categorical, Beta, Normal
+
+cs = ConfigurationSpace(
+    space={
+        "lr": Float(
+            'lr',
+            bounds=(1e-5, 1e-1),
+            default=1e-3,
+            log=True,
+            distribution=Normal(1e-3, 1e-1)
+        ),
+        "dropout": Float(
+            'dropout',
+            bounds=(0, 0.99),
+            default=0.25,
+            distribution=Beta(alpha=2, beta=4)
+        ),
+        "activation": Categorical(
+            'activation',
+            items=['tanh', 'relu'],
+            weights=[0.2, 0.8]
+        ),
+    },
+    seed=1234,
+)
+```
+
+--------------------------------------------------------------------------------
+[2025-05-20 14:02:47] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-05-20 14:02:48] [Metadata: {'component': 'scenario'}] ---
+
+**Objective:**
+Generate a **Python function** named `generate_scenario(cs)` that returns a valid `Scenario` object configured for SMAC (v2.0+), strictly following the rules below.
+
+---
+
+**Output Format Rules (Strict):**
+
+* Output **only** the function `generate_scenario(cs)` and the **necessary import statements**.
+* Use **Python 3.10 syntax** but **do not** include type annotations for the function or parameters.
+* The code must be **fully executable** with the latest **SMAC v2.0+** version.
+* Output **only valid Python code** – **no comments**, **no explanations**, **no extra text**, and **no example usage**.
+* The function must be **self-contained**.
+
+---
+
+**Functional Requirements:**
+
+* The input `cs` is a `ConfigurationSpace` object.
+* Return a `Scenario` configured with the following:
+  * `output_directory`: `"./automl_results"`
+  * `deterministic`: `False` (enable variability)
+  * `n_workers`: greater than 1 (to enable parallel optimization)
+  * `min_budget` and `max_budget`: set appropriately for multi-fidelity tuning (e.g., training epochs)
+---
+
+**Reminder:** The output must be limited to:
+
+* Valid `import` statements
+* A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
+* Do not use any parameters other than the ones explicitly listed in this prompt.
+
+---
+
+**Example (Correct Output Format):**
+
+```python
+from smac import Scenario
+from ConfigSpace import Configuration
+
+def generate_scenario(cs: Configuration):
+    scenario = Scenario(
+        configspace=cs,
+        objectives="validation_loss",
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=100,
+        n_workers=4
+    )
+    return scenario
+```
+
+--------------------------------------------------------------------------------
+[2025-05-20 14:02:48] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-05-20 14:02:58] [Metadata: {'component': 'train_function'}] **Generate production-grade Python code for a machine learning training function with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import Configuration
+def train(cfg: Configuration, dataset: Any) -> float:
+```
+
+---
+
+### **Function Behavior Requirements:**
+
+* The function **must accept** a `dataset` dictionary with:
+
+  * `dataset['X']`: feature matrix or input tensor
+  * `dataset['y']`: label vector or label tensor
+
+* Assume `cfg` is a sampled configuration object:
+
+  * Access primitive values using `cfg.get('key')` (only `int`, `float`, `str`, etc.).
+  * **Do not access or manipulate non-primitive hyperparameter objects**.
+
+* The function must return the **average training loss** over 10 epochs.
+
+* You must carefully read and follow the dataset description provided, which includes:
+  * Data format and dimensions
+  * Required preprocessing steps
+  * Special handling requirements
+  * Framework-specific considerations
+
+```python
+return loss  # float
+```
+
+* Lower `loss` means a better model.
+
+---
+
+### **Frameworks**
+
+You may choose **PyTorch**, **TensorFlow**, or **scikit-learn**, depending on the dataset and supporting code provided.
+
+---
+
+### **Model Requirements**
+
+* Infer input and output dimensions dynamically from the dataset
+* Follow the data format requirements specified in the dataset description
+* Handle any necessary data transformations as described in the dataset description
+
+---
+
+### **Supporting Code Provided:**
+
+* ConfigSpace definition: `from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import EqualsCondition, InCondition, OrConjunction
+
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    optimizer = Categorical("optimizer", ["Adam", "SGD"], default="Adam")
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), log=True, default=1e-3)
+    batch_size = Categorical("batch_size", [32, 64, 128], default=32)
+    num_layers = Integer("num_layers", (1, 5), default=2)
+    num_units = Integer("num_units", (32, 256), log=True, default=64)
+    dropout = Float("dropout", (0.0, 0.9), default=0.5)
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([optimizer, learning_rate, batch_size, num_layers, num_units, dropout])
+
+    # Define forbidden clauses
+    # Example: If optimizer is SGD, then learning rate must be less than 0.001
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(optimizer, "SGD"),
+        ForbiddenEqualsClause(learning_rate, 0.01)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+`
+* SMAC scenario: `from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        min_budget=1,
+        max_budget=10,
+        n_workers=2
+    )
+    return scenario
+`
+* Dataset description: `This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+`
+
+---
+
+### **Additional Instructions**
+
+* The code must not hardcode dataset dimensions
+* The function must be runnable and not assume unavailable classes or modules
+* You must only output the `def train(...)` function and nothing else
+* Always check dataset description for format hints and requirements before processing
+
+--------------------------------------------------------------------------------
+[2025-05-20 14:02:58] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-05-20 14:02:59] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-05-20 14:02:59] [Metadata: {'component': 'train_function', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
+'DataFrame' object has no attribute 'reshape'
+
+Your task is to fix the issues in the code. The requirements below MUST be respected:
+
+1. Do not change the function name or its purpose.
+2. Fix all syntax and runtime errors.
+3. Use only valid parameters.
+4. Do not change the logic unless necessary for fixing errors.
+5. Return ONLY the corrected function code — no explanations, comments, or extra output.
+6. The function must be syntactically and semantically correct, and executable with `exec`.
+
+Buggy code:
+```python
+from typing import Any
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+from ConfigSpace import Configuration
+import math
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a neural network model on the given dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples, n_features = X.shape
+    num_classes = len(np.unique(y))
+
+    # Image Data Handling Requirements
+
+    # 1. Input Format Requirements:
+    #    - For CNN models: Input must be in (batch, channels, height, width) format
+    #    - For dense/linear layers: Input should be flattened
+
+    # 2. Data Processing Steps:
+    #    a) For flattened input (2D):
+    #       - Calculate dimensions: height = width = int(sqrt(n_features))
+    #       - Verify square dimensions: height * height == n_features
+    #       - Reshape to (N, 1, H, W) for CNNs
+    #    b) For 3D input (N, H, W):
+    #       - Add channel dimension: reshape to (N, 1, H, W)
+    #    c) For 4D input:
+    #       - Verify channel order matches framework requirements
+
+    # Framework-Specific Format:
+    #    - PyTorch: (N, C, H, W)
+    #    - TensorFlow: (N, H, W, C)
+    #    - Convert between formats if necessary
+
+    # Check if the input is flattened
+    if len(X.shape) == 2:
+        height = width = int(math.sqrt(n_features))
+        if height * width != n_features:
+            raise ValueError("Input features are not a perfect square.")
+        X = X.reshape(n_samples, 1, height, width)
+    elif len(X.shape) == 3:
+        X = X.reshape(n_samples, 1, X.shape[1], X.shape[2])
+    elif len(X.shape) == 4:
+        pass  # Assume correct format
+    else:
+        raise ValueError("Unsupported input dimension.")
+
+    # 4. Normalization:
+    #    - Scale pixel values to [0, 1] by dividing by 255.0
+    #    - Or standardize to mean=0, std=1
+
+    X = X / 255.0  # Scale pixel values to [0, 1]
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Create TensorDatasets and DataLoaders
+    train_dataset = TensorDataset(X_train, y_train)
+    val_dataset = TensorDataset(X_val, y_val)
+
+    batch_size = cfg.get("batch_size")
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes, num_layers, num_units, dropout):
+            super(SimpleCNN, self).__init__()
+            self.features = nn.ModuleList()
+            in_channels = 1
+            for i in range(num_layers):
+                self.features.append(nn.Conv2d(in_channels, num_units, kernel_size=3, padding=1))
+                self.features.append(nn.ReLU())
+                self.features.append(nn.MaxPool2d(kernel_size=2, stride=2))
+                in_channels = num_units
+                num_units = int(num_units/2) if num_units > 32 else num_units  # Reduce channels
+
+            self.flatten = nn.Flatten()
+            self.dropout = nn.Dropout(dropout)
+            self.classifier = nn.Linear(in_channels * (X.shape[2]//(2**num_layers)) * (X.shape[3]//(2**num_layers)), num_classes) # Dynamic Calculation
+
+        def forward(self, x):
+            for layer in self.features:
+                x = layer(x)
+            x = self.flatten(x)
+            x = self.dropout(x)
+            x = self.classifier(x)
+            return x
+
+    # Instantiate the model
+    num_layers = cfg.get("num_layers")
+    num_units = cfg.get("num_units")
+    dropout = cfg.get("dropout")
+    model = SimpleCNN(num_classes, num_layers, num_units, dropout)
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate = cfg.get("learning_rate")
+    if optimizer_name == "Adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    elif optimizer_name == "SGD":
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    for epoch in range(num_epochs):
+        model.train()
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            optimizer.zero_grad()
+
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+        # print(f"Epoch {epoch+1}/{num_epochs}, Loss: {avg_epoch_loss}")
+
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+```
+
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:08] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:08] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:08] [Metadata: {'component': 'train_function', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
+'DataFrame' object has no attribute 'reshape'
+'DataFrame' object has no attribute 'reshape'
+
+Your task is to fix the issues in the code. The requirements below MUST be respected:
+
+1. Do not change the function name or its purpose.
+2. Fix all syntax and runtime errors.
+3. Use only valid parameters.
+4. Do not change the logic unless necessary for fixing errors.
+5. Return ONLY the corrected function code — no explanations, comments, or extra output.
+6. The function must be syntactically and semantically correct, and executable with `exec`.
+
+Buggy code:
+```python
+from typing import Any
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+from ConfigSpace import Configuration
+import math
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a neural network model on the given dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples, n_features = X.shape
+    num_classes = len(np.unique(y))
+
+    # Image Data Handling Requirements
+
+    # 1. Input Format Requirements:
+    #    - For CNN models: Input must be in (batch, channels, height, width) format
+    #    - For dense/linear layers: Input should be flattened
+
+    # 2. Data Processing Steps:
+    #    a) For flattened input (2D):
+    #       - Calculate dimensions: height = width = int(sqrt(n_features))
+    #       - Verify square dimensions: height * height == n_features
+    #       - Reshape to (N, 1, H, W) for CNNs
+    #    b) For 3D input (N, H, W):
+    #       - Add channel dimension: reshape to (N, 1, H, W)
+    #    c) For 4D input:
+    #       - Verify channel order matches framework requirements
+
+    # Framework-Specific Format:
+    #    - PyTorch: (N, C, H, W)
+    #    - TensorFlow: (N, H, W, C)
+    #    - Convert between formats if necessary
+
+    # Check if the input is flattened
+    if len(X.shape) == 2:
+        height = width = int(math.sqrt(n_features))
+        if height * width != n_features:
+            raise ValueError("Input features are not a perfect square.")
+        X = X.reshape(n_samples, 1, height, width)
+    elif len(X.shape) == 3:
+        X = np.expand_dims(X, axis=1)
+    elif len(X.shape) == 4:
+        pass  # Assume correct format
+    else:
+        raise ValueError("Unsupported input dimension.")
+
+    # 4. Normalization:
+    #    - Scale pixel values to [0, 1] by dividing by 255.0
+    #    - Or standardize to mean=0, std=1
+
+    X = X / 255.0  # Scale pixel values to [0, 1]
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Create TensorDatasets and DataLoaders
+    train_dataset = TensorDataset(X_train, y_train)
+    val_dataset = TensorDataset(X_val, y_val)
+
+    batch_size = cfg.get("batch_size")
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes, num_layers, num_units, dropout):
+            super(SimpleCNN, self).__init__()
+            self.features = nn.ModuleList()
+            in_channels = 1
+            for i in range(num_layers):
+                self.features.append(nn.Conv2d(in_channels, num_units, kernel_size=3, padding=1))
+                self.features.append(nn.ReLU())
+                self.features.append(nn.MaxPool2d(kernel_size=2, stride=2))
+                in_channels = num_units
+                num_units = int(num_units/2) if num_units > 32 else num_units  # Reduce channels
+
+            self.flatten = nn.Flatten()
+            self.dropout = nn.Dropout(dropout)
+            # Dynamic Calculation
+            self.classifier = nn.Linear(in_channels * (X.shape[2]//(2**num_layers)) * (X.shape[3]//(2**num_layers)), num_classes)
+
+        def forward(self, x):
+            for layer in self.features:
+                x = layer(x)
+            x = self.flatten(x)
+            x = self.dropout(x)
+            x = self.classifier(x)
+            return x
+
+    # Instantiate the model
+    num_layers = cfg.get("num_layers")
+    num_units = cfg.get("num_units")
+    dropout = cfg.get("dropout")
+    model = SimpleCNN(num_classes, num_layers, num_units, dropout)
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate = cfg.get("learning_rate")
+    if optimizer_name == "Adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    elif optimizer_name == "SGD":
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    for epoch in range(num_epochs):
+        model.train()
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            optimizer.zero_grad()
+
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+        # print(f"Epoch {epoch+1}/{num_epochs}, Loss: {avg_epoch_loss}")
+
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+```
+
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:18] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:18] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#3): batch_size should be a positive integer value, but got batch_size=128
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:18] [Metadata: {'component': 'train_function', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
+'DataFrame' object has no attribute 'reshape'
+'DataFrame' object has no attribute 'reshape'
+batch_size should be a positive integer value, but got batch_size=128
+
+Your task is to fix the issues in the code. The requirements below MUST be respected:
+
+1. Do not change the function name or its purpose.
+2. Fix all syntax and runtime errors.
+3. Use only valid parameters.
+4. Do not change the logic unless necessary for fixing errors.
+5. Return ONLY the corrected function code — no explanations, comments, or extra output.
+6. The function must be syntactically and semantically correct, and executable with `exec`.
+
+Buggy code:
+```python
+from typing import Any
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+from ConfigSpace import Configuration
+import math
+import pandas as pd
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a neural network model on the given dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.Series):
+        y = y.values
+
+    n_samples, n_features = X.shape
+    num_classes = len(np.unique(y))
+
+    # Image Data Handling Requirements
+
+    # 1. Input Format Requirements:
+    #    - For CNN models: Input must be in (batch, channels, height, width) format
+    #    - For dense/linear layers: Input should be flattened
+
+    # 2. Data Processing Steps:
+    #    a) For flattened input (2D):
+    #       - Calculate dimensions: height = width = int(sqrt(n_features))
+    #       - Verify square dimensions: height * height == n_features
+    #       - Reshape to (N, 1, H, W) for CNNs
+    #    b) For 3D input (N, H, W):
+    #       - Add channel dimension: reshape to (N, 1, H, W)
+    #    c) For 4D input:
+    #       - Verify channel order matches framework requirements
+
+    # Framework-Specific Format:
+    #    - PyTorch: (N, C, H, W)
+    #    - TensorFlow: (N, H, W, C)
+    #    - Convert between formats if necessary
+
+    # Check if the input is flattened
+    if len(X.shape) == 2:
+        height = width = int(math.sqrt(n_features))
+        if height * width != n_features:
+            raise ValueError("Input features are not a perfect square.")
+        X = X.reshape(n_samples, 1, height, width)
+    elif len(X.shape) == 3:
+        X = np.expand_dims(X, axis=1)
+    elif len(X.shape) == 4:
+        pass  # Assume correct format
+    else:
+        raise ValueError("Unsupported input dimension.")
+
+    # 4. Normalization:
+    #    - Scale pixel values to [0, 1] by dividing by 255.0
+    #    - Or standardize to mean=0, std=1
+
+    X = X / 255.0  # Scale pixel values to [0, 1]
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Create TensorDatasets and DataLoaders
+    train_dataset = TensorDataset(X_train, y_train)
+    val_dataset = TensorDataset(X_val, y_val)
+
+    batch_size = cfg.get("batch_size")
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes, num_layers, num_units, dropout, input_height, input_width):
+            super(SimpleCNN, self).__init__()
+            self.features = nn.ModuleList()
+            in_channels = 1
+            current_height = input_height
+            current_width = input_width
+            for i in range(num_layers):
+                self.features.append(nn.Conv2d(in_channels, num_units, kernel_size=3, padding=1))
+                self.features.append(nn.ReLU())
+                self.features.append(nn.MaxPool2d(kernel_size=2, stride=2))
+                in_channels = num_units
+                num_units = int(num_units/2) if num_units > 32 else num_units  # Reduce channels
+                current_height = current_height // 2
+                current_width = current_width // 2
+
+
+            self.flatten = nn.Flatten()
+            self.dropout = nn.Dropout(dropout)
+            # Dynamic Calculation
+            self.classifier = nn.Linear(in_channels * current_height * current_width, num_classes)
+
+        def forward(self, x):
+            for layer in self.features:
+                x = layer(x)
+            x = self.flatten(x)
+            x = self.dropout(x)
+            x = self.classifier(x)
+            return x
+
+    # Instantiate the model
+    num_layers = cfg.get("num_layers")
+    num_units = cfg.get("num_units")
+    dropout = cfg.get("dropout")
+    input_height = X.shape[2]
+    input_width = X.shape[3]
+    model = SimpleCNN(num_classes, num_layers, num_units, dropout, input_height, input_width)
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate = cfg.get("learning_rate")
+    if optimizer_name == "Adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    elif optimizer_name == "SGD":
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {{optimizer_name}}")
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    for epoch in range(num_epochs):
+        model.train()
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            optimizer.zero_grad()
+
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+        # print(f"Epoch {{epoch+1}}/{{num_epochs}}, Loss: {{avg_epoch_loss}}")
+
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+```
+
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:28] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:28] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#4): batch_size should be a positive integer value, but got batch_size=128
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:28] [Metadata: {'component': 'train_function', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
+'DataFrame' object has no attribute 'reshape'
+'DataFrame' object has no attribute 'reshape'
+batch_size should be a positive integer value, but got batch_size=128
+batch_size should be a positive integer value, but got batch_size=128
+
+Your task is to fix the issues in the code. The requirements below MUST be respected:
+
+1. Do not change the function name or its purpose.
+2. Fix all syntax and runtime errors.
+3. Use only valid parameters.
+4. Do not change the logic unless necessary for fixing errors.
+5. Return ONLY the corrected function code — no explanations, comments, or extra output.
+6. The function must be syntactically and semantically correct, and executable with `exec`.
+
+Buggy code:
+```python
+from typing import Any
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+from ConfigSpace import Configuration
+import math
+import pandas as pd
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a neural network model on the given dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.Series):
+        y = y.values
+
+    n_samples, n_features = X.shape
+    num_classes = len(np.unique(y))
+
+    # Image Data Handling Requirements
+
+    # 1. Input Format Requirements:
+    #    - For CNN models: Input must be in (batch, channels, height, width) format
+    #    - For dense/linear layers: Input should be flattened
+
+    # 2. Data Processing Steps:
+    #    a) For flattened input (2D):
+    #       - Calculate dimensions: height = width = int(sqrt(n_features))
+    #       - Verify square dimensions: height * height == n_features
+    #       - Reshape to (N, 1, H, W) for CNNs
+    #    b) For 3D input (N, H, W):
+    #       - Add channel dimension: reshape to (N, 1, H, W)
+    #    c) For 4D input:
+    #       - Verify channel order matches framework requirements
+
+    # Framework-Specific Format:
+    #    - PyTorch: (N, C, H, W)
+    #    - TensorFlow: (N, H, W, C)
+    #    - Convert between formats if necessary
+
+    # Check if the input is flattened
+    if len(X.shape) == 2:
+        height = width = int(math.sqrt(n_features))
+        if height * width != n_features:
+            raise ValueError("Input features are not a perfect square.")
+        X = X.reshape(n_samples, 1, height, width)
+    elif len(X.shape) == 3:
+        X = np.expand_dims(X, axis=1)
+    elif len(X.shape) == 4:
+        pass  # Assume correct format
+    else:
+        raise ValueError("Unsupported input dimension.")
+
+    # 4. Normalization:
+    #    - Scale pixel values to [0, 1] by dividing by 255.0
+    #    - Or standardize to mean=0, std=1
+
+    X = X / 255.0  # Scale pixel values to [0, 1]
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Create TensorDatasets and DataLoaders
+    train_dataset = TensorDataset(X_train, y_train)
+    val_dataset = TensorDataset(X_val, y_val)
+
+    batch_size = cfg.get("batch_size", 32)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    # Define the model
+    class SimpleCNN(nn.Module):
+        def __init__(self, num_classes, num_layers, num_units, dropout, input_height, input_width):
+            super(SimpleCNN, self).__init__()
+            self.features = nn.ModuleList()
+            in_channels = 1
+            current_height = input_height
+            current_width = input_width
+            for i in range(num_layers):
+                self.features.append(nn.Conv2d(in_channels, num_units, kernel_size=3, padding=1))
+                self.features.append(nn.ReLU())
+                self.features.append(nn.MaxPool2d(kernel_size=2, stride=2))
+                in_channels = num_units
+                num_units = max(num_units // 2, 16)
+                current_height = current_height // 2
+                current_width = current_width // 2
+
+
+            self.flatten = nn.Flatten()
+            self.dropout = nn.Dropout(dropout)
+            # Dynamic Calculation
+            self.classifier = nn.Linear(in_channels * current_height * current_width, num_classes)
+
+        def forward(self, x):
+            for layer in self.features:
+                x = layer(x)
+            x = self.flatten(x)
+            x = self.dropout(x)
+            x = self.classifier(x)
+            return x
+
+    # Instantiate the model
+    num_layers = cfg.get("num_layers")
+    num_units = cfg.get("num_units")
+    dropout = cfg.get("dropout")
+    input_height = X.shape[2]
+    input_width = X.shape[3]
+    model = SimpleCNN(num_classes, num_layers, num_units, dropout, input_height, input_width)
+
+    # Define the optimizer
+    optimizer_name = cfg.get("optimizer")
+    learning_rate = cfg.get("learning_rate")
+    if optimizer_name == "Adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    elif optimizer_name == "SGD":
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    num_epochs = 10
+    total_loss = 0.0
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    for epoch in range(num_epochs):
+        model.train()
+        epoch_loss = 0.0
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            optimizer.zero_grad()
+
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+        # print(f"Epoch {epoch+1}/{num_epochs}, Loss: {avg_epoch_loss}")
+
+
+    avg_loss = total_loss / num_epochs
+
+    return float(avg_loss)
+```
+
+--------------------------------------------------------------------------------
+[2025-05-20 14:03:36] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------

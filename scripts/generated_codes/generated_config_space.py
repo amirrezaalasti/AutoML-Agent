@@ -1,42 +1,24 @@
 from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import EqualsCondition, InCondition, OrConjunction
 
 
 def get_configspace():
     cs = ConfigurationSpace(seed=1234)
 
     # Define hyperparameters
-    classifier = Categorical("classifier", ["knn", "svm", "random_forest"], default="knn")
-    cs.add_hyperparameter(classifier)
+    optimizer = Categorical("optimizer", ["Adam", "SGD"], default="Adam")
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), log=True, default=1e-3)
+    batch_size = Categorical("batch_size", [32, 64, 128], default=32)
+    num_layers = Integer("num_layers", (1, 5), default=2)
+    num_units = Integer("num_units", (32, 256), log=True, default=64)
+    dropout = Float("dropout", (0.0, 0.9), default=0.5)
 
-    # KNN parameters
-    n_neighbors = Integer("n_neighbors", bounds=(1, 20), default=5)
-    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
-    p = Categorical("p", [1, 2], default=2)
-    cs.add_hyperparameters([n_neighbors, weights, p])
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([optimizer, learning_rate, batch_size, num_layers, num_units, dropout])
 
-    # SVM parameters
-    C = Float("C", bounds=(1e-5, 10), default=1.0, log=True)
-    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
-    degree = Integer("degree", bounds=(2, 5), default=3)
-    gamma = Categorical("gamma", ["scale", "auto"], default="scale")
-    cs.add_hyperparameters([C, kernel, degree, gamma])
-
-    # Random Forest parameters
-    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
-    max_depth = Integer("max_depth", bounds=(2, 10), default=None)
-    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
-    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
-    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
-
-    # Add forbidden clauses
-    forbidden_knn = ForbiddenAndConjunction(ForbiddenEqualsClause(classifier, "knn"), ForbiddenEqualsClause(kernel, "linear"))
-
-    forbidden_svm = ForbiddenAndConjunction(ForbiddenEqualsClause(classifier, "svm"), ForbiddenEqualsClause(n_neighbors, 5))
-
-    forbidden_rf = ForbiddenAndConjunction(ForbiddenEqualsClause(classifier, "random_forest"), ForbiddenEqualsClause(kernel, "rbf"))
-
-    cs.add_forbidden_clause(forbidden_knn)
-    cs.add_forbidden_clause(forbidden_svm)
-    cs.add_forbidden_clause(forbidden_rf)
+    # Define forbidden clauses
+    # Example: If optimizer is SGD, then learning rate must be less than 0.001
+    forbidden_clause = ForbiddenAndConjunction(ForbiddenEqualsClause(optimizer, "SGD"), ForbiddenEqualsClause(learning_rate, 0.01))
+    cs.add_forbidden_clause(forbidden_clause)
 
     return cs

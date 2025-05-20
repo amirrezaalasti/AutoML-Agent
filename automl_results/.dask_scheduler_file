@@ -1,126 +1,24 @@
 {
   "type": "Scheduler",
-  "id": "Scheduler-43108d2e-9736-441d-800c-74a4173263cf",
-  "address": "tcp://127.0.0.1:56295",
+  "id": "Scheduler-c3ffd0bb-8aef-46aa-b525-62383d110c67",
+  "address": "tcp://127.0.0.1:62137",
   "services": {
-    "dashboard": 56294
+    "dashboard": 62136
   },
-  "started": 1747736354.7140028,
+  "started": 1747742891.655854,
   "workers": {
-    "tcp://127.0.0.1:56310": {
-      "type": "Worker",
-      "id": 1,
-      "host": "127.0.0.1",
-      "resources": {},
-      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/dask-scratch-space/worker-a2wk0qs8",
-      "name": 1,
-      "nthreads": 1,
-      "memory_limit": 4831838208,
-      "last_seen": 1747736359.963068,
-      "services": {
-        "dashboard": 56316
-      },
-      "metrics": {
-        "task_counts": {},
-        "bandwidth": {
-          "total": 100000000,
-          "workers": {},
-          "types": {}
-        },
-        "digests_total_since_heartbeat": {},
-        "managed_bytes": 0,
-        "spilled_bytes": {
-          "memory": 0,
-          "disk": 0
-        },
-        "transfer": {
-          "incoming_bytes": 0,
-          "incoming_count": 0,
-          "incoming_count_total": 0,
-          "outgoing_bytes": 0,
-          "outgoing_count": 0,
-          "outgoing_count_total": 0
-        },
-        "event_loop_interval": 0.02,
-        "cpu": 0.0,
-        "memory": 479526912,
-        "time": 1747736359.936357,
-        "host_net_io": {
-          "read_bps": 0.0,
-          "write_bps": 0.0
-        },
-        "host_disk_io": {
-          "read_bps": 0.0,
-          "write_bps": 0.0
-        },
-        "num_fds": 22
-      },
-      "status": "running",
-      "nanny": "tcp://127.0.0.1:56299"
-    },
-    "tcp://127.0.0.1:56311": {
-      "type": "Worker",
-      "id": 2,
-      "host": "127.0.0.1",
-      "resources": {},
-      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/dask-scratch-space/worker-_ooc7ufs",
-      "name": 2,
-      "nthreads": 1,
-      "memory_limit": 4831838208,
-      "last_seen": 1747736359.9640908,
-      "services": {
-        "dashboard": 56314
-      },
-      "metrics": {
-        "task_counts": {},
-        "bandwidth": {
-          "total": 100000000,
-          "workers": {},
-          "types": {}
-        },
-        "digests_total_since_heartbeat": {},
-        "managed_bytes": 0,
-        "spilled_bytes": {
-          "memory": 0,
-          "disk": 0
-        },
-        "transfer": {
-          "incoming_bytes": 0,
-          "incoming_count": 0,
-          "incoming_count_total": 0,
-          "outgoing_bytes": 0,
-          "outgoing_count": 0,
-          "outgoing_count_total": 0
-        },
-        "event_loop_interval": 0.02,
-        "cpu": 0.0,
-        "memory": 477298688,
-        "time": 1747736359.936356,
-        "host_net_io": {
-          "read_bps": 0.0,
-          "write_bps": 0.0
-        },
-        "host_disk_io": {
-          "read_bps": 0.0,
-          "write_bps": 0.0
-        },
-        "num_fds": 22
-      },
-      "status": "running",
-      "nanny": "tcp://127.0.0.1:56300"
-    },
-    "tcp://127.0.0.1:56312": {
+    "tcp://127.0.0.1:62152": {
       "type": "Worker",
       "id": 0,
       "host": "127.0.0.1",
       "resources": {},
-      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/dask-scratch-space/worker-fdrf2j9t",
+      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/dask-scratch-space/worker-91u_jk9t",
       "name": 0,
       "nthreads": 1,
-      "memory_limit": 4831838208,
-      "last_seen": 1747736359.965479,
+      "memory_limit": 9663676416,
+      "last_seen": 1747742896.945976,
       "services": {
-        "dashboard": 56315
+        "dashboard": 62154
       },
       "metrics": {
         "task_counts": {},
@@ -145,8 +43,8 @@
         },
         "event_loop_interval": 0.02,
         "cpu": 0.0,
-        "memory": 479789056,
-        "time": 1747736359.936403,
+        "memory": 500170752,
+        "time": 1747742896.9250948,
         "host_net_io": {
           "read_bps": 0.0,
           "write_bps": 0.0
@@ -158,20 +56,20 @@
         "num_fds": 22
       },
       "status": "running",
-      "nanny": "tcp://127.0.0.1:56298"
+      "nanny": "tcp://127.0.0.1:62140"
     },
-    "tcp://127.0.0.1:56313": {
+    "tcp://127.0.0.1:62153": {
       "type": "Worker",
-      "id": 3,
+      "id": 1,
       "host": "127.0.0.1",
       "resources": {},
-      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/dask-scratch-space/worker-8rct34xi",
-      "name": 3,
+      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/dask-scratch-space/worker-0ux26fkb",
+      "name": 1,
       "nthreads": 1,
-      "memory_limit": 4831838208,
-      "last_seen": 1747736359.964895,
+      "memory_limit": 9663676416,
+      "last_seen": 1747742896.9469702,
       "services": {
-        "dashboard": 56317
+        "dashboard": 62155
       },
       "metrics": {
         "task_counts": {},
@@ -196,8 +94,8 @@
         },
         "event_loop_interval": 0.02,
         "cpu": 0.0,
-        "memory": 480247808,
-        "time": 1747736359.936358,
+        "memory": 497909760,
+        "time": 1747742896.9251158,
         "host_net_io": {
           "read_bps": 0.0,
           "write_bps": 0.0
@@ -209,7 +107,7 @@
         "num_fds": 22
       },
       "status": "running",
-      "nanny": "tcp://127.0.0.1:56301"
+      "nanny": "tcp://127.0.0.1:62141"
     }
   }
 }
