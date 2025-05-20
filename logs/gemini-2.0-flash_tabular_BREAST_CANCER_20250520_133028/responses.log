@@ -1,0 +1,222 @@
+[2025-05-20 13:30:30] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Float("max_features", bounds=(0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 20), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 20), default=1)
+    bootstrap = Categorical("bootstrap", choices=[True, False], default=True)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, bootstrap, criterion])
+
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(hyperparameter=bootstrap, value=False),
+        ForbiddenEqualsClause(hyperparameter=n_estimators, value=10)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:30] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Float("max_features", bounds=(0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 20), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 20), default=1)
+    bootstrap = Categorical("bootstrap", choices=[True, False], default=True)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, bootstrap, criterion])
+
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(hyperparameter=bootstrap, value=False),
+        ForbiddenEqualsClause(hyperparameter=n_estimators, value=10)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:30] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:32] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 20), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 20), default=1)
+    bootstrap = Categorical("bootstrap", [True, False], default=True)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, bootstrap, criterion])
+
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(bootstrap, False),
+        ForbiddenEqualsClause(n_estimators, 10)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:32] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace(seed=1234)
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 20), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 20), default=1)
+    bootstrap = Categorical("bootstrap", [True, False], default=True)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, bootstrap, criterion])
+
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(bootstrap, False),
+        ForbiddenEqualsClause(n_estimators, 10)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:32] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:33] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:33] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:33] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:35] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (feature matrix) and 'y' (label vector).
+
+    Returns:
+        float: The average training loss (negative cross-validation score) over 10 epochs. Lower is better.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate RandomForestClassifier with hyperparameters from cfg
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_features=cfg.get("max_features"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        bootstrap=cfg.get("bootstrap"),
+        criterion=cfg.get("criterion"),
+        random_state=42  # for reproducibility
+    )
+
+    # Perform cross-validation to estimate the model's performance. Use negative mean squared error since we need the loss.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss')
+
+    # Return the average cross-validation score as the loss.  Note that the scores are negative, so we return the mean directly as loss.
+    loss = np.mean(scores)
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:35] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+def train(cfg: Configuration, dataset: Any) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (feature matrix) and 'y' (label vector).
+
+    Returns:
+        float: The average training loss (negative cross-validation score) over 10 epochs. Lower is better.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate RandomForestClassifier with hyperparameters from cfg
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_features=cfg.get("max_features"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        bootstrap=cfg.get("bootstrap"),
+        criterion=cfg.get("criterion"),
+        random_state=42  # for reproducibility
+    )
+
+    # Perform cross-validation to estimate the model's performance. Use negative mean squared error since we need the loss.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss')
+
+    # Return the average cross-validation score as the loss.  Note that the scores are negative, so we return the mean directly as loss.
+    loss = np.mean(scores)
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-20 13:30:38] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': -0.1430792510767615}] Training executed successfully, loss: -0.1430792510767615
+--------------------------------------------------------------------------------
