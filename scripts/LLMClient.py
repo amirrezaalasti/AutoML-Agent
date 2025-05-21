@@ -1,19 +1,165 @@
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from google import genai
+from langchain.vectorstores import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from typing import List, Optional, Dict, Any
+import os
+import logging
+import torch
+
+logger = logging.getLogger(__name__)
 
 
 class LLMClient:
-    def __init__(self, api_key, model_name, temperature=0):
+    def __init__(self, api_key, model_name, temperature=0, embedding_model="all-MiniLM-L6-v2"):
         # if model name has gemini in it, use genai
         if "gemini" in model_name:
             self.client = genai.Client(api_key=api_key)
             self.model_name = model_name
-
         else:
             # Use ChatGroq for other models
             self.client = ChatGroq(temperature=temperature, groq_api_key=api_key, model_name=model_name)
             self.model_name = model_name
+
+        # Initialize embeddings model with error handling
+        try:
+            # Set default device
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            logger.info(f"Using device: {device}")
+
+            self.embeddings = HuggingFaceEmbeddings(
+                model_name=embedding_model,
+                model_kwargs={"device": device},
+                encode_kwargs={"device": device, "batch_size": 32},
+            )
+            # Test the embeddings
+            test_text = "Test embedding initialization"
+            _ = self.embeddings.embed_query(test_text)
+            logger.info("Successfully initialized embeddings model")
+
+        except Exception as e:
+            logger.error(f"Failed to initialize embeddings model: {str(e)}")
+            logger.warning("Attempting fallback to CPU-only mode...")
+
+            try:
+                self.embeddings = HuggingFaceEmbeddings(
+                    model_name=embedding_model,
+                    model_kwargs={"device": "cpu"},
+                    encode_kwargs={"device": "cpu", "batch_size": 32},
+                )
+                # Test the embeddings
+                test_text = "Test embedding initialization"
+                _ = self.embeddings.embed_query(test_text)
+                logger.info("Successfully initialized embeddings model in CPU mode")
+
+            except Exception as e2:
+                logger.error(f"Fallback initialization also failed: {str(e2)}")
+                logger.warning("RAG capabilities will be disabled")
+                self.embeddings = None
+
+        self.vector_store = None
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200,
+            length_function=len,
+        )
+
+    def create_vector_store(self, documents: List[str], metadata: Optional[List[Dict[str, Any]]] = None):
+        """
+        Create a vector store from a list of documents.
+
+        Args:
+            documents: List of text documents to index
+            metadata: Optional list of metadata dictionaries for each document
+        """
+        if not self.embeddings:
+            raise ValueError("Embeddings model not initialized. RAG capabilities are disabled. Please check the logs for initialization errors.")
+
+        if not documents:
+            raise ValueError("No documents provided for indexing")
+
+        try:
+            # Split documents into chunks
+            splits = self.text_splitter.split_text("\n\n".join(documents))
+
+            # Create vector store
+            self.vector_store = Chroma.from_texts(
+                texts=splits,
+                embedding=self.embeddings,
+                metadatas=[metadata[i] if metadata else None for i in range(len(splits))],
+                persist_directory="chroma_db",
+            )
+            logger.info(f"Successfully created vector store with {len(splits)} chunks")
+
+        except Exception as e:
+            logger.error(f"Failed to create vector store: {str(e)}")
+            raise ValueError(f"Failed to create vector store: {str(e)}")
+
+    def similarity_search(self, query: str, k: int = 3) -> List[str]:
+        """
+        Perform similarity search on the vector store.
+
+        Args:
+            query: Search query
+            k: Number of results to return
+
+        Returns:
+            List of similar documents
+        """
+        if not self.embeddings:
+            raise ValueError("Embeddings model not initialized. RAG capabilities are disabled.")
+        if not self.vector_store:
+            raise ValueError("Vector store not initialized. Call create_vector_store first.")
+
+        try:
+            results = self.vector_store.similarity_search(query, k=k)
+            return [doc.page_content for doc in results]
+        except Exception as e:
+            logger.error(f"Error during similarity search: {str(e)}")
+            raise ValueError(f"Error during similarity search: {str(e)}")
+
+    def generate_with_context(self, prompt: str, k: int = 3):
+        """
+        Generate a response using RAG - retrieve relevant context and use it to augment the prompt.
+
+        Args:
+            prompt: The user's prompt
+            k: Number of relevant documents to retrieve
+
+        Returns:
+            Generated response
+        """
+        if not self.embeddings:
+            logger.warning("RAG capabilities are disabled. Falling back to standard generation.")
+            return self.generate(prompt)
+
+        if not self.vector_store:
+            logger.warning("Vector store not initialized. Falling back to standard generation.")
+            return self.generate(prompt)
+
+        try:
+            # Retrieve relevant documents
+            relevant_docs = self.similarity_search(prompt, k=k)
+
+            # Construct augmented prompt
+            context = "\n\n".join(relevant_docs)
+            augmented_prompt = f"""Context information is below.
+---------------------
+{context}
+---------------------
+Given the context information and not prior knowledge, answer the following query:
+{prompt}"""
+
+            print(augmented_prompt)
+
+            return self.generate(augmented_prompt)
+
+        except Exception as e:
+            logger.error(f"Error in generate_with_context: {str(e)}")
+            logger.warning("Falling back to standard generation due to error")
+            return self.generate(prompt)
 
     def generate(self, prompt):
         # Escape curly braces in the context TODO: the prompt should be escaped in the template

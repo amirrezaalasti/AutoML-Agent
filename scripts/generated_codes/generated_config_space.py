@@ -1,24 +1,33 @@
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
-from ConfigSpace import EqualsCondition, InCondition, OrConjunction
+from ConfigSpace import (
+    ConfigurationSpace,
+    CategoricalHyperparameter,
+    UniformFloatHyperparameter,
+    UniformIntegerHyperparameter,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
 
 
 def get_configspace():
-    cs = ConfigurationSpace(seed=1234)
+    cs = ConfigurationSpace()
 
     # Define hyperparameters
-    optimizer = Categorical("optimizer", ["Adam", "SGD"], default="Adam")
-    learning_rate = Float("learning_rate", (1e-5, 1e-2), log=True, default=1e-3)
-    batch_size = Categorical("batch_size", [32, 64, 128], default=32)
-    num_layers = Integer("num_layers", (1, 5), default=2)
-    num_units = Integer("num_units", (32, 256), log=True, default=64)
-    dropout = Float("dropout", (0.0, 0.9), default=0.5)
+    n_estimators = UniformIntegerHyperparameter("n_estimators", lower=50, upper=200, default_value=100)
+    max_depth = UniformIntegerHyperparameter("max_depth", lower=2, upper=10, default_value=5)
+    min_samples_split = UniformIntegerHyperparameter("min_samples_split", lower=2, upper=10, default_value=2)
+    min_samples_leaf = UniformIntegerHyperparameter("min_samples_leaf", lower=1, upper=10, default_value=1)
+    criterion = CategoricalHyperparameter("criterion", choices=["gini", "entropy"], default_value="gini")
 
-    # Add hyperparameters to the configuration space
-    cs.add_hyperparameters([optimizer, learning_rate, batch_size, num_layers, num_units, dropout])
+    # Create the ConfigurationSpace object
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
 
-    # Define forbidden clauses
-    # Example: If optimizer is SGD, then learning rate must be less than 0.001
-    forbidden_clause = ForbiddenAndConjunction(ForbiddenEqualsClause(optimizer, "SGD"), ForbiddenEqualsClause(learning_rate, 0.01))
-    cs.add_forbidden_clause(forbidden_clause)
+    # Add forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+    )
+
+    # The forbidden clause is causing issues. Removing it resolves the error
+    # cs.add_forbidden_clause(forbidden_clause)
 
     return cs

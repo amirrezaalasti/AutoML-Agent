@@ -1,0 +1,20 @@
+\begin{thebibliography}{}
+
+\bibitem[Guo et~al., 2024]{guo2024largelanguagemodelbased}
+Guo, T., Chen, X., Wang, Y., Chang, R., Pei, S., Chawla, N.~V., Wiest, O., and Zhang, X. (2024).
+\newblock Large language model based multi-agents: A survey of progress and challenges.
+
+\bibitem[He et~al., 2021]{He_2021}
+He, X., Zhao, K., and Chu, X. (2021).
+\newblock Automl: A survey of the state-of-the-art.
+\newblock {\em Knowledge-Based Systems}, 212:106622.
+
+\bibitem[Hou et~al., 2024]{hou2024largelanguagemodelssoftware}
+Hou, X., Zhao, Y., Liu, Y., Yang, Z., Wang, K., Li, L., Luo, X., Lo, D., Grundy, J., and Wang, H. (2024).
+\newblock Large language models for software engineering: A systematic literature review.
+
+\bibitem[Lindauer et~al., 2022]{lindauer2022smac3versatilebayesianoptimization}
+Lindauer, M., Eggensperger, K., Feurer, M., Biedenkapp, A., Deng, D., Benjamins, C., Ruhopf, T., Sass, R., and Hutter, F. (2022).
+\newblock Smac3: A versatile bayesian optimization package for hyperparameter optimization.
+
+\end{thebibliography}

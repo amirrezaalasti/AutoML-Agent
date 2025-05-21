@@ -50,19 +50,12 @@ Goal: Write a Python function called `get_configspace()` that returns a valid `C
 * `default`
 * `log`
 * `distribution`
-* `seed`
 
 ---
 
 **CONSTRAINTS**
 
 * Must include **at least one** `ForbiddenAndConjunction` to block invalid combinations.
-
----
-
-**CONFIGURATION SPACE REQUIREMENTS**
-
-* Initialize `ConfigurationSpace` with `seed=1234`.
 
 ---
 
@@ -89,7 +82,6 @@ cs = ConfigurationSpace(
         "C": (-1.0, 1.0),
         "max_iter": (10, 100),
     }},
-    seed=1234,
 )
 ```
 # Example 2: Adding Hyperparameters
@@ -144,7 +136,6 @@ cs = ConfigurationSpace(
         "C": (-1.0, 1.0),
         "max_iter": (10, 100),
     }},
-    seed=1234,
 )
 cs.to_yaml(path)
 loaded_cs = ConfigurationSpace.from_yaml(path)
@@ -175,6 +166,5 @@ cs = ConfigurationSpace(
             weights=[0.2, 0.8]
         ),
     }},
-    seed=1234,
 )
 ```
