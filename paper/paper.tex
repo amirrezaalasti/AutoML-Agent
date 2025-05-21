@@ -4,11 +4,21 @@
 \usepackage{booktabs}
 \usepackage{url}
 \usepackage{csquotes}
+\usepackage{cite}
 \usepackage{amsmath}
 \usepackage{amsthm}
-\usepackage[final]{automl}
+\usepackage{graphicx}
 \usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{authblk}
+\usepackage{environ}
 \bibliographystyle{apalike}
+
+% Define acknowledgements environment
+\NewEnviron{acknowledgements}{\section*{Acknowledgements}\BODY}
+
+% Define nameemail command
+\newcommand{\nameemail}[2]{#1\thanks{#2}}
 
 \title{AutoML Agent}
 
@@ -30,27 +40,27 @@
 \maketitle
 
 \begin{abstract}
-Large language models (LLMs) are transforming software development by automating complex coding tasks \citep{llms_code}. In the field of machine learning, hyperparameter optimization remains a critical and time-consuming challenge \citep{automl_survey}. This paper introduces AutoML Agent, a framework that leverages LLMs to automatically generate training functions, define configuration spaces, and set up SMAC optimization scenarios based on the user's dataset and objective. By integrating code generation with automated tuning, AutoML Agent streamlines the model development process and minimizes manual effort. Experimental results on standard benchmarks demonstrate the framework's adaptability and effectiveness in delivering competitive performance.
+Large language models (LLMs) are transforming software development by automating complex coding tasks \cite{hou2024largelanguagemodelssoftware}. In the field of machine learning, hyperparameter optimization remains a critical and time-consuming challenge \cite{He_2021}. This paper introduces AutoML Agent, a framework that leverages LLMs to automatically generate training functions, define configuration spaces, and set up SMAC optimization scenarios based on the user's dataset and objective. By integrating code generation with automated tuning, AutoML Agent streamlines the model development process and minimizes manual effort. Experimental results on standard benchmarks demonstrate the framework's adaptability and effectiveness in delivering competitive performance.
 \end{abstract}
 
 \section{Introduction}
-The field of machine learning has seen remarkable growth in recent years, with an increasing demand for automated solutions that can streamline the model development process. While Large Language Models (LLMs) have demonstrated impressive capabilities in code generation and software development tasks \citep{llms_code}, their potential in automating the machine learning pipeline remains largely unexplored.
+The field of machine learning has seen remarkable growth in recent years, with an increasing demand for automated solutions that can streamline the model development process. While Large Language Models (LLMs) have demonstrated impressive capabilities in code generation and software development tasks \citep{hou2024largelanguagemodelssoftware}, their potential in automating the machine learning pipeline remains largely unexplored.
 
-Automated Machine Learning (AutoML) has emerged as a critical technology for democratizing machine learning by automating various aspects of the ML workflow \citep{automl_survey}. However, existing AutoML solutions often require significant manual setup and configuration, limiting their accessibility to practitioners without extensive ML expertise.
+Automated Machine Learning (AutoML) has emerged as a critical technology for democratizing machine learning by automating various aspects of the ML workflow \citep{He_2021}. However, existing AutoML solutions often require significant manual setup and configuration, limiting their accessibility to practitioners without extensive ML expertise.
 
 This paper introduces AutoML Agent, a novel framework that bridges the gap between LLM-powered code generation and automated machine learning. Our key contributions include:
 
 \begin{itemize}
     \item A multi-agent system architecture that leverages LLMs to automate the entire ML pipeline
     \item An intelligent code generation system for creating configuration spaces and training functions
-    \item Integration with SMAC \citep{smac3} for efficient hyperparameter optimization
+    \item Integration with SMAC \cite{lindauer2022smac3versatilebayesianoptimization} for efficient hyperparameter optimization
     \item A comprehensive evaluation on diverse datasets demonstrating the framework's effectiveness
 \end{itemize}
 
 The rest of this paper is organized as follows: Section 2 describes the methodology and system architecture, Section 3 details the implementation, Section 4 presents our experimental setup, Section 5 discusses the results, and Section 6 concludes with future directions.
 
 \section{Methodology}
-The AutoML Agent framework employs a multi-agent system architecture powered by Large Language Models (LLMs) to automate the machine learning pipeline \citep{multi_agent_ml}. The system consists of specialized agents that collaborate to handle different aspects of the AutoML process.
+The AutoML Agent framework employs a multi-agent system architecture powered by Large Language Models (LLMs) to automate the machine learning pipeline \citep{guo2024largelanguagemodelbased}. The system consists of specialized agents that collaborate to handle different aspects of the AutoML process.
 
 \subsection{System Architecture}
 The framework operates through five main stages:
@@ -61,6 +71,13 @@ The framework operates through five main stages:
     \item \textbf{Verification}: The outputs of each agent are evaluated to ensure correctness and quality.
     \item \textbf{Deployment}: Results are aggregated into a deployable machine learning model.
 \end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{methodology-diagram}
+    \caption{System architecture of the AutoML Agent showing the interaction between components. The agent takes a dataset and preferred model as input, generates necessary code components, evaluates them, and runs the AutoML scenario. The process includes error handling and result logging.}
+    \label{fig:methodology}
+\end{figure}
 
 \subsection{LLM Integration}
 The framework leverages state-of-the-art LLMs through a flexible client interface that supports multiple models:
@@ -78,7 +95,7 @@ These models are used to generate code for configuration spaces, scenarios, and 
 The AutoML Agent is implemented as a modular Python framework with several key components:
 
 \subsection{Configuration Space Generation}
-The system automatically generates configuration spaces for hyperparameter optimization using the ConfigSpace library \citep{configspace}. This includes:
+The system automatically generates configuration spaces for hyperparameter optimization using the ConfigSpace library. This includes:
 \begin{itemize}
     \item Definition of hyperparameter types and ranges
     \item Specification of parameter dependencies
@@ -86,7 +103,7 @@ The system automatically generates configuration spaces for hyperparameter optim
 \end{itemize}
 
 \subsection{SMAC Integration}
-The framework integrates with SMAC (Sequential Model-based Algorithm Configuration) \citep{smac3} for efficient hyperparameter optimization:
+The framework integrates with SMAC (Sequential Model-based Algorithm Configuration) \cite{lindauer2022smac3versatilebayesianoptimization} for efficient hyperparameter optimization:
 \begin{itemize}
     \item Automated scenario configuration
     \item Parallel optimization with multiple workers
@@ -102,7 +119,7 @@ The system generates customized training functions that:
 \end{itemize}
 
 \section{Experiments}
-We evaluated the AutoML Agent on various standard datasets and tasks, following established benchmarking practices in AutoML research \citep{automl_survey}:
+We evaluated the AutoML Agent on various standard datasets and tasks, following established benchmarking practices in AutoML research \cite{He_2021}:
 
 \subsection{Datasets}
 The framework was tested on diverse dataset types:
@@ -156,9 +173,10 @@ Several directions for future research and development include:
 \end{itemize}
 
 \begin{acknowledgements}
-The authors would like to thank the Leibniz University Hannover and Leibniz AI Academy for their support of this research.
+The authors would like to thank the Leibniz University Hannover and Leibniz AI Academy for supporting this research.
 \end{acknowledgements}
 
-\bibliography{rerfrences}
+\bibliographystyle{plain}  % or "ieeetr", "apalike", etc.
+\bibliography{references}
 
 \end{document}

@@ -135,7 +135,7 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     train_fn = self.namespace["train"]
                     sampled = cfg.sample_configuration()
-                    loss = train_fn(cfg=sampled, dataset=self.dataset)
+                    loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
                     self.train_function = source
                     self.last_loss = loss
                     self.logger.log_response(
@@ -208,9 +208,9 @@ class AutoMLAgent:
     def run_scenario(self, scenario: Scenario, train_fn: Any, dataset: Any, cfg: Any):
         """Run the scenario code and return the results"""
 
-        def smac_train_function(seed) -> float:
+        def smac_train_function(config, seed: int = 0) -> float:
             """Wrapper function to call the training function with the correct parameters"""
-            return train_fn(cfg=cfg, dataset=dataset)
+            return train_fn(cfg=config, dataset=dataset, seed=seed)
 
         smac = HPOFacade(
             scenario,

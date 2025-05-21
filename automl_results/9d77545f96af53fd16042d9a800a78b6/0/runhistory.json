@@ -1,0 +1,1921 @@
+{
+  "stats": {
+    "submitted": 100,
+    "finished": 100,
+    "running": 0
+  },
+  "data": [
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.126241,
+      "status": 2,
+      "starttime": 1747819213.581444,
+      "endtime": 1747819213.58368,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 2,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.12718,
+      "status": 2,
+      "starttime": 1747819213.5908322,
+      "endtime": 1747819213.592839,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.130055,
+      "status": 2,
+      "starttime": 1747819213.607181,
+      "endtime": 1747819213.609144,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 4,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.133292,
+      "status": 2,
+      "starttime": 1747819213.62606,
+      "endtime": 1747819213.627687,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 5,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.132666,
+      "status": 2,
+      "starttime": 1747819213.6067,
+      "endtime": 1747819213.607862,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.134492,
+      "status": 2,
+      "starttime": 1747819213.6338491,
+      "endtime": 1747819213.6351948,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 6,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.137315,
+      "status": 2,
+      "starttime": 1747819213.656738,
+      "endtime": 1747819213.657703,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.139454,
+      "status": 2,
+      "starttime": 1747819213.681018,
+      "endtime": 1747819213.682304,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 6,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.137953,
+      "status": 2,
+      "starttime": 1747819213.700864,
+      "endtime": 1747819213.7018921,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 7,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.141798,
+      "status": 2,
+      "starttime": 1747819213.721904,
+      "endtime": 1747819213.723043,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 6,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.14556,
+      "status": 2,
+      "starttime": 1747819213.734832,
+      "endtime": 1747819213.736845,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 7,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.149581,
+      "status": 2,
+      "starttime": 1747819213.755324,
+      "endtime": 1747819213.7563,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 8,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.153835,
+      "status": 2,
+      "starttime": 1747819213.7846599,
+      "endtime": 1747819213.785812,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 7,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.145003,
+      "status": 2,
+      "starttime": 1747819213.7893682,
+      "endtime": 1747819213.790525,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 9,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.156901,
+      "status": 2,
+      "starttime": 1747819213.80159,
+      "endtime": 1747819213.8033879,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 8,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.162117,
+      "status": 2,
+      "starttime": 1747819213.826006,
+      "endtime": 1747819213.8277812,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 9,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.165896,
+      "status": 2,
+      "starttime": 1747819213.8450391,
+      "endtime": 1747819213.845943,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 8,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.170161,
+      "status": 2,
+      "starttime": 1747819213.8736482,
+      "endtime": 1747819213.874912,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 9,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.173045,
+      "status": 2,
+      "starttime": 1747819213.88834,
+      "endtime": 1747819213.890006,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 10,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.176778,
+      "status": 2,
+      "starttime": 1747819213.897794,
+      "endtime": 1747819213.898794,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 11,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.181607,
+      "status": 2,
+      "starttime": 1747819213.919924,
+      "endtime": 1747819213.921342,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 10,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.184496,
+      "status": 2,
+      "starttime": 1747819213.93427,
+      "endtime": 1747819213.935991,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 11,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.189618,
+      "status": 2,
+      "starttime": 1747819213.9546618,
+      "endtime": 1747819213.955904,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 10,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.19377,
+      "status": 2,
+      "starttime": 1747819213.982319,
+      "endtime": 1747819213.983587,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 11,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.196464,
+      "status": 2,
+      "starttime": 1747819213.9958751,
+      "endtime": 1747819213.997826,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 12,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.200201,
+      "status": 2,
+      "starttime": 1747819214.0057259,
+      "endtime": 1747819214.006751,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 13,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.207666,
+      "status": 2,
+      "starttime": 1747819214.0618382,
+      "endtime": 1747819214.066731,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 12,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.213219,
+      "status": 2,
+      "starttime": 1747819214.1116018,
+      "endtime": 1747819214.113333,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 13,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.21705,
+      "status": 2,
+      "starttime": 1747819214.130851,
+      "endtime": 1747819214.1325471,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 12,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.221757,
+      "status": 2,
+      "starttime": 1747819214.1514812,
+      "endtime": 1747819214.152556,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 13,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.225914,
+      "status": 2,
+      "starttime": 1747819214.1821811,
+      "endtime": 1747819214.183392,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 14,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.228426,
+      "status": 2,
+      "starttime": 1747819214.188342,
+      "endtime": 1747819214.189429,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 15,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.231025,
+      "status": 2,
+      "starttime": 1747819214.200109,
+      "endtime": 1747819214.2020018,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 14,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.235801,
+      "status": 2,
+      "starttime": 1747819214.223422,
+      "endtime": 1747819214.2251258,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 15,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.240376,
+      "status": 2,
+      "starttime": 1747819214.24542,
+      "endtime": 1747819214.246506,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 14,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.243864,
+      "status": 2,
+      "starttime": 1747819214.264118,
+      "endtime": 1747819214.265185,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 15,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.247908,
+      "status": 2,
+      "starttime": 1747819214.283623,
+      "endtime": 1747819214.284873,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 16,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.250468,
+      "status": 2,
+      "starttime": 1747819214.295084,
+      "endtime": 1747819214.29673,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 17,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.255208,
+      "status": 2,
+      "starttime": 1747819214.315707,
+      "endtime": 1747819214.31843,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 16,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.258912,
+      "status": 2,
+      "starttime": 1747819214.335863,
+      "endtime": 1747819214.337499,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 17,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.263329,
+      "status": 2,
+      "starttime": 1747819214.357365,
+      "endtime": 1747819214.358437,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 16,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.266807,
+      "status": 2,
+      "starttime": 1747819214.375844,
+      "endtime": 1747819214.3768709,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 17,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.270829,
+      "status": 2,
+      "starttime": 1747819214.395684,
+      "endtime": 1747819214.396947,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 18,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.273514,
+      "status": 2,
+      "starttime": 1747819214.4078789,
+      "endtime": 1747819214.40974,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 19,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.279364,
+      "status": 2,
+      "starttime": 1747819214.4289122,
+      "endtime": 1747819214.430774,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 18,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.284514,
+      "status": 2,
+      "starttime": 1747819214.4503858,
+      "endtime": 1747819214.452123,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 19,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.288929,
+      "status": 2,
+      "starttime": 1747819214.4717178,
+      "endtime": 1747819214.472796,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 18,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.292854,
+      "status": 2,
+      "starttime": 1747819214.500902,
+      "endtime": 1747819214.502173,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 19,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.158535,
+      "status": 2,
+      "starttime": 1747819214.504556,
+      "endtime": 1747819214.5055559,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 20,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.295582,
+      "status": 2,
+      "starttime": 1747819214.516159,
+      "endtime": 1747819214.518003,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 21,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.299624,
+      "status": 2,
+      "starttime": 1747819214.544401,
+      "endtime": 1747819214.546205,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 20,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.304986,
+      "status": 2,
+      "starttime": 1747819214.563754,
+      "endtime": 1747819214.565755,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 21,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.309098,
+      "status": 2,
+      "starttime": 1747819214.586144,
+      "endtime": 1747819214.587456,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 20,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.311756,
+      "status": 2,
+      "starttime": 1747819214.598124,
+      "endtime": 1747819214.599854,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 21,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.315813,
+      "status": 2,
+      "starttime": 1747819214.6183639,
+      "endtime": 1747819214.6201138,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 22,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.31951,
+      "status": 2,
+      "starttime": 1747819214.639254,
+      "endtime": 1747819214.640992,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 23,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.323377,
+      "status": 2,
+      "starttime": 1747819214.66079,
+      "endtime": 1747819214.662556,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 22,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.327771,
+      "status": 2,
+      "starttime": 1747819214.6818628,
+      "endtime": 1747819214.682951,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 23,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.331658,
+      "status": 2,
+      "starttime": 1747819214.710172,
+      "endtime": 1747819214.711458,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 22,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.164376,
+      "status": 2,
+      "starttime": 1747819214.716804,
+      "endtime": 1747819214.71776,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 24,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.334419,
+      "status": 2,
+      "starttime": 1747819214.728608,
+      "endtime": 1747819214.730284,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 23,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.338371,
+      "status": 2,
+      "starttime": 1747819214.756095,
+      "endtime": 1747819214.757932,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 24,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.342882,
+      "status": 2,
+      "starttime": 1747819214.776025,
+      "endtime": 1747819214.7770948,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 25,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.34678,
+      "status": 2,
+      "starttime": 1747819214.798143,
+      "endtime": 1747819214.799382,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 24,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.350289,
+      "status": 2,
+      "starttime": 1747819214.812534,
+      "endtime": 1747819214.8150241,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 25,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.354828,
+      "status": 2,
+      "starttime": 1747819214.8337011,
+      "endtime": 1747819214.8354518,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 26,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.363208,
+      "status": 2,
+      "starttime": 1747819215.26274,
+      "endtime": 1747819215.264597,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 25,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.367281,
+      "status": 2,
+      "starttime": 1747819215.2830222,
+      "endtime": 1747819215.2849221,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 26,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.372045,
+      "status": 2,
+      "starttime": 1747819215.303721,
+      "endtime": 1747819215.3049622,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 27,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.375947,
+      "status": 2,
+      "starttime": 1747819215.326208,
+      "endtime": 1747819215.32728,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 26,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.379967,
+      "status": 2,
+      "starttime": 1747819215.347898,
+      "endtime": 1747819215.349108,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 27,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.382786,
+      "status": 2,
+      "starttime": 1747819215.360339,
+      "endtime": 1747819215.362174,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 28,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.387055,
+      "status": 2,
+      "starttime": 1747819215.384228,
+      "endtime": 1747819215.386119,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 27,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.391045,
+      "status": 2,
+      "starttime": 1747819215.404742,
+      "endtime": 1747819215.4065769,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 28,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.395537,
+      "status": 2,
+      "starttime": 1747819215.424844,
+      "endtime": 1747819215.4258711,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 29,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.400089,
+      "status": 2,
+      "starttime": 1747819215.448958,
+      "endtime": 1747819215.450221,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 28,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.405197,
+      "status": 2,
+      "starttime": 1747819215.467998,
+      "endtime": 1747819215.4703329,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 29,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.408169,
+      "status": 2,
+      "starttime": 1747819215.484433,
+      "endtime": 1747819215.4860969,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 30,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.41195,
+      "status": 2,
+      "starttime": 1747819215.5070772,
+      "endtime": 1747819215.508756,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 29,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.415684,
+      "status": 2,
+      "starttime": 1747819215.5269718,
+      "endtime": 1747819215.528679,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 30,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.420214,
+      "status": 2,
+      "starttime": 1747819215.547318,
+      "endtime": 1747819215.548439,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 31,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.424349,
+      "status": 2,
+      "starttime": 1747819215.569041,
+      "endtime": 1747819215.5703301,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 30,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.428653,
+      "status": 2,
+      "starttime": 1747819215.589952,
+      "endtime": 1747819215.5911732,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 31,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.432739,
+      "status": 2,
+      "starttime": 1747819215.610652,
+      "endtime": 1747819215.611804,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 32,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.436761,
+      "status": 2,
+      "starttime": 1747819215.632986,
+      "endtime": 1747819215.634092,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 31,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.440824,
+      "status": 2,
+      "starttime": 1747819215.653269,
+      "endtime": 1747819215.6544268,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 32,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.444649,
+      "status": 2,
+      "starttime": 1747819215.67472,
+      "endtime": 1747819215.6757472,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 33,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.448139,
+      "status": 2,
+      "starttime": 1747819215.6934621,
+      "endtime": 1747819215.694446,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 32,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.453204,
+      "status": 2,
+      "starttime": 1747819215.724416,
+      "endtime": 1747819215.72659,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 33,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.456302,
+      "status": 2,
+      "starttime": 1747819215.732336,
+      "endtime": 1747819215.7336488,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 34,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.464864,
+      "status": 2,
+      "starttime": 1747819216.214032,
+      "endtime": 1747819216.215782,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 33,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.471134,
+      "status": 2,
+      "starttime": 1747819216.249003,
+      "endtime": 1747819216.250315,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 34,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.47382,
+      "status": 2,
+      "starttime": 1747819216.2606049,
+      "endtime": 1747819216.262325,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 35,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.477623,
+      "status": 2,
+      "starttime": 1747819216.284595,
+      "endtime": 1747819216.286324,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 34,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.481373,
+      "status": 2,
+      "starttime": 1747819216.305002,
+      "endtime": 1747819216.306659,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 35,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.485014,
+      "status": 2,
+      "starttime": 1747819216.324825,
+      "endtime": 1747819216.326507,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 36,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.488765,
+      "status": 2,
+      "starttime": 1747819216.347719,
+      "endtime": 1747819216.349473,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 35,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.492693,
+      "status": 2,
+      "starttime": 1747819216.3693151,
+      "endtime": 1747819216.371099,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 36,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.496473,
+      "status": 2,
+      "starttime": 1747819216.3899121,
+      "endtime": 1747819216.3917482,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    },
+    {
+      "config_id": 37,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": Infinity,
+      "time": 0.0,
+      "cpu_time": 5.500303,
+      "status": 2,
+      "starttime": 1747819216.413119,
+      "endtime": 1747819216.414798,
+      "additional_info": {
+        "traceback": "Traceback (most recent call last):\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 190, in run\n    rval = self(config_copy, target_function, kwargs)\n  File \"/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/smac/runner/target_function_runner.py\", line 264, in __call__\n    return algorithm(config, **algorithm_kwargs)\n  File \"/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/scripts/AutoMLAgent.py\", line 231, in smac_train_function\n    return train_fn(cfg=config, dataset=dataset, seed=seed)\nTypeError: train() got an unexpected keyword argument 'seed'\n",
+        "error": "TypeError(\"train() got an unexpected keyword argument 'seed'\")"
+      }
+    }
+  ],
+  "configs": {
+    "1": {
+      "classifier": "SVM",
+      "svm_C": 0.0056074086723,
+      "svm_degree": 4,
+      "svm_gamma": 0.0002110672839,
+      "svm_kernel": "linear"
+    },
+    "2": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "gini",
+      "dt_max_depth": 13,
+      "dt_min_samples_leaf": 6,
+      "dt_min_samples_split": 3
+    },
+    "3": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "log_loss",
+      "dt_max_depth": 6,
+      "dt_min_samples_leaf": 4,
+      "dt_min_samples_split": 10
+    },
+    "4": {
+      "classifier": "SVM",
+      "svm_C": 0.0002221600972,
+      "svm_degree": 4,
+      "svm_gamma": 0.0132414433992,
+      "svm_kernel": "sigmoid"
+    },
+    "5": {
+      "classifier": "SVM",
+      "svm_C": 0.0180902776696,
+      "svm_degree": 4,
+      "svm_gamma": 0.0004062210762,
+      "svm_kernel": "poly"
+    },
+    "6": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "entropy",
+      "dt_max_depth": 4,
+      "dt_min_samples_leaf": 5,
+      "dt_min_samples_split": 8
+    },
+    "7": {
+      "classifier": "KNN",
+      "knn_algorithm": "kd_tree",
+      "knn_leaf_size": 40,
+      "knn_n_neighbors": 16,
+      "knn_p": 5,
+      "knn_weights": "distance"
+    },
+    "8": {
+      "classifier": "KNN",
+      "knn_algorithm": "auto",
+      "knn_leaf_size": 27,
+      "knn_n_neighbors": 8,
+      "knn_p": 3,
+      "knn_weights": "uniform"
+    },
+    "9": {
+      "classifier": "KNN",
+      "knn_algorithm": "auto",
+      "knn_leaf_size": 34,
+      "knn_n_neighbors": 2,
+      "knn_p": 2,
+      "knn_weights": "distance"
+    },
+    "10": {
+      "classifier": "KNN",
+      "knn_algorithm": "kd_tree",
+      "knn_leaf_size": 19,
+      "knn_n_neighbors": 13,
+      "knn_p": 4,
+      "knn_weights": "uniform"
+    },
+    "11": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "entropy",
+      "dt_max_depth": 11,
+      "dt_min_samples_leaf": 1,
+      "dt_min_samples_split": 14
+    },
+    "12": {
+      "classifier": "SVM",
+      "svm_C": 0.046682745848,
+      "svm_degree": 4,
+      "svm_gamma": 2.01677733e-05,
+      "svm_kernel": "linear"
+    },
+    "13": {
+      "classifier": "SVM",
+      "svm_C": 0.0001264040289,
+      "svm_degree": 4,
+      "svm_gamma": 0.6529818609059,
+      "svm_kernel": "rbf"
+    },
+    "14": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "gini",
+      "dt_max_depth": 19,
+      "dt_min_samples_leaf": 2,
+      "dt_min_samples_split": 13
+    },
+    "15": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "log_loss",
+      "dt_max_depth": 2,
+      "dt_min_samples_leaf": 10,
+      "dt_min_samples_split": 20
+    },
+    "16": {
+      "classifier": "SVM",
+      "svm_C": 0.0021124356909,
+      "svm_degree": 5,
+      "svm_gamma": 0.0044193635219,
+      "svm_kernel": "poly"
+    },
+    "17": {
+      "classifier": "KNN",
+      "knn_algorithm": "kd_tree",
+      "knn_leaf_size": 23,
+      "knn_n_neighbors": 5,
+      "knn_p": 4,
+      "knn_weights": "distance"
+    },
+    "18": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "entropy",
+      "dt_max_depth": 16,
+      "dt_min_samples_leaf": 2,
+      "dt_min_samples_split": 9
+    },
+    "19": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "log_loss",
+      "dt_max_depth": 5,
+      "dt_min_samples_leaf": 8,
+      "dt_min_samples_split": 3
+    },
+    "20": {
+      "classifier": "SVM",
+      "svm_C": 7.28907193e-05,
+      "svm_degree": 5,
+      "svm_gamma": 0.0007130206083,
+      "svm_kernel": "rbf"
+    },
+    "21": {
+      "classifier": "SVM",
+      "svm_C": 0.0350724697551,
+      "svm_degree": 5,
+      "svm_gamma": 0.0218741189653,
+      "svm_kernel": "linear"
+    },
+    "22": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "gini",
+      "dt_max_depth": 8,
+      "dt_min_samples_leaf": 9,
+      "dt_min_samples_split": 6
+    },
+    "23": {
+      "classifier": "KNN",
+      "knn_algorithm": "ball_tree",
+      "knn_leaf_size": 26,
+      "knn_n_neighbors": 1,
+      "knn_p": 3,
+      "knn_weights": "distance"
+    },
+    "24": {
+      "classifier": "KNN",
+      "knn_algorithm": "brute",
+      "knn_leaf_size": 41,
+      "knn_n_neighbors": 12,
+      "knn_p": 1,
+      "knn_weights": "uniform"
+    },
+    "25": {
+      "classifier": "KNN",
+      "knn_algorithm": "brute",
+      "knn_leaf_size": 20,
+      "knn_n_neighbors": 15,
+      "knn_p": 2,
+      "knn_weights": "distance"
+    },
+    "26": {
+      "classifier": "KNN",
+      "knn_algorithm": "kd_tree",
+      "knn_leaf_size": 31,
+      "knn_n_neighbors": 10,
+      "knn_p": 4,
+      "knn_weights": "uniform"
+    },
+    "27": {
+      "classifier": "SVM",
+      "svm_C": 0.8888692902737,
+      "svm_degree": 3,
+      "svm_gamma": 0.1,
+      "svm_kernel": "sigmoid"
+    },
+    "28": {
+      "classifier": "KNN",
+      "knn_algorithm": "auto",
+      "knn_leaf_size": 32,
+      "knn_n_neighbors": 9,
+      "knn_p": 1,
+      "knn_weights": "distance"
+    },
+    "29": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "gini",
+      "dt_max_depth": 5,
+      "dt_min_samples_leaf": 1,
+      "dt_min_samples_split": 2
+    },
+    "30": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "log_loss",
+      "dt_max_depth": 5,
+      "dt_min_samples_leaf": 1,
+      "dt_min_samples_split": 8
+    },
+    "31": {
+      "classifier": "KNN",
+      "knn_algorithm": "auto",
+      "knn_leaf_size": 26,
+      "knn_n_neighbors": 9,
+      "knn_p": 5,
+      "knn_weights": "uniform"
+    },
+    "32": {
+      "classifier": "SVM",
+      "svm_C": 1.0,
+      "svm_degree": 5,
+      "svm_gamma": 0.1,
+      "svm_kernel": "rbf"
+    },
+    "33": {
+      "classifier": "SVM",
+      "svm_C": 0.3003666323244,
+      "svm_degree": 5,
+      "svm_gamma": 0.1,
+      "svm_kernel": "linear"
+    },
+    "34": {
+      "classifier": "DecisionTree",
+      "dt_criterion": "gini",
+      "dt_max_depth": 10,
+      "dt_min_samples_leaf": 8,
+      "dt_min_samples_split": 2
+    },
+    "35": {
+      "classifier": "SVM",
+      "svm_C": 0.0002179217275,
+      "svm_degree": 2,
+      "svm_gamma": 1.4508491145394,
+      "svm_kernel": "rbf"
+    },
+    "36": {
+      "classifier": "KNN",
+      "knn_algorithm": "auto",
+      "knn_leaf_size": 30,
+      "knn_n_neighbors": 5,
+      "knn_p": 2,
+      "knn_weights": "uniform"
+    },
+    "37": {
+      "classifier": "SVM",
+      "svm_C": 1.0317506978026,
+      "svm_degree": 3,
+      "svm_gamma": 0.0906698754258,
+      "svm_kernel": "rbf"
+    }
+  },
+  "config_origins": {
+    "1": "Initial Design: Sobol",
+    "2": "Initial Design: Sobol",
+    "3": "Initial Design: Sobol",
+    "4": "Initial Design: Sobol",
+    "5": "Initial Design: Sobol",
+    "6": "Initial Design: Sobol",
+    "7": "Initial Design: Sobol",
+    "8": "Initial Design: Sobol",
+    "9": "Initial Design: Sobol",
+    "10": "Initial Design: Sobol",
+    "11": "Initial Design: Sobol",
+    "12": "Initial Design: Sobol",
+    "13": "Initial Design: Sobol",
+    "14": "Initial Design: Sobol",
+    "15": "Initial Design: Sobol",
+    "16": "Initial Design: Sobol",
+    "17": "Initial Design: Sobol",
+    "18": "Initial Design: Sobol",
+    "19": "Initial Design: Sobol",
+    "20": "Initial Design: Sobol",
+    "21": "Initial Design: Sobol",
+    "22": "Initial Design: Sobol",
+    "23": "Initial Design: Sobol",
+    "24": "Initial Design: Sobol",
+    "25": "Initial Design: Sobol",
+    "26": "Acquisition Function Maximizer: Local Search",
+    "27": "Acquisition Function Maximizer: Local Search",
+    "28": "Acquisition Function Maximizer: Local Search",
+    "29": "Acquisition Function Maximizer: Local Search",
+    "30": "Acquisition Function Maximizer: Local Search",
+    "31": "Acquisition Function Maximizer: Local Search",
+    "32": "Acquisition Function Maximizer: Local Search",
+    "33": "Acquisition Function Maximizer: Local Search",
+    "34": "Acquisition Function Maximizer: Local Search",
+    "35": "Acquisition Function Maximizer: Local Search",
+    "36": "Acquisition Function Maximizer: Local Search",
+    "37": "Acquisition Function Maximizer: Local Search"
+  }
+}

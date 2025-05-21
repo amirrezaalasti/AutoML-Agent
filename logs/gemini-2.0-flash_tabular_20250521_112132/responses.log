@@ -1,0 +1,1278 @@
+[2025-05-21 11:21:34] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", bounds=(50, 200), default=100)
+    max_depth = Integer("max_depth", bounds=(2, 10), default=5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Add Forbidden Clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(max_depth, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:34] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", bounds=(50, 200), default=100)
+    max_depth = Integer("max_depth", bounds=(2, 10), default=5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Add Forbidden Clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(max_depth, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:34] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:35] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", (50, 200), default=100)
+    max_depth = Integer("max_depth", (2, 10), default=5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Add Forbidden Clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(max_depth, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:35] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", (50, 200), default=100)
+    max_depth = Integer("max_depth", (2, 10), default=5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Add Forbidden Clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(max_depth, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:35] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:36] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=100
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:36] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=100
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:36] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:39] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:39] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:39] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:41] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:41] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:41] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:43] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:43] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:43] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#3): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:46] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:46] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:46] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#4): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:48] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:48] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score) over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=-1  # Use all available cores
+    )
+
+    # Perform cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss', n_jobs=-1)
+
+    # Calculate the average loss
+    loss = -np.mean(cv_scores)  # Cross-validation returns negative scores, so invert
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:48] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#5): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:51] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:51] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:53] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:53] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:53] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:56] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:56] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:56] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#3): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:58] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:58] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:21:58] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#4): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:00] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:00] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): Dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (label vector).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).  Lower loss means a better model.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the RandomForestClassifier with hyperparameters from the configuration
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed  # Set random state for reproducibility
+    )
+
+    # Perform cross-validation to evaluate the model.  Use negative mean squared error as it is common,
+    # and scikit-learn's cross_val_score returns *scores*, where higher is better. Since SMAC
+    # optimizes for *loss* (lower is better), we return the negative of the score.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+
+    # Calculate the average loss (negative mean squared error)
+    loss = -np.mean(scores)
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:00] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#5): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:03] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+
+from ConfigSpace import Configuration
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+import numpy as np
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed,  # set the seed for consistent results
+        n_jobs=1 # avoid spawning too many parallel threads that may overwhelm the system
+    )
+
+    # Perform cross-validation and calculate the mean score.  We use negative mean squared error
+    # because SMAC minimizes the objective function, but cross_val_score maximizes it.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+    loss = np.mean(-scores)  # Convert negative mean squared error to MSE and then to the 'loss'. Since cross_val_score already returns negative values, we change sign
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:03] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:05] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+
+from ConfigSpace import Configuration
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+import numpy as np
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed,  # set the seed for consistent results
+        n_jobs=1 # avoid spawning too many parallel threads that may overwhelm the system
+    )
+
+    # Perform cross-validation and calculate the mean score.  We use negative mean squared error
+    # because SMAC minimizes the objective function, but cross_val_score maximizes it.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+    loss = np.mean(-scores)
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:05] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+
+from ConfigSpace import Configuration
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+import numpy as np
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed,  # set the seed for consistent results
+        n_jobs=1 # avoid spawning too many parallel threads that may overwhelm the system
+    )
+
+    # Perform cross-validation and calculate the mean score.  We use negative mean squared error
+    # because SMAC minimizes the objective function, but cross_val_score maximizes it.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+    loss = np.mean(-scores)
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:05] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:07] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+
+from ConfigSpace import Configuration
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+import numpy as np
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed,  # set the seed for consistent results
+        n_jobs=1 # avoid spawning too many parallel threads that may overwhelm the system
+    )
+
+    # Perform cross-validation and calculate the mean score.  We use negative mean squared error
+    # because SMAC minimizes the objective function, but cross_val_score maximizes it.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+    loss = np.mean(-scores)
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:07] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+
+from ConfigSpace import Configuration
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+import numpy as np
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset with 'X' and 'y' keys.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Average training loss (negative cross-validation score).
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Instantiate the Random Forest Classifier
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        criterion=cfg.get("criterion"),
+        random_state=seed,  # set the seed for consistent results
+        n_jobs=1 # avoid spawning too many parallel threads that may overwhelm the system
+    )
+
+    # Perform cross-validation and calculate the mean score.  We use negative mean squared error
+    # because SMAC minimizes the objective function, but cross_val_score maximizes it.
+    scores = cross_val_score(model, X, y, cv=10, scoring='neg_mean_squared_error')
+    loss = np.mean(-scores)
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-05-21 11:22:07] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#3): train() missing 1 required positional argument: 'seed'
+--------------------------------------------------------------------------------

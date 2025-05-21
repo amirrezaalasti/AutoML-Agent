@@ -6,7 +6,7 @@
 
 ```python
 from ConfigSpace import Configuration
-def train(cfg: Configuration, dataset: Any) -> float:
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
 ```
 
 ---
