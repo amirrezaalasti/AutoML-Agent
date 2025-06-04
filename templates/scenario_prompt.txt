@@ -29,25 +29,5 @@ Generate a **Python function** named `generate_scenario(cs)` that returns a vali
 
 * Valid `import` statements
 * A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
-* Do not use any parameters other than the ones explicitly listed in this prompt.
 
 ---
-
-**Example (Correct Output Format):**
-
-```python
-from smac import Scenario
-from ConfigSpace import Configuration
-
-def generate_scenario(cs: Configuration):
-    scenario = Scenario(
-        configspace=cs,
-        objectives="validation_loss",
-        output_directory="./automl_results",
-        deterministic=False,
-        min_budget=1,
-        max_budget=100,
-        n_workers=4
-    )
-    return scenario
-```

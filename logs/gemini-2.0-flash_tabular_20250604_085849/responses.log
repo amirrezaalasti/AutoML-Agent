@@ -1,0 +1,485 @@
+[2025-06-04 08:58:51] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Float("max_features", bounds=(0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:51] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Float("max_features", bounds=(0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:51] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:53] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:53] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:53] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): Given vector violates forbidden clause: (Forbidden: criterion == 'gini' && Forbidden: min_samples_split == 2)
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:54] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+    )
+
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:54] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+    )
+
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:54] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Given vector violates forbidden clause: (Forbidden: criterion == 'gini' && Forbidden: min_samples_split == 2)
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:56] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+    )
+
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:56] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+    )
+
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:56] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:57] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+    )
+
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:57] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+    )
+
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:58:57] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#5): Given vector violates forbidden clause: (Forbidden: criterion == 'gini' && Forbidden: min_samples_split == 2)
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:01] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical("classifier", ["SVM", "RandomForest"])
+
+    # SVM hyperparameters
+    svm_C = Float("svm_C", (0.001, 1000), default=1.0, log=True)
+    svm_kernel = Categorical("svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_degree = Integer("svm_degree", (2, 5), default=3)
+    svm_gamma = Float("svm_gamma", (0.0001, 10), default=0.1, log=True)
+
+    # Random Forest hyperparameters
+    rf_n_estimators = Integer("rf_n_estimators", (10, 200), default=100)
+    rf_max_depth = Integer("rf_max_depth", (2, 10), default=None)
+    rf_min_samples_split = Integer("rf_min_samples_split", (2, 10), default=2)
+    rf_min_samples_leaf = Integer("rf_min_samples_leaf", (1, 10), default=1)
+
+    # Add hyperparameters to configuration space
+    cs.add_hyperparameters([classifier, svm_C, svm_kernel, svm_degree, svm_gamma,
+                             rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf])
+
+    # Add forbidden clauses
+    forbidden_clause_1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "SVM"),
+        ForbiddenEqualsClause(svm_kernel, "linear"),
+        ForbiddenEqualsClause(svm_C, 0.001),
+    )
+
+    forbidden_clause_2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, "RandomForest"),
+        ForbiddenEqualsClause(rf_n_estimators, 10),
+        ForbiddenEqualsClause(rf_max_depth, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause_1)
+    cs.add_forbidden_clause(forbidden_clause_2)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:01] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:02] [Metadata: {'component': 'scenario'}] ```python
+import os
+from ConfigSpace import ConfigurationSpace
+from smac import Scenario
+
+def generate_scenario(cs):
+    return Scenario(
+        configspace=cs,
+        name="smac_experiment",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=2,
+        min_budget=1,
+        max_budget=10
+    )
+```
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:02] [Metadata: {'component': 'scenario', 'action': 'run'}] import os
+from ConfigSpace import ConfigurationSpace
+from smac import Scenario
+
+def generate_scenario(cs):
+    return Scenario(
+        configspace=cs,
+        name="smac_experiment",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=2,
+        min_budget=1,
+        max_budget=10
+    )
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:02] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:05] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the dataset with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Split data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed)
+
+    # Model selection based on configuration
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "SVM":
+        # SVM Parameters
+        C = cfg.get("svm_C")
+        kernel = cfg.get("svm_kernel")
+        degree = cfg.get("svm_degree")
+        gamma = cfg.get("svm_gamma")
+
+        model = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, probability=True, random_state=seed)
+
+    elif classifier_name == "RandomForest":
+        # Random Forest Parameters
+        n_estimators = cfg.get("rf_n_estimators")
+        max_depth = cfg.get("rf_max_depth")
+        min_samples_split = cfg.get("rf_min_samples_split")
+        min_samples_leaf = cfg.get("rf_min_samples_leaf")
+
+        model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
+                                       min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                       random_state=seed)
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    # Training loop (multiple epochs)
+    epochs = 10
+    losses = []
+    for _ in range(epochs):
+        # Train the model
+        model.fit(X_train, y_train)
+
+        # Calculate validation loss
+        y_pred = model.predict_proba(X_val)  # Use predict_proba for log_loss
+        loss = log_loss(y_val, y_pred)
+        losses.append(loss)
+
+    # Calculate the average loss
+    avg_loss = np.mean(losses)
+
+    return avg_loss
+```
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:05] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the dataset with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Split data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed)
+
+    # Model selection based on configuration
+    classifier_name = cfg.get("classifier")
+
+    if classifier_name == "SVM":
+        # SVM Parameters
+        C = cfg.get("svm_C")
+        kernel = cfg.get("svm_kernel")
+        degree = cfg.get("svm_degree")
+        gamma = cfg.get("svm_gamma")
+
+        model = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, probability=True, random_state=seed)
+
+    elif classifier_name == "RandomForest":
+        # Random Forest Parameters
+        n_estimators = cfg.get("rf_n_estimators")
+        max_depth = cfg.get("rf_max_depth")
+        min_samples_split = cfg.get("rf_min_samples_split")
+        min_samples_leaf = cfg.get("rf_min_samples_leaf")
+
+        model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
+                                       min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                       random_state=seed)
+    else:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    # Training loop (multiple epochs)
+    epochs = 10
+    losses = []
+    for _ in range(epochs):
+        # Train the model
+        model.fit(X_train, y_train)
+
+        # Calculate validation loss
+        y_pred = model.predict_proba(X_val)  # Use predict_proba for log_loss
+        loss = log_loss(y_val, y_pred)
+        losses.append(loss)
+
+    # Calculate the average loss
+    avg_loss = np.mean(losses)
+
+    return avg_loss
+
+--------------------------------------------------------------------------------
+[2025-06-04 08:59:06] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 0.07107978737292085}] Training executed successfully, loss: 0.07107978737292085
+--------------------------------------------------------------------------------
