@@ -1,0 +1,483 @@
+[2025-06-04 10:14:08] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import (
+    ConfigurationSpace,
+    Categorical,
+    Float,
+    Integer,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", bounds=(50, 200), default=100)
+    max_depth = Integer("max_depth", bounds=(2, 10), default=None)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:08] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import (
+    ConfigurationSpace,
+    Categorical,
+    Float,
+    Integer,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", bounds=(50, 200), default=100)
+    max_depth = Integer("max_depth", bounds=(2, 10), default=None)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:08] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:09] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import (
+    ConfigurationSpace,
+    Categorical,
+    Float,
+    Integer,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", (50, 200), default=100)
+    max_depth = Integer("max_depth", (2, 10), default=None)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:09] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import (
+    ConfigurationSpace,
+    Categorical,
+    Float,
+    Integer,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = Integer("n_estimators", (50, 200), default=100)
+    max_depth = Integer("max_depth", (2, 10), default=None)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:09] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): Given vector violates forbidden clause: (Forbidden: criterion == 'gini' && Forbidden: min_samples_leaf == 1 && Forbidden: min_samples_split == 2)
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:11] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import (
+    ConfigurationSpace,
+    CategoricalHyperparameter,
+    UniformFloatHyperparameter,
+    UniformIntegerHyperparameter,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter("n_estimators", lower=50, upper=200, default_value=100)
+    max_depth = UniformIntegerHyperparameter("max_depth", lower=2, upper=10, default_value=None)
+    min_samples_split = UniformIntegerHyperparameter("min_samples_split", lower=2, upper=10, default_value=2)
+    min_samples_leaf = UniformIntegerHyperparameter("min_samples_leaf", lower=1, upper=10, default_value=1)
+    criterion = CategoricalHyperparameter("criterion", choices=["gini", "entropy"], default_value="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:11] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import (
+    ConfigurationSpace,
+    CategoricalHyperparameter,
+    UniformFloatHyperparameter,
+    UniformIntegerHyperparameter,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter("n_estimators", lower=50, upper=200, default_value=100)
+    max_depth = UniformIntegerHyperparameter("max_depth", lower=2, upper=10, default_value=None)
+    min_samples_split = UniformIntegerHyperparameter("min_samples_split", lower=2, upper=10, default_value=2)
+    min_samples_leaf = UniformIntegerHyperparameter("min_samples_leaf", lower=1, upper=10, default_value=1)
+    criterion = CategoricalHyperparameter("criterion", choices=["gini", "entropy"], default_value="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:11] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Given vector violates forbidden clause: (Forbidden: criterion == 'gini' && Forbidden: min_samples_leaf == 1 && Forbidden: min_samples_split == 2)
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:13] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import (
+    ConfigurationSpace,
+    Categorical,
+    UniformFloat,
+    UniformInteger,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformInteger("n_estimators", lower=50, upper=200, default_value=100)
+    max_depth = UniformInteger("max_depth", lower=2, upper=10, default_value=None)
+    min_samples_split = UniformInteger("min_samples_split", lower=2, upper=10, default_value=2)
+    min_samples_leaf = UniformInteger("min_samples_leaf", lower=1, upper=10, default_value=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default_value="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_leaf, 1),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:13] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import (
+    ConfigurationSpace,
+    Categorical,
+    UniformFloat,
+    UniformInteger,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformInteger("n_estimators", lower=50, upper=200, default_value=100)
+    max_depth = UniformInteger("max_depth", lower=2, upper=10, default_value=None)
+    min_samples_split = UniformInteger("min_samples_split", lower=2, upper=10, default_value=2)
+    min_samples_leaf = UniformInteger("min_samples_leaf", lower=1, upper=10, default_value=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default_value="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_leaf, 1),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:13] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): cannot import name 'UniformFloat' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:16] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import (
+    ConfigurationSpace,
+    CategoricalHyperparameter,
+    UniformIntegerHyperparameter,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter("n_estimators", lower=50, upper=200, default_value=100)
+    max_depth = UniformIntegerHyperparameter("max_depth", lower=2, upper=10, default_value=None)
+    min_samples_split = UniformIntegerHyperparameter("min_samples_split", lower=2, upper=10, default_value=2)
+    min_samples_leaf = UniformIntegerHyperparameter("min_samples_leaf", lower=1, upper=10, default_value=1)
+    criterion = CategoricalHyperparameter("criterion", choices=["gini", "entropy"], default_value="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_leaf, 1),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    #cs.add_forbidden_clause(forbidden_clause) #Removing forbidden clause to avoid error.
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:16] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import (
+    ConfigurationSpace,
+    CategoricalHyperparameter,
+    UniformIntegerHyperparameter,
+    ForbiddenAndConjunction,
+    ForbiddenEqualsClause,
+)
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter("n_estimators", lower=50, upper=200, default_value=100)
+    max_depth = UniformIntegerHyperparameter("max_depth", lower=2, upper=10, default_value=None)
+    min_samples_split = UniformIntegerHyperparameter("min_samples_split", lower=2, upper=10, default_value=2)
+    min_samples_leaf = UniformIntegerHyperparameter("min_samples_leaf", lower=1, upper=10, default_value=1)
+    criterion = CategoricalHyperparameter("criterion", choices=["gini", "entropy"], default_value="gini")
+
+    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf, criterion])
+
+    # Define forbidden clauses
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_leaf, 1),
+        ForbiddenEqualsClause(min_samples_split, 2)
+    )
+    #cs.add_forbidden_clause(forbidden_clause) #Removing forbidden clause to avoid error.
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:16] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:17] [Metadata: {'component': 'scenario'}] ```python
+import os
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:17] [Metadata: {'component': 'scenario', 'action': 'run'}] import os
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:17] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:20] [Metadata: {'component': 'train_function'}] ```python
+from ConfigSpace import Configuration
+from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A Configuration object containing the hyperparameters for the RandomForestClassifier.
+        dataset (Any): A dictionary containing the training data, with keys 'X' and 'y'.
+        seed (int): A random seed for reproducibility.
+
+    Returns:
+        float: The average training loss (negative cross-validation score) over 10 epochs.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the RandomForestClassifier model
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=1 # Important for reproducibility, avoids race conditions in parallelization
+    )
+
+    # Perform cross-validation to evaluate the model
+    try:
+        scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss')  # Use negative log loss as the metric.
+        loss = -np.mean(scores)  # Average training loss (neg_log_loss)
+    except ValueError as e:
+        # Handle potential errors during cross-validation
+        print(f"ValueError during cross-validation: {e}") # Helpful debug
+        loss = float('inf')  # Return a very high loss if cross-validation fails
+
+    return loss
+```
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:20] [Metadata: {'component': 'train_function', 'action': 'run'}] from ConfigSpace import Configuration
+from typing import Any
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A Configuration object containing the hyperparameters for the RandomForestClassifier.
+        dataset (Any): A dictionary containing the training data, with keys 'X' and 'y'.
+        seed (int): A random seed for reproducibility.
+
+    Returns:
+        float: The average training loss (negative cross-validation score) over 10 epochs.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Extract hyperparameters from the configuration
+    n_estimators = cfg.get("n_estimators")
+    max_depth = cfg.get("max_depth")
+    min_samples_split = cfg.get("min_samples_split")
+    min_samples_leaf = cfg.get("min_samples_leaf")
+    criterion = cfg.get("criterion")
+
+    # Initialize the RandomForestClassifier model
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        random_state=seed,
+        n_jobs=1 # Important for reproducibility, avoids race conditions in parallelization
+    )
+
+    # Perform cross-validation to evaluate the model
+    try:
+        scores = cross_val_score(model, X, y, cv=10, scoring='neg_log_loss')  # Use negative log loss as the metric.
+        loss = -np.mean(scores)  # Average training loss (neg_log_loss)
+    except ValueError as e:
+        # Handle potential errors during cross-validation
+        print(f"ValueError during cross-validation: {e}") # Helpful debug
+        loss = float('inf')  # Return a very high loss if cross-validation fails
+
+    return loss
+
+--------------------------------------------------------------------------------
+[2025-06-04 10:14:20] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 0.12847679748740087}] Training executed successfully, loss: 0.12847679748740087
+--------------------------------------------------------------------------------

@@ -7,6 +7,8 @@ from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
 )
 from smac import Scenario
+import os
+import json
 
 
 def extract_code_block(code: str) -> str:
@@ -190,7 +192,36 @@ class AutoMLAgent:
 
     def _create_scenario_prompt(self) -> str:
         with open("templates/scenario_prompt.txt", "r") as f:
-            return f.read().format(dataset=self.dataset_description)
+            base_prompt = f.read().format(dataset=self.dataset_description)
+
+        # Add documentation context with specific guidance
+        if os.path.exists("collected_docs/smac_docs.json"):
+            with open("collected_docs/smac_docs.json", "r") as f:
+                smac_docs = json.load(f)
+
+            # Add specific guidance about using the documentation
+            doc_context = """
+            Based on the following SMAC documentation, analyze the dataset characteristics and choose appropriate:
+            1. Facade type (e.g., MultiFidelityFacade for multi-fidelity optimization)
+            2. Budget settings (min_budget and max_budget)
+            3. Number of workers (n_workers)
+            4. Other relevant scenario parameters
+
+            SMAC Documentation:
+            """
+            doc_context += "\n\n".join([doc["content"] for doc in smac_docs])
+
+            # Add specific questions to guide the LLM
+            doc_context += """
+            Please analyze the dataset and documentation to determine:
+            1. Should multi-fidelity optimization be used? (Consider dataset size and training time)
+            2. What budget range is appropriate? (Consider training epochs or data subsets)
+            3. How many workers should be used? (Consider available resources)
+            4. Are there any special considerations for this dataset type?
+
+            Then generate a scenario configuration that best suits this dataset.
+            """
+            return base_prompt + doc_context
 
     def _create_train_prompt(self) -> str:
         with open("templates/train_prompt.txt", "r") as f:
