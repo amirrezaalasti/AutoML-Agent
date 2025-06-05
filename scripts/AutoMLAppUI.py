@@ -65,35 +65,35 @@ class AutoMLAppUI:
                 X, y = load_iris(return_X_y=True)
                 return {"X": X, "y": y}
 
-            if dataset_name == "Wine":
+            elif dataset_name == "Wine":
                 X, y = load_wine(return_X_y=True)
                 return {"X": X, "y": y}
 
-            if dataset_name == "Breast Cancer":
+            elif dataset_name == "Breast Cancer":
                 X, y = load_breast_cancer(return_X_y=True)
                 return {"X": X, "y": y}
 
-            if dataset_name == "Diabetes":
+            elif dataset_name == "Diabetes":
                 X, y = load_diabetes(return_X_y=True)
                 return {"X": X, "y": y}
 
-            if dataset_name == "Digits":
+            elif dataset_name == "Digits":
                 X, y = load_digits(return_X_y=True)
                 return {"X": X, "y": y}
 
-            if dataset_name == "R Duncan (statsmodels)":
+            elif dataset_name == "R Duncan (statsmodels)":
                 ds = sm.datasets.get_rdataset("Duncan", "carData").data
                 X = ds.drop(columns=["prestige"])
                 y = ds["prestige"]
                 return {"X": X, "y": y}
 
-            if dataset_name == "Titanic (seaborn)":
+            elif dataset_name == "Titanic (seaborn)":
                 df = sns.load_dataset("titanic").dropna(subset=["survived"])
                 X = df.drop(columns=["survived"])
                 y = df["survived"]
                 return {"X": X, "y": y}
 
-            if dataset_name == "Custom Upload":
+            elif dataset_name == "Custom Upload":
                 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
                 if uploaded_file:
                     df = pd.read_csv(uploaded_file)
@@ -104,7 +104,7 @@ class AutoMLAppUI:
                 return None
 
         # 2. Image (only Keras)
-        if data_type == "image":
+        elif data_type == "image":
             if dataset_name == "MNIST (Keras)":
                 (xtr, ytr), _ = mnist.load_data()
             elif dataset_name == "Fashion‑MNIST (Keras)":
@@ -119,17 +119,17 @@ class AutoMLAppUI:
             return {"X": X, "y": y}
 
         # 3. Time Series
-        if data_type == "time_series":
+        elif data_type == "time_series":
             ds = sm.datasets.get_rdataset("sunspot.year", "datasets").data
             return {"X": ds.index.values.reshape(-1, 1), "y": ds.value}
 
         # 4. Text
-        if data_type == "text":
+        elif data_type == "text":
             data = fetch_20newsgroups(subset="all", remove=("headers", "footers", "quotes"))
             return {"X": pd.Series(data.data), "y": pd.Series(data.target)}
 
         # 5. Categorical
-        if data_type == "categorical":
+        elif data_type == "categorical":
             if dataset_name == "Adult Income (statsmodels)":
                 df = sm.datasets.get_rdataset("adult", "OpenML").data
                 X = df.drop(columns=["class"])
@@ -165,6 +165,7 @@ class AutoMLAppUI:
                     llm_client=llm_client,
                     dataset_type=self.data_type,
                     ui_agent=st,
+                    dataset_name=dataset_choice,
                 )
                 (
                     config_code,

@@ -4,8 +4,11 @@ from ConfigSpace import ConfigurationSpace
 
 
 def generate_scenario(cs):
-    """
-    Generates a SMAC scenario object.
-    """
-    scenario = Scenario(configspace=cs, output_directory="./automl_results", deterministic=False, n_workers=2, min_budget=1, max_budget=3)
+    output_dir = "./automl_results"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    scenario = Scenario(
+        configspace=cs, name="smac_experiment", output_directory=output_dir, deterministic=False, n_workers=2, min_budget=1, max_budget=3
+    )
     return scenario

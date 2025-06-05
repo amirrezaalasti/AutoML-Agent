@@ -1,20 +1,21 @@
 **TASK**
 
-Goal: Write a Python function called `get_configspace()` that returns a valid `ConfigurationSpace` for a classification task.
+**Goal:**
+Write a Python function named `get_configspace()` that returns a valid `ConfigurationSpace` object for a classification task.
 
 ---
 
 **STRICT OUTPUT RULES**
 
-* Output only the `get_configspace()` function and necessary imports.
-* Do not include any extra text, explanations, or comments.
-* Code must be syntactically correct, executable, and compatible with SMAC.
+* Output **only** the complete `get_configspace()` function and **required imports**.
+* Do **not** include any explanations, comments, docstrings, or extra text.
+* The code must be **syntactically correct**, **executable**, and **compatible with SMAC**.
 
 ---
 
 **ALLOWED CLASSES**
 
-**Core Classes**
+**Core**
 
 * `ConfigurationSpace`
 * `Categorical`
@@ -31,7 +32,7 @@ Goal: Write a Python function called `get_configspace()` that returns a valid `C
 **Forbidden Clauses**
 
 * `ForbiddenEqualsClause`
-* `ForbiddenAndConjunction`
+* `ForbiddenAndConjunction` *(must include at least one)*
 
 **Distributions (only if needed)**
 
@@ -45,31 +46,36 @@ Goal: Write a Python function called `get_configspace()` that returns a valid `C
 
 ---
 
-**ALLOWED OPTIONS**
-
-* `default`
-* `log`
-* `distribution`
-
----
-
 **CONSTRAINTS**
 
-* Must include **at least one** `ForbiddenAndConjunction` to block invalid combinations.
+* Must include **at least one** `ForbiddenAndConjunction` to block invalid hyperparameter combinations.
 
 ---
 
 **DATASET DESCRIPTION**
 
-* The configuration space must be based on the following information
-{dataset_description}.
-* Hyperparameters and model choices must reflect what is appropriate for that dataset type.
+* Use the following information to design the configuration space:
+  `{dataset_description}`
+* Hyperparameter choices and model types must be suitable for this classification dataset.
+
+---
+
+**SUGGESTED PARAMETERS From OpenML**
+
+* Here are some parameter configurations for this dataset from OpenML (for inspiration only, not mandatory):
+  `{config_space_suggested_parameters}`
 
 ---
 
 **IMPORTANT RULE**
 
-* Do **not** use any classes, functions, methods, or modules outside of the **ALLOWED CLASSES**.
+* Do **not** use any class, function, method, or module outside the **ALLOWED CLASSES** list.
+
+---
+
+**EXAMPLES**
+
+* See provided examples for valid usage of hyperparameters, conditions, forbidden clauses, and priors.
 
 [EXAMPLES]
 
@@ -167,4 +173,3 @@ cs = ConfigurationSpace(
         ),
     }},
 )
-```

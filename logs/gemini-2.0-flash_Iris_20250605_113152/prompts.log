@@ -1,20 +1,21 @@
-[2025-06-04 08:41:21] [Metadata: {'component': 'config'}] **TASK**
+[2025-06-05 11:32:00] [Metadata: {'component': 'config'}] **TASK**
 
-Goal: Write a Python function called `get_configspace()` that returns a valid `ConfigurationSpace` for a classification task.
+**Goal:**
+Write a Python function named `get_configspace()` that returns a valid `ConfigurationSpace` object for a classification task.
 
 ---
 
 **STRICT OUTPUT RULES**
 
-* Output only the `get_configspace()` function and necessary imports.
-* Do not include any extra text, explanations, or comments.
-* Code must be syntactically correct, executable, and compatible with SMAC.
+* Output **only** the complete `get_configspace()` function and **required imports**.
+* Do **not** include any explanations, comments, docstrings, or extra text.
+* The code must be **syntactically correct**, **executable**, and **compatible with SMAC**.
 
 ---
 
 **ALLOWED CLASSES**
 
-**Core Classes**
+**Core**
 
 * `ConfigurationSpace`
 * `Categorical`
@@ -31,7 +32,7 @@ Goal: Write a Python function called `get_configspace()` that returns a valid `C
 **Forbidden Clauses**
 
 * `ForbiddenEqualsClause`
-* `ForbiddenAndConjunction`
+* `ForbiddenAndConjunction` *(must include at least one)*
 
 **Distributions (only if needed)**
 
@@ -45,24 +46,16 @@ Goal: Write a Python function called `get_configspace()` that returns a valid `C
 
 ---
 
-**ALLOWED OPTIONS**
-
-* `default`
-* `log`
-* `distribution`
-
----
-
 **CONSTRAINTS**
 
-* Must include **at least one** `ForbiddenAndConjunction` to block invalid combinations.
+* Must include **at least one** `ForbiddenAndConjunction` to block invalid hyperparameter combinations.
 
 ---
 
 **DATASET DESCRIPTION**
 
-* The configuration space must be based on the following information
-This is a tabular dataset.
+* Use the following information to design the configuration space:
+  `This is a tabular dataset.
 It has 150 samples and 4 features.
 Feature columns and types:
 - 0: float64
@@ -85,14 +78,303 @@ Label distribution:
 0    50
 1    50
 2    50
-Name: count, dtype: int64.
-* Hyperparameters and model choices must reflect what is appropriate for that dataset type.
+Name: count, dtype: int64`
+* Hyperparameter choices and model types must be suitable for this classification dataset.
+
+---
+
+**SUGGESTED PARAMETERS From OpenML**
+
+* Here are some parameter configurations for this dataset from OpenML (for inspiration only, not mandatory):
+  `[{56535: OpenML Parameter
+================
+ID............: 56535
+Flow ID.......: 6048
+Flow Name.....: sklearn.pipeline.Pipeline(dualimputer=helper.dual_imputer.DualImputer,nusvc=sklearn.svm.classes.NuSVC)(1)_steps
+Flow URL......: https://www.openml.org/f/6048
+Parameter Name: steps
+  |__Data Type: None
+  |__Default..: [{"oml-python:serialized_object": "component_reference", "value": {"key": "dualimputer", "step_name": "dualimputer"}}, {"oml-python:serialized_object": "component_reference", "value": {"key": "nusvc", "step_name": "nusvc"}}]
+  |__Value....: [('dualimputer', <helper.dual_imputer.DualImputer object at 0x7f9edc7cfe48>), ('nusvc', NuSVC(cache_size=200, class_weight=None, coef0=0.0,
+   decision_function_shape=None, degree=3, gamma='auto', kernel='linear',
+   max_iter=-1, nu=0.3, probability=True, random_state=None,
+   shrinking=True, tol=0.001, verbose=False))], 56536: OpenML Parameter
+================
+ID............: 56536
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_cache_size
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: cache_size
+  |__Data Type: None
+  |__Default..: 200
+  |__Value....: 200, 56537: OpenML Parameter
+================
+ID............: 56537
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_class_weight
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: class_weight
+  |__Data Type: None
+  |__Default..: null
+  |__Value....: None, 56538: OpenML Parameter
+================
+ID............: 56538
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_coef0
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: coef0
+  |__Data Type: None
+  |__Default..: 0.0
+  |__Value....: 0.0, 56539: OpenML Parameter
+================
+ID............: 56539
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_decision_function_shape
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: decision_function_shape
+  |__Data Type: None
+  |__Default..: null
+  |__Value....: None, 56540: OpenML Parameter
+================
+ID............: 56540
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_degree
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: degree
+  |__Data Type: None
+  |__Default..: 3
+  |__Value....: 3, 56541: OpenML Parameter
+================
+ID............: 56541
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_gamma
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: gamma
+  |__Data Type: None
+  |__Default..: "auto"
+  |__Value....: auto, 56542: OpenML Parameter
+================
+ID............: 56542
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_kernel
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: kernel
+  |__Data Type: None
+  |__Default..: "rbf"
+  |__Value....: linear, 56543: OpenML Parameter
+================
+ID............: 56543
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_max_iter
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: max_iter
+  |__Data Type: None
+  |__Default..: -1
+  |__Value....: -1, 56544: OpenML Parameter
+================
+ID............: 56544
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_nu
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: nu
+  |__Data Type: None
+  |__Default..: 0.5
+  |__Value....: 0.3, 56545: OpenML Parameter
+================
+ID............: 56545
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_probability
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: probability
+  |__Data Type: None
+  |__Default..: false
+  |__Value....: True, 56546: OpenML Parameter
+================
+ID............: 56546
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_random_state
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: random_state
+  |__Data Type: None
+  |__Default..: null
+  |__Value....: None, 56547: OpenML Parameter
+================
+ID............: 56547
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_shrinking
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: shrinking
+  |__Data Type: None
+  |__Default..: true
+  |__Value....: True, 56548: OpenML Parameter
+================
+ID............: 56548
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_tol
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: tol
+  |__Data Type: None
+  |__Default..: 0.001
+  |__Value....: 0.001, 56549: OpenML Parameter
+================
+ID............: 56549
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_verbose
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: verbose
+  |__Data Type: None
+  |__Default..: false
+  |__Value....: False}, {56535: OpenML Parameter
+================
+ID............: 56535
+Flow ID.......: 6048
+Flow Name.....: sklearn.pipeline.Pipeline(dualimputer=helper.dual_imputer.DualImputer,nusvc=sklearn.svm.classes.NuSVC)(1)_steps
+Flow URL......: https://www.openml.org/f/6048
+Parameter Name: steps
+  |__Data Type: None
+  |__Default..: [{"oml-python:serialized_object": "component_reference", "value": {"key": "dualimputer", "step_name": "dualimputer"}}, {"oml-python:serialized_object": "component_reference", "value": {"key": "nusvc", "step_name": "nusvc"}}]
+  |__Value....: [('dualimputer', <helper.dual_imputer.DualImputer object at 0x7f5bb3649f60>), ('nusvc', NuSVC(cache_size=200, class_weight=None, coef0=0.0,
+   decision_function_shape=None, degree=3, gamma='auto', kernel='linear',
+   max_iter=-1, nu=0.3, probability=True, random_state=3, shrinking=True,
+   tol=2.7236785791009957e-05, verbose=False))], 56536: OpenML Parameter
+================
+ID............: 56536
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_cache_size
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: cache_size
+  |__Data Type: None
+  |__Default..: 200
+  |__Value....: 200, 56537: OpenML Parameter
+================
+ID............: 56537
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_class_weight
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: class_weight
+  |__Data Type: None
+  |__Default..: null
+  |__Value....: None, 56538: OpenML Parameter
+================
+ID............: 56538
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_coef0
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: coef0
+  |__Data Type: None
+  |__Default..: 0.0
+  |__Value....: 0.0, 56539: OpenML Parameter
+================
+ID............: 56539
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_decision_function_shape
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: decision_function_shape
+  |__Data Type: None
+  |__Default..: null
+  |__Value....: None, 56540: OpenML Parameter
+================
+ID............: 56540
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_degree
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: degree
+  |__Data Type: None
+  |__Default..: 3
+  |__Value....: 3, 56541: OpenML Parameter
+================
+ID............: 56541
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_gamma
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: gamma
+  |__Data Type: None
+  |__Default..: "auto"
+  |__Value....: auto, 56542: OpenML Parameter
+================
+ID............: 56542
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_kernel
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: kernel
+  |__Data Type: None
+  |__Default..: "rbf"
+  |__Value....: linear, 56543: OpenML Parameter
+================
+ID............: 56543
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_max_iter
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: max_iter
+  |__Data Type: None
+  |__Default..: -1
+  |__Value....: -1, 56544: OpenML Parameter
+================
+ID............: 56544
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_nu
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: nu
+  |__Data Type: None
+  |__Default..: 0.5
+  |__Value....: 0.3, 56545: OpenML Parameter
+================
+ID............: 56545
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_probability
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: probability
+  |__Data Type: None
+  |__Default..: false
+  |__Value....: True, 56546: OpenML Parameter
+================
+ID............: 56546
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_random_state
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: random_state
+  |__Data Type: None
+  |__Default..: null
+  |__Value....: 3, 56547: OpenML Parameter
+================
+ID............: 56547
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_shrinking
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: shrinking
+  |__Data Type: None
+  |__Default..: true
+  |__Value....: True, 56548: OpenML Parameter
+================
+ID............: 56548
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_tol
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: tol
+  |__Data Type: None
+  |__Default..: 0.001
+  |__Value....: 2.7236785791e-05, 56549: OpenML Parameter
+================
+ID............: 56549
+Flow ID.......: 6049
+Flow Name.....: sklearn.svm.classes.NuSVC(1)_verbose
+Flow URL......: https://www.openml.org/f/6049
+Parameter Name: verbose
+  |__Data Type: None
+  |__Default..: false
+  |__Value....: False}]`
 
 ---
 
 **IMPORTANT RULE**
 
-* Do **not** use any classes, functions, methods, or modules outside of the **ALLOWED CLASSES**.
+* Do **not** use any class, function, method, or module outside the **ALLOWED CLASSES** list.
+
+---
+
+**EXAMPLES**
+
+* See provided examples for valid usage of hyperparameters, conditions, forbidden clauses, and priors.
 
 [EXAMPLES]
 
@@ -190,413 +472,10 @@ cs = ConfigurationSpace(
         ),
     },
 )
-```
-
 --------------------------------------------------------------------------------
-[2025-06-04 08:41:21] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+[2025-06-05 11:32:00] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
 --------------------------------------------------------------------------------
-[2025-06-04 08:41:21] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): ufunc 'multiply' did not contain a loop with signature matching types (dtype('<U5'), dtype('float64')) -> None
---------------------------------------------------------------------------------
-[2025-06-04 08:41:21] [Metadata: {'component': 'config', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
-ufunc 'multiply' did not contain a loop with signature matching types (dtype('<U5'), dtype('float64')) -> None
-
-Your task is to fix the issues in the code. The requirements below MUST be respected:
-
-1. Do not change the function name or its purpose.
-2. Fix all syntax and runtime errors.
-3. Use only valid parameters.
-4. Do not change the logic unless necessary for fixing errors.
-5. Return ONLY the corrected function code — no explanations, comments, or extra output.
-6. The function must be syntactically and semantically correct, and executable with `exec`.
-
-Buggy code:
-```python
-from ConfigSpace import (
-    ConfigurationSpace,
-    Categorical,
-    Float,
-    Integer,
-    ForbiddenAndConjunction,
-    ForbiddenEqualsClause,
-)
-
-
-def get_configspace():
-    cs = ConfigurationSpace()
-
-    # Define hyperparameters
-    classifier = Categorical(
-        "classifier", ["knn", "svm", "random_forest"], default="random_forest"
-    )
-    cs.add_hyperparameter(classifier)
-
-    # KNN parameters
-    n_neighbors = Integer("n_neighbors", (1, 20), default=5)
-    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
-    cs.add_hyperparameters([n_neighbors, weights])
-
-    # SVM parameters
-    C = Float("C", (1e-4, 1000), default=1.0, log=True)
-    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
-    gamma = Float("gamma", (1e-5, 100), default="scale", log=True)
-    degree = Integer("degree", (2, 5), default=3)
-    cs.add_hyperparameters([C, kernel, gamma, degree])
-
-    # Random Forest parameters
-    n_estimators = Integer("n_estimators", (10, 200), default=100)
-    max_depth = Integer("max_depth", (2, 10), default=None)
-    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
-    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
-    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
-
-    # Add conditions
-    cs.add_condition(
-        ForbiddenAndConjunction(
-            ForbiddenEqualsClause(classifier, "knn"),
-            ForbiddenEqualsClause(kernel, "rbf")
-        )
-    )
-    cs.add_condition(
-        ForbiddenAndConjunction(
-            ForbiddenEqualsClause(classifier, "knn"),
-            ForbiddenEqualsClause(kernel, "linear")
-        )
-    )
-    cs.add_condition(
-        ForbiddenAndConjunction(
-            ForbiddenEqualsClause(classifier, "knn"),
-            ForbiddenEqualsClause(kernel, "poly")
-        )
-    )
-    cs.add_condition(
-        ForbiddenAndConjunction(
-            ForbiddenEqualsClause(classifier, "knn"),
-            ForbiddenEqualsClause(kernel, "sigmoid")
-        )
-    )
-
-    return cs
-```
-
---------------------------------------------------------------------------------
-[2025-06-04 08:41:25] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
---------------------------------------------------------------------------------
-[2025-06-04 08:41:25] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
---------------------------------------------------------------------------------
-[2025-06-04 08:41:25] [Metadata: {'component': 'config', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
-ufunc 'multiply' did not contain a loop with signature matching types (dtype('<U5'), dtype('float64')) -> None
-cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
-
-Your task is to fix the issues in the code. The requirements below MUST be respected:
-
-1. Do not change the function name or its purpose.
-2. Fix all syntax and runtime errors.
-3. Use only valid parameters.
-4. Do not change the logic unless necessary for fixing errors.
-5. Return ONLY the corrected function code — no explanations, comments, or extra output.
-6. The function must be syntactically and semantically correct, and executable with `exec`.
-
-Buggy code:
-```python
-from ConfigSpace import (
-    ConfigurationSpace,
-    Categorical,
-    Float,
-    Integer,
-    ForbiddenAndConjunction,
-    ForbiddenEqualsClause,
-    Condition,
-)
-
-
-def get_configspace():
-    cs = ConfigurationSpace()
-
-    # Define hyperparameters
-    classifier = Categorical(
-        "classifier", ["knn", "svm", "random_forest"], default="random_forest"
-    )
-    cs.add_hyperparameter(classifier)
-
-    # KNN parameters
-    n_neighbors = Integer("n_neighbors", (1, 20), default=5)
-    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
-    cs.add_hyperparameters([n_neighbors, weights])
-
-    # SVM parameters
-    C = Float("C", (1e-4, 1000), default=1.0, log=True)
-    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
-    gamma = Float("gamma", (1e-5, 100), default=1.0, log=True)
-    degree = Integer("degree", (2, 5), default=3)
-    cs.add_hyperparameters([C, kernel, gamma, degree])
-
-    # Random Forest parameters
-    n_estimators = Integer("n_estimators", (10, 200), default=100)
-    max_depth = Integer("max_depth", (2, 10), default=None)
-    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
-    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
-    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
-
-    # Add conditions
-    knn_condition = Condition(
-        child=n_neighbors, parent=classifier, values=["knn"]
-    )
-    weights_condition = Condition(
-        child=weights, parent=classifier, values=["knn"]
-    )
-    C_condition = Condition(child=C, parent=classifier, values=["svm"])
-    kernel_condition = Condition(
-        child=kernel, parent=classifier, values=["svm"]
-    )
-    gamma_condition = Condition(child=gamma, parent=classifier, values=["svm"])
-    degree_condition = Condition(child=degree, parent=classifier, values=["svm"])
-    n_estimators_condition = Condition(
-        child=n_estimators, parent=classifier, values=["random_forest"]
-    )
-    max_depth_condition = Condition(
-        child=max_depth, parent=classifier, values=["random_forest"]
-    )
-    min_samples_split_condition = Condition(
-        child=min_samples_split, parent=classifier, values=["random_forest"]
-    )
-    min_samples_leaf_condition = Condition(
-        child=min_samples_leaf, parent=classifier, values=["random_forest"]
-    )
-
-    cs.add_conditions(
-        [
-            knn_condition,
-            weights_condition,
-            C_condition,
-            kernel_condition,
-            gamma_condition,
-            degree_condition,
-            n_estimators_condition,
-            max_depth_condition,
-            min_samples_split_condition,
-            min_samples_leaf_condition,
-        ]
-    )
-    return cs
-```
-
---------------------------------------------------------------------------------
-[2025-06-04 08:41:29] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
---------------------------------------------------------------------------------
-[2025-06-04 08:41:29] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Integer() got an unexpected keyword argument 'default_value'
---------------------------------------------------------------------------------
-[2025-06-04 08:41:29] [Metadata: {'component': 'config', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
-ufunc 'multiply' did not contain a loop with signature matching types (dtype('<U5'), dtype('float64')) -> None
-cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
-Integer() got an unexpected keyword argument 'default_value'
-
-Your task is to fix the issues in the code. The requirements below MUST be respected:
-
-1. Do not change the function name or its purpose.
-2. Fix all syntax and runtime errors.
-3. Use only valid parameters.
-4. Do not change the logic unless necessary for fixing errors.
-5. Return ONLY the corrected function code — no explanations, comments, or extra output.
-6. The function must be syntactically and semantically correct, and executable with `exec`.
-
-Buggy code:
-```python
-from ConfigSpace import (
-    ConfigurationSpace,
-    Categorical,
-    Float,
-    Integer,
-    ForbiddenAndConjunction,
-    ForbiddenEqualsClause,
-    EqualsCondition,
-)
-
-
-def get_configspace():
-    cs = ConfigurationSpace()
-
-    # Define hyperparameters
-    classifier = Categorical(
-        "classifier", ["knn", "svm", "random_forest"], default="random_forest"
-    )
-    cs.add_hyperparameter(classifier)
-
-    # KNN parameters
-    n_neighbors = Integer("n_neighbors", (1, 20), default=5)
-    weights = Categorical("weights", ["uniform", "distance"], default="uniform")
-    cs.add_hyperparameters([n_neighbors, weights])
-
-    # SVM parameters
-    C = Float("C", (1e-4, 1000), default=1.0, log=True)
-    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
-    gamma = Float("gamma", (1e-5, 100), default=1.0, log=True)
-    degree = Integer("degree", (2, 5), default=3)
-    cs.add_hyperparameters([C, kernel, gamma, degree])
-
-    # Random Forest parameters
-    n_estimators = Integer("n_estimators", (10, 200), default=100)
-    max_depth = Integer("max_depth", (2, 10), default=None, default_value=None)
-    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
-    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
-    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
-
-    # Add conditions
-    knn_condition = EqualsCondition(
-        n_neighbors, classifier, "knn"
-    )
-    weights_condition = EqualsCondition(
-        weights, classifier, "knn"
-    )
-    C_condition = EqualsCondition(C, classifier, "svm")
-    kernel_condition = EqualsCondition(
-        kernel, classifier, "svm"
-    )
-    gamma_condition = EqualsCondition(gamma, classifier, "svm")
-    degree_condition = EqualsCondition(degree, classifier, "svm")
-    n_estimators_condition = EqualsCondition(
-        n_estimators, classifier, "random_forest"
-    )
-    max_depth_condition = EqualsCondition(
-        max_depth, classifier, "random_forest"
-    )
-    min_samples_split_condition = EqualsCondition(
-        min_samples_split, classifier, "random_forest"
-    )
-    min_samples_leaf_condition = EqualsCondition(
-        min_samples_leaf, classifier, "random_forest"
-    )
-
-    cs.add_conditions(
-        [
-            knn_condition,
-            weights_condition,
-            C_condition,
-            kernel_condition,
-            gamma_condition,
-            degree_condition,
-            n_estimators_condition,
-            max_depth_condition,
-            min_samples_split_condition,
-            min_samples_leaf_condition,
-        ]
-    )
-    return cs
-```
-
---------------------------------------------------------------------------------
-[2025-06-04 08:41:33] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
---------------------------------------------------------------------------------
-[2025-06-04 08:41:33] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): Categorical() got an unexpected keyword argument 'default_value'
---------------------------------------------------------------------------------
-[2025-06-04 08:41:33] [Metadata: {'component': 'config', 'action': 'fix'}] The following python code is generated by an LLM which now has run into the following errors:
-ufunc 'multiply' did not contain a loop with signature matching types (dtype('<U5'), dtype('float64')) -> None
-cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
-Integer() got an unexpected keyword argument 'default_value'
-Categorical() got an unexpected keyword argument 'default_value'
-
-Your task is to fix the issues in the code. The requirements below MUST be respected:
-
-1. Do not change the function name or its purpose.
-2. Fix all syntax and runtime errors.
-3. Use only valid parameters.
-4. Do not change the logic unless necessary for fixing errors.
-5. Return ONLY the corrected function code — no explanations, comments, or extra output.
-6. The function must be syntactically and semantically correct, and executable with `exec`.
-
-Buggy code:
-```python
-from ConfigSpace import (
-    ConfigurationSpace,
-    Categorical,
-    Float,
-    Integer,
-    ForbiddenAndConjunction,
-    ForbiddenEqualsClause,
-    EqualsCondition,
-)
-
-
-def get_configspace():
-    cs = ConfigurationSpace()
-
-    # Define hyperparameters
-    classifier = Categorical(
-        "classifier", ["knn", "svm", "random_forest"], default_value="random_forest"
-    )
-    cs.add_hyperparameter(classifier)
-
-    # KNN parameters
-    n_neighbors = Integer("n_neighbors", (1, 20), default_value=5)
-    weights = Categorical("weights", ["uniform", "distance"], default_value="uniform")
-    cs.add_hyperparameters([n_neighbors, weights])
-
-    # SVM parameters
-    C = Float("C", (1e-4, 1000), default_value=1.0, log=True)
-    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf")
-    gamma = Float("gamma", (1e-5, 100), default_value=1.0, log=True)
-    degree = Integer("degree", (2, 5), default_value=3)
-    cs.add_hyperparameters([C, kernel, gamma, degree])
-
-    # Random Forest parameters
-    n_estimators = Integer("n_estimators", (10, 200), default_value=100)
-    max_depth = Integer("max_depth", (2, 10), default_value=2)
-    min_samples_split = Integer("min_samples_split", (2, 10), default_value=2)
-    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default_value=1)
-    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
-
-    # Add conditions
-    knn_condition = EqualsCondition(
-        n_neighbors, classifier, "knn"
-    )
-    weights_condition = EqualsCondition(
-        weights, classifier, "knn"
-    )
-    C_condition = EqualsCondition(C, classifier, "svm")
-    kernel_condition = EqualsCondition(
-        kernel, classifier, "svm"
-    )
-    gamma_condition = EqualsCondition(gamma, classifier, "svm")
-    degree_condition = EqualsCondition(degree, classifier, "svm")
-    n_estimators_condition = EqualsCondition(
-        n_estimators, classifier, "random_forest"
-    )
-    max_depth_condition = EqualsCondition(
-        max_depth, classifier, "random_forest"
-    )
-    min_samples_split_condition = EqualsCondition(
-        min_samples_split, classifier, "random_forest"
-    )
-    min_samples_leaf_condition = EqualsCondition(
-        min_samples_leaf, classifier, "random_forest"
-    )
-
-    cs.add_conditions(
-        [
-            knn_condition,
-            weights_condition,
-            C_condition,
-            kernel_condition,
-            gamma_condition,
-            degree_condition,
-            n_estimators_condition,
-            max_depth_condition,
-            min_samples_split_condition,
-            min_samples_leaf_condition,
-        ]
-    )
-    return cs
-```
-
---------------------------------------------------------------------------------
-[2025-06-04 08:41:38] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
---------------------------------------------------------------------------------
-[2025-06-04 08:41:38] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#5): cannot import name 'FloatHyperparameter' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
---------------------------------------------------------------------------------
-[2025-06-04 08:41:38] [Metadata: {'component': 'config', 'action': 'retry'}] Retry limit reached for config. Fetching fresh code from LLM.
---------------------------------------------------------------------------------
-[2025-06-04 08:41:40] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
---------------------------------------------------------------------------------
-[2025-06-04 08:41:41] [Metadata: {'component': 'scenario'}] ---
+[2025-06-05 11:32:01] [Metadata: {'component': 'scenario'}] ---
 
 **Objective:**
 Generate a **Python function** named `generate_scenario(cs)` that returns a valid `Scenario` object configured for SMAC (v2.0+), strictly following the rules below.
@@ -627,28 +506,8 @@ Generate a **Python function** named `generate_scenario(cs)` that returns a vali
 
 * Valid `import` statements
 * A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
-* Do not use any parameters other than the ones explicitly listed in this prompt.
 
 ---
-
-**Example (Correct Output Format):**
-
-```python
-from smac import Scenario
-from ConfigSpace import Configuration
-
-def generate_scenario(cs: Configuration):
-    scenario = Scenario(
-        configspace=cs,
-        objectives="validation_loss",
-        output_directory="./automl_results",
-        deterministic=False,
-        min_budget=1,
-        max_budget=100,
-        n_workers=4
-    )
-    return scenario
-```
 
             Based on the following SMAC documentation, analyze the dataset characteristics and choose appropriate:
             1. Facade type (e.g., MultiFidelityFacade for multi-fidelity optimization)
@@ -1514,9 +1373,9 @@ optimize
             Then generate a scenario configuration that best suits this dataset.
             
 --------------------------------------------------------------------------------
-[2025-06-04 08:41:41] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+[2025-06-05 11:32:01] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
 --------------------------------------------------------------------------------
-[2025-06-04 08:41:44] [Metadata: {'component': 'train_function'}] **Generate production-grade Python code for a machine learning training function with the following STRICT requirements:**
+[2025-06-05 11:32:04] [Metadata: {'component': 'train_function'}] **Generate production-grade Python code for a machine learning training function with the following STRICT requirements:**
 
 ---
 
@@ -1574,38 +1433,47 @@ You may choose **PyTorch**, **TensorFlow**, or **scikit-learn**, depending on th
 ### **Supporting Code Provided:**
 
 * ConfigSpace definition: `from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
-from ConfigSpace import EqualsCondition, InCondition, OrConjunction
 
 def get_configspace():
     cs = ConfigurationSpace()
 
-    # Define hyperparameters
-    n_estimators = Integer("n_estimators", bounds=(50, 200), default=100)
-    max_depth = Integer("max_depth", bounds=(2, 10), default=5)
-    min_samples_split = Float("min_samples_split", bounds=(0.01, 0.1), default=0.05)
-    min_samples_leaf = Float("min_samples_leaf", bounds=(0.01, 0.1), default=0.05)
-    
-    cs.add_hyperparameters([n_estimators, max_depth, min_samples_split, min_samples_leaf])
+    # Define hyperparameters for a simple classifier (e.g., Support Vector Machine)
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    C = Float("C", (0.001, 1000), default=1.0, log=True)
+    gamma = Float("gamma", (0.0001, 10), default=0.1, log=True)
+    degree = Integer("degree", (2, 5), default=3)
+    coef0 = Float("coef0", (-1, 1), default=0)
 
-    # Add forbidden clause
-    cs.add_forbidden_clause(ForbiddenAndConjunction(
-        ForbiddenEqualsClause(n_estimators, 50),
-        ForbiddenEqualsClause(max_depth, 2)
-    ))
+
+    cs.add_hyperparameters([kernel, C, gamma, degree, coef0])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(kernel, "linear"),
+        ForbiddenEqualsClause(degree, 2)
+    )
+
+    cs.add_forbidden_clause(forbidden_clause)
 
     return cs
 `
-* SMAC scenario: `from smac import Scenario
+* SMAC scenario: `import os
+from smac import Scenario
 from ConfigSpace import ConfigurationSpace
 
-def generate_scenario(cs: ConfigurationSpace):
+def generate_scenario(cs):
+    output_dir = "./automl_results"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     scenario = Scenario(
         configspace=cs,
-        output_directory="./automl_results",
+        name="smac_experiment",
+        output_directory=output_dir,
         deterministic=False,
-        n_workers=4,
+        n_workers=2,
         min_budget=1,
-        max_budget=100
+        max_budget=3
     )
     return scenario
 `
@@ -1644,5 +1512,5 @@ Name: count, dtype: int64`
 * Always check dataset description for format hints and requirements before processing
 
 --------------------------------------------------------------------------------
-[2025-06-04 08:41:44] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+[2025-06-05 11:32:04] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
 --------------------------------------------------------------------------------
