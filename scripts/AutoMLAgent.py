@@ -1,8 +1,14 @@
 from scripts.LLMClient import LLMClient
 from typing import Any
-from scripts.utils import describe_dataset, save_code, format_dataset
-from scripts.logger import Logger
-import re
+from scripts.utils import (
+    describe_dataset,
+    save_code,
+    format_dataset,
+    extract_code_block,
+)
+from scripts.Logger import Logger
+from scripts.OpenMLRAG import OpenMLRAG
+from scripts.LLMPlanner import LLMPlanner
 from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
 )
@@ -11,22 +17,32 @@ import os
 import json
 
 
-def extract_code_block(code: str) -> str:
-    """Extract Python code between markdown code fences"""
-    pattern = r"```python\n(.*?)```"
-    match = re.search(pattern, code, re.DOTALL)
-    return match.group(1) if match else code
-
-
 class AutoMLAgent:
     MAX_RETRIES_PROMPT = 5
     MAX_RETRIES_ABORT = 20
 
-    def __init__(self, dataset: Any, llm_client: LLMClient, dataset_type: str, ui_agent: Any):
+    def __init__(
+        self,
+        dataset: Any,
+        llm_client: LLMClient,
+        dataset_type: str,
+        ui_agent: Any,
+        dataset_name: str = None,
+    ):
+        """
+        Initialize the AutoML Agent with dataset, LLM client, and UI agent.
+        :param dataset: The dataset to be used for training.
+        :param llm_client: The LLM client for generating code.
+        :param dataset_type: The type of dataset (e.g., "tabular", "image", etc.).
+        :param ui_agent: The UI agent for displaying results and prompts.
+        :param dataset_name: Optional name of the dataset for logging and display.
+        """
         self.dataset = format_dataset(dataset)
-        self.llm = llm_client
         self.dataset_type = dataset_type
         self.dataset_description = describe_dataset(self.dataset, dataset_type)
+        self.dataset_name = dataset_name if dataset_name else None
+
+        self.llm = llm_client
 
         self.config_code = None
         self.scenario_code = None
@@ -50,13 +66,33 @@ class AutoMLAgent:
         # Initialize logger
         self.logger = Logger(
             model_name=llm_client.model_name,
-            dataset_name=dataset_type,
+            dataset_name=dataset_name,
             base_log_dir="./logs",
         )
 
+        self.openML = OpenMLRAG()
+        self.LLMInstructor = LLMPlanner(
+            dataset_name=self.dataset_name,
+            dataset_description=self.dataset_description,
+            dataset_type=self.dataset_type,
+        )
+
+    def extract_suggested_config_space_parameters(self, dataset_name_in_openml: str = None):
+        sample_datasets = self.openML.get_related_datasets(dataset_name=dataset_name_in_openml)
+
+        tasks = self.openML.get_related_tasks_of_dataset(dataset_id=sample_datasets.did, task_type="classification")
+        task_ids = tasks["tid"].tolist()
+
+        parameters = self.openML.get_setup_parameters_of_tasks(task_ids=task_ids)
+
+        return parameters
+
     def generate_components(self):
+        instructor_response = self.LLMInstructor.generate_instructions()
+        config_space_suggested_parameters = self.extract_suggested_config_space_parameters(dataset_name_in_openml=instructor_response.dataset_name)
+
         # Configuration Space
-        self.prompts["config"] = self._create_config_prompt()
+        self.prompts["config"] = self._create_config_prompt(config_space_suggested_parameters)
         self.config_code = self.llm.generate(self.prompts["config"])
         self.logger.log_prompt(self.prompts["config"], {"component": "config"})
         self.logger.log_response(self.config_code, {"component": "config"})
@@ -186,9 +222,12 @@ class AutoMLAgent:
                     self.logger.log_response(fixed, {"component": component, "action": "fix"})
                     setattr(self, code_attr, fixed)
 
-    def _create_config_prompt(self) -> str:
+    def _create_config_prompt(self, config_space_suggested_parameters) -> str:
         with open("templates/config_prompt.txt", "r") as f:
-            return f.read().format(dataset_description=self.dataset_description)
+            return f.read().format(
+                dataset_description=self.dataset_description,
+                config_space_suggested_parameters=config_space_suggested_parameters,
+            )
 
     def _create_scenario_prompt(self) -> str:
         with open("templates/scenario_prompt.txt", "r") as f:

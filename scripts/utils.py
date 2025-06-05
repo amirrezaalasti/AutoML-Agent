@@ -3,7 +3,7 @@ import numpy as np
 from smac import HyperparameterOptimizationFacade, Scenario
 import warnings
 from typing import Any
-from .logger import Logger
+import re
 
 
 def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
@@ -248,3 +248,10 @@ def format_dataset(dataset: Any) -> dict:
         raise ValueError("Unsupported dataset format")
 
     return {"X": X, "y": y}
+
+
+def extract_code_block(code: str) -> str:
+    """Extract Python code between markdown code fences"""
+    pattern = r"```python\n(.*?)```"
+    match = re.search(pattern, code, re.DOTALL)
+    return match.group(1) if match else code

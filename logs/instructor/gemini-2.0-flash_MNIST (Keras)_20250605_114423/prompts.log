@@ -1,0 +1,56 @@
+[2025-06-05 11:44:27] [Metadata: {'dataset_name': 'MNIST (Keras)'}] You are a data science expert with deep knowledge of image datasets. Your task is to generate clear, structured, and comprehensive instructions for effectively working with the dataset 'MNIST (Keras)'. Dataset description: This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+
+
+Please perform the following tasks:
+1. Describe the recommended data preprocessing steps specific to this dataset.
+2. Outline useful feature engineering strategies relevant to the dataset's type and domain.
+3. Mention any common challenges or important considerations when working with this dataset type.
+4. If this dataset exists on OpenML:
+   - Provide the exact dataset name as listed on OpenML.
+   - Include the dataset's tag(s) on OpenML.
+   - Provide the direct OpenML URL to the dataset.
+
+Return all the above in a structured JSON format matching the following fields:
+- dataset_name (str)
+- dataset_tag (str)
+- dataset_instructions (list of str)
+
+--------------------------------------------------------------------------------
