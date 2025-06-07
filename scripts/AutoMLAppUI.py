@@ -38,7 +38,7 @@ DATASET_OPTIONS = {
         "Breast Cancer",
         "Diabetes",
         "Digits",
-        "R Duncan (statsmodels)",
+        "R Duncan",
         "Titanic (seaborn)",
         "Custom Upload",
     ],
@@ -46,9 +46,9 @@ DATASET_OPTIONS = {
         "MNIST",
         "Fashion‑MNIST",
     ],
-    "time_series": ["Sunspots (statsmodels)"],
+    "time_series": ["Sunspots"],
     "text": ["20 Newsgroups"],
-    "categorical": ["Breast Cancer", "Wine", "Adult Income (statsmodels)"],
+    "categorical": ["Breast Cancer", "Wine", "Adult Income"],
 }
 
 
@@ -81,7 +81,7 @@ class AutoMLAppUI:
                 X, y = load_digits(return_X_y=True)
                 return {"X": X, "y": y}
 
-            elif dataset_name == "R Duncan (statsmodels)":
+            elif dataset_name == "R Duncan":
                 ds = sm.datasets.get_rdataset("Duncan", "carData").data
                 X = ds.drop(columns=["prestige"])
                 y = ds["prestige"]
@@ -130,7 +130,7 @@ class AutoMLAppUI:
 
         # 5. Categorical
         elif data_type == "categorical":
-            if dataset_name == "Adult Income (statsmodels)":
+            if dataset_name == "Adult Income":
                 df = sm.datasets.get_rdataset("adult", "OpenML").data
                 X = df.drop(columns=["class"])
                 y = df["class"]

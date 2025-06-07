@@ -79,6 +79,11 @@ class AutoMLAgent:
         )
 
     def extract_suggested_config_space_parameters(self, dataset_name_in_openml: str = None):
+        """
+        Extract suggested configuration space parameters from OpenML related datasets.
+        :param dataset_name_in_openml: The name of the dataset in OpenML to find related datasets.
+        :return: A dictionary of suggested parameters for the configuration space.
+        """
         sample_datasets = self.openML.get_related_datasets(dataset_name=dataset_name_in_openml)
         if sample_datasets is None or sample_datasets.empty:
             self.logger.log_error(
@@ -96,6 +101,10 @@ class AutoMLAgent:
         return parameters
 
     def generate_components(self):
+        """
+        Generate the configuration space, scenario, and training function code using LLM.
+        :return: Tuple containing the generated configuration space, scenario, training function code, last loss, and prompts.
+        """
         config_space_suggested_parameters = self.extract_suggested_config_space_parameters(dataset_name_in_openml=self.dataset_name)
         instructor_response = self.LLMInstructor.generate_instructions(config_space_suggested_parameters)
 
@@ -231,6 +240,11 @@ class AutoMLAgent:
                     setattr(self, code_attr, fixed)
 
     def _create_config_prompt(self, config_space_suggested_parameters) -> str:
+        """
+        Create a prompt for generating the configuration space code.
+        :param config_space_suggested_parameters: Suggested parameters for the configuration space.
+        :return: A formatted prompt string for the LLM.
+        """
         with open("templates/config_prompt.txt", "r") as f:
             return f.read().format(
                 dataset_description=self.dataset_description,
@@ -238,6 +252,10 @@ class AutoMLAgent:
             )
 
     def _create_scenario_prompt(self) -> str:
+        """
+        Create a prompt for generating the scenario code.
+        :return: A formatted prompt string for the LLM.
+        """
         smac_file_name = self.llm.model_name.replace(" ", "_").lower() + self.dataset_name.replace(" ", "_").lower() + time.strftime("%Y%m%d_%H%M%S")
         with open("templates/scenario_prompt.txt", "r") as f:
             base_prompt = f.read().format(dataset=self.dataset_description, smac_file_name=smac_file_name)
@@ -272,6 +290,12 @@ class AutoMLAgent:
             return base_prompt + doc_context
 
     def _create_train_prompt(self, train_function_instructions) -> str:
+        """
+        Create a prompt for generating the training function code.
+        :param train_function_instructions: Instructions for the training function.
+        :return: A formatted prompt string for the LLM.
+        """
+
         with open("templates/train_prompt.txt", "r") as f:
             prompt = f.read().format(
                 dataset_description=self.dataset_description,
