@@ -1,0 +1,215 @@
+{
+  "type": "Scheduler",
+  "id": "Scheduler-07730d1a-d101-454b-abb1-cdaa85a2ef1c",
+  "address": "tcp://127.0.0.1:57158",
+  "services": {
+    "dashboard": 8787
+  },
+  "started": 1749288469.01563,
+  "workers": {
+    "tcp://127.0.0.1:57174": {
+      "type": "Worker",
+      "id": 0,
+      "host": "127.0.0.1",
+      "resources": {},
+      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/gemini-2.0-flashiris20250607_112729/0/dask-scratch-space/worker-fhuaxl8j",
+      "name": 0,
+      "nthreads": 1,
+      "memory_limit": 4831838208,
+      "last_seen": 1749288476.1827662,
+      "services": {
+        "dashboard": 57180
+      },
+      "metrics": {
+        "task_counts": {},
+        "bandwidth": {
+          "total": 100000000,
+          "workers": {},
+          "types": {}
+        },
+        "digests_total_since_heartbeat": {},
+        "managed_bytes": 0,
+        "spilled_bytes": {
+          "memory": 0,
+          "disk": 0
+        },
+        "transfer": {
+          "incoming_bytes": 0,
+          "incoming_count": 0,
+          "incoming_count_total": 0,
+          "outgoing_bytes": 0,
+          "outgoing_count": 0,
+          "outgoing_count_total": 0
+        },
+        "event_loop_interval": 0.02,
+        "cpu": 0.0,
+        "memory": 686292992,
+        "time": 1749288476.154658,
+        "host_net_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "host_disk_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "num_fds": 22
+      },
+      "status": "running",
+      "nanny": "tcp://127.0.0.1:57161"
+    },
+    "tcp://127.0.0.1:57175": {
+      "type": "Worker",
+      "id": 2,
+      "host": "127.0.0.1",
+      "resources": {},
+      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/gemini-2.0-flashiris20250607_112729/0/dask-scratch-space/worker-0su4pwvk",
+      "name": 2,
+      "nthreads": 1,
+      "memory_limit": 4831838208,
+      "last_seen": 1749288476.195665,
+      "services": {
+        "dashboard": 57179
+      },
+      "metrics": {
+        "task_counts": {},
+        "bandwidth": {
+          "total": 100000000,
+          "workers": {},
+          "types": {}
+        },
+        "digests_total_since_heartbeat": {},
+        "managed_bytes": 0,
+        "spilled_bytes": {
+          "memory": 0,
+          "disk": 0
+        },
+        "transfer": {
+          "incoming_bytes": 0,
+          "incoming_count": 0,
+          "incoming_count_total": 0,
+          "outgoing_bytes": 0,
+          "outgoing_count": 0,
+          "outgoing_count_total": 0
+        },
+        "event_loop_interval": 0.02,
+        "cpu": 0.0,
+        "memory": 687734784,
+        "time": 1749288476.154641,
+        "host_net_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "host_disk_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "num_fds": 22
+      },
+      "status": "running",
+      "nanny": "tcp://127.0.0.1:57163"
+    },
+    "tcp://127.0.0.1:57176": {
+      "type": "Worker",
+      "id": 1,
+      "host": "127.0.0.1",
+      "resources": {},
+      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/gemini-2.0-flashiris20250607_112729/0/dask-scratch-space/worker-wdgkbwu6",
+      "name": 1,
+      "nthreads": 1,
+      "memory_limit": 4831838208,
+      "last_seen": 1749288476.1946912,
+      "services": {
+        "dashboard": 57178
+      },
+      "metrics": {
+        "task_counts": {},
+        "bandwidth": {
+          "total": 100000000,
+          "workers": {},
+          "types": {}
+        },
+        "digests_total_since_heartbeat": {},
+        "managed_bytes": 0,
+        "spilled_bytes": {
+          "memory": 0,
+          "disk": 0
+        },
+        "transfer": {
+          "incoming_bytes": 0,
+          "incoming_count": 0,
+          "incoming_count_total": 0,
+          "outgoing_bytes": 0,
+          "outgoing_count": 0,
+          "outgoing_count_total": 0
+        },
+        "event_loop_interval": 0.02,
+        "cpu": 0.0,
+        "memory": 687063040,
+        "time": 1749288476.154627,
+        "host_net_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "host_disk_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "num_fds": 22
+      },
+      "status": "running",
+      "nanny": "tcp://127.0.0.1:57162"
+    },
+    "tcp://127.0.0.1:57177": {
+      "type": "Worker",
+      "id": 3,
+      "host": "127.0.0.1",
+      "resources": {},
+      "local_directory": "/Users/amirrezaalasti/Desktop/master/semester 2/AutoML-Agent/automl_results/gemini-2.0-flashiris20250607_112729/0/dask-scratch-space/worker-q7qolp3e",
+      "name": 3,
+      "nthreads": 1,
+      "memory_limit": 4831838208,
+      "last_seen": 1749288476.195312,
+      "services": {
+        "dashboard": 57181
+      },
+      "metrics": {
+        "task_counts": {},
+        "bandwidth": {
+          "total": 100000000,
+          "workers": {},
+          "types": {}
+        },
+        "digests_total_since_heartbeat": {},
+        "managed_bytes": 0,
+        "spilled_bytes": {
+          "memory": 0,
+          "disk": 0
+        },
+        "transfer": {
+          "incoming_bytes": 0,
+          "incoming_count": 0,
+          "incoming_count_total": 0,
+          "outgoing_bytes": 0,
+          "outgoing_count": 0,
+          "outgoing_count_total": 0
+        },
+        "event_loop_interval": 0.02,
+        "cpu": 0.0,
+        "memory": 689094656,
+        "time": 1749288476.154625,
+        "host_net_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "host_disk_io": {
+          "read_bps": 0.0,
+          "write_bps": 0.0
+        },
+        "num_fds": 22
+      },
+      "status": "running",
+      "nanny": "tcp://127.0.0.1:57164"
+    }
+  }
+}

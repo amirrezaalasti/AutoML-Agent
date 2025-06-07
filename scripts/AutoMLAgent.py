@@ -96,8 +96,8 @@ class AutoMLAgent:
         return parameters
 
     def generate_components(self):
-        instructor_response = self.LLMInstructor.generate_instructions()
-        config_space_suggested_parameters = self.extract_suggested_config_space_parameters(dataset_name_in_openml=instructor_response.dataset_name)
+        config_space_suggested_parameters = self.extract_suggested_config_space_parameters(dataset_name_in_openml=self.dataset_name)
+        instructor_response = self.LLMInstructor.generate_instructions(config_space_suggested_parameters)
 
         # Configuration Space
         self.prompts["config"] = self._create_config_prompt(config_space_suggested_parameters)
