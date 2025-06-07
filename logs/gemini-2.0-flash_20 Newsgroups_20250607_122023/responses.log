@@ -1,0 +1,949 @@
+[2025-06-07 12:20:35] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'])
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, 100)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    forbidden_clause2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause2)
+
+    forbidden_clause3 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, 5000)
+    )
+    cs.add_forbidden_clause(forbidden_clause3)
+    
+    forbidden_clause4 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, 1.0)
+    )
+    cs.add_forbidden_clause(forbidden_clause4)
+    
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:35] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'])
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, 100)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    forbidden_clause2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, 2)
+    )
+    cs.add_forbidden_clause(forbidden_clause2)
+
+    forbidden_clause3 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, 5000)
+    )
+    cs.add_forbidden_clause(forbidden_clause3)
+    
+    forbidden_clause4 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, 1.0)
+    )
+    cs.add_forbidden_clause(forbidden_clause4)
+    
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:35] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Given vector violates forbidden clause: (Forbidden: embedding_dim == 100 && Forbidden: model_type == 'tfidf_lr')
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:38] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'])
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_embedding = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, embedding_dim.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_embedding)
+
+    forbidden_nn_layers = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, nn_num_layers.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_nn_layers)
+
+    forbidden_tfidf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, tfidf_max_features.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_tfidf)
+    
+    forbidden_lr = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, lr_C.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_lr)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:38] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'])
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_embedding = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, embedding_dim.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_embedding)
+
+    forbidden_nn_layers = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, nn_num_layers.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_nn_layers)
+
+    forbidden_tfidf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, tfidf_max_features.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_tfidf)
+    
+    forbidden_lr = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, lr_C.default_value)
+    )
+    cs.add_forbidden_clause(forbidden_lr)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:38] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): Given vector violates forbidden clause: (Forbidden: embedding_dim == 100 && Forbidden: model_type == 'tfidf_lr')
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:42] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'], default='tfidf_lr')
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_embedding = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, 100)
+    )
+    cs.add_forbidden_clause(forbidden_embedding)
+
+    forbidden_nn_layers = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, 2)
+    )
+    cs.add_forbidden_clause(forbidden_nn_layers)
+
+    forbidden_tfidf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, 5000)
+    )
+    cs.add_forbidden_clause(forbidden_tfidf)
+    
+    forbidden_lr = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, 1.0)
+    )
+    cs.add_forbidden_clause(forbidden_lr)
+
+    # Add conditional parameter dependencies
+    cs.add_condition(EqualsCondition(tfidf_max_features, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(lr_C, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(embedding_dim, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_num_layers, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_units, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_dropout, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_lr, model_type, 'embedding_nn'))
+
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:42] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'], default='tfidf_lr')
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_embedding = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, 100)
+    )
+    cs.add_forbidden_clause(forbidden_embedding)
+
+    forbidden_nn_layers = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, 2)
+    )
+    cs.add_forbidden_clause(forbidden_nn_layers)
+
+    forbidden_tfidf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, 5000)
+    )
+    cs.add_forbidden_clause(forbidden_tfidf)
+    
+    forbidden_lr = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, 1.0)
+    )
+    cs.add_forbidden_clause(forbidden_lr)
+
+    # Add conditional parameter dependencies
+    cs.add_condition(EqualsCondition(tfidf_max_features, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(lr_C, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(embedding_dim, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_num_layers, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_units, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_dropout, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_lr, model_type, 'embedding_nn'))
+
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:42] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Given vector violates forbidden clause: (Forbidden: embedding_dim == 100 && Forbidden: model_type == 'tfidf_lr')
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:47] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'], default='tfidf_lr')
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_embedding = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, embedding_dim.default)
+    )
+    #cs.add_forbidden_clause(forbidden_embedding)  # Removing as it violates constraints
+
+    forbidden_nn_layers = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, nn_num_layers.default)
+    )
+    #cs.add_forbidden_clause(forbidden_nn_layers) # Removing as it violates constraints
+
+    forbidden_tfidf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, tfidf_max_features.default)
+    )
+    #cs.add_forbidden_clause(forbidden_tfidf) # Removing as it violates constraints
+    
+    forbidden_lr = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, lr_C.default)
+    )
+    #cs.add_forbidden_clause(forbidden_lr) # Removing as it violates constraints
+
+    # Add conditional parameter dependencies
+    cs.add_condition(EqualsCondition(tfidf_max_features, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(lr_C, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(embedding_dim, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_num_layers, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_units, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_dropout, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_lr, model_type, 'embedding_nn'))
+
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:47] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'], default='tfidf_lr')
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_embedding = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(embedding_dim, embedding_dim.default)
+    )
+    #cs.add_forbidden_clause(forbidden_embedding)  # Removing as it violates constraints
+
+    forbidden_nn_layers = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'tfidf_lr'),
+        ForbiddenEqualsClause(nn_num_layers, nn_num_layers.default)
+    )
+    #cs.add_forbidden_clause(forbidden_nn_layers) # Removing as it violates constraints
+
+    forbidden_tfidf = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(tfidf_max_features, tfidf_max_features.default)
+    )
+    #cs.add_forbidden_clause(forbidden_tfidf) # Removing as it violates constraints
+    
+    forbidden_lr = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, 'embedding_nn'),
+        ForbiddenEqualsClause(lr_C, lr_C.default)
+    )
+    #cs.add_forbidden_clause(forbidden_lr) # Removing as it violates constraints
+
+    # Add conditional parameter dependencies
+    cs.add_condition(EqualsCondition(tfidf_max_features, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(lr_C, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(embedding_dim, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_num_layers, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_units, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_dropout, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_lr, model_type, 'embedding_nn'))
+
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:47] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): 'UniformIntegerHyperparameter' object has no attribute 'default'
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:49] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'], default='tfidf_lr')
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+
+    # Add conditional parameter dependencies
+    cs.add_condition(EqualsCondition(tfidf_max_features, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(lr_C, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(embedding_dim, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_num_layers, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_units, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_dropout, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_lr, model_type, 'embedding_nn'))
+
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:49] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause, EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical('model_type', ['tfidf_lr', 'embedding_nn'], default='tfidf_lr')
+    
+    # TF-IDF + Logistic Regression
+    tfidf_max_features = Integer('tfidf_max_features', (1000, 10000), default=5000)
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+
+    # Embedding + Neural Network
+    embedding_dim = Integer('embedding_dim', (50, 300), default=100)
+    nn_num_layers = Integer('nn_num_layers', (1, 3), default=2)
+    nn_units = Integer('nn_units', (32, 256), default=64)
+    nn_dropout = Float('nn_dropout', (0.0, 0.9), default=0.2)
+    nn_lr = Float('nn_lr', (1e-5, 1e-2), default=1e-3, log=True)
+    
+    cs.add_hyperparameters([
+        model_type,
+        tfidf_max_features,
+        lr_C,
+        embedding_dim,
+        nn_num_layers,
+        nn_units,
+        nn_dropout,
+        nn_lr
+    ])
+
+
+    # Add conditional parameter dependencies
+    cs.add_condition(EqualsCondition(tfidf_max_features, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(lr_C, model_type, 'tfidf_lr'))
+    cs.add_condition(EqualsCondition(embedding_dim, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_num_layers, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_units, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_dropout, model_type, 'embedding_nn'))
+    cs.add_condition(EqualsCondition(nn_lr, model_type, 'embedding_nn'))
+
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:49] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:51] [Metadata: {'component': 'scenario'}] ```python
+from pathlib import Path
+
+from ConfigSpace import ConfigurationSpace
+
+from smac.scenario import Scenario
+
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flash20_newsgroups20250607_122049",
+        output_directory=Path("./automl_results"),
+        deterministic=False,
+        n_trials=10,
+        min_budget=1,
+        max_budget=10,
+        n_workers=2,
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:51] [Metadata: {'component': 'scenario', 'action': 'run'}] from pathlib import Path
+
+from ConfigSpace import ConfigurationSpace
+
+from smac.scenario import Scenario
+
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flash20_newsgroups20250607_122049",
+        output_directory=Path("./automl_results"),
+        deterministic=False,
+        n_trials=10,
+        min_budget=1,
+        max_budget=10,
+        n_workers=2,
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:51] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:59] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+
+from ConfigSpace import Configuration
+import numpy as np
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import Dataset, DataLoader
+
+import re
+
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z\s]', '', text, re.I|re.A)
+    return text
+
+
+class TextDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = X
+        self.y = y
+    
+    def __len__(self):
+        return len(self.X)
+    
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model on the given dataset.
+
+    Args:
+        cfg (Configuration): The configuration object.
+        dataset (Any): The dataset dictionary.
+        seed (int): The random seed.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Preprocess text data
+    X = [clean_text(text) for text in X]
+    
+    model_type = cfg.get('model_type')
+
+    if model_type == 'tfidf_lr':
+        # TF-IDF Vectorization
+        tfidf_max_features = cfg.get('tfidf_max_features')
+        vectorizer = TfidfVectorizer(max_features=tfidf_max_features)
+        X_vec = vectorizer.fit_transform(X)
+
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(X_vec, y, test_size=0.2, random_state=seed)
+
+        # Logistic Regression Model
+        lr_C = cfg.get('lr_C')
+        model = LogisticRegression(C=lr_C, solver='liblinear', multi_class='auto', random_state=seed)  # Explicitly set solver and multi_class
+
+        # Train model (1 epoch)
+        model.fit(X_train, y_train)
+
+        # Evaluate on training data
+        y_pred = model.predict(X_train)
+        loss = np.mean(y_pred != y_train)
+
+    elif model_type == 'embedding_nn':
+        # Tokenization (crude, but functional)
+        all_words = ' '.join(X).split()
+        unique_words = list(set(all_words))
+        word_to_index = {word: i+1 for i, word in enumerate(unique_words)}  # 0 is for padding
+        index_to_word = {i+1: word for i, word in enumerate(unique_words)}
+        vocab_size = len(unique_words) + 1  # +1 for padding
+
+        X_indexed = [[word_to_index[word] for word in text.split()] for text in X]
+
+        # Padding
+        max_len = max(len(seq) for seq in X_indexed)
+        X_padded = pad_sequence([torch.tensor(seq) for seq in X_indexed], batch_first=True, padding_value=0)
+
+        # Convert labels to tensor
+        y_tensor = torch.tensor(y, dtype=torch.long)
+
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(X_padded, y_tensor, test_size=0.2, random_state=seed)
+
+        # Create Dataset and DataLoader
+        train_dataset = TextDataset(X_train, y_train)
+        train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+        
+        # Neural Network Model
+        embedding_dim = cfg.get('embedding_dim')
+        nn_num_layers = cfg.get('nn_num_layers')
+        nn_units = cfg.get('nn_units')
+        nn_dropout = cfg.get('nn_dropout')
+        nn_lr = cfg.get('nn_lr')
+        
+        class SimpleNN(nn.Module):
+            def __init__(self, vocab_size, embedding_dim, num_layers, units, dropout, num_classes):
+                super(SimpleNN, self).__init__()
+                self.embedding = nn.Embedding(vocab_size, embedding_dim)
+                self.lstm = nn.LSTM(embedding_dim, units, num_layers, batch_first=True, dropout=dropout if num_layers > 1 else 0)
+                self.dropout = nn.Dropout(dropout)
+                self.linear = nn.Linear(units, num_classes)
+
+            def forward(self, x):
+                x = self.embedding(x)
+                x, _ = self.lstm(x)
+                x = self.dropout(x[:, -1, :])  # Take the last time step's output
+                x = self.linear(x)
+                return x
+
+        num_classes = len(np.unique(y)) #Infer number of classes
+        model = SimpleNN(vocab_size, embedding_dim, nn_num_layers, nn_units, nn_dropout, num_classes)
+        
+        # Loss function and optimizer
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(model.parameters(), lr=nn_lr)
+
+        # Train model (10 epochs)
+        model.train()
+        total_loss = 0.0
+        for epoch in range(10):
+            epoch_loss = 0.0
+            for inputs, labels in train_loader:
+                optimizer.zero_grad()
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
+                epoch_loss += loss.item()
+            total_loss += epoch_loss / len(train_loader)
+        loss = total_loss / 10.0
+
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
+
+    return float(loss)
+```
+--------------------------------------------------------------------------------
+[2025-06-07 12:20:59] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+
+from ConfigSpace import Configuration
+import numpy as np
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import Dataset, DataLoader
+
+import re
+
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z\s]', '', text, re.I|re.A)
+    return text
+
+
+class TextDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = X
+        self.y = y
+    
+    def __len__(self):
+        return len(self.X)
+    
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model on the given dataset.
+
+    Args:
+        cfg (Configuration): The configuration object.
+        dataset (Any): The dataset dictionary.
+        seed (int): The random seed.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Preprocess text data
+    X = [clean_text(text) for text in X]
+    
+    model_type = cfg.get('model_type')
+
+    if model_type == 'tfidf_lr':
+        # TF-IDF Vectorization
+        tfidf_max_features = cfg.get('tfidf_max_features')
+        vectorizer = TfidfVectorizer(max_features=tfidf_max_features)
+        X_vec = vectorizer.fit_transform(X)
+
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(X_vec, y, test_size=0.2, random_state=seed)
+
+        # Logistic Regression Model
+        lr_C = cfg.get('lr_C')
+        model = LogisticRegression(C=lr_C, solver='liblinear', multi_class='auto', random_state=seed)  # Explicitly set solver and multi_class
+
+        # Train model (1 epoch)
+        model.fit(X_train, y_train)
+
+        # Evaluate on training data
+        y_pred = model.predict(X_train)
+        loss = np.mean(y_pred != y_train)
+
+    elif model_type == 'embedding_nn':
+        # Tokenization (crude, but functional)
+        all_words = ' '.join(X).split()
+        unique_words = list(set(all_words))
+        word_to_index = {word: i+1 for i, word in enumerate(unique_words)}  # 0 is for padding
+        index_to_word = {i+1: word for i, word in enumerate(unique_words)}
+        vocab_size = len(unique_words) + 1  # +1 for padding
+
+        X_indexed = [[word_to_index[word] for word in text.split()] for text in X]
+
+        # Padding
+        max_len = max(len(seq) for seq in X_indexed)
+        X_padded = pad_sequence([torch.tensor(seq) for seq in X_indexed], batch_first=True, padding_value=0)
+
+        # Convert labels to tensor
+        y_tensor = torch.tensor(y, dtype=torch.long)
+
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(X_padded, y_tensor, test_size=0.2, random_state=seed)
+
+        # Create Dataset and DataLoader
+        train_dataset = TextDataset(X_train, y_train)
+        train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+        
+        # Neural Network Model
+        embedding_dim = cfg.get('embedding_dim')
+        nn_num_layers = cfg.get('nn_num_layers')
+        nn_units = cfg.get('nn_units')
+        nn_dropout = cfg.get('nn_dropout')
+        nn_lr = cfg.get('nn_lr')
+        
+        class SimpleNN(nn.Module):
+            def __init__(self, vocab_size, embedding_dim, num_layers, units, dropout, num_classes):
+                super(SimpleNN, self).__init__()
+                self.embedding = nn.Embedding(vocab_size, embedding_dim)
+                self.lstm = nn.LSTM(embedding_dim, units, num_layers, batch_first=True, dropout=dropout if num_layers > 1 else 0)
+                self.dropout = nn.Dropout(dropout)
+                self.linear = nn.Linear(units, num_classes)
+
+            def forward(self, x):
+                x = self.embedding(x)
+                x, _ = self.lstm(x)
+                x = self.dropout(x[:, -1, :])  # Take the last time step's output
+                x = self.linear(x)
+                return x
+
+        num_classes = len(np.unique(y)) #Infer number of classes
+        model = SimpleNN(vocab_size, embedding_dim, nn_num_layers, nn_units, nn_dropout, num_classes)
+        
+        # Loss function and optimizer
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(model.parameters(), lr=nn_lr)
+
+        # Train model (10 epochs)
+        model.train()
+        total_loss = 0.0
+        for epoch in range(10):
+            epoch_loss = 0.0
+            for inputs, labels in train_loader:
+                optimizer.zero_grad()
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
+                epoch_loss += loss.item()
+            total_loss += epoch_loss / len(train_loader)
+        loss = total_loss / 10.0
+
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
+
+    return float(loss)
+
+--------------------------------------------------------------------------------

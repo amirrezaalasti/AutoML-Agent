@@ -1,0 +1,603 @@
+[2025-06-07 11:54:14] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'lbfgs', 'saga'])
+    lr_penalty = Categorical('lr_penalty', ['l1', 'l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    # Add forbidden clauses
+    forbidden_1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1'),
+        ForbiddenEqualsClause(lr_solver, 'lbfgs')
+    )
+    forbidden_2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1'),
+        ForbiddenEqualsClause(lr_solver, 'liblinear'),
+    )
+    forbidden_3 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1'),
+        ForbiddenEqualsClause(lr_solver, 'saga'),
+    )
+
+    cs.add_forbidden_clauses([forbidden_1, forbidden_2, forbidden_3])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:14] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'lbfgs', 'saga'])
+    lr_penalty = Categorical('lr_penalty', ['l1', 'l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    # Add forbidden clauses
+    forbidden_1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1'),
+        ForbiddenEqualsClause(lr_solver, 'lbfgs')
+    )
+    forbidden_2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1'),
+        ForbiddenEqualsClause(lr_solver, 'liblinear'),
+    )
+    forbidden_3 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1'),
+        ForbiddenEqualsClause(lr_solver, 'saga'),
+    )
+
+    cs.add_forbidden_clauses([forbidden_1, forbidden_2, forbidden_3])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:14] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Given vector violates forbidden clause: (Forbidden: classifier == 'LogisticRegression' && Forbidden: lr_penalty == 'l1' && Forbidden: lr_solver in {'lbfgs', 'liblinear', 'saga'})
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:16] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga'])
+    lr_penalty = Categorical('lr_penalty', ['l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    forbidden = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1')
+    )
+
+    cs.add_forbidden_clause(forbidden)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:16] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga'])
+    lr_penalty = Categorical('lr_penalty', ['l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    forbidden = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1')
+    )
+
+    cs.add_forbidden_clause(forbidden)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:16] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): Forbidden clause must be instantiated with a legal hyperparameter value for 'lr_penalty, Type: Categorical, Choices: {l2}, Default: l2', but got 'l1'
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:18] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga'])
+    lr_penalty = Categorical('lr_penalty', ['l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    forbidden = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1')
+    )
+
+    # remove the forbidden clause because penalty is already fixed to l2
+    # cs.add_forbidden_clause(forbidden)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:18] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga'])
+    lr_penalty = Categorical('lr_penalty', ['l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    forbidden = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l1')
+    )
+
+    # remove the forbidden clause because penalty is already fixed to l2
+    # cs.add_forbidden_clause(forbidden)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:18] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Forbidden clause must be instantiated with a legal hyperparameter value for 'lr_penalty, Type: Categorical, Choices: {l2}, Default: l2', but got 'l1'
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:21] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga', 'lbfgs'])
+    lr_penalty = Categorical('lr_penalty', ['l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    forbidden = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l2')
+    )
+    forbidden2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_solver, 'lbfgs')
+    )
+
+    cs.add_forbidden_clause(forbidden)
+    cs.add_forbidden_clause(forbidden2)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:21] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'])
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga', 'lbfgs'])
+    lr_penalty = Categorical('lr_penalty', ['l2'])
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'])
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    forbidden = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_penalty, 'l2')
+    )
+    forbidden2 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'LogisticRegression'),
+        ForbiddenEqualsClause(lr_solver, 'lbfgs')
+    )
+
+    cs.add_forbidden_clause(forbidden)
+    cs.add_forbidden_clause(forbidden2)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:21] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): Given vector violates forbidden clause: (Forbidden: classifier == 'LogisticRegression' && Forbidden: lr_penalty == 'l2')
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:23] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'], default='LogisticRegression')
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga', 'lbfgs'], default='lbfgs')
+    lr_penalty = Categorical('lr_penalty', ['l2'], default='l2')
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'], default='rbf')
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:23] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace import ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['LogisticRegression', 'SVC', 'DecisionTree'], default='LogisticRegression')
+
+    # Logistic Regression parameters
+    lr_C = Float('lr_C', (1e-5, 10), default=1.0, log=True)
+    lr_solver = Categorical('lr_solver', ['liblinear', 'saga', 'lbfgs'], default='lbfgs')
+    lr_penalty = Categorical('lr_penalty', ['l2'], default='l2')
+
+    # SVC parameters
+    svc_C = Float('svc_C', (1e-5, 10), default=1.0, log=True)
+    svc_kernel = Categorical('svc_kernel', ['linear', 'rbf', 'poly', 'sigmoid'], default='rbf')
+    svc_degree = Integer('svc_degree', (2, 5), default=3)
+
+    # Decision Tree parameters
+    dt_max_depth = Integer('dt_max_depth', (1, 10), default=5)
+    dt_min_samples_split = Integer('dt_min_samples_split', (2, 10), default=2)
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add([classifier, lr_C, lr_solver, lr_penalty, svc_C, svc_kernel, svc_degree, dt_max_depth, dt_min_samples_split])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:23] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:24] [Metadata: {'component': 'scenario'}] ```python
+from ConfigSpace import ConfigurationSpace
+from smac import Scenario
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashbreast_cancer20250607_115423",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10,
+        n_trials=10
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:24] [Metadata: {'component': 'scenario', 'action': 'run'}] from ConfigSpace import ConfigurationSpace
+from smac import Scenario
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashbreast_cancer20250607_115423",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=10,
+        n_trials=10
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:24] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:29] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+
+import sklearn.linear_model
+import sklearn.svm
+import sklearn.tree
+import sklearn.impute
+import pandas as pd
+import numpy as np
+
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): The configuration object specifying the hyperparameters.
+        dataset (Any): The dataset dictionary containing 'X' (features) and 'y' (labels).
+        seed (int): The random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert to pandas DataFrame
+    X = pd.DataFrame(X)
+    y = pd.Series(y)
+
+    # Impute missing values (if any) using mean imputation
+    imputer = sklearn.impute.SimpleImputer(strategy='mean')
+    X = imputer.fit_transform(X)
+
+    # Convert X to numpy array
+    X = np.array(X)
+
+    # Determine the model type based on the configuration
+    classifier_type = cfg.get('classifier')
+
+    if classifier_type == 'LogisticRegression':
+        model = sklearn.linear_model.LogisticRegression(
+            C=cfg.get('lr_C'),
+            solver=cfg.get('lr_solver'),
+            penalty=cfg.get('lr_penalty'),
+            random_state=seed,
+            max_iter=1000  # Add max_iter to prevent convergence issues
+        )
+    elif classifier_type == 'SVC':
+        model = sklearn.svm.SVC(
+            C=cfg.get('svc_C'),
+            kernel=cfg.get('svc_kernel'),
+            degree=cfg.get('svc_degree'),
+            random_state=seed,
+            probability=True
+        )
+    elif classifier_type == 'DecisionTree':
+        model = sklearn.tree.DecisionTreeClassifier(
+            max_depth=cfg.get('dt_max_depth'),
+            min_samples_split=cfg.get('dt_min_samples_split'),
+            random_state=seed
+        )
+    else:
+        raise ValueError(f"Unknown classifier type: {classifier_type}")
+
+    # Train the model for 10 epochs (in this context, we fit the model 10 times and average the loss)
+    losses = []
+    for _ in range(10):
+        model.fit(X, y)
+        # Calculate the loss (using cross-entropy loss for classification)
+        if hasattr(model, "predict_proba"):
+            y_pred = model.predict_proba(X)
+            loss = sklearn.metrics.log_loss(y, y_pred)  # Use log loss for probabilistic outputs
+        else:
+            y_pred = model.predict(X)
+            loss = sklearn.metrics.log_loss(y, sklearn.preprocessing.LabelBinarizer().fit_transform(y_pred)) #binary
+        losses.append(loss)
+
+    loss = np.mean(losses)
+    return float(loss)
+```
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:29] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+
+import sklearn.linear_model
+import sklearn.svm
+import sklearn.tree
+import sklearn.impute
+import pandas as pd
+import numpy as np
+
+from ConfigSpace import Configuration
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): The configuration object specifying the hyperparameters.
+        dataset (Any): The dataset dictionary containing 'X' (features) and 'y' (labels).
+        seed (int): The random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert to pandas DataFrame
+    X = pd.DataFrame(X)
+    y = pd.Series(y)
+
+    # Impute missing values (if any) using mean imputation
+    imputer = sklearn.impute.SimpleImputer(strategy='mean')
+    X = imputer.fit_transform(X)
+
+    # Convert X to numpy array
+    X = np.array(X)
+
+    # Determine the model type based on the configuration
+    classifier_type = cfg.get('classifier')
+
+    if classifier_type == 'LogisticRegression':
+        model = sklearn.linear_model.LogisticRegression(
+            C=cfg.get('lr_C'),
+            solver=cfg.get('lr_solver'),
+            penalty=cfg.get('lr_penalty'),
+            random_state=seed,
+            max_iter=1000  # Add max_iter to prevent convergence issues
+        )
+    elif classifier_type == 'SVC':
+        model = sklearn.svm.SVC(
+            C=cfg.get('svc_C'),
+            kernel=cfg.get('svc_kernel'),
+            degree=cfg.get('svc_degree'),
+            random_state=seed,
+            probability=True
+        )
+    elif classifier_type == 'DecisionTree':
+        model = sklearn.tree.DecisionTreeClassifier(
+            max_depth=cfg.get('dt_max_depth'),
+            min_samples_split=cfg.get('dt_min_samples_split'),
+            random_state=seed
+        )
+    else:
+        raise ValueError(f"Unknown classifier type: {classifier_type}")
+
+    # Train the model for 10 epochs (in this context, we fit the model 10 times and average the loss)
+    losses = []
+    for _ in range(10):
+        model.fit(X, y)
+        # Calculate the loss (using cross-entropy loss for classification)
+        if hasattr(model, "predict_proba"):
+            y_pred = model.predict_proba(X)
+            loss = sklearn.metrics.log_loss(y, y_pred)  # Use log loss for probabilistic outputs
+        else:
+            y_pred = model.predict(X)
+            loss = sklearn.metrics.log_loss(y, sklearn.preprocessing.LabelBinarizer().fit_transform(y_pred)) #binary
+        losses.append(loss)
+
+    loss = np.mean(losses)
+    return float(loss)
+
+--------------------------------------------------------------------------------
+[2025-06-07 11:54:29] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 0.13955648331689258}] Training executed successfully, loss: 0.13955648331689258
+--------------------------------------------------------------------------------

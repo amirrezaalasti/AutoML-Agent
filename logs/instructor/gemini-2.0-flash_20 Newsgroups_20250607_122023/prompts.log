@@ -1,0 +1,420 @@
+[2025-06-07 12:20:31] [Metadata: {'dataset_name': '20 Newsgroups'}] You are a data science expert with deep knowledge of text datasets. Your task is to generate structured, and comprehensive instructions for effectively working with the dataset '20 Newsgroups'. Dataset description: This is a text dataset.
+Number of text entries: 16182
+Average text length: 1185.93 characters
+
+Target variable has 20 unique classes.
+
+Text Data Handling Requirements:
+1. Preprocessing Steps:
+   - Tokenization
+   - Convert to lowercase
+   - Remove special characters if needed
+   - Handle missing values
+
+2. Feature Extraction:
+   - Use TF-IDF or word embeddings
+   - Consider max sequence length
+   - Handle vocabulary size
+
+3. Model-Specific Requirements:
+   - For neural networks: Use appropriate padding/truncation
+   - For traditional ML: Convert to fixed-size features
+
+
+Please perform the following tasks:
+1. Describe the recommended data preprocessing steps specific to this dataset.
+2. Outline useful feature engineering strategies relevant to the dataset's type and domain.
+3. Mention any common challenges or important considerations when working with this dataset type.
+4. If this dataset exists on OpenML:
+   - Provide the exact dataset name as listed on OpenML.
+   - Include the dataset's tag(s) on OpenML.
+   - Provide the direct OpenML URL to the dataset.
+
+Return all the above in a structured JSON format matching the following fields:
+- dataset_name (str)
+- dataset_tag (str)
+- dataset_instructions (list of str)
+
+            Below, I am providing a set of parameters that were used on the top-performing models evaluated on the dataset.
+            Please generate an instruction for creating a configuration for the dataset based on the following parameters:
+            [{23300: OpenML Parameter
+================
+ID............: 23300
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_m
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: m
+  |__Data Type: option
+  |__Default..: 33554432
+  |__Value....: 33554432, 23301: OpenML Parameter
+================
+ID............: 23301
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_n
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: n
+  |__Data Type: baselearner
+  |__Default..: GaussianNumericAttributeClassObserver
+  |__Value....: GaussianNumericAttributeClassObserver, 23302: OpenML Parameter
+================
+ID............: 23302
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_d
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: d
+  |__Data Type: baselearner
+  |__Default..: NominalAttributeClassObserver
+  |__Value....: NominalAttributeClassObserver, 23303: OpenML Parameter
+================
+ID............: 23303
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_e
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: e
+  |__Data Type: option
+  |__Default..: 1000000
+  |__Value....: 1000000, 23304: OpenML Parameter
+================
+ID............: 23304
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_g
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: g
+  |__Data Type: option
+  |__Default..: 200
+  |__Value....: 200, 23305: OpenML Parameter
+================
+ID............: 23305
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_s
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: s
+  |__Data Type: baselearner
+  |__Default..: InfoGainSplitCriterion
+  |__Value....: InfoGainSplitCriterion, 23306: OpenML Parameter
+================
+ID............: 23306
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_c
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: c
+  |__Data Type: option
+  |__Default..: 1.0E-7
+  |__Value....: 1.0E-7, 23307: OpenML Parameter
+================
+ID............: 23307
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_t
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: t
+  |__Data Type: option
+  |__Default..: 0.05
+  |__Value....: 0.05, 23308: OpenML Parameter
+================
+ID............: 23308
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_b
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: b
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 23309: OpenML Parameter
+================
+ID............: 23309
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_z
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: z
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 23310: OpenML Parameter
+================
+ID............: 23310
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_r
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: r
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 23311: OpenML Parameter
+================
+ID............: 23311
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_p
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: p
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 23312: OpenML Parameter
+================
+ID............: 23312
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_l
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: l
+  |__Data Type: option
+  |__Default..: NBAdaptive
+  |__Value....: NBAdaptive, 23313: OpenML Parameter
+================
+ID............: 23313
+Flow ID.......: 2688
+Flow Name.....: moa.HoeffdingTree(5)_q
+Flow URL......: https://www.openml.org/f/2688
+Parameter Name: q
+  |__Data Type: option
+  |__Default..: 0
+  |__Value....: 0, 23357: OpenML Parameter
+================
+ID............: 23357
+Flow ID.......: 2699
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(2)_l
+Flow URL......: https://www.openml.org/f/2699
+Parameter Name: l
+  |__Data Type: baselearner
+  |__Default..: trees.HoeffdingTree
+  |__Value....: moa.classifiers.trees.HoeffdingTree, 23358: OpenML Parameter
+================
+ID............: 23358
+Flow ID.......: 2699
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(2)_s
+Flow URL......: https://www.openml.org/f/2699
+Parameter Name: s
+  |__Data Type: option
+  |__Default..: 10
+  |__Value....: 16, 23359: OpenML Parameter
+================
+ID............: 23359
+Flow ID.......: 2699
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(2)_w
+Flow URL......: https://www.openml.org/f/2699
+Parameter Name: w
+  |__Data Type: option
+  |__Default..: 6.0
+  |__Value....: 6.0, 23360: OpenML Parameter
+================
+ID............: 23360
+Flow ID.......: 2699
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(2)_a
+Flow URL......: https://www.openml.org/f/2699
+Parameter Name: a
+  |__Data Type: option
+  |__Default..: 0.002
+  |__Value....: 0.002, 23361: OpenML Parameter
+================
+ID............: 23361
+Flow ID.......: 2699
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(2)_o
+Flow URL......: https://www.openml.org/f/2699
+Parameter Name: o
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 23362: OpenML Parameter
+================
+ID............: 23362
+Flow ID.......: 2699
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(2)_m
+Flow URL......: https://www.openml.org/f/2699
+Parameter Name: m
+  |__Data Type: option
+  |__Default..: LeveragingBag
+  |__Value....: LeveragingBag, 23363: OpenML Parameter
+================
+ID............: 23363
+Flow ID.......: 2699
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(2)_r
+Flow URL......: https://www.openml.org/f/2699
+Parameter Name: r
+  |__Data Type: option
+  |__Default..: 1
+  |__Value....: 1}, {113: OpenML Parameter
+================
+ID............: 113
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_b
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: b
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 114: OpenML Parameter
+================
+ID............: 114
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_c
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: c
+  |__Data Type: option
+  |__Default..: 1.0E-7
+  |__Value....: 1.0E-7, 115: OpenML Parameter
+================
+ID............: 115
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_d
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: d
+  |__Data Type: baselearner
+  |__Default..: NominalAttributeClassObserver
+  |__Value....: NominalAttributeClassObserver, 116: OpenML Parameter
+================
+ID............: 116
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_e
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: e
+  |__Data Type: option
+  |__Default..: 1000000
+  |__Value....: 1000000, 117: OpenML Parameter
+================
+ID............: 117
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_g
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: g
+  |__Data Type: option
+  |__Default..: 200
+  |__Value....: 200, 118: OpenML Parameter
+================
+ID............: 118
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_l
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: l
+  |__Data Type: option
+  |__Default..: NBAdaptive
+  |__Value....: NBAdaptive, 119: OpenML Parameter
+================
+ID............: 119
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_m
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: m
+  |__Data Type: option
+  |__Default..: 33554432
+  |__Value....: 33554432, 120: OpenML Parameter
+================
+ID............: 120
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_n
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: n
+  |__Data Type: baselearner
+  |__Default..: GaussianNumericAttributeClassObserver
+  |__Value....: GaussianNumericAttributeClassObserver, 121: OpenML Parameter
+================
+ID............: 121
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_p
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: p
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 122: OpenML Parameter
+================
+ID............: 122
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_q
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: q
+  |__Data Type: option
+  |__Default..: 0
+  |__Value....: 0, 123: OpenML Parameter
+================
+ID............: 123
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_r
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: r
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 124: OpenML Parameter
+================
+ID............: 124
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_s
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: s
+  |__Data Type: baselearner
+  |__Default..: InfoGainSplitCriterion
+  |__Value....: InfoGainSplitCriterion, 125: OpenML Parameter
+================
+ID............: 125
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_t
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: t
+  |__Data Type: option
+  |__Default..: 0.05
+  |__Value....: 0.05, 126: OpenML Parameter
+================
+ID............: 126
+Flow ID.......: 80
+Flow Name.....: moa.HoeffdingTree(1)_z
+Flow URL......: https://www.openml.org/f/80
+Parameter Name: z
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 127: OpenML Parameter
+================
+ID............: 127
+Flow ID.......: 83
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(1)_a
+Flow URL......: https://www.openml.org/f/83
+Parameter Name: a
+  |__Data Type: option
+  |__Default..: 0.002
+  |__Value....: 0.002, 128: OpenML Parameter
+================
+ID............: 128
+Flow ID.......: 83
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(1)_l
+Flow URL......: https://www.openml.org/f/83
+Parameter Name: l
+  |__Data Type: baselearner
+  |__Default..: trees.HoeffdingTree
+  |__Value....: moa.classifiers.trees.HoeffdingTree, 129: OpenML Parameter
+================
+ID............: 129
+Flow ID.......: 83
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(1)_m
+Flow URL......: https://www.openml.org/f/83
+Parameter Name: m
+  |__Data Type: option
+  |__Default..: LeveragingBag
+  |__Value....: LeveragingBag, 130: OpenML Parameter
+================
+ID............: 130
+Flow ID.......: 83
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(1)_o
+Flow URL......: https://www.openml.org/f/83
+Parameter Name: o
+  |__Data Type: flag
+  |__Default..: false
+  |__Value....: false, 131: OpenML Parameter
+================
+ID............: 131
+Flow ID.......: 83
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(1)_r
+Flow URL......: https://www.openml.org/f/83
+Parameter Name: r
+  |__Data Type: option
+  |__Default..: 1
+  |__Value....: 1, 132: OpenML Parameter
+================
+ID............: 132
+Flow ID.......: 83
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(1)_s
+Flow URL......: https://www.openml.org/f/83
+Parameter Name: s
+  |__Data Type: option
+  |__Default..: 10
+  |__Value....: 10, 133: OpenML Parameter
+================
+ID............: 133
+Flow ID.......: 83
+Flow Name.....: moa.LeveragingBag_HoeffdingTree(1)_w
+Flow URL......: https://www.openml.org/f/83
+Parameter Name: w
+  |__Data Type: option
+  |__Default..: 6.0
+  |__Value....: 6.0}]
+            
+--------------------------------------------------------------------------------
