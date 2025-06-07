@@ -1,0 +1,89 @@
+[2025-06-07 11:27:26] [Metadata: {'dataset_name': 'Iris'}] You are a data science expert with deep knowledge of tabular datasets. Your task is to generate structured, and comprehensive instructions for effectively working with the dataset 'Iris'. Dataset description: This is a tabular dataset.
+It has 150 samples and 4 features.
+Feature columns and types:
+- 0: float64
+- 1: float64
+- 2: float64
+- 3: float64
+
+Feature statistical summary:
+                0           1           2           3
+count  150.000000  150.000000  150.000000  150.000000
+mean     5.843333    3.057333    3.758000    1.199333
+std      0.828066    0.435866    1.765298    0.762238
+min      4.300000    2.000000    1.000000    0.100000
+25%      5.100000    2.800000    1.600000    0.300000
+50%      5.800000    3.000000    4.350000    1.300000
+75%      6.400000    3.300000    5.100000    1.800000
+max      7.900000    4.400000    6.900000    2.500000
+
+Label distribution:
+0    50
+1    50
+2    50
+Name: count, dtype: int64
+
+Please perform the following tasks:
+1. Describe the recommended data preprocessing steps specific to this dataset.
+2. Outline useful feature engineering strategies relevant to the dataset's type and domain.
+3. Mention any common challenges or important considerations when working with this dataset type.
+4. If this dataset exists on OpenML:
+   - Provide the exact dataset name as listed on OpenML.
+   - Include the dataset's tag(s) on OpenML.
+   - Provide the direct OpenML URL to the dataset.
+
+Return all the above in a structured JSON format matching the following fields:
+- dataset_name (str)
+- dataset_tag (str)
+- dataset_instructions (list of str)
+
+            Below, I am providing a set of parameters that were used on the top-performing models evaluated on the dataset.
+            Please generate an instruction for creating a configuration for the dataset based on the following parameters:
+            [{9551: OpenML Parameter
+================
+ID............: 9551
+Flow ID.......: 1068
+Flow Name.....: weka.J48(28)_C
+Flow URL......: https://www.openml.org/f/1068
+Parameter Name: C
+  |__Data Type: option
+  |__Default..: 0.25
+  |__Value....: 0.25, 9552: OpenML Parameter
+================
+ID............: 9552
+Flow ID.......: 1068
+Flow Name.....: weka.J48(28)_M
+Flow URL......: https://www.openml.org/f/1068
+Parameter Name: M
+  |__Data Type: option
+  |__Default..: 2
+  |__Value....: 2}, {9566: OpenML Parameter
+================
+ID............: 9566
+Flow ID.......: 1070
+Flow Name.....: weka.Ridor(3)_F
+Flow URL......: https://www.openml.org/f/1070
+Parameter Name: F
+  |__Data Type: option
+  |__Default..: 3
+  |__Value....: 3, 9567: OpenML Parameter
+================
+ID............: 9567
+Flow ID.......: 1070
+Flow Name.....: weka.Ridor(3)_S
+Flow URL......: https://www.openml.org/f/1070
+Parameter Name: S
+  |__Data Type: option
+  |__Default..: 1
+  |__Value....: 1, 9570: OpenML Parameter
+================
+ID............: 9570
+Flow ID.......: 1070
+Flow Name.....: weka.Ridor(3)_N
+Flow URL......: https://www.openml.org/f/1070
+Parameter Name: N
+  |__Data Type: option
+  |__Default..: 2.0
+  |__Value....: 2.0}]
+            
+--------------------------------------------------------------------------------

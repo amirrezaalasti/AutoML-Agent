@@ -10,10 +10,23 @@ class InstructorInfo(BaseModel):
     dataset_tag: str
     dataset_instructions: list[str]
     openml_url: str
+    recommended_configuration: str
 
 
 class LLMPlanner:
-    def __init__(self, dataset_name: str, dataset_description: str, dataset_type: str):
+    def __init__(
+        self,
+        dataset_name: str,
+        dataset_description: str,
+        dataset_type: str,
+    ):
+        """
+        Initializes the LLMPlanner with dataset details and constructs the instruction for the LLM.
+        :param dataset_name: Name of the dataset.
+        :param dataset_description: Description of the dataset.
+        :param dataset_type: Type of the dataset (e.g., classification, regression).
+        """
+
         self.dataset_name = dataset_name
         self.dataset_description = dataset_description
         self.dataset_type = dataset_type
@@ -35,13 +48,29 @@ class LLMPlanner:
             "- dataset_instructions (list of str)\n"
         )
 
+        self.instruction_for_configuration_based_on_openml = """
+            Below, I am providing a set of parameters that were used on the top-performing models evaluated on the dataset.
+            Please generate an instruction for creating a configuration for the dataset based on the following parameters:
+            {config_space_suggested_parameters}
+            """
+
         self.logger = Logger(
             model_name="gemini-2.0-flash",
             dataset_name=self.dataset_name,
             base_log_dir="./logs/instructor",
         )
 
-    def generate_instructions(self):
+    def generate_instructions(self, config_space_suggested_parameters: str | None = None) -> InstructorInfo:
+        """
+        Generates structured instructions for the dataset using the Gemini LLM.
+        :return: An InstructorInfo object containing the generated instructions.
+        """
+
+        if config_space_suggested_parameters:
+            self.instruction += self.instruction_for_configuration_based_on_openml.format(
+                config_space_suggested_parameters=config_space_suggested_parameters
+            )
+
         google_client = genai.Client(api_key=GOOGLE_API_KEY)
         client = instructor.from_genai(google_client, model="models/gemini-2.0-flash")
         response = client.chat.completions.create(
