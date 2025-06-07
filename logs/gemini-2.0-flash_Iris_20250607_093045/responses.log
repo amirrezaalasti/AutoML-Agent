@@ -1,0 +1,265 @@
+[2025-06-07 09:30:53] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Float("max_features", bounds=(0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:53] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", bounds=(10, 200), default=100)
+    max_features = Float("max_features", bounds=(0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", bounds=(2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", bounds=(1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:53] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:54] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:54] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:54] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): Given vector violates forbidden clause: (Forbidden: criterion == 'gini' && Forbidden: min_samples_leaf == 1 && Forbidden: min_samples_split == 2)
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:56] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:56] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:56] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:58] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:58] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", ["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:58] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): Given vector violates forbidden clause: (Forbidden: criterion == 'gini' && Forbidden: min_samples_leaf == 1 && Forbidden: min_samples_split == 2)
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:59] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:59] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for a RandomForestClassifier
+    n_estimators = Integer("n_estimators", (10, 200), default=100)
+    max_features = Float("max_features", (0.1, 1.0), default=0.5)
+    min_samples_split = Integer("min_samples_split", (2, 10), default=2)
+    min_samples_leaf = Integer("min_samples_leaf", (1, 10), default=1)
+    criterion = Categorical("criterion", choices=["gini", "entropy"], default="gini")
+
+    cs.add_hyperparameters([n_estimators, max_features, min_samples_split, min_samples_leaf, criterion])
+
+    # Add a forbidden clause
+    forbidden_clause = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(criterion, "gini"),
+        ForbiddenEqualsClause(min_samples_split, 2),
+        ForbiddenEqualsClause(min_samples_leaf, 1)
+    )
+    cs.add_forbidden_clause(forbidden_clause)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:30:59] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#5): Categorical() got an unexpected keyword argument 'choices'
+--------------------------------------------------------------------------------

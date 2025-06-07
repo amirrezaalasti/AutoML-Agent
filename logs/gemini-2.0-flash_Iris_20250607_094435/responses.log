@@ -1,0 +1,293 @@
+[2025-06-07 09:44:45] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['SVM', 'RandomForest', 'KNN'])
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical('svm_kernel', ['linear', 'rbf', 'poly'], parent=classifier)
+    svm_C = Float('svm_C', (0.001, 10), log=True, default=1.0, parent=classifier)
+    svm_gamma = Float('svm_gamma', (0.0001, 1), log=True, default=0.1, parent=classifier)
+    svm_degree = Integer('svm_degree', (2, 5), default=3, parent=classifier)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # RandomForest hyperparameters
+    rf_n_estimators = Integer('rf_n_estimators', (10, 200), default=100, parent=classifier)
+    rf_max_depth = Integer('rf_max_depth', (2, 10), default=5, parent=classifier)
+    rf_min_samples_split = Integer('rf_min_samples_split', (2, 10), default=2, parent=classifier)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split])
+
+    # KNN hyperparameters
+    knn_n_neighbors = Integer('knn_n_neighbors', (1, 20), default=5, parent=classifier)
+    knn_weights = Categorical('knn_weights', ['uniform', 'distance'], default='uniform', parent=classifier)
+    knn_algorithm = Categorical('knn_algorithm', ['auto', 'ball_tree', 'kd_tree', 'brute'], default='auto', parent=classifier)
+
+    cs.add_hyperparameters([knn_n_neighbors, knn_weights, knn_algorithm])
+
+    # Conditions
+    kernel_condition = EqualsCondition(svm_kernel, classifier, 'SVM')
+    C_condition = EqualsCondition(svm_C, classifier, 'SVM')
+    gamma_condition = EqualsCondition(svm_gamma, classifier, 'SVM')
+    degree_condition = EqualsCondition(svm_degree, classifier, 'SVM')
+
+    n_estimators_condition = EqualsCondition(rf_n_estimators, classifier, 'RandomForest')
+    max_depth_condition = EqualsCondition(rf_max_depth, classifier, 'RandomForest')
+    min_samples_split_condition = EqualsCondition(rf_min_samples_split, classifier, 'RandomForest')
+
+    n_neighbors_condition = EqualsCondition(knn_n_neighbors, classifier, 'KNN')
+    weights_condition = EqualsCondition(knn_weights, classifier, 'KNN')
+    algorithm_condition = EqualsCondition(knn_algorithm, classifier, 'KNN')
+
+    cs.add_conditions([kernel_condition, C_condition, gamma_condition, degree_condition,
+                       n_estimators_condition, max_depth_condition, min_samples_split_condition,
+                       n_neighbors_condition, weights_condition, algorithm_condition])
+
+    # Forbidden Clauses
+    forbidden_rbf_degree = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'SVM'),
+        ForbiddenEqualsClause(svm_kernel, 'rbf'),
+        ForbiddenEqualsClause(svm_degree, 3)
+    )
+
+    cs.add_forbidden_clause(forbidden_rbf_degree)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:45] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['SVM', 'RandomForest', 'KNN'])
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical('svm_kernel', ['linear', 'rbf', 'poly'], parent=classifier)
+    svm_C = Float('svm_C', (0.001, 10), log=True, default=1.0, parent=classifier)
+    svm_gamma = Float('svm_gamma', (0.0001, 1), log=True, default=0.1, parent=classifier)
+    svm_degree = Integer('svm_degree', (2, 5), default=3, parent=classifier)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # RandomForest hyperparameters
+    rf_n_estimators = Integer('rf_n_estimators', (10, 200), default=100, parent=classifier)
+    rf_max_depth = Integer('rf_max_depth', (2, 10), default=5, parent=classifier)
+    rf_min_samples_split = Integer('rf_min_samples_split', (2, 10), default=2, parent=classifier)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split])
+
+    # KNN hyperparameters
+    knn_n_neighbors = Integer('knn_n_neighbors', (1, 20), default=5, parent=classifier)
+    knn_weights = Categorical('knn_weights', ['uniform', 'distance'], default='uniform', parent=classifier)
+    knn_algorithm = Categorical('knn_algorithm', ['auto', 'ball_tree', 'kd_tree', 'brute'], default='auto', parent=classifier)
+
+    cs.add_hyperparameters([knn_n_neighbors, knn_weights, knn_algorithm])
+
+    # Conditions
+    kernel_condition = EqualsCondition(svm_kernel, classifier, 'SVM')
+    C_condition = EqualsCondition(svm_C, classifier, 'SVM')
+    gamma_condition = EqualsCondition(svm_gamma, classifier, 'SVM')
+    degree_condition = EqualsCondition(svm_degree, classifier, 'SVM')
+
+    n_estimators_condition = EqualsCondition(rf_n_estimators, classifier, 'RandomForest')
+    max_depth_condition = EqualsCondition(rf_max_depth, classifier, 'RandomForest')
+    min_samples_split_condition = EqualsCondition(rf_min_samples_split, classifier, 'RandomForest')
+
+    n_neighbors_condition = EqualsCondition(knn_n_neighbors, classifier, 'KNN')
+    weights_condition = EqualsCondition(knn_weights, classifier, 'KNN')
+    algorithm_condition = EqualsCondition(knn_algorithm, classifier, 'KNN')
+
+    cs.add_conditions([kernel_condition, C_condition, gamma_condition, degree_condition,
+                       n_estimators_condition, max_depth_condition, min_samples_split_condition,
+                       n_neighbors_condition, weights_condition, algorithm_condition])
+
+    # Forbidden Clauses
+    forbidden_rbf_degree = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'SVM'),
+        ForbiddenEqualsClause(svm_kernel, 'rbf'),
+        ForbiddenEqualsClause(svm_degree, 3)
+    )
+
+    cs.add_forbidden_clause(forbidden_rbf_degree)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:45] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): Categorical() got an unexpected keyword argument 'parent'
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:49] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['SVM', 'RandomForest', 'KNN'])
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical('svm_kernel', ['linear', 'rbf', 'poly'])
+    svm_C = Float('svm_C', (0.001, 10), log=True, default=1.0)
+    svm_gamma = Float('svm_gamma', (0.0001, 1), log=True, default=0.1)
+    svm_degree = Integer('svm_degree', (2, 5), default=3)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # RandomForest hyperparameters
+    rf_n_estimators = Integer('rf_n_estimators', (10, 200), default=100)
+    rf_max_depth = Integer('rf_max_depth', (2, 10), default=5)
+    rf_min_samples_split = Integer('rf_min_samples_split', (2, 10), default=2)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split])
+
+    # KNN hyperparameters
+    knn_n_neighbors = Integer('knn_n_neighbors', (1, 20), default=5)
+    knn_weights = Categorical('knn_weights', ['uniform', 'distance'], default='uniform')
+    knn_algorithm = Categorical('knn_algorithm', ['auto', 'ball_tree', 'kd_tree', 'brute'], default='auto')
+
+    cs.add_hyperparameters([knn_n_neighbors, knn_weights, knn_algorithm])
+
+    # Conditions
+    kernel_condition = EqualsCondition(svm_kernel, classifier, 'SVM')
+    C_condition = EqualsCondition(svm_C, classifier, 'SVM')
+    gamma_condition = EqualsCondition(svm_gamma, classifier, 'SVM')
+    degree_condition = EqualsCondition(svm_degree, classifier, 'SVM')
+
+    n_estimators_condition = EqualsCondition(rf_n_estimators, classifier, 'RandomForest')
+    max_depth_condition = EqualsCondition(rf_max_depth, classifier, 'RandomForest')
+    min_samples_split_condition = EqualsCondition(rf_min_samples_split, classifier, 'RandomForest')
+
+    n_neighbors_condition = EqualsCondition(knn_n_neighbors, classifier, 'KNN')
+    weights_condition = EqualsCondition(knn_weights, classifier, 'KNN')
+    algorithm_condition = EqualsCondition(knn_algorithm, classifier, 'KNN')
+
+    cs.add_conditions([kernel_condition, C_condition, gamma_condition, degree_condition,
+                       n_estimators_condition, max_depth_condition, min_samples_split_condition,
+                       n_neighbors_condition, weights_condition, algorithm_condition])
+
+    # Forbidden Clauses
+    forbidden_rbf_degree = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'SVM'),
+        ForbiddenEqualsClause(svm_kernel, 'rbf'),
+        ForbiddenEqualsClause(svm_degree, 3)
+    )
+
+    cs.add_forbidden_clause(forbidden_rbf_degree)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:49] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    classifier = Categorical('classifier', ['SVM', 'RandomForest', 'KNN'])
+    cs.add_hyperparameter(classifier)
+
+    # SVM hyperparameters
+    svm_kernel = Categorical('svm_kernel', ['linear', 'rbf', 'poly'])
+    svm_C = Float('svm_C', (0.001, 10), log=True, default=1.0)
+    svm_gamma = Float('svm_gamma', (0.0001, 1), log=True, default=0.1)
+    svm_degree = Integer('svm_degree', (2, 5), default=3)
+
+    cs.add_hyperparameters([svm_kernel, svm_C, svm_gamma, svm_degree])
+
+    # RandomForest hyperparameters
+    rf_n_estimators = Integer('rf_n_estimators', (10, 200), default=100)
+    rf_max_depth = Integer('rf_max_depth', (2, 10), default=5)
+    rf_min_samples_split = Integer('rf_min_samples_split', (2, 10), default=2)
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split])
+
+    # KNN hyperparameters
+    knn_n_neighbors = Integer('knn_n_neighbors', (1, 20), default=5)
+    knn_weights = Categorical('knn_weights', ['uniform', 'distance'], default='uniform')
+    knn_algorithm = Categorical('knn_algorithm', ['auto', 'ball_tree', 'kd_tree', 'brute'], default='auto')
+
+    cs.add_hyperparameters([knn_n_neighbors, knn_weights, knn_algorithm])
+
+    # Conditions
+    kernel_condition = EqualsCondition(svm_kernel, classifier, 'SVM')
+    C_condition = EqualsCondition(svm_C, classifier, 'SVM')
+    gamma_condition = EqualsCondition(svm_gamma, classifier, 'SVM')
+    degree_condition = EqualsCondition(svm_degree, classifier, 'SVM')
+
+    n_estimators_condition = EqualsCondition(rf_n_estimators, classifier, 'RandomForest')
+    max_depth_condition = EqualsCondition(rf_max_depth, classifier, 'RandomForest')
+    min_samples_split_condition = EqualsCondition(rf_min_samples_split, classifier, 'RandomForest')
+
+    n_neighbors_condition = EqualsCondition(knn_n_neighbors, classifier, 'KNN')
+    weights_condition = EqualsCondition(knn_weights, classifier, 'KNN')
+    algorithm_condition = EqualsCondition(knn_algorithm, classifier, 'KNN')
+
+    cs.add_conditions([kernel_condition, C_condition, gamma_condition, degree_condition,
+                       n_estimators_condition, max_depth_condition, min_samples_split_condition,
+                       n_neighbors_condition, weights_condition, algorithm_condition])
+
+    # Forbidden Clauses
+    forbidden_rbf_degree = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier, 'SVM'),
+        ForbiddenEqualsClause(svm_kernel, 'rbf'),
+        ForbiddenEqualsClause(svm_degree, 3)
+    )
+
+    cs.add_forbidden_clause(forbidden_rbf_degree)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:49] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:50] [Metadata: {'component': 'scenario'}] ```python
+import ConfigSpace as CS
+from smac.scenario import Scenario
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashiris20250607_094449",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=9,
+        objectives=['loss'],
+        n_trials=10
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:50] [Metadata: {'component': 'scenario', 'action': 'run'}] import ConfigSpace as CS
+from smac.scenario import Scenario
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashiris20250607_094449",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=4,
+        min_budget=1,
+        max_budget=9,
+        objectives=['loss'],
+        n_trials=10
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:44:50] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------

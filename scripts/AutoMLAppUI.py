@@ -43,8 +43,8 @@ DATASET_OPTIONS = {
         "Custom Upload",
     ],
     "image": [
-        "MNIST (Keras)",
-        "Fashion‑MNIST (Keras)",
+        "MNIST",
+        "Fashion‑MNIST",
     ],
     "time_series": ["Sunspots (statsmodels)"],
     "text": ["20 Newsgroups"],
@@ -105,13 +105,13 @@ class AutoMLAppUI:
 
         # 2. Image (only Keras)
         elif data_type == "image":
-            if dataset_name == "MNIST (Keras)":
+            if dataset_name == "MNIST":
                 (xtr, ytr), _ = mnist.load_data()
-            elif dataset_name == "Fashion‑MNIST (Keras)":
+            elif dataset_name == "Fashion‑MNIST":
                 (xtr, ytr), _ = fashion_mnist.load_data()
-            elif dataset_name == "CIFAR‑10 (Keras)":
+            elif dataset_name == "CIFAR‑10":
                 (xtr, ytr), _ = cifar10.load_data()
-            elif dataset_name == "CIFAR‑100 (Keras)":
+            elif dataset_name == "CIFAR‑100":
                 (xtr, ytr), _ = cifar100.load_data()
             # flatten images
             X = pd.DataFrame(xtr.reshape(xtr.shape[0], -1))

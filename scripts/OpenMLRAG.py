@@ -1,10 +1,47 @@
 import openml
 from configs.api_keys import OPENML_API_KEY
+import pandas as pd
 
 
 class OpenMLRAG:
     def __init__(self):
         openml.config.apikey = OPENML_API_KEY
+
+    def search_datasets(self, keyword: str) -> pd.DataFrame:
+        """
+        Searches for active OpenML datasets by a flexible keyword search in their name.
+
+        This function splits the keyword into individual words and finds datasets
+        whose names contain ALL of those words, regardless of what's between them.
+
+        Args:
+            keyword: The string to search for (e.g., "breast cancer", "kr kp").
+
+        Returns:
+            A pandas DataFrame containing all matching datasets, sorted by relevance.
+        """
+        # Fetch all active datasets from OpenML
+        datasets_df = openml.datasets.list_datasets(output_format="dataframe", status="active")
+
+        # Split the search query into individual words
+        search_words = str(keyword).lower().split()
+
+        if not search_words:
+            # If the keyword is empty or just spaces, return an empty DataFrame
+            return pd.DataFrame()
+
+        # Start with a mask that includes all datasets
+        final_mask = pd.Series(True, index=datasets_df.index)
+
+        # Sequentially filter the DataFrame for each word in the search query
+        # This ensures the name contains 'word1' AND 'word2' AND ...
+        for word in search_words:
+            final_mask = final_mask & datasets_df["name"].str.lower().str.contains(word)
+
+        related_datasets = datasets_df[final_mask]
+
+        # Sort results by a relevance metric.
+        return related_datasets.sort_values(by="NumberOfInstances", ascending=False)
 
     def get_related_datasets(self, tag=None, dataset_name=None):
         """
@@ -15,7 +52,7 @@ class OpenMLRAG:
         datasets = openml.datasets.list_datasets(output_format="dataframe", status="active")
         if dataset_name:
             # choose the first dataset that matches the name
-            datasets = datasets[datasets["name"].str.lower() == dataset_name.lower()]
+            datasets = self.search_datasets(dataset_name)
             return datasets.iloc[0] if not datasets.empty else None
         elif tag:
             return openml.datasets.list_datasets(tag=tag)

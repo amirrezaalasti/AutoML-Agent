@@ -1,0 +1,1774 @@
+[2025-06-07 09:19:46] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace.Forbidden import ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace.Conditions import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical("model_type", ["cnn", "mlp"], default="cnn")
+    normalize = Categorical("normalize", [True, False], default=True)
+    
+    # CNN hyperparameters
+    cnn_layers = Integer("cnn_layers", (1, 3), default=2)
+    cnn_filters_1 = Integer("cnn_filters_1", (8, 64), default=32, log=True)
+    cnn_filters_2 = Integer("cnn_filters_2", (8, 64), default=32, log=True)
+    cnn_filters_3 = Integer("cnn_filters_3", (8, 64), default=32, log=True)
+    cnn_kernel_size = Integer("cnn_kernel_size", (3, 5), default=3)
+    cnn_pooling = Categorical("cnn_pooling", ["max", "avg"], default="max")
+    
+    # MLP hyperparameters
+    mlp_layers = Integer("mlp_layers", (1, 3), default=2)
+    mlp_units_1 = Integer("mlp_units_1", (16, 512), default=128, log=True)
+    mlp_units_2 = Integer("mlp_units_2", (16, 512), default=128, log=True)
+    mlp_units_3 = Integer("mlp_units_3", (16, 512), default=128, log=True)
+    dropout = Float("dropout", (0.0, 0.9), default=0.5)
+    
+    # Learning rate and optimizer
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    optimizer = Categorical("optimizer", ["adam", "sgd"], default="adam")
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add_hyperparameters([model_type, normalize, learning_rate, optimizer])
+    
+    # CNN parameters
+    cs.add_hyperparameters([cnn_layers, cnn_filters_1, cnn_filters_2, cnn_filters_3, cnn_kernel_size, cnn_pooling])
+    
+    # MLP parameters
+    cs.add_hyperparameters([mlp_layers, mlp_units_1, mlp_units_2, mlp_units_3, dropout])
+
+    # Define conditions
+    cnn_params = ["cnn_layers", "cnn_filters_1", "cnn_filters_2", "cnn_filters_3", "cnn_kernel_size", "cnn_pooling"]
+    mlp_params = ["mlp_layers", "mlp_units_1", "mlp_units_2", "mlp_units_3", "dropout"]
+
+    for param in cnn_params:
+      cs.add_condition(EqualsCondition(cs[param].name, model_type, "cnn"))
+    for param in mlp_params:
+      cs.add_condition(EqualsCondition(cs[param].name, model_type, "mlp"))
+    
+    # Define forbidden clauses
+    forbidden_filter_comb1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, "cnn"),
+        ForbiddenEqualsClause(cnn_layers, 1),
+        ForbiddenEqualsClause(cnn_filters_2, 32)
+    )
+
+    cs.add_forbidden_clause(forbidden_filter_comb1)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:46] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace.Forbidden import ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace.Conditions import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical("model_type", ["cnn", "mlp"], default="cnn")
+    normalize = Categorical("normalize", [True, False], default=True)
+    
+    # CNN hyperparameters
+    cnn_layers = Integer("cnn_layers", (1, 3), default=2)
+    cnn_filters_1 = Integer("cnn_filters_1", (8, 64), default=32, log=True)
+    cnn_filters_2 = Integer("cnn_filters_2", (8, 64), default=32, log=True)
+    cnn_filters_3 = Integer("cnn_filters_3", (8, 64), default=32, log=True)
+    cnn_kernel_size = Integer("cnn_kernel_size", (3, 5), default=3)
+    cnn_pooling = Categorical("cnn_pooling", ["max", "avg"], default="max")
+    
+    # MLP hyperparameters
+    mlp_layers = Integer("mlp_layers", (1, 3), default=2)
+    mlp_units_1 = Integer("mlp_units_1", (16, 512), default=128, log=True)
+    mlp_units_2 = Integer("mlp_units_2", (16, 512), default=128, log=True)
+    mlp_units_3 = Integer("mlp_units_3", (16, 512), default=128, log=True)
+    dropout = Float("dropout", (0.0, 0.9), default=0.5)
+    
+    # Learning rate and optimizer
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    optimizer = Categorical("optimizer", ["adam", "sgd"], default="adam")
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add_hyperparameters([model_type, normalize, learning_rate, optimizer])
+    
+    # CNN parameters
+    cs.add_hyperparameters([cnn_layers, cnn_filters_1, cnn_filters_2, cnn_filters_3, cnn_kernel_size, cnn_pooling])
+    
+    # MLP parameters
+    cs.add_hyperparameters([mlp_layers, mlp_units_1, mlp_units_2, mlp_units_3, dropout])
+
+    # Define conditions
+    cnn_params = ["cnn_layers", "cnn_filters_1", "cnn_filters_2", "cnn_filters_3", "cnn_kernel_size", "cnn_pooling"]
+    mlp_params = ["mlp_layers", "mlp_units_1", "mlp_units_2", "mlp_units_3", "dropout"]
+
+    for param in cnn_params:
+      cs.add_condition(EqualsCondition(cs[param].name, model_type, "cnn"))
+    for param in mlp_params:
+      cs.add_condition(EqualsCondition(cs[param].name, model_type, "mlp"))
+    
+    # Define forbidden clauses
+    forbidden_filter_comb1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, "cnn"),
+        ForbiddenEqualsClause(cnn_layers, 1),
+        ForbiddenEqualsClause(cnn_filters_2, 32)
+    )
+
+    cs.add_forbidden_clause(forbidden_filter_comb1)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:46] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): No module named 'ConfigSpace.Forbidden'
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:50] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace.forbidden import ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace.conditions import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical("model_type", ["cnn", "mlp"], default="cnn")
+    normalize = Categorical("normalize", [True, False], default=True)
+    
+    # CNN hyperparameters
+    cnn_layers = Integer("cnn_layers", (1, 3), default=2)
+    cnn_filters_1 = Integer("cnn_filters_1", (8, 64), default=32, log=True)
+    cnn_filters_2 = Integer("cnn_filters_2", (8, 64), default=32, log=True)
+    cnn_filters_3 = Integer("cnn_filters_3", (8, 64), default=32, log=True)
+    cnn_kernel_size = Integer("cnn_kernel_size", (3, 5), default=3)
+    cnn_pooling = Categorical("cnn_pooling", ["max", "avg"], default="max")
+    
+    # MLP hyperparameters
+    mlp_layers = Integer("mlp_layers", (1, 3), default=2)
+    mlp_units_1 = Integer("mlp_units_1", (16, 512), default=128, log=True)
+    mlp_units_2 = Integer("mlp_units_2", (16, 512), default=128, log=True)
+    mlp_units_3 = Integer("mlp_units_3", (16, 512), default=128, log=True)
+    dropout = Float("dropout", (0.0, 0.9), default=0.5)
+    
+    # Learning rate and optimizer
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    optimizer = Categorical("optimizer", ["adam", "sgd"], default="adam")
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add_hyperparameters([model_type, normalize, learning_rate, optimizer])
+    
+    # CNN parameters
+    cs.add_hyperparameters([cnn_layers, cnn_filters_1, cnn_filters_2, cnn_filters_3, cnn_kernel_size, cnn_pooling])
+    
+    # MLP parameters
+    cs.add_hyperparameters([mlp_layers, mlp_units_1, mlp_units_2, mlp_units_3, dropout])
+
+    # Define conditions
+    cnn_params = [cnn_layers, cnn_filters_1, cnn_filters_2, cnn_filters_3, cnn_kernel_size, cnn_pooling]
+    mlp_params = [mlp_layers, mlp_units_1, mlp_units_2, mlp_units_3, dropout]
+
+    for param in cnn_params:
+      cs.add_condition(EqualsCondition(param, model_type, "cnn"))
+    for param in mlp_params:
+      cs.add_condition(EqualsCondition(param, model_type, "mlp"))
+    
+    # Define forbidden clauses
+    forbidden_filter_comb1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, "cnn"),
+        ForbiddenEqualsClause(cnn_layers, 1),
+        ForbiddenEqualsClause(cnn_filters_2, 32)
+    )
+
+    cs.add_forbidden_clause(forbidden_filter_comb1)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:50] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
+from ConfigSpace.forbidden import ForbiddenAndConjunction, ForbiddenEqualsClause
+from ConfigSpace.conditions import EqualsCondition
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    model_type = Categorical("model_type", ["cnn", "mlp"], default="cnn")
+    normalize = Categorical("normalize", [True, False], default=True)
+    
+    # CNN hyperparameters
+    cnn_layers = Integer("cnn_layers", (1, 3), default=2)
+    cnn_filters_1 = Integer("cnn_filters_1", (8, 64), default=32, log=True)
+    cnn_filters_2 = Integer("cnn_filters_2", (8, 64), default=32, log=True)
+    cnn_filters_3 = Integer("cnn_filters_3", (8, 64), default=32, log=True)
+    cnn_kernel_size = Integer("cnn_kernel_size", (3, 5), default=3)
+    cnn_pooling = Categorical("cnn_pooling", ["max", "avg"], default="max")
+    
+    # MLP hyperparameters
+    mlp_layers = Integer("mlp_layers", (1, 3), default=2)
+    mlp_units_1 = Integer("mlp_units_1", (16, 512), default=128, log=True)
+    mlp_units_2 = Integer("mlp_units_2", (16, 512), default=128, log=True)
+    mlp_units_3 = Integer("mlp_units_3", (16, 512), default=128, log=True)
+    dropout = Float("dropout", (0.0, 0.9), default=0.5)
+    
+    # Learning rate and optimizer
+    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
+    optimizer = Categorical("optimizer", ["adam", "sgd"], default="adam")
+
+    # Add hyperparameters to the ConfigurationSpace
+    cs.add_hyperparameters([model_type, normalize, learning_rate, optimizer])
+    
+    # CNN parameters
+    cs.add_hyperparameters([cnn_layers, cnn_filters_1, cnn_filters_2, cnn_filters_3, cnn_kernel_size, cnn_pooling])
+    
+    # MLP parameters
+    cs.add_hyperparameters([mlp_layers, mlp_units_1, mlp_units_2, mlp_units_3, dropout])
+
+    # Define conditions
+    cnn_params = [cnn_layers, cnn_filters_1, cnn_filters_2, cnn_filters_3, cnn_kernel_size, cnn_pooling]
+    mlp_params = [mlp_layers, mlp_units_1, mlp_units_2, mlp_units_3, dropout]
+
+    for param in cnn_params:
+      cs.add_condition(EqualsCondition(param, model_type, "cnn"))
+    for param in mlp_params:
+      cs.add_condition(EqualsCondition(param, model_type, "mlp"))
+    
+    # Define forbidden clauses
+    forbidden_filter_comb1 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(model_type, "cnn"),
+        ForbiddenEqualsClause(cnn_layers, 1),
+        ForbiddenEqualsClause(cnn_filters_2, 32)
+    )
+
+    cs.add_forbidden_clause(forbidden_filter_comb1)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:50] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:51] [Metadata: {'component': 'scenario'}] ```python
+import os
+
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=2,
+        min_budget=1,
+        max_budget=3
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:51] [Metadata: {'component': 'scenario', 'action': 'run'}] import os
+
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs):
+    scenario = Scenario(
+        configspace=cs,
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=2,
+        min_budget=1,
+        max_budget=3
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:51] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:58] [Metadata: {'component': 'train_function'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize"):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+      X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}") if i < 3 else 32 # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output(X.shape[1:]), num_classes)
+
+            def _get_conv_output(self, shape):
+              bs = 1
+              input = torch.autograd.Variable(torch.rand(bs, *shape))
+              output_feat = self.features(input)
+              n_size = output_feat.data.view(bs, -1).size(1)
+              return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}") if i < 3 else 128 # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:58] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize"):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+      X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}") if i < 3 else 32 # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output(X.shape[1:]), num_classes)
+
+            def _get_conv_output(self, shape):
+              bs = 1
+              input = torch.autograd.Variable(torch.rand(bs, *shape))
+              output_feat = self.features(input)
+              n_size = output_feat.data.view(bs, -1).size(1)
+              return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}") if i < 3 else 128 # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:19:59] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): expected sequence of length 60000 at dim 0 (got 784)
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:06] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize"):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+        X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}") if f"cnn_filters_{i+1}" in cfg else 32 # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+              bs = 1
+              input = torch.randn(bs, *shape)
+              output_feat = self.features(input)
+              n_size = output_feat.data.view(bs, -1).size(1)
+              return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}") if f"mlp_units_{i+1}" in cfg else 128 # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:06] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize"):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+        X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}") if f"cnn_filters_{i+1}" in cfg else 32 # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+              bs = 1
+              input = torch.randn(bs, *shape)
+              output_feat = self.features(input)
+              n_size = output_feat.data.view(bs, -1).size(1)
+              return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}") if f"mlp_units_{i+1}" in cfg else 128 # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:06] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): expected sequence of length 60000 at dim 0 (got 784)
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:13] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize"):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+        X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}") if f"cnn_filters_{i+1}" in cfg else 32 # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+              bs = 1
+              input = torch.randn(bs, *shape)
+              output_feat = self.features(input)
+              n_size = output_feat.data.view(bs, -1).size(1)
+              return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}") if f"mlp_units_{i+1}" in cfg else 128 # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:13] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize"):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+        X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}") if f"cnn_filters_{i+1}" in cfg else 32 # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+              bs = 1
+              input = torch.randn(bs, *shape)
+              output_feat = self.features(input)
+              n_size = output_feat.data.view(bs, -1).size(1)
+              return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}") if f"mlp_units_{i+1}" in cfg else 128 # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:13] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#3): expected sequence of length 60000 at dim 0 (got 784)
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:19] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize", False):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+        X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}", 32)  # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+                bs = 1
+                input = torch.randn(bs, *shape)
+                output_feat = self.features(input)
+                n_size = output_feat.data.view(bs, -1).size(1)
+                return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}", 128)  # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+    X = X.view(X.shape[0], -1)
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:19] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize", False):
+        X = X / 255.0  # Normalize to [0, 1]
+    else:
+        X = (X - np.mean(X)) / np.std(X)  # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}", 32)  # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+                bs = 1
+                input = torch.randn(bs, *shape)
+                output_feat = self.features(input)
+                n_size = output_feat.data.view(bs, -1).size(1)
+                return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}", 128)  # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+    X = X.view(X.shape[0], -1)
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:20] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#4): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:26] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize", False):
+        X = X / 255.0  # Normalize to [0, 1]
+    # else:
+    #     X = (X - np.mean(X)) / np.std(X)  # Standardize # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}", 32)  # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+                bs = 1
+                input = torch.randn(bs, *shape)
+                output_feat = self.features(input)
+                n_size = output_feat.data.view(bs, -1).size(1)
+                return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}", 128)  # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:26] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+from ConfigSpace import Configuration
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from math import sqrt
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data, with keys 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Infer input and output dimensions
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
+
+    # Data Preprocessing and Formatting
+    X = X.astype(np.float32)
+    if cfg.get("normalize", False):
+        X = X / 255.0  # Normalize to [0, 1]
+    # else:
+    #     X = (X - np.mean(X)) / np.std(X)  # Standardize # Standardize
+
+    # Reshape and convert to tensor
+    if cfg.get("model_type") == "cnn":
+        height = width = int(sqrt(n_features))
+        assert height * height == n_features, "Input is not square"
+        X = X.reshape(n_samples, 1, height, width)  # Add channel dimension
+        X = torch.tensor(X, dtype=torch.float32)
+    else:
+        X = torch.tensor(X, dtype=torch.float32)  # Flattened input for MLP
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Model Definition
+    if cfg.get("model_type") == "cnn":
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                layers = []
+                in_channels = 1  # MNIST-like data has 1 channel
+                for i in range(cfg.get("cnn_layers")):
+                    filters = cfg.get(f"cnn_filters_{i+1}", 32)  # Default to 32 if not defined
+                    layers.append(nn.Conv2d(in_channels, filters, kernel_size=cfg.get("cnn_kernel_size")))
+                    layers.append(nn.ReLU())
+                    if cfg.get("cnn_pooling") == "max":
+                        layers.append(nn.MaxPool2d(2))
+                    else:
+                        layers.append(nn.AvgPool2d(2))
+                    in_channels = filters
+                self.features = nn.Sequential(*layers)
+
+                # Determine the output size after convolutional layers
+                self.fc = nn.Linear(self._get_conv_output((1, height, width)), num_classes)
+
+            def _get_conv_output(self, shape):
+                bs = 1
+                input = torch.randn(bs, *shape)
+                output_feat = self.features(input)
+                n_size = output_feat.data.view(bs, -1).size(1)
+                return n_size
+
+            def forward(self, x):
+                x = self.features(x)
+                x = torch.flatten(x, 1)
+                x = self.fc(x)
+                return x
+
+        model = CNN(num_classes=n_classes)
+
+    else:  # MLP
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                layers = []
+                input_dim = input_size
+                for i in range(cfg.get("mlp_layers")):
+                    units = cfg.get(f"mlp_units_{i+1}", 128)  # Default to 128 if not defined
+                    layers.append(nn.Linear(input_dim, units))
+                    layers.append(nn.ReLU())
+                    layers.append(nn.Dropout(cfg.get("dropout")))
+                    input_dim = units
+                layers.append(nn.Linear(input_dim, num_classes))
+                self.net = nn.Sequential(*layers)
+
+            def forward(self, x):
+                return self.net(x)
+
+        model = MLP(input_size=n_features, num_classes=n_classes)
+
+    # Optimizer
+    if cfg.get("optimizer") == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get("learning_rate"))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get("learning_rate"))
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Training Loop
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X)
+        loss = criterion(outputs, y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / epochs
+
+    return avg_loss
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:26] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#5): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:35] [Metadata: {'component': 'train_function', 'action': 'run'}] from typing import Any
+import numpy as np
+from ConfigSpace import Configuration
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+
+
+def train(cfg: Configuration, dataset: dict, seed: int) -> float:
+    """
+    Trains a machine learning model (CNN or MLP) on the given dataset.
+
+    Args:
+        cfg (Configuration): A Configuration object containing the hyperparameters.
+        dataset (dict): A dictionary containing the training data ('X' and 'y').
+        seed (int): The random seed for reproducibility.
+
+    Returns:
+        float: The average training loss over 10 epochs.
+    """
+
+    # Set seed for reproducibility
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert data to numpy arrays if it's not already
+    if not isinstance(X, np.ndarray):
+        X = np.array(X)
+    if not isinstance(y, np.ndarray):
+        y = np.array(y)
+
+    # Normalize the data
+    if cfg.get('normalize'):
+        X = X / 255.0
+    else:
+        X = (X - np.mean(X)) / np.std(X)
+    
+    # Determine input dimensions and prepare data for the model
+    n_samples, n_features = X.shape
+    num_classes = len(np.unique(y))
+    
+    # Prepare data based on model type
+    if cfg.get('model_type') == 'cnn':
+        height = width = int(np.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError("Input dimension is not a perfect square.")
+
+        X = X.reshape(n_samples, 1, height, width)  # Reshape to (N, C, H, W)
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Create TensorDataset and DataLoader
+    train_dataset = TensorDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+
+    # Define the model
+    if cfg.get('model_type') == 'cnn':
+        class CNN(nn.Module):
+            def __init__(self, num_classes):
+                super(CNN, self).__init__()
+                self.layers = nn.ModuleList()
+                
+                in_channels = 1  # Always 1 for this grayscale image data
+                
+                for i in range(cfg.get("cnn_layers")):
+                    layer_num = i + 1
+                    filters = cfg.get(f"cnn_filters_{layer_num}")
+                    kernel_size = cfg.get("cnn_kernel_size")
+                    
+                    self.layers.append(nn.Conv2d(in_channels, filters, kernel_size=kernel_size))
+                    self.layers.append(nn.ReLU())
+                    
+                    if cfg.get("cnn_pooling") == "max":
+                        self.layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
+                    else:
+                        self.layers.append(nn.AvgPool2d(kernel_size=2, stride=2))
+                        
+                    in_channels = filters
+                    
+                # Determine the output size after convolutions/pooling
+                self._to_linear = None
+                self._to_linear = self._get_conv_output(X.shape[1:])  # Pass the shape from input
+
+                self.fc = nn.Linear(self._to_linear, num_classes)  # Flattened features to classes
+            
+            def _get_conv_output(self, shape):
+                with torch.no_grad():
+                    x = torch.rand(1, *shape)  # Dummy input
+                    for layer in self.layers:
+                        x = layer(x)
+                    return int(np.prod(x.size()))
+                
+            def forward(self, x):
+                for layer in self.layers:
+                    x = layer(x)
+                x = x.reshape(x.size(0), -1) # Flatten
+                x = self.fc(x)
+                return x
+        
+        model = CNN(num_classes=num_classes)
+
+    elif cfg.get('model_type') == 'mlp':
+        class MLP(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(MLP, self).__init__()
+                self.layers = nn.ModuleList()
+                
+                in_features = input_size
+                
+                for i in range(cfg.get("mlp_layers")):
+                    layer_num = i + 1
+                    units = cfg.get(f"mlp_units_{layer_num}")
+                    
+                    self.layers.append(nn.Linear(in_features, units))
+                    self.layers.append(nn.ReLU())
+                    self.layers.append(nn.Dropout(cfg.get("dropout")))
+                    
+                    in_features = units
+                    
+                self.layers.append(nn.Linear(in_features, num_classes))
+
+            def forward(self, x):
+                x = x.view(x.size(0), -1)  # Flatten the input
+                for layer in self.layers:
+                    x = layer(x)
+                return x
+        
+        model = MLP(input_size=n_features, num_classes=num_classes)
+
+    # Define the optimizer
+    if cfg.get('optimizer') == 'adam':
+        optimizer = optim.Adam(model.parameters(), lr=cfg.get('learning_rate'))
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=cfg.get('learning_rate'))
+
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Train the model
+    epochs = 10
+    total_loss = 0.0
+    for epoch in range(epochs):
+        epoch_loss = 0.0
+        for i, (inputs, labels) in enumerate(train_loader):
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+
+            # Forward + backward + optimize
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+
+        avg_epoch_loss = epoch_loss / len(train_loader)
+        total_loss += avg_epoch_loss
+    
+    avg_loss = total_loss / epochs
+
+    return float(avg_loss)
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:20:45] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 2.2324880082066856}] Training executed successfully, loss: 2.2324880082066856
+--------------------------------------------------------------------------------

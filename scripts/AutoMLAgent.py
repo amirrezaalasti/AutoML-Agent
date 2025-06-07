@@ -15,6 +15,7 @@ from smac.facade.hyperparameter_optimization_facade import (
 from smac import Scenario
 import os
 import json
+import time
 
 
 class AutoMLAgent:
@@ -79,6 +80,13 @@ class AutoMLAgent:
 
     def extract_suggested_config_space_parameters(self, dataset_name_in_openml: str = None):
         sample_datasets = self.openML.get_related_datasets(dataset_name=dataset_name_in_openml)
+        if sample_datasets is None or sample_datasets.empty:
+            self.logger.log_error(
+                f"No related datasets found for {dataset_name_in_openml}",
+                error_type="DATASET_NOT_FOUND",
+            )
+            self.ui_agent.error(f"No related datasets found for {dataset_name_in_openml} in OpenML.")
+            return {}
 
         tasks = self.openML.get_related_tasks_of_dataset(dataset_id=sample_datasets.did, task_type="classification")
         task_ids = tasks["tid"].tolist()
@@ -110,7 +118,7 @@ class AutoMLAgent:
         self.ui_agent.code(self.scenario, language="python")
 
         # Training Function
-        self.prompts["train_function"] = self._create_train_prompt()
+        self.prompts["train_function"] = self._create_train_prompt(instructor_response.dataset_instructions or [])
         self.train_function_code = self.llm.generate(self.prompts["train_function"])
         self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
         self.logger.log_response(self.train_function_code, {"component": "train_function"})
@@ -230,8 +238,9 @@ class AutoMLAgent:
             )
 
     def _create_scenario_prompt(self) -> str:
+        smac_file_name = self.llm.model_name.replace(" ", "_").lower() + self.dataset_name.replace(" ", "_").lower() + time.strftime("%Y%m%d_%H%M%S")
         with open("templates/scenario_prompt.txt", "r") as f:
-            base_prompt = f.read().format(dataset=self.dataset_description)
+            base_prompt = f.read().format(dataset=self.dataset_description, smac_file_name=smac_file_name)
 
         # Add documentation context with specific guidance
         if os.path.exists("collected_docs/smac_docs.json"):
@@ -262,13 +271,18 @@ class AutoMLAgent:
             """
             return base_prompt + doc_context
 
-    def _create_train_prompt(self) -> str:
+    def _create_train_prompt(self, train_function_instructions) -> str:
         with open("templates/train_prompt.txt", "r") as f:
-            return f.read().format(
+            prompt = f.read().format(
                 dataset_description=self.dataset_description,
                 config_space=self.config_space or "",
                 scenario=self.scenario or "",
             )
+        # Add specific instructions for the training function
+        print("Adding training function instructions")
+        print(train_function_instructions)
+        prompt += "\n\n".join(train_function_instructions)
+        return prompt
 
     def _create_fix_prompt(self, errors: str, code: str) -> str:
         """Include recent error history when asking LLM to fix code"""
