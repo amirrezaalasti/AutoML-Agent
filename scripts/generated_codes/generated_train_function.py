@@ -1,54 +1,66 @@
 from typing import Any
-import numpy as np
-from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
 from ConfigSpace import Configuration
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import StratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 
 
 def train(cfg: Configuration, dataset: Any, seed: int) -> float:
     """
-    Trains a Support Vector Machine (SVM) model on the given dataset
-    using the provided configuration and returns the average training loss
-    over 10 epochs.
+    Trains a RandomForestClassifier on the given dataset using the provided configuration and returns the average cross-validation loss.
 
     Args:
-        cfg (Configuration): Configuration object containing hyperparameters for the SVM.
-        dataset (Any): Dictionary containing the training data, with keys 'X' for features
-            and 'y' for labels.
-        seed (int): Random seed for reproducibility.
+        cfg (Configuration): A configuration object containing hyperparameters for the RandomForestClassifier.
+        dataset (Any): A dictionary containing the dataset with keys 'X' (feature matrix) and 'y' (target vector).
+        seed (int): A random seed for reproducibility.
 
     Returns:
-        float: Average training loss over 10 epochs.
+        float: The average cross-validation loss across 10 epochs (splits).
     """
+
     X = dataset["X"]
     y = dataset["y"]
 
-    # Infer input and output dimensions dynamically
-    input_dim = X.shape[1]
-    output_dim = len(np.unique(y))
+    # Convert to pandas DataFrame
+    X = pd.DataFrame(X)
+    y = pd.Series(y)
 
-    # Split data into training and validation sets
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed)
+    # Preprocessing steps
+    numeric_features = X.select_dtypes(include=np.number).columns
+    numeric_transformer = Pipeline(
+        steps=[("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]  # Handle missing values  # Scale numerical features
+    )
 
-    # Initialize the SVM model with hyperparameters from the configuration
-    kernel = cfg.get("kernel")
-    C = cfg.get("C")
-    gamma = cfg.get("gamma")
-    degree = cfg.get("degree")
-    coef0 = cfg.get("coef0")
+    # Apply preprocessing to numerical features
+    X[numeric_features] = numeric_transformer.fit_transform(X[numeric_features])
 
-    model = SVC(kernel=kernel, C=C, gamma=gamma, degree=degree, coef0=coef0, random_state=seed)
+    # Model definition
+    model = RandomForestClassifier(
+        n_estimators=cfg.get("n_estimators"),
+        max_depth=cfg.get("max_depth"),
+        min_samples_split=cfg.get("min_samples_split"),
+        min_samples_leaf=cfg.get("min_samples_leaf"),
+        random_state=seed,
+        n_jobs=-1,  # Use all available cores
+    )
 
-    # Train the model for 10 epochs (in this case, we're just fitting the model 10 times and averaging the loss,
-    #  as there's no actual epoch-based training for sklearn's SVC directly).
-    total_loss = 0.0
-    for _ in range(10):
+    # Cross-validation
+    n_splits = 10  # Number of cross-validation splits (epochs)
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
+    losses = []
+
+    for train_idx, val_idx in cv.split(X, y):
+        X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
+        y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
+
         model.fit(X_train, y_train)
-        y_pred = model.predict(X_train)
-        loss = mean_squared_error(y_train, y_pred)  # Use MSE for consistent loss metric
-        total_loss += loss
+        y_pred = model.predict_proba(X_val)
+        loss = log_loss(y_val, y_pred)
+        losses.append(loss)
 
-    avg_loss = total_loss / 10.0
-
-    return avg_loss
+    return np.mean(losses)

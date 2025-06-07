@@ -1,0 +1,102 @@
+[2025-06-07 09:42:44] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+import numpy as np
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for the SVM classifier
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    C = Float("C", (1e-5, 10), default=1.0, log=True)
+    gamma = Float("gamma", (1e-5, 10), default=0.1, log=True)
+    degree = Integer("degree", (2, 5), default=3)
+    coef0 = Float("coef0", (-1, 1), default=0.0)
+    shrinking = Categorical("shrinking", [True, False], default=True)
+    tol = Float("tol", (1e-5, 1e-1), default=1e-3, log=True)
+
+    cs.add_hyperparameters([kernel, C, gamma, degree, coef0, shrinking, tol])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_kernel_poly_coef0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(kernel, "poly"),
+        ForbiddenEqualsClause(coef0, 0.0)
+    )
+
+    cs.add_forbidden_clause(forbidden_kernel_poly_coef0)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:42:44] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
+import numpy as np
+
+
+def get_configspace():
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for the SVM classifier
+    kernel = Categorical("kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    C = Float("C", (1e-5, 10), default=1.0, log=True)
+    gamma = Float("gamma", (1e-5, 10), default=0.1, log=True)
+    degree = Integer("degree", (2, 5), default=3)
+    coef0 = Float("coef0", (-1, 1), default=0.0)
+    shrinking = Categorical("shrinking", [True, False], default=True)
+    tol = Float("tol", (1e-5, 1e-1), default=1e-3, log=True)
+
+    cs.add_hyperparameters([kernel, C, gamma, degree, coef0, shrinking, tol])
+
+    # Add forbidden clauses to avoid invalid combinations
+    forbidden_kernel_poly_coef0 = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(kernel, "poly"),
+        ForbiddenEqualsClause(coef0, 0.0)
+    )
+
+    cs.add_forbidden_clause(forbidden_kernel_poly_coef0)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:42:44] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-07 09:42:45] [Metadata: {'component': 'scenario'}] ```python
+from smac.scenario import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    """Generates a SMAC scenario object."""
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashiris20250607_094244",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=2,
+        min_budget=1,
+        max_budget=9,
+        objectives=['loss'],
+        n_trials=10
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-07 09:42:45] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac.scenario import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs):
+    """Generates a SMAC scenario object."""
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashiris20250607_094244",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_workers=2,
+        min_budget=1,
+        max_budget=9,
+        objectives=['loss'],
+        n_trials=10
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-07 09:42:45] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
