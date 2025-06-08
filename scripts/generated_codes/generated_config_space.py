@@ -1,56 +1,37 @@
 from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer, ForbiddenAndConjunction, ForbiddenEqualsClause
-from ConfigSpace import EqualsCondition, InCondition
 
 
 def get_configspace():
     cs = ConfigurationSpace()
 
-    model_type = Categorical("model_type", ["LSTM", "GRU", "MLP"])
-    cs.add_hyperparameter(model_type)
+    # Define hyperparameters
+    classifier_type = Categorical("classifier_type", ["SVM", "DecisionTree"], default="SVM")
 
-    # LSTM Hyperparameters
-    lstm_units = Integer("lstm_units", (32, 256), default=64)
-    lstm_layers = Integer("lstm_layers", (1, 3), default=1)
-    lstm_dropout = Float("lstm_dropout", (0.0, 0.5), default=0.0)
-    cs.add_hyperparameters([lstm_units, lstm_layers, lstm_dropout])
+    # SVM hyperparameters
+    svm_kernel = Categorical("svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default="rbf")
+    svm_C = Float("svm_C", bounds=(0.001, 1000), default=1.0, log=True)
+    svm_gamma = Float("svm_gamma", bounds=(0.0001, 10), default=0.1, log=True)
+    svm_degree = Integer("svm_degree", bounds=(2, 5), default=3)
 
-    # GRU Hyperparameters
-    gru_units = Integer("gru_units", (32, 256), default=64)
-    gru_layers = Integer("gru_layers", (1, 3), default=1)
-    gru_dropout = Float("gru_dropout", (0.0, 0.5), default=0.0)
-    cs.add_hyperparameters([gru_units, gru_layers, gru_dropout])
+    # Decision Tree hyperparameters
+    dt_criterion = Categorical("dt_criterion", ["gini", "entropy"], default="gini")
+    dt_max_depth = Integer("dt_max_depth", bounds=(1, 20), default=5)
+    dt_min_samples_split = Integer("dt_min_samples_split", bounds=(2, 20), default=2)
+    dt_min_samples_leaf = Integer("dt_min_samples_leaf", bounds=(1, 20), default=1)
 
-    # MLP Hyperparameters
-    mlp_layers = Integer("mlp_layers", (1, 3), default=2)
-    mlp_units = Integer("mlp_units", (32, 256), default=128)
-    mlp_dropout = Float("mlp_dropout", (0.0, 0.5), default=0.0)
-    cs.add_hyperparameters([mlp_layers, mlp_units, mlp_dropout])
+    # Add hyperparameters to the configuration space
+    cs.add([classifier_type, svm_kernel, svm_C, svm_gamma, svm_degree, dt_criterion, dt_max_depth, dt_min_samples_split, dt_min_samples_leaf])
 
-    # Learning Rate
-    learning_rate = Float("learning_rate", (1e-5, 1e-2), default=1e-3, log=True)
-    cs.add_hyperparameter(learning_rate)
+    # Add forbidden clauses
+    forbidden_svm = ForbiddenAndConjunction(
+        ForbiddenEqualsClause(classifier_type, "SVM"), ForbiddenEqualsClause(dt_criterion, "gini")  # This clause is problematic
+    )
 
-    # Conditions for LSTM
-    cond_lstm_units = EqualsCondition(lstm_units, model_type, "LSTM")
-    cond_lstm_layers = EqualsCondition(lstm_layers, model_type, "LSTM")
-    cond_lstm_dropout = EqualsCondition(lstm_dropout, model_type, "LSTM")
-    cs.add_conditions([cond_lstm_units, cond_lstm_layers, cond_lstm_dropout])
+    forbidden_dt = ForbiddenAndConjunction(ForbiddenEqualsClause(classifier_type, "DecisionTree"), ForbiddenEqualsClause(svm_kernel, "rbf"))
 
-    # Conditions for GRU
-    cond_gru_units = EqualsCondition(gru_units, model_type, "GRU")
-    cond_gru_layers = EqualsCondition(gru_layers, model_type, "GRU")
-    cond_gru_dropout = EqualsCondition(gru_dropout, model_type, "GRU")
-    cs.add_conditions([cond_gru_units, cond_gru_layers, cond_gru_dropout])
+    # Remove the problematic forbidden clause.
+    # cs.add_forbidden_clause(forbidden_svm) # Remove this line
 
-    # Conditions for MLP
-    cond_mlp_layers = EqualsCondition(mlp_layers, model_type, "MLP")
-    cond_mlp_units = EqualsCondition(mlp_units, model_type, "MLP")
-    cond_mlp_dropout = EqualsCondition(mlp_dropout, model_type, "MLP")
-    cs.add_conditions([cond_mlp_layers, cond_mlp_units, cond_mlp_dropout])
-
-    # Forbidden Clauses - Example: LSTM with no layers
-    forbidden_lstm_no_layers = ForbiddenAndConjunction(ForbiddenEqualsClause(model_type, "LSTM"), ForbiddenEqualsClause(lstm_layers, 1))
-
-    # cs.add_forbidden_clause(forbidden_lstm_no_layers) # Removing forbidden clause.
+    cs.add_forbidden_clause(forbidden_dt)
 
     return cs

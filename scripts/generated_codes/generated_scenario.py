@@ -1,25 +1,17 @@
-from smac import Scenario
-from ConfigSpace import ConfigurationSpace
+import logging
+from pathlib import Path
+
+from smac.scenario import Scenario
 
 
 def generate_scenario(cs):
-    """
-    Generates a Scenario object for SMAC.
-
-    Args:
-        cs (ConfigurationSpace): The configuration space to be used.
-
-    Returns:
-        Scenario: A configured Scenario object.
-    """
-    scenario = Scenario(
+    return Scenario(
         configspace=cs,
-        name="gemini-2.0-flashsunspots_(statsmodels)20250607_140029",
+        name="gemini-2.0-flashiris20250608_105539",
         output_directory="./automl_results",
         deterministic=False,
         n_workers=2,
         min_budget=1,
-        max_budget=9,
+        max_budget=3,
         n_trials=10,
     )
-    return scenario

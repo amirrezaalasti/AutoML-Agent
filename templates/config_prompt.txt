@@ -79,18 +79,7 @@ Write a Python function named `get_configspace()` that returns a valid `Configur
 
 [EXAMPLES]
 
-# Example 1: Basic ConfigurationSpace
-```python
-from ConfigSpace import ConfigurationSpace
-
-cs = ConfigurationSpace(
-    space={{
-        "C": (-1.0, 1.0),
-        "max_iter": (10, 100),
-    }},
-)
-```
-# Example 2: Adding Hyperparameters
+# Example 1: Adding Hyperparameters
 ```python
 from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
 
@@ -102,7 +91,7 @@ gamma = Float('gamma', bounds=(1e-5, 1e2), default=1, log=True)
 cs = ConfigurationSpace()
 cs.add([kernel_type, degree, coef0, gamma])
 ```
-# Example 3: Adding Conditions
+# Example 2: Adding Conditions
 ```python
 from ConfigSpace import EqualsCondition, InCondition, OrConjunction
 
@@ -113,7 +102,7 @@ cond_2 = OrConjunction(
 )
 cond_3 = InCondition(gamma, kernel_type, ['rbf', 'poly', 'sigmoid'])
 ```
-# Example 4: Adding Forbidden Clauses
+# Example 3: Adding Forbidden Clauses
 ```pyhon
 from ConfigSpace import ForbiddenEqualsClause, ForbiddenAndConjunction
 
@@ -131,45 +120,3 @@ penalty_and_dual = ForbiddenAndConjunction(
     ForbiddenEqualsClause(penalty, "l1")
 )
 ```
-Example 5: Serialization
-```python
-from pathlib import Path
-from ConfigSpace import ConfigurationSpace
-
-path = Path("configspace.yaml")
-cs = ConfigurationSpace(
-    space={{
-        "C": (-1.0, 1.0),
-        "max_iter": (10, 100),
-    }},
-)
-cs.to_yaml(path)
-loaded_cs = ConfigurationSpace.from_yaml(path)
-```
-# Example 6: Priors
-```python
-import numpy as np
-from ConfigSpace import ConfigurationSpace, Float, Categorical, Beta, Normal
-
-cs = ConfigurationSpace(
-    space={{
-        "lr": Float(
-            'lr',
-            bounds=(1e-5, 1e-1),
-            default=1e-3,
-            log=True,
-            distribution=Normal(1e-3, 1e-1)
-        ),
-        "dropout": Float(
-            'dropout',
-            bounds=(0, 0.99),
-            default=0.25,
-            distribution=Beta(alpha=2, beta=4)
-        ),
-        "activation": Categorical(
-            'activation',
-            items=['tanh', 'relu'],
-            weights=[0.2, 0.8]
-        ),
-    }},
-)

@@ -19,7 +19,7 @@ import time
 
 
 class AutoMLAgent:
-    MAX_RETRIES_PROMPT = 5
+    MAX_RETRIES_PROMPT = 10
     MAX_RETRIES_ABORT = 20
 
     def __init__(
@@ -118,7 +118,7 @@ class AutoMLAgent:
         self.ui_agent.code(self.config_space, language="python")
 
         # Scenario
-        self.prompts["scenario"] = self._create_scenario_prompt()
+        self.prompts["scenario"] = self._create_scenario_prompt(instructor_response.scenario_plan)
         self.scenario_code = self.llm.generate(self.prompts["scenario"])
         self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
         self.logger.log_response(self.scenario_code, {"component": "scenario"})
@@ -127,7 +127,8 @@ class AutoMLAgent:
         self.ui_agent.code(self.scenario, language="python")
 
         # Training Function
-        self.prompts["train_function"] = self._create_train_prompt(instructor_response.dataset_instructions or [])
+        train_plan = instructor_response.recommended_configuration + "\n\n".join(instructor_response.dataset_instructions)
+        self.prompts["train_function"] = self._create_train_prompt(train_plan)
         self.train_function_code = self.llm.generate(self.prompts["train_function"])
         self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
         self.logger.log_response(self.train_function_code, {"component": "train_function"})
@@ -251,43 +252,16 @@ class AutoMLAgent:
                 config_space_suggested_parameters=config_space_suggested_parameters,
             )
 
-    def _create_scenario_prompt(self) -> str:
+    def _create_scenario_prompt(self, scenario_plan) -> str:
         """
         Create a prompt for generating the scenario code.
         :return: A formatted prompt string for the LLM.
         """
         smac_file_name = self.llm.model_name.replace(" ", "_").lower() + self.dataset_name.replace(" ", "_").lower() + time.strftime("%Y%m%d_%H%M%S")
         with open("templates/scenario_prompt.txt", "r") as f:
-            base_prompt = f.read().format(dataset=self.dataset_description, smac_file_name=smac_file_name)
+            base_prompt = f.read().format(dataset=self.dataset_description, smac_file_name=smac_file_name, scenario_plan=scenario_plan)
 
-        # Add documentation context with specific guidance
-        if os.path.exists("collected_docs/smac_docs.json"):
-            with open("collected_docs/smac_docs.json", "r") as f:
-                smac_docs = json.load(f)
-
-            # Add specific guidance about using the documentation
-            doc_context = """
-            Based on the following SMAC documentation, analyze the dataset characteristics and choose appropriate:
-            1. Facade type (e.g., MultiFidelityFacade for multi-fidelity optimization)
-            2. Budget settings (min_budget and max_budget)
-            3. Number of workers (n_workers)
-            4. Other relevant scenario parameters
-
-            SMAC Documentation:
-            """
-            doc_context += "\n\n".join([doc["content"] for doc in smac_docs])
-
-            # Add specific questions to guide the LLM
-            doc_context += """
-            Please analyze the dataset and documentation to determine:
-            1. Should multi-fidelity optimization be used? (Consider dataset size and training time)
-            2. What budget range is appropriate? (Consider training epochs or data subsets)
-            3. How many workers should be used? (Consider available resources)
-            4. Are there any special considerations for this dataset type?
-
-            Then generate a scenario configuration that best suits this dataset.
-            """
-            return base_prompt + doc_context
+        return base_prompt
 
     def _create_train_prompt(self, train_function_instructions) -> str:
         """

@@ -23,7 +23,7 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
   * Access primitive values using `cfg.get('key')` (only `int`, `float`, `str`, etc.).
   * **Do not access or manipulate non-primitive hyperparameter objects**.
 
-* The function must return the **average training loss** over 10 epochs.
+* if using Neural Networks The function must return the **average training loss** over 10 epochs.
 
 * You must carefully read and follow the dataset description provided, which includes:
   * Data format and dimensions
