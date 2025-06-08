@@ -1,0 +1,2979 @@
+[2025-06-08 11:27:05] [Metadata: {'component': 'config'}] **Generate a production-grade Python configuration space for machine learning hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+def get_configspace() -> ConfigurationSpace:
+```
+
+---
+
+### **Configuration Space Requirements:**
+
+* The configuration space **must** be appropriate for the dataset type and characteristics:
+  * Dataset Description: `This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+`
+
+* If OpenML parameters are provided, use them as a reference:
+  * Suggested Parameters: `[{83544: OpenML Parameter
+================
+ID............: 83544
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_batch_size
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: batch_size
+  |__Data Type: None
+  |__Default..: 32
+  |__Value....: 128, 83545: OpenML Parameter
+================
+ID............: 83545
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_build_fn
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: build_fn
+  |__Data Type: None
+  |__Default..: {"oml-python:serialized_object": "function", "value": "__main__.vggnet"}
+  |__Value....: {"oml-python:serialized_object": "function", "value": "__main__.vggnet_emnist_emnist_5_128_False"}, 83546: OpenML Parameter
+================
+ID............: 83546
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_epochs
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: epochs
+  |__Data Type: None
+  |__Default..: 3
+  |__Value....: 5, 83547: OpenML Parameter
+================
+ID............: 83547
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer0
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer0
+  |__Data Type: None
+  |__Default..: {"class_name": "Reshape", "config": {"batch_input_shape": [null, 3072], "dtype": "float32", "name": "reshape_1", "target_shape": [32, 32, 3], "trainable": true}}
+  |__Value....: {"class_name": "Reshape", "config": {"batch_input_shape": [null, 784], "dtype": "float32", "name": "reshape_72", "target_shape": [28, 28, 1], "trainable": true}}, 83548: OpenML Parameter
+================
+ID............: 83548
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer1
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer1
+  |__Data Type: None
+  |__Default..: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_1", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}
+  |__Value....: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_498", "padding": "same", "strides": [1, 1], "trainable": false, "use_bias": true}}, 83549: OpenML Parameter
+================
+ID............: 83549
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer10
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer10
+  |__Data Type: None
+  |__Default..: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_6", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}
+  |__Value....: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_503", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}, 83550: OpenML Parameter
+================
+ID............: 83550
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer11
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer11
+  |__Data Type: None
+  |__Default..: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_7", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}
+  |__Value....: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_504", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}, 83551: OpenML Parameter
+================
+ID............: 83551
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer12
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer12
+  |__Data Type: None
+  |__Default..: {"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_3", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}
+  |__Value....: {"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_216", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}, 83552: OpenML Parameter
+================
+ID............: 83552
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer13
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer13
+  |__Data Type: None
+  |__Default..: {"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_3", "scale": true, "trainable": true}}
+  |__Value....: {"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_216", "scale": true, "trainable": true}}, 83553: OpenML Parameter
+================
+ID............: 83553
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer14
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer14
+  |__Data Type: None
+  |__Default..: {"class_name": "Flatten", "config": {"data_format": "channels_last", "name": "flatten_1", "trainable": true}}
+  |__Value....: {"class_name": "Flatten", "config": {"data_format": "channels_last", "name": "flatten_72", "trainable": true}}, 83554: OpenML Parameter
+================
+ID............: 83554
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer15
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer15
+  |__Data Type: None
+  |__Default..: {"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_1", "trainable": true, "units": 4096, "use_bias": true}}
+  |__Value....: {"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_214", "trainable": true, "units": 4096, "use_bias": true}}, 83555: OpenML Parameter
+================
+ID............: 83555
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer16
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer16
+  |__Data Type: None
+  |__Default..: {"class_name": "Dropout", "config": {"name": "dropout_1", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}
+  |__Value....: {"class_name": "Dropout", "config": {"name": "dropout_143", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}, 83556: OpenML Parameter
+================
+ID............: 83556
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer17
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer17
+  |__Data Type: None
+  |__Default..: {"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_2", "trainable": true, "units": 4096, "use_bias": true}}
+  |__Value....: {"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_215", "trainable": true, "units": 4096, "use_bias": true}}, 83557: OpenML Parameter
+================
+ID............: 83557
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer18
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer18
+  |__Data Type: None
+  |__Default..: {"class_name": "Dropout", "config": {"name": "dropout_2", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}
+  |__Value....: {"class_name": "Dropout", "config": {"name": "dropout_144", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}, 83558: OpenML Parameter
+================
+ID............: 83558
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer19
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer19
+  |__Data Type: None
+  |__Default..: {"class_name": "Dense", "config": {"activation": "softmax", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_3", "trainable": true, "units": 10, "use_bias": true}}
+  |__Value....: {"class_name": "Dense", "config": {"activation": "softmax", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_216", "trainable": true, "units": 47, "use_bias": true}}, 83559: OpenML Parameter
+================
+ID............: 83559
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer2
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer2
+  |__Data Type: None
+  |__Default..: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_2", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}
+  |__Value....: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_499", "padding": "same", "strides": [1, 1], "trainable": false, "use_bias": true}}, 83560: OpenML Parameter
+================
+ID............: 83560
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer3
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer3
+  |__Data Type: None
+  |__Default..: {"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_1", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}
+  |__Value....: {"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_214", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}, 83561: OpenML Parameter
+================
+ID............: 83561
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer4
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer4
+  |__Data Type: None
+  |__Default..: {"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_1", "scale": true, "trainable": true}}
+  |__Value....: {"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_214", "scale": true, "trainable": true}}, 83562: OpenML Parameter
+================
+ID............: 83562
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer5
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer5
+  |__Data Type: None
+  |__Default..: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_3", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}
+  |__Value....: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_500", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}, 83563: OpenML Parameter
+================
+ID............: 83563
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer6
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer6
+  |__Data Type: None
+  |__Default..: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_4", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}
+  |__Value....: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_501", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}, 83564: OpenML Parameter
+================
+ID............: 83564
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer7
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer7
+  |__Data Type: None
+  |__Default..: {"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_2", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}
+  |__Value....: {"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_215", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}, 83565: OpenML Parameter
+================
+ID............: 83565
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer8
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer8
+  |__Data Type: None
+  |__Default..: {"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_2", "scale": true, "trainable": true}}
+  |__Value....: {"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_215", "scale": true, "trainable": true}}, 83566: OpenML Parameter
+================
+ID............: 83566
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_layer9
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: layer9
+  |__Data Type: None
+  |__Default..: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_5", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}
+  |__Value....: {"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_502", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}, 83567: OpenML Parameter
+================
+ID............: 83567
+Flow ID.......: 8608
+Flow Name.....: keras.wrappers.scikit_learn.KerasClassifier(Reshape,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Conv2D,Conv2D,Conv2D,MaxPooling2D,BatchNormalization,Flatten,Dense,Dropout,Dense,Dropout,Dense)(2)_verbose
+Flow URL......: https://www.openml.org/f/8608
+Parameter Name: verbose
+  |__Data Type: None
+  |__Default..: 2
+  |__Value....: 2}]`
+
+* The configuration space **must** include:
+  * Appropriate hyperparameter ranges based on the dataset characteristics
+  * Reasonable default values
+  * Proper hyperparameter types (continuous, discrete, categorical)
+  * Conditional hyperparameters if needed
+  * Proper bounds and constraints
+
+* **Best Practices:**
+  * Use meaningful hyperparameter names
+  * Include proper documentation for each hyperparameter
+  * Consider dataset size and complexity when setting ranges
+  * Ensure ranges are not too narrow or too wide
+  * Add proper conditions between dependent hyperparameters
+
+* **Common Hyperparameters to Consider:**
+  * Learning rate (if applicable)
+  * Model-specific hyperparameters
+  * Regularization parameters
+  * Architecture parameters
+  * Optimization parameters
+
+---
+
+### **Output Format:**
+
+* Return **only** the `get_configspace()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all hyperparameter names are valid Python identifiers
+* Verify that all ranges and bounds are valid
+* Check that conditional hyperparameters are properly defined
+* Validate that default values are within the specified ranges
+
+---
+
+### **Example Structure:**
+
+```python
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+    
+    # Add hyperparameters
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+    
+    # Add more hyperparameters...
+    
+    return cs
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `get_configspace()` function that returns a properly configured `ConfigurationSpace` object
+* No additional code or explanations
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:05] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:05] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:05] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+from ConfigSpace.conditions import InCondition
+from ConfigSpace.hyperparameters import UnParametrizedHyperparameter
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Creates a configuration space for a CNN model suitable for image classification.
+    """
+    cs = ConfigurationSpace()
+
+    # Data Augmentation
+    data_augmentation = CategoricalHyperparameter(
+        "data_augmentation", ["none", "horizontal_flip", "random_rotation"], default_value="none"
+    )
+    cs.add_hyperparameter(data_augmentation)
+
+    random_rotation_degree = UniformIntegerHyperparameter(
+        "random_rotation_degree", lower=1, upper=45, default_value=10
+    )
+    cs.add_hyperparameter(random_rotation_degree)
+
+    condition_rotation = InCondition(random_rotation_degree, data_augmentation, ["random_rotation"])
+    cs.add_condition(condition_rotation)
+
+
+    # Batch Size
+    batch_size = UniformIntegerHyperparameter(
+        "batch_size", lower=32, upper=256, default_value=128, q=32,
+        docstring="The batch size to use during training."
+    )
+    cs.add_hyperparameter(batch_size)
+
+    # Epochs
+    epochs = UniformIntegerHyperparameter(
+        "epochs", lower=5, upper=50, default_value=10, q=5,
+        docstring="Number of epochs to train."
+    )
+    cs.add_hyperparameter(epochs)
+
+    # Learning Rate
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-2, default_value=1e-3, log=True,
+        docstring="The learning rate for the optimizer."
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    # Optimizer
+    optimizer = CategoricalHyperparameter(
+        "optimizer", ["adam", "sgd", "rmsprop"], default_value="adam",
+        docstring="The optimizer to use for training."
+    )
+    cs.add_hyperparameter(optimizer)
+
+    # Adam Specific Parameters
+    adam_beta1 = UniformFloatHyperparameter(
+        "adam_beta1", lower=0.8, upper=0.999, default_value=0.9,
+        docstring="Beta1 parameter for Adam optimizer",
+    )
+    cs.add_hyperparameter(adam_beta1)
+    adam_beta2 = UniformFloatHyperparameter(
+        "adam_beta2", lower=0.9, upper=0.9999, default_value=0.999,
+        docstring="Beta2 parameter for Adam optimizer",
+    )
+    cs.add_hyperparameter(adam_beta2)
+
+    condition_adam_beta1 = InCondition(child=adam_beta1, parent=optimizer, values=['adam'])
+    cs.add_condition(condition_adam_beta1)
+    condition_adam_beta2 = InCondition(child=adam_beta2, parent=optimizer, values=['adam'])
+    cs.add_condition(condition_adam_beta2)
+
+    # SGD Specific Parameters
+    sgd_momentum = UniformFloatHyperparameter(
+        "sgd_momentum", lower=0.0, upper=0.99, default_value=0.0,
+        docstring="Momentum for SGD optimizer"
+    )
+    cs.add_hyperparameter(sgd_momentum)
+    condition_sgd_momentum = InCondition(child=sgd_momentum, parent=optimizer, values=['sgd'])
+    cs.add_condition(condition_sgd_momentum)
+
+    # RMSprop Specific Parameters
+    rmsprop_rho = UniformFloatHyperparameter(
+        "rmsprop_rho", lower=0.9, upper=0.999, default_value=0.9,
+        docstring="Rho parameter for RMSprop optimizer"
+    )
+    cs.add_hyperparameter(rmsprop_rho)
+    condition_rmsprop_rho = InCondition(child=rmsprop_rho, parent=optimizer, values=['rmsprop'])
+    cs.add_condition(condition_rmsprop_rho)
+
+
+    # Convolutional Layers
+    num_conv_layers = UniformIntegerHyperparameter(
+        "num_conv_layers", lower=1, upper=5, default_value=3,
+        docstring="Number of convolutional layers in the network."
+    )
+    cs.add_hyperparameter(num_conv_layers)
+
+    # Filters for each convolutional layer
+    filters_layer_1 = UniformIntegerHyperparameter(
+        "filters_layer_1", lower=32, upper=256, default_value=64, log=True,
+        docstring="Number of filters in the first convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_1)
+    filters_layer_2 = UniformIntegerHyperparameter(
+        "filters_layer_2", lower=32, upper=256, default_value=64, log=True,
+        docstring="Number of filters in the second convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_2)
+    filters_layer_3 = UniformIntegerHyperparameter(
+        "filters_layer_3", lower=32, upper=256, default_value=128, log=True,
+        docstring="Number of filters in the third convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_3)
+    filters_layer_4 = UniformIntegerHyperparameter(
+        "filters_layer_4", lower=32, upper=256, default_value=128, log=True,
+        docstring="Number of filters in the fourth convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_4)
+    filters_layer_5 = UniformIntegerHyperparameter(
+        "filters_layer_5", lower=32, upper=256, default_value=256, log=True,
+        docstring="Number of filters in the fifth convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_5)
+
+
+    # Kernel Size
+    kernel_size = UniformIntegerHyperparameter(
+        "kernel_size", lower=3, upper=5, default_value=3,
+        docstring="Size of the convolutional kernel (e.g., 3 for 3x3)."
+    )
+    cs.add_hyperparameter(kernel_size)
+
+    # Pooling Type
+    pooling_type = CategoricalHyperparameter(
+        "pooling_type", ["max", "average"], default_value="max",
+        docstring="Type of pooling layer to use."
+    )
+    cs.add_hyperparameter(pooling_type)
+
+    # Dense Layers
+    num_dense_layers = UniformIntegerHyperparameter(
+        "num_dense_layers", lower=1, upper=3, default_value=2,
+        docstring="Number of dense layers in the network."
+    )
+    cs.add_hyperparameter(num_dense_layers)
+
+
+    dense_units_1 = UniformIntegerHyperparameter(
+        "dense_units_1", lower=64, upper=512, default_value=256, log=True,
+        docstring="Number of units in the first dense layer."
+    )
+    cs.add_hyperparameter(dense_units_1)
+
+    dense_units_2 = UniformIntegerHyperparameter(
+        "dense_units_2", lower=64, upper=512, default_value=128, log=True,
+        docstring="Number of units in the second dense layer."
+    )
+    cs.add_hyperparameter(dense_units_2)
+
+    dense_units_3 = UniformIntegerHyperparameter(
+        "dense_units_3", lower=64, upper=512, default_value=64, log=True,
+        docstring="Number of units in the third dense layer."
+    )
+    cs.add_hyperparameter(dense_units_3)
+
+
+    # Dropout Rate
+    dropout_rate = UniformFloatHyperparameter(
+        "dropout_rate", lower=0.0, upper=0.5, default_value=0.25,
+        docstring="Dropout rate for regularization."
+    )
+    cs.add_hyperparameter(dropout_rate)
+
+
+    # Conditions for number of layers
+    condition_layer_2 = InCondition(child=filters_layer_2, parent=num_conv_layers, values=[2, 3, 4, 5])
+    cs.add_condition(condition_layer_2)
+
+    condition_layer_3 = InCondition(child=filters_layer_3, parent=num_conv_layers, values=[3, 4, 5])
+    cs.add_condition(condition_layer_3)
+
+    condition_layer_4 = InCondition(child=filters_layer_4, parent=num_conv_layers, values=[4, 5])
+    cs.add_condition(condition_layer_4)
+
+    condition_layer_5 = InCondition(child=filters_layer_5, parent=num_conv_layers, values=[5])
+    cs.add_condition(condition_layer_5)
+
+    condition_dense_layer_2 = InCondition(child=dense_units_2, parent=num_dense_layers, values=[2,3])
+    cs.add_condition(condition_dense_layer_2)
+
+    condition_dense_layer_3 = InCondition(child=dense_units_3, parent=num_dense_layers, values=[3])
+    cs.add_condition(condition_dense_layer_3)
+
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:15] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:15] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:15] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+from ConfigSpace.conditions import InCondition
+from ConfigSpace.hyperparameters import UnParametrizedHyperparameter
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Creates a configuration space for a CNN model suitable for image classification.
+    """
+    cs = ConfigurationSpace()
+
+    # Data Augmentation
+    data_augmentation = CategoricalHyperparameter(
+        "data_augmentation", ["none", "horizontal_flip", "random_rotation"], default_value="none"
+    )
+    cs.add_hyperparameter(data_augmentation)
+
+    random_rotation_degree = UniformIntegerHyperparameter(
+        "random_rotation_degree", lower=1, upper=45, default_value=10
+    )
+    cs.add_hyperparameter(random_rotation_degree)
+
+    condition_rotation = InCondition(random_rotation_degree, data_augmentation, ["random_rotation"])
+    cs.add_condition(condition_rotation)
+
+
+    # Batch Size
+    batch_size = UniformIntegerHyperparameter(
+        "batch_size", lower=32, upper=256, default_value=128
+    )
+    cs.add_hyperparameter(batch_size)
+
+    # Epochs
+    epochs = UniformIntegerHyperparameter(
+        "epochs", lower=5, upper=50, default_value=10
+    )
+    cs.add_hyperparameter(epochs)
+
+    # Learning Rate
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-2, default_value=1e-3, log=True,
+        docstring="The learning rate for the optimizer."
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    # Optimizer
+    optimizer = CategoricalHyperparameter(
+        "optimizer", ["adam", "sgd", "rmsprop"], default_value="adam",
+        docstring="The optimizer to use for training."
+    )
+    cs.add_hyperparameter(optimizer)
+
+    # Adam Specific Parameters
+    adam_beta1 = UniformFloatHyperparameter(
+        "adam_beta1", lower=0.8, upper=0.999, default_value=0.9,
+        docstring="Beta1 parameter for Adam optimizer",
+    )
+    cs.add_hyperparameter(adam_beta1)
+    adam_beta2 = UniformFloatHyperparameter(
+        "adam_beta2", lower=0.9, upper=0.9999, default_value=0.999,
+        docstring="Beta2 parameter for Adam optimizer",
+    )
+    cs.add_hyperparameter(adam_beta2)
+
+    condition_adam_beta1 = InCondition(child=adam_beta1, parent=optimizer, values=['adam'])
+    cs.add_condition(condition_adam_beta1)
+    condition_adam_beta2 = InCondition(child=adam_beta2, parent=optimizer, values=['adam'])
+    cs.add_condition(condition_adam_beta2)
+
+    # SGD Specific Parameters
+    sgd_momentum = UniformFloatHyperparameter(
+        "sgd_momentum", lower=0.0, upper=0.99, default_value=0.0,
+        docstring="Momentum for SGD optimizer"
+    )
+    cs.add_hyperparameter(sgd_momentum)
+    condition_sgd_momentum = InCondition(child=sgd_momentum, parent=optimizer, values=['sgd'])
+    cs.add_condition(condition_sgd_momentum)
+
+    # RMSprop Specific Parameters
+    rmsprop_rho = UniformFloatHyperparameter(
+        "rmsprop_rho", lower=0.9, upper=0.999, default_value=0.9,
+        docstring="Rho parameter for RMSprop optimizer"
+    )
+    cs.add_hyperparameter(rmsprop_rho)
+    condition_rmsprop_rho = InCondition(child=rmsprop_rho, parent=optimizer, values=['rmsprop'])
+    cs.add_condition(condition_rmsprop_rho)
+
+
+    # Convolutional Layers
+    num_conv_layers = UniformIntegerHyperparameter(
+        "num_conv_layers", lower=1, upper=5, default_value=3,
+        docstring="Number of convolutional layers in the network."
+    )
+    cs.add_hyperparameter(num_conv_layers)
+
+    # Filters for each convolutional layer
+    filters_layer_1 = UniformIntegerHyperparameter(
+        "filters_layer_1", lower=32, upper=256, default_value=64, log=True,
+        docstring="Number of filters in the first convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_1)
+    filters_layer_2 = UniformIntegerHyperparameter(
+        "filters_layer_2", lower=32, upper=256, default_value=64, log=True,
+        docstring="Number of filters in the second convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_2)
+    filters_layer_3 = UniformIntegerHyperparameter(
+        "filters_layer_3", lower=32, upper=256, default_value=128, log=True,
+        docstring="Number of filters in the third convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_3)
+    filters_layer_4 = UniformIntegerHyperparameter(
+        "filters_layer_4", lower=32, upper=256, default_value=128, log=True,
+        docstring="Number of filters in the fourth convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_4)
+    filters_layer_5 = UniformIntegerHyperparameter(
+        "filters_layer_5", lower=32, upper=256, default_value=256, log=True,
+        docstring="Number of filters in the fifth convolutional layer."
+    )
+    cs.add_hyperparameter(filters_layer_5)
+
+
+    # Kernel Size
+    kernel_size = UniformIntegerHyperparameter(
+        "kernel_size", lower=3, upper=5, default_value=3,
+        docstring="Size of the convolutional kernel (e.g., 3 for 3x3)."
+    )
+    cs.add_hyperparameter(kernel_size)
+
+    # Pooling Type
+    pooling_type = CategoricalHyperparameter(
+        "pooling_type", ["max", "average"], default_value="max",
+        docstring="Type of pooling layer to use."
+    )
+    cs.add_hyperparameter(pooling_type)
+
+    # Dense Layers
+    num_dense_layers = UniformIntegerHyperparameter(
+        "num_dense_layers", lower=1, upper=3, default_value=2,
+        docstring="Number of dense layers in the network."
+    )
+    cs.add_hyperparameter(num_dense_layers)
+
+
+    dense_units_1 = UniformIntegerHyperparameter(
+        "dense_units_1", lower=64, upper=512, default_value=256, log=True,
+        docstring="Number of units in the first dense layer."
+    )
+    cs.add_hyperparameter(dense_units_1)
+
+    dense_units_2 = UniformIntegerHyperparameter(
+        "dense_units_2", lower=64, upper=512, default_value=128, log=True,
+        docstring="Number of units in the second dense layer."
+    )
+    cs.add_hyperparameter(dense_units_2)
+
+    dense_units_3 = UniformIntegerHyperparameter(
+        "dense_units_3", lower=64, upper=512, default_value=64, log=True,
+        docstring="Number of units in the third dense layer."
+    )
+    cs.add_hyperparameter(dense_units_3)
+
+
+    # Dropout Rate
+    dropout_rate = UniformFloatHyperparameter(
+        "dropout_rate", lower=0.0, upper=0.5, default_value=0.25,
+        docstring="Dropout rate for regularization."
+    )
+    cs.add_hyperparameter(dropout_rate)
+
+
+    # Conditions for number of layers
+    condition_layer_2 = InCondition(child=filters_layer_2, parent=num_conv_layers, values=[2, 3, 4, 5])
+    cs.add_condition(condition_layer_2)
+
+    condition_layer_3 = InCondition(child=filters_layer_3, parent=num_conv_layers, values=[3, 4, 5])
+    cs.add_condition(condition_layer_3)
+
+    condition_layer_4 = InCondition(child=filters_layer_4, parent=num_conv_layers, values=[4, 5])
+    cs.add_condition(condition_layer_4)
+
+    condition_layer_5 = InCondition(child=filters_layer_5, parent=num_conv_layers, values=[5])
+    cs.add_condition(condition_layer_5)
+
+    condition_dense_layer_2 = InCondition(child=dense_units_2, parent=num_dense_layers, values=[2,3])
+    cs.add_condition(condition_dense_layer_2)
+
+    condition_dense_layer_3 = InCondition(child=dense_units_3, parent=num_dense_layers, values=[3])
+    cs.add_condition(condition_dense_layer_3)
+
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:25] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:28] [Metadata: {'component': 'scenario'}] **Generate a production-grade Python scenario configuration for SMAC hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+```
+
+---
+
+### **Scenario Configuration Requirements:**
+
+* The scenario **must** be optimized for the dataset characteristics:
+  * Dataset Description: `This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+`
+
+* The scenario **must** include:
+  * Appropriate budget settings (min_budget, max_budget)
+  * Optimal number of workers for parallelization
+  * Reasonable walltime and CPU time limits
+  * Proper trial resource constraints
+  * Appropriate number of trials
+
+* **Best Practices:**
+  * Set deterministic=False for better generalization
+  * Use multi-fidelity optimization when appropriate
+  * Configure proper output directory structure
+  * Set appropriate trial resource limits
+  * Enable parallel optimization when possible
+
+* **Resource Management:**
+  * Set appropriate memory limits for trials
+  * Configure proper walltime limits
+  * Enable parallel processing when beneficial
+  * Consider dataset size for budget settings
+
+---
+
+### **Output Format:**
+
+* Return **only** the `generate_scenario(cs)` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all parameters are within valid ranges
+* Verify that resource limits are reasonable
+* Check that budget settings are appropriate
+* Validate that parallelization settings are correct
+* Ensure the training function can be pickled for parallel processing
+
+---
+
+### **Example Structure:**
+
+```python
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashmnist20250608_112725",
+        output_directory="./automl_results",
+        deterministic=True,
+        //other parameters based on the information
+    )
+    return scenario
+```
+
+---
+
+### **Suggested Scenario Plan:**
+
+unavailable
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
+* No additional code or explanations
+
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:28] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:28] [Metadata: {'error_type': 'SCENARIO_ERROR'}] [SCENARIO_ERROR] Error in scenario (#1): Scenario.__init__() got an unexpected keyword argument 'cpu_limit'
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:28] [Metadata: {'component': 'scenario', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Scenario.__init__() got an unexpected keyword argument 'cpu_limit'
+
+---
+
+### **Code to Fix:**
+```python
+import os
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario for hyperparameter optimization, specifically tailored for image datasets.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space to be optimized.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    # Define the output directory for SMAC results
+    output_dir = "./smac_output"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine the number of available cores.  Using os.cpu_count() may not be appropriate
+    # in all environments (e.g., Docker containers).  Consider using a resource-aware method.
+    n_workers = os.cpu_count() or 1 # Default to 1 worker if os.cpu_count() is None
+
+    # Define budget settings: min_budget, max_budget
+    # These depend heavily on the complexity of the model and the dataset size.
+    # For an image dataset with 10 classes and ~60k examples,
+    # these values need careful consideration.
+    # Example: budget is based on the number of epochs/iterations
+    min_budget = 3  # Minimum number of epochs/iterations
+    max_budget = 27  # Maximum number of epochs/iterations
+
+    # Set walltime and CPU time limits (in seconds)
+    walltime_limit = 3600  # 1 hour
+    cpu_limit = 3600 # 1 hour. Should not exceed walltime.
+
+    # Define resource limits for each trial
+    memory_limit = 4096  # 4GB memory limit (in MB)
+
+    # Number of trials (function evaluations)
+    n_trials = 500 # Adjust based on available resources and complexity
+
+    scenario = Scenario(
+        configspace=cs,
+        name="image_dataset_optimization",
+        output_directory=output_dir,
+        deterministic=False,  # Enable for reproducibility during testing
+        # but disable for better generalization during actual optimization
+        n_trials=n_trials,
+        walltime_limit=walltime_limit,
+        cpu_limit=cpu_limit,
+        memory_limit=memory_limit,
+        min_budget=min_budget,
+        max_budget=max_budget,
+        n_workers=n_workers # Number of parallel workers
+        # trial_resource_limits = # Removed because it's redundant with memory and time limits.
+    )
+
+    return scenario
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:31] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:31] [Metadata: {'error_type': 'SCENARIO_ERROR'}] [SCENARIO_ERROR] Error in scenario (#2): Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:31] [Metadata: {'component': 'scenario', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Scenario.__init__() got an unexpected keyword argument 'cpu_limit'
+Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+
+---
+
+### **Code to Fix:**
+```python
+import os
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario for hyperparameter optimization, specifically tailored for image datasets.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space to be optimized.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    # Define the output directory for SMAC results
+    output_dir = "./smac_output"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine the number of available cores.  Using os.cpu_count() may not be appropriate
+    # in all environments (e.g., Docker containers).  Consider using a resource-aware method.
+    n_workers = os.cpu_count() or 1 # Default to 1 worker if os.cpu_count() is None
+
+    # Define budget settings: min_budget, max_budget
+    # These depend heavily on the complexity of the model and the dataset size.
+    # For an image dataset with 10 classes and ~60k examples,
+    # these values need careful consideration.
+    # Example: budget is based on the number of epochs/iterations
+    min_budget = 3  # Minimum number of epochs/iterations
+    max_budget = 27  # Maximum number of epochs/iterations
+
+    # Set walltime and CPU time limits (in seconds)
+    walltime_limit = 3600  # 1 hour
+
+    # Define resource limits for each trial
+    memory_limit = 4096  # 4GB memory limit (in MB)
+
+    # Number of trials (function evaluations)
+    n_trials = 500 # Adjust based on available resources and complexity
+
+    scenario = Scenario(
+        configspace=cs,
+        name="image_dataset_optimization",
+        output_directory=output_dir,
+        deterministic=False,  # Enable for reproducibility during testing
+        # but disable for better generalization during actual optimization
+        n_trials=n_trials,
+        walltime_limit=walltime_limit,
+        memory_limit=memory_limit,
+        min_budget=min_budget,
+        max_budget=max_budget,
+        n_workers=n_workers # Number of parallel workers
+        # trial_resource_limits = # Removed because it's redundant with memory and time limits.
+    )
+
+    return scenario
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:34] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:34] [Metadata: {'error_type': 'SCENARIO_ERROR'}] [SCENARIO_ERROR] Error in scenario (#3): cannot assign to field 'memory_limit'
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:34] [Metadata: {'component': 'scenario', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Scenario.__init__() got an unexpected keyword argument 'cpu_limit'
+Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+cannot assign to field 'memory_limit'
+
+---
+
+### **Code to Fix:**
+```python
+import os
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario for hyperparameter optimization, specifically tailored for image datasets.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space to be optimized.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    # Define the output directory for SMAC results
+    output_dir = "./smac_output"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine the number of available cores.  Using os.cpu_count() may not be appropriate
+    # in all environments (e.g., Docker containers).  Consider using a resource-aware method.
+    n_workers = os.cpu_count() or 1 # Default to 1 worker if os.cpu_count() is None
+
+    # Define budget settings: min_budget, max_budget
+    # These depend heavily on the complexity of the model and the dataset size.
+    # For an image dataset with 10 classes and ~60k examples,
+    # these values need careful consideration.
+    # Example: budget is based on the number of epochs/iterations
+    min_budget = 3  # Minimum number of epochs/iterations
+    max_budget = 27  # Maximum number of epochs/iterations
+
+    # Set walltime and CPU time limits (in seconds)
+    walltime_limit = 3600  # 1 hour
+
+    # Define resource limits for each trial
+    memory_limit = 4096  # 4GB memory limit (in MB)
+
+    # Number of trials (function evaluations)
+    n_trials = 500 # Adjust based on available resources and complexity
+
+    scenario = Scenario(
+        configspace=cs,
+        name="image_dataset_optimization",
+        output_directory=output_dir,
+        deterministic=False,  # Enable for reproducibility during testing
+        # but disable for better generalization during actual optimization
+        n_trials=n_trials,
+        walltime_limit=walltime_limit,
+        min_budget=min_budget,
+        max_budget=max_budget,
+        n_workers=n_workers
+        # trial_resource_limits = # Removed because it's redundant with memory and time limits.
+    )
+
+    scenario.memory_limit = memory_limit
+    return scenario
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:37] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:37] [Metadata: {'error_type': 'SCENARIO_ERROR'}] [SCENARIO_ERROR] Error in scenario (#4): Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:37] [Metadata: {'component': 'scenario', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Scenario.__init__() got an unexpected keyword argument 'cpu_limit'
+Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+cannot assign to field 'memory_limit'
+Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+
+---
+
+### **Code to Fix:**
+```python
+import os
+from smac.scenario import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario for hyperparameter optimization, specifically tailored for image datasets.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space to be optimized.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    # Define the output directory for SMAC results
+    output_dir = "./smac_output"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine the number of available cores.  Using os.cpu_count() may not be appropriate
+    # in all environments (e.g., Docker containers).  Consider using a resource-aware method.
+    n_workers = os.cpu_count() or 1 # Default to 1 worker if os.cpu_count() is None
+
+    # Define budget settings: min_budget, max_budget
+    # These depend heavily on the complexity of the model and the dataset size.
+    # For an image dataset with 10 classes and ~60k examples,
+    # these values need careful consideration.
+    # Example: budget is based on the number of epochs/iterations
+    min_budget = 3  # Minimum number of epochs/iterations
+    max_budget = 27  # Maximum number of epochs/iterations
+
+    # Set walltime and CPU time limits (in seconds)
+    walltime_limit = 3600  # 1 hour
+
+    # Define resource limits for each trial
+    memory_limit = 4096  # 4GB memory limit (in MB)
+
+    # Number of trials (function evaluations)
+    n_trials = 500 # Adjust based on available resources and complexity
+
+    scenario = Scenario(
+        configspace=cs,
+        name="image_dataset_optimization",
+        output_directory=output_dir,
+        deterministic=False,  # Enable for reproducibility during testing
+        # but disable for better generalization during actual optimization
+        n_trials=n_trials,
+        walltime_limit=walltime_limit,
+        min_budget=min_budget,
+        max_budget=max_budget,
+        n_workers=n_workers,
+        memory_limit=memory_limit
+    )
+
+    return scenario
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:40] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:40] [Metadata: {'error_type': 'SCENARIO_ERROR'}] [SCENARIO_ERROR] Error in scenario (#5): name 'n_trials' is not defined
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:40] [Metadata: {'component': 'scenario', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Scenario.__init__() got an unexpected keyword argument 'cpu_limit'
+Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+cannot assign to field 'memory_limit'
+Scenario.__init__() got an unexpected keyword argument 'memory_limit'
+name 'n_trials' is not defined
+
+---
+
+### **Code to Fix:**
+```python
+import os
+from smac.scenario import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario for hyperparameter optimization, specifically tailored for image datasets.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space to be optimized.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    # Define the output directory for SMAC results
+    output_dir = "./smac_output"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine the number of available cores.  Using os.cpu_count() may not be appropriate
+    # in all environments (e.g., Docker containers).  Consider using a resource-aware method.
+    n_workers = os.cpu_count() or 1 # Default to 1 worker if os.cpu_count() is None
+
+    # Define budget settings: min_budget, max_budget
+    # These depend heavily on the complexity of the model and the dataset size.
+    # For an image dataset with 10 classes and ~60k examples,
+    # these values need careful consideration.
+    # Example: budget is based on the number of epochs/iterations
+    min_budget = 3  # Minimum number of epochs/iterations
+    max_budget = 27  # Maximum number of epochs/iterations
+
+    # Set walltime and CPU time limits (in seconds)
+    walltime_limit = 3600  # 1 hour
+
+    # Define resource limits for each trial
+    memory_limit = 4096  # 4GB memory limit (in MB)
+
+    scenario = Scenario(
+        configspace=cs,
+        name="image_dataset_optimization",
+        output_directory=output_dir,
+        deterministic=False,  # Enable for reproducibility during testing
+        # but disable for better generalization during actual optimization
+        n_trials=n_trials,
+        walltime_limit=walltime_limit,
+        min_budget=min_budget,
+        max_budget=max_budget,
+        n_workers=n_workers,
+        #memory_limit=memory_limit,  # Removed invalid argument for Scenario
+    )
+
+    scenario.memory_limit = memory_limit # Setting memory limit after initialization
+
+
+    return scenario
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:42] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:56] [Metadata: {'component': 'train_function'}] **Generate a production-grade Python training function for machine learning with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import Configuration
+from typing import Any
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+```
+
+---
+
+### **Function Behavior Requirements:**
+
+* The function **must** handle the dataset properly:
+  * Dataset Description: `This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+`
+  * ConfigSpace Definition: `from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+from ConfigSpace.conditions import InCondition
+from ConfigSpace.hyperparameters import UnParametrizedHyperparameter
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Creates a configuration space for a CNN model suitable for image classification.
+    """
+    cs = ConfigurationSpace()
+
+    # Data Augmentation
+    data_augmentation = CategoricalHyperparameter(
+        "data_augmentation", ["none", "horizontal_flip", "random_rotation"], default_value="none"
+    )
+    cs.add_hyperparameter(data_augmentation)
+
+    random_rotation_degree = UniformIntegerHyperparameter(
+        "random_rotation_degree", lower=1, upper=45, default_value=10
+    )
+    cs.add_hyperparameter(random_rotation_degree)
+
+    condition_rotation = InCondition(random_rotation_degree, data_augmentation, ["random_rotation"])
+    cs.add_condition(condition_rotation)
+
+
+    # Batch Size
+    batch_size = UniformIntegerHyperparameter(
+        "batch_size", lower=32, upper=256, default_value=128
+    )
+    cs.add_hyperparameter(batch_size)
+
+    # Epochs
+    epochs = UniformIntegerHyperparameter(
+        "epochs", lower=5, upper=50, default_value=10
+    )
+    cs.add_hyperparameter(epochs)
+
+    # Learning Rate
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-2, default_value=1e-3, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    # Optimizer
+    optimizer = CategoricalHyperparameter(
+        "optimizer", ["adam", "sgd", "rmsprop"], default_value="adam"
+    )
+    cs.add_hyperparameter(optimizer)
+
+    # Adam Specific Parameters
+    adam_beta1 = UniformFloatHyperparameter(
+        "adam_beta1", lower=0.8, upper=0.999, default_value=0.9
+    )
+    cs.add_hyperparameter(adam_beta1)
+    adam_beta2 = UniformFloatHyperparameter(
+        "adam_beta2", lower=0.9, upper=0.9999, default_value=0.999
+    )
+    cs.add_hyperparameter(adam_beta2)
+
+    condition_adam_beta1 = InCondition(child=adam_beta1, parent=optimizer, values=['adam'])
+    cs.add_condition(condition_adam_beta1)
+    condition_adam_beta2 = InCondition(child=adam_beta2, parent=optimizer, values=['adam'])
+    cs.add_condition(condition_adam_beta2)
+
+    # SGD Specific Parameters
+    sgd_momentum = UniformFloatHyperparameter(
+        "sgd_momentum", lower=0.0, upper=0.99, default_value=0.0
+    )
+    cs.add_hyperparameter(sgd_momentum)
+    condition_sgd_momentum = InCondition(child=sgd_momentum, parent=optimizer, values=['sgd'])
+    cs.add_condition(condition_sgd_momentum)
+
+    # RMSprop Specific Parameters
+    rmsprop_rho = UniformFloatHyperparameter(
+        "rmsprop_rho", lower=0.9, upper=0.999, default_value=0.9
+    )
+    cs.add_hyperparameter(rmsprop_rho)
+    condition_rmsprop_rho = InCondition(child=rmsprop_rho, parent=optimizer, values=['rmsprop'])
+    cs.add_condition(condition_rmsprop_rho)
+
+
+    # Convolutional Layers
+    num_conv_layers = UniformIntegerHyperparameter(
+        "num_conv_layers", lower=1, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(num_conv_layers)
+
+    # Filters for each convolutional layer
+    filters_layer_1 = UniformIntegerHyperparameter(
+        "filters_layer_1", lower=32, upper=256, default_value=64, log=True
+    )
+    cs.add_hyperparameter(filters_layer_1)
+    filters_layer_2 = UniformIntegerHyperparameter(
+        "filters_layer_2", lower=32, upper=256, default_value=64, log=True
+    )
+    cs.add_hyperparameter(filters_layer_2)
+    filters_layer_3 = UniformIntegerHyperparameter(
+        "filters_layer_3", lower=32, upper=256, default_value=128, log=True
+    )
+    cs.add_hyperparameter(filters_layer_3)
+    filters_layer_4 = UniformIntegerHyperparameter(
+        "filters_layer_4", lower=32, upper=256, default_value=128, log=True
+    )
+    cs.add_hyperparameter(filters_layer_4)
+    filters_layer_5 = UniformIntegerHyperparameter(
+        "filters_layer_5", lower=32, upper=256, default_value=256, log=True
+    )
+    cs.add_hyperparameter(filters_layer_5)
+
+
+    # Kernel Size
+    kernel_size = UniformIntegerHyperparameter(
+        "kernel_size", lower=3, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(kernel_size)
+
+    # Pooling Type
+    pooling_type = CategoricalHyperparameter(
+        "pooling_type", ["max", "average"], default_value="max"
+    )
+    cs.add_hyperparameter(pooling_type)
+
+    # Dense Layers
+    num_dense_layers = UniformIntegerHyperparameter(
+        "num_dense_layers", lower=1, upper=3, default_value=2
+    )
+    cs.add_hyperparameter(num_dense_layers)
+
+
+    dense_units_1 = UniformIntegerHyperparameter(
+        "dense_units_1", lower=64, upper=512, default_value=256, log=True
+    )
+    cs.add_hyperparameter(dense_units_1)
+
+    dense_units_2 = UniformIntegerHyperparameter(
+        "dense_units_2", lower=64, upper=512, default_value=128, log=True
+    )
+    cs.add_hyperparameter(dense_units_2)
+
+    dense_units_3 = UniformIntegerHyperparameter(
+        "dense_units_3", lower=64, upper=512, default_value=64, log=True
+    )
+    cs.add_hyperparameter(dense_units_3)
+
+
+    # Dropout Rate
+    dropout_rate = UniformFloatHyperparameter(
+        "dropout_rate", lower=0.0, upper=0.5, default_value=0.25
+    )
+    cs.add_hyperparameter(dropout_rate)
+
+
+    # Conditions for number of layers
+    condition_layer_2 = InCondition(child=filters_layer_2, parent=num_conv_layers, values=[2, 3, 4, 5])
+    cs.add_condition(condition_layer_2)
+
+    condition_layer_3 = InCondition(child=filters_layer_3, parent=num_conv_layers, values=[3, 4, 5])
+    cs.add_condition(condition_layer_3)
+
+    condition_layer_4 = InCondition(child=filters_layer_4, parent=num_conv_layers, values=[4, 5])
+    cs.add_condition(condition_layer_4)
+
+    condition_layer_5 = InCondition(child=filters_layer_5, parent=num_conv_layers, values=[5])
+    cs.add_condition(condition_layer_5)
+
+    condition_dense_layer_2 = InCondition(child=dense_units_2, parent=num_dense_layers, values=[2,3])
+    cs.add_condition(condition_dense_layer_2)
+
+    condition_dense_layer_3 = InCondition(child=dense_units_3, parent=num_dense_layers, values=[3])
+    cs.add_condition(condition_dense_layer_3)
+
+
+    return cs
+`
+  * SMAC Scenario: `import os
+from smac.scenario import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario for hyperparameter optimization, specifically tailored for image datasets.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space to be optimized.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    # Define the output directory for SMAC results
+    output_dir = "./smac_output"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine the number of available cores.  Using os.cpu_count() may not be appropriate
+    # in all environments (e.g., Docker containers).  Consider using a resource-aware method.
+    n_workers = os.cpu_count() or 1 # Default to 1 worker if os.cpu_count() is None
+
+    # Define budget settings: min_budget, max_budget
+    # These depend heavily on the complexity of the model and the dataset size.
+    # For an image dataset with 10 classes and ~60k examples,
+    # these values need careful consideration.
+    # Example: budget is based on the number of epochs/iterations
+    min_budget = 3  # Minimum number of epochs/iterations
+    max_budget = 27  # Maximum number of epochs/iterations
+
+    # Set walltime and CPU time limits (in seconds)
+    walltime_limit = 3600  # 1 hour
+
+    # Define resource limits for each trial
+    memory_limit = 4096  # 4GB memory limit (in MB)
+
+    n_trials = 10 # Define n_trials, the number of trials
+
+    scenario = Scenario(
+        configspace=cs,
+        name="image_dataset_optimization",
+        output_directory=output_dir,
+        deterministic=False,  # Enable for reproducibility during testing
+        # but disable for better generalization during actual optimization
+        n_trials=n_trials,
+        walltime_limit=walltime_limit,
+        min_budget=min_budget,
+        max_budget=max_budget,
+        n_workers=n_workers,
+    )
+
+    #scenario.memory_limit = memory_limit # Setting memory limit after initialization - invalid
+
+    return scenario
+`
+
+* The function **must** accept a `dataset` dictionary with:
+  * `dataset['X']`: feature matrix or input tensor
+  * `dataset['y']`: label vector or label tensor
+
+* The function **must** handle the configuration properly:
+  * Access primitive values using `cfg.get('key')`
+  * Handle all hyperparameters defined in the configuration space
+  * Apply proper type conversion and validation
+  * Handle conditional hyperparameters correctly
+
+* **Model Requirements:**
+  * Infer input and output dimensions dynamically
+  * Follow data format requirements
+  * Handle necessary data transformations
+  * Implement proper model initialization
+  * Use appropriate loss functions
+  * Apply proper regularization
+  * Handle model-specific requirements
+
+* **Training Requirements:**
+  * Implement proper training loop
+  * Handle batch processing
+  * Apply proper optimization
+  * Implement early stopping if needed
+  * Handle validation if required
+  * Return appropriate loss value
+
+* **Performance Optimization Requirements:**
+  * Minimize memory usage and allocations
+  * Use vectorized operations where possible
+  * Avoid unnecessary data copying
+  * Optimize data loading and preprocessing
+  * Use efficient data structures
+  * Minimize CPU/GPU synchronization
+  * Implement efficient batch processing
+  * Use appropriate device placement (CPU/GPU)
+  * Optimize model forward/backward passes
+  * Minimize Python overhead
+
+* **Code Optimization Requirements:**
+  * Keep code minimal and focused
+  * Avoid redundant computations
+  * Use efficient algorithms
+  * Minimize function calls
+  * Optimize loops and iterations
+  * Use appropriate data types
+  * Avoid unnecessary object creation
+  * Implement efficient error handling
+  * Use appropriate caching strategies
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement proper logging
+  * Handle edge cases
+  * Ensure reproducibility
+  * Optimize performance
+  * Follow framework best practices
+
+---
+
+### **Frameworks:**
+
+Choose **one** of the following frameworks based on the dataset and requirements:
+* **PyTorch**: For deep learning tasks
+* **TensorFlow**: For deep learning tasks
+* **scikit-learn**: For traditional ML tasks
+
+---
+
+### **Output Format:**
+
+* Return **only** the `train()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+* Code must be minimal and optimized for performance
+
+---
+
+### **Error Prevention:**
+
+* Validate all inputs
+* Handle missing or invalid hyperparameters
+* Check data types and shapes
+* Handle edge cases
+* Implement proper error messages
+
+---
+
+### **Example Structure:**
+
+```python
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    # Set random seed for reproducibility
+    torch.manual_seed(seed)
+    
+    # Extract hyperparameters efficiently
+    lr, bs = cfg.get('learning_rate'), cfg.get('batch_size')
+    
+    # Prepare data efficiently
+    X, y = dataset['X'], dataset['y']
+    
+    # Initialize model with optimized parameters
+    model = Model(X.shape[1], **cfg).to(device)
+    
+    # Optimized training loop
+    for epoch in range(10):
+        loss = train_epoch(model, X, y, lr, bs)
+    
+    return loss
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `train()` function that returns a float loss value
+* No additional code or explanations
+* Code must be optimized for performance and minimal in size
+u
+
+n
+
+a
+
+v
+
+a
+
+i
+
+l
+
+a
+
+b
+
+l
+
+e
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:56] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:56] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-06-08 11:27:56] [Metadata: {'component': 'train_function', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+'DataFrame' object has no attribute 'reshape'
+
+---
+
+### **Code to Fix:**
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+import numpy as np
+from ConfigSpace import Configuration
+from typing import Any
+import math
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a CNN model on the given dataset using the provided configuration.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    # Extract data and labels
+    X, y = dataset['X'], dataset['y']
+
+    # Determine input shape and handle data format
+    n_samples = X.shape[0]
+    n_features = X.shape[1] if len(X.shape) == 2 else X.shape[1] * X.shape[2] if len(X.shape) == 3 else X.shape[1] * X.shape[2] * X.shape[3]
+    num_classes = len(torch.unique(torch.tensor(y)))
+
+    if len(X.shape) == 2:
+        # Flattened input
+        height = width = int(math.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError("Input features are not a square image.")
+        X = X.reshape(n_samples, 1, height, width)  # NCHW format
+    elif len(X.shape) == 3:
+        # 3D input (N, H, W)
+        X = X.reshape(n_samples, 1, X.shape[1], X.shape[2]) # NCHW format
+
+    # Normalize pixel values to [0, 1]
+    X = X.astype(np.float32) / 255.0
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Data augmentation (basic)
+    data_augmentation = cfg.get("data_augmentation")
+    if data_augmentation == "horizontal_flip":
+        X = torch.cat([X, torch.flip(X, dims=[3])], dim=0)
+        y = torch.cat([y, y], dim=0)
+    elif data_augmentation == "random_rotation":
+        degrees = cfg.get("random_rotation_degree")
+        # Simple rotation (replace with a proper augmentation library for better results)
+        angle = np.random.uniform(-degrees, degrees)
+        # rotation logic here would significantly increase code size
+
+    # Define hyperparameters
+    batch_size = cfg.get("batch_size")
+    learning_rate = cfg.get("learning_rate")
+    epochs = cfg.get("epochs")
+    num_conv_layers = cfg.get("num_conv_layers")
+    filters_layer_1 = cfg.get("filters_layer_1")
+    filters_layer_2 = cfg.get("filters_layer_2") if num_conv_layers >= 2 else 0
+    filters_layer_3 = cfg.get("filters_layer_3") if num_conv_layers >= 3 else 0
+    filters_layer_4 = cfg.get("filters_layer_4") if num_conv_layers >= 4 else 0
+    filters_layer_5 = cfg.get("filters_layer_5") if num_conv_layers >= 5 else 0
+    kernel_size = cfg.get("kernel_size")
+    pooling_type = cfg.get("pooling_type")
+    num_dense_layers = cfg.get("num_dense_layers")
+    dense_units_1 = cfg.get("dense_units_1")
+    dense_units_2 = cfg.get("dense_units_2") if num_dense_layers >= 2 else 0
+    dense_units_3 = cfg.get("dense_units_3") if num_dense_layers >= 3 else 0
+    dropout_rate = cfg.get("dropout_rate")
+    optimizer_name = cfg.get("optimizer")
+    adam_beta1 = cfg.get("adam_beta1") if optimizer_name == 'adam' else 0.9
+    adam_beta2 = cfg.get("adam_beta2") if optimizer_name == 'adam' else 0.999
+    sgd_momentum = cfg.get("sgd_momentum") if optimizer_name == 'sgd' else 0.0
+    rmsprop_rho = cfg.get("rmsprop_rho") if optimizer_name == 'rmsprop' else 0.9
+
+
+    # Define CNN model
+    class CNN(nn.Module):
+        def __init__(self, num_classes):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, filters_layer_1, kernel_size=kernel_size)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+
+            conv_layers = [self.conv1, self.relu1, self.pool1]
+            in_channels = filters_layer_1
+
+            if num_conv_layers >= 2:
+                self.conv2 = nn.Conv2d(in_channels, filters_layer_2, kernel_size=kernel_size)
+                self.relu2 = nn.ReLU()
+                self.pool2 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv2, self.relu2, self.pool2])
+                in_channels = filters_layer_2
+            else:
+                self.conv2 = self.relu2 = self.pool2 = None
+
+            if num_conv_layers >= 3:
+                self.conv3 = nn.Conv2d(in_channels, filters_layer_3, kernel_size=kernel_size)
+                self.relu3 = nn.ReLU()
+                self.pool3 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv3, self.relu3, self.pool3])
+                in_channels = filters_layer_3
+            else:
+                 self.conv3 = self.relu3 = self.pool3 = None
+
+            if num_conv_layers >= 4:
+                self.conv4 = nn.Conv2d(in_channels, filters_layer_4, kernel_size=kernel_size)
+                self.relu4 = nn.ReLU()
+                self.pool4 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv4, self.relu4, self.pool4])
+                in_channels = filters_layer_4
+            else:
+                 self.conv4 = self.relu4 = self.pool4 = None
+
+            if num_conv_layers >= 5:
+                self.conv5 = nn.Conv2d(in_channels, filters_layer_5, kernel_size=kernel_size)
+                self.relu5 = nn.ReLU()
+                self.pool5 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv5, self.relu5, self.pool5])
+            else:
+                 self.conv5 = self.relu5 = self.pool5 = None
+
+            self.conv_layers = nn.Sequential(*conv_layers)
+
+            # Calculate the output size of the convolutional layers dynamically
+            test_input = torch.randn(1, 1, height, width)
+            with torch.no_grad():
+                output_conv = self.conv_layers(test_input)
+            conv_output_size = output_conv.view(1, -1).size(1)
+
+            dense_layers = []
+            in_features = conv_output_size
+
+            self.fc1 = nn.Linear(in_features, dense_units_1)
+            self.relu_fc1 = nn.ReLU()
+            self.dropout1 = nn.Dropout(dropout_rate)
+            dense_layers.extend([self.fc1, self.relu_fc1, self.dropout1])
+            in_features = dense_units_1
+
+            if num_dense_layers >= 2:
+                self.fc2 = nn.Linear(in_features, dense_units_2)
+                self.relu_fc2 = nn.ReLU()
+                self.dropout2 = nn.Dropout(dropout_rate)
+                dense_layers.extend([self.fc2, self.relu_fc2, self.dropout2])
+                in_features = dense_units_2
+            else:
+                 self.fc2 = self.relu_fc2 = self.dropout2 = None
+
+            if num_dense_layers >= 3:
+                self.fc3 = nn.Linear(in_features, dense_units_3)
+                self.relu_fc3 = nn.ReLU()
+                self.dropout3 = nn.Dropout(dropout_rate)
+                dense_layers.extend([self.fc3, self.relu_fc3, self.dropout3])
+            else:
+                 self.fc3 = self.relu_fc3 = self.dropout3 = None
+
+            self.dense_layers = nn.Sequential(*dense_layers)
+            in_features = dense_units_3 if num_dense_layers == 3 else dense_units_2 if num_dense_layers == 2 else dense_units_1
+
+            self.fc_out = nn.Linear(in_features, num_classes)
+
+        def forward(self, x):
+            x = self.conv_layers(x)
+            x = x.view(x.size(0), -1)  # Flatten
+            x = self.dense_layers(x)
+            x = self.fc_out(x)
+            return x
+
+    # Instantiate the model
+    model = CNN(num_classes)
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Define optimizer
+    if optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(adam_beta1, adam_beta2))
+    elif optimizer_name == "sgd":
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=sgd_momentum)
+    elif optimizer_name == "rmsprop":
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, rho=rmsprop_rho)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Create data loader
+    dataset = TensorDataset(X, y)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    # Training loop
+    model.train()
+    for epoch in range(epochs):
+        for inputs, labels in dataloader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+    # Return the final loss
+    model.eval()
+    with torch.no_grad():
+        outputs = model(X)
+        loss = criterion(outputs, y).item()
+
+    return float(loss)
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:28:09] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:28:09] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): Input data X must be a numpy array.
+--------------------------------------------------------------------------------
+[2025-06-08 11:28:09] [Metadata: {'component': 'train_function', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+'DataFrame' object has no attribute 'reshape'
+Input data X must be a numpy array.
+
+---
+
+### **Code to Fix:**
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+import numpy as np
+from ConfigSpace import Configuration
+from typing import Any
+import math
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a CNN model on the given dataset using the provided configuration.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    # Extract data and labels
+    X, y = dataset['X'], dataset['y']
+
+    # Determine input shape and handle data format
+    n_samples = X.shape[0]
+    if isinstance(X, np.ndarray):
+        if len(X.shape) == 2:
+            n_features = X.shape[1]
+        elif len(X.shape) == 3:
+            n_features = X.shape[1] * X.shape[2]
+        elif len(X.shape) == 4:
+            n_features = X.shape[1] * X.shape[2] * X.shape[3]
+        else:
+            raise ValueError("Input data must be 2D, 3D, or 4D array.")
+    else:
+        raise TypeError("Input data X must be a numpy array.")
+
+    num_classes = len(torch.unique(torch.tensor(y)))
+
+    if len(X.shape) == 2:
+        # Flattened input
+        height = width = int(math.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError("Input features are not a square image.")
+        X = X.reshape(n_samples, 1, height, width)  # NCHW format
+    elif len(X.shape) == 3:
+        # 3D input (N, H, W)
+        X = X.reshape(n_samples, 1, X.shape[1], X.shape[2]) # NCHW format
+
+    # Normalize pixel values to [0, 1]
+    X = X.astype(np.float32) / 255.0
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Data augmentation (basic)
+    data_augmentation = cfg.get("data_augmentation")
+    if data_augmentation == "horizontal_flip":
+        X = torch.cat([X, torch.flip(X, dims=[3])], dim=0)
+        y = torch.cat([y, y], dim=0)
+    elif data_augmentation == "random_rotation":
+        degrees = cfg.get("random_rotation_degree")
+        # Simple rotation (replace with a proper augmentation library for better results)
+        angle = np.random.uniform(-degrees, degrees)
+        # rotation logic here would significantly increase code size
+
+    # Define hyperparameters
+    batch_size = cfg.get("batch_size")
+    learning_rate = cfg.get("learning_rate")
+    epochs = cfg.get("epochs")
+    num_conv_layers = cfg.get("num_conv_layers")
+    filters_layer_1 = cfg.get("filters_layer_1")
+    filters_layer_2 = cfg.get("filters_layer_2") if num_conv_layers >= 2 else 0
+    filters_layer_3 = cfg.get("filters_layer_3") if num_conv_layers >= 3 else 0
+    filters_layer_4 = cfg.get("filters_layer_4") if num_conv_layers >= 4 else 0
+    filters_layer_5 = cfg.get("filters_layer_5") if num_conv_layers >= 5 else 0
+    kernel_size = cfg.get("kernel_size")
+    pooling_type = cfg.get("pooling_type")
+    num_dense_layers = cfg.get("num_dense_layers")
+    dense_units_1 = cfg.get("dense_units_1")
+    dense_units_2 = cfg.get("dense_units_2") if num_dense_layers >= 2 else 0
+    dense_units_3 = cfg.get("dense_units_3") if num_dense_layers >= 3 else 0
+    dropout_rate = cfg.get("dropout_rate")
+    optimizer_name = cfg.get("optimizer")
+    adam_beta1 = cfg.get("adam_beta1") if optimizer_name == 'adam' else 0.9
+    adam_beta2 = cfg.get("adam_beta2") if optimizer_name == 'adam' else 0.999
+    sgd_momentum = cfg.get("sgd_momentum") if optimizer_name == 'sgd' else 0.0
+    rmsprop_rho = cfg.get("rmsprop_rho") if optimizer_name == 'rmsprop' else 0.9
+
+
+    # Define CNN model
+    class CNN(nn.Module):
+        def __init__(self, num_classes):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, filters_layer_1, kernel_size=kernel_size)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+
+            conv_layers = [self.conv1, self.relu1, self.pool1]
+            in_channels = filters_layer_1
+
+            if num_conv_layers >= 2:
+                self.conv2 = nn.Conv2d(in_channels, filters_layer_2, kernel_size=kernel_size)
+                self.relu2 = nn.ReLU()
+                self.pool2 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv2, self.relu2, self.pool2])
+                in_channels = filters_layer_2
+            else:
+                self.conv2 = self.relu2 = self.pool2 = None
+
+            if num_conv_layers >= 3:
+                self.conv3 = nn.Conv2d(in_channels, filters_layer_3, kernel_size=kernel_size)
+                self.relu3 = nn.ReLU()
+                self.pool3 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv3, self.relu3, self.pool3])
+                in_channels = filters_layer_3
+            else:
+                 self.conv3 = self.relu3 = self.pool3 = None
+
+            if num_conv_layers >= 4:
+                self.conv4 = nn.Conv2d(in_channels, filters_layer_4, kernel_size=kernel_size)
+                self.relu4 = nn.ReLU()
+                self.pool4 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv4, self.relu4, self.pool4])
+                in_channels = filters_layer_4
+            else:
+                 self.conv4 = self.relu4 = self.pool4 = None
+
+            if num_conv_layers >= 5:
+                self.conv5 = nn.Conv2d(in_channels, filters_layer_5, kernel_size=kernel_size)
+                self.relu5 = nn.ReLU()
+                self.pool5 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv5, self.relu5, self.pool5])
+            else:
+                 self.conv5 = self.relu5 = self.pool5 = None
+
+            self.conv_layers = nn.Sequential(*conv_layers)
+
+            # Calculate the output size of the convolutional layers dynamically
+            test_input = torch.randn(1, 1, height, width)
+            with torch.no_grad():
+                output_conv = self.conv_layers(test_input)
+            conv_output_size = output_conv.view(1, -1).size(1)
+
+            dense_layers = []
+            in_features = conv_output_size
+
+            self.fc1 = nn.Linear(in_features, dense_units_1)
+            self.relu_fc1 = nn.ReLU()
+            self.dropout1 = nn.Dropout(dropout_rate)
+            dense_layers.extend([self.fc1, self.relu_fc1, self.dropout1])
+            in_features = dense_units_1
+
+            if num_dense_layers >= 2:
+                self.fc2 = nn.Linear(in_features, dense_units_2)
+                self.relu_fc2 = nn.ReLU()
+                self.dropout2 = nn.Dropout(dropout_rate)
+                dense_layers.extend([self.fc2, self.relu_fc2, self.dropout2])
+                in_features = dense_units_2
+            else:
+                 self.fc2 = self.relu_fc2 = self.dropout2 = None
+
+            if num_dense_layers >= 3:
+                self.fc3 = nn.Linear(in_features, dense_units_3)
+                self.relu_fc3 = nn.ReLU()
+                self.dropout3 = nn.Dropout(dropout_rate)
+                dense_layers.extend([self.fc3, self.relu_fc3, self.dropout3])
+            else:
+                 self.fc3 = self.relu_fc3 = self.dropout3 = None
+
+            self.dense_layers = nn.Sequential(*dense_layers)
+            in_features = dense_units_3 if num_dense_layers == 3 else dense_units_2 if num_dense_layers == 2 else dense_units_1
+
+            self.fc_out = nn.Linear(in_features, num_classes)
+
+        def forward(self, x):
+            x = self.conv_layers(x)
+            x = x.view(x.size(0), -1)  # Flatten
+            x = self.dense_layers(x)
+            x = self.fc_out(x)
+            return x
+
+    # Instantiate the model
+    model = CNN(num_classes)
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Define optimizer
+    if optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(adam_beta1, adam_beta2))
+    elif optimizer_name == "sgd":
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=sgd_momentum)
+    elif optimizer_name == "rmsprop":
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, rho=rmsprop_rho)
+    else:
+        raise ValueError(f"Unknown optimizer: {{optimizer_name}}")
+
+    # Create data loader
+    dataset = TensorDataset(X, y)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    # Training loop
+    model.train()
+    for epoch in range(epochs):
+        for inputs, labels in dataloader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+    # Return the final loss
+    model.eval()
+    with torch.no_grad():
+        outputs = model(X)
+        loss = criterion(outputs, y).item()
+
+    return float(loss)
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:28:22] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-06-08 11:28:23] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#3): Given input size: (53x1x1). Calculated output size: (53x0x0). Output size is too small
+--------------------------------------------------------------------------------
+[2025-06-08 11:28:23] [Metadata: {'component': 'train_function', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+'DataFrame' object has no attribute 'reshape'
+Input data X must be a numpy array.
+Given input size: (53x1x1). Calculated output size: (53x0x0). Output size is too small
+
+---
+
+### **Code to Fix:**
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+import numpy as np
+from ConfigSpace import Configuration
+from typing import Any
+import math
+import pandas as pd
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a CNN model on the given dataset using the provided configuration.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    # Extract data and labels
+    X, y = dataset['X'], dataset['y']
+
+    # Check if X is a Pandas DataFrame and convert to NumPy array
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    
+    # Check if y is a Pandas DataFrame or Series and convert to NumPy array
+    if isinstance(y, pd.DataFrame) or isinstance(y, pd.Series):
+        y = y.values
+
+    # Determine input shape and handle data format
+    n_samples = X.shape[0]
+    if isinstance(X, np.ndarray):
+        if len(X.shape) == 2:
+            n_features = X.shape[1]
+        elif len(X.shape) == 3:
+            n_features = X.shape[1] * X.shape[2]
+        elif len(X.shape) == 4:
+            n_features = X.shape[1] * X.shape[2] * X.shape[3]
+        else:
+            raise ValueError("Input data must be 2D, 3D, or 4D array.")
+    else:
+        raise TypeError("Input data X must be a numpy array.")
+
+    num_classes = len(torch.unique(torch.tensor(y)))
+
+    if len(X.shape) == 2:
+        # Flattened input
+        height = width = int(math.sqrt(n_features))
+        if height * height != n_features:
+            raise ValueError("Input features are not a square image.")
+        X = X.reshape(n_samples, 1, height, width)  # NCHW format
+    elif len(X.shape) == 3:
+        # 3D input (N, H, W)
+        X = X.reshape(n_samples, 1, X.shape[1], X.shape[2]) # NCHW format
+
+    # Normalize pixel values to [0, 1]
+    X = X.astype(np.float32) / 255.0
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Data augmentation (basic)
+    data_augmentation = cfg.get("data_augmentation")
+    if data_augmentation == "horizontal_flip":
+        X = torch.cat([X, torch.flip(X, dims=[3])], dim=0)
+        y = torch.cat([y, y], dim=0)
+    elif data_augmentation == "random_rotation":
+        degrees = cfg.get("random_rotation_degree")
+        # Simple rotation (replace with a proper augmentation library for better results)
+        angle = np.random.uniform(-degrees, degrees)
+        # rotation logic here would significantly increase code size
+
+    # Define hyperparameters
+    batch_size = cfg.get("batch_size")
+    learning_rate = cfg.get("learning_rate")
+    epochs = cfg.get("epochs")
+    num_conv_layers = cfg.get("num_conv_layers")
+    filters_layer_1 = cfg.get("filters_layer_1")
+    filters_layer_2 = cfg.get("filters_layer_2") if num_conv_layers >= 2 else 0
+    filters_layer_3 = cfg.get("filters_layer_3") if num_conv_layers >= 3 else 0
+    filters_layer_4 = cfg.get("filters_layer_4") if num_conv_layers >= 4 else 0
+    filters_layer_5 = cfg.get("filters_layer_5") if num_conv_layers >= 5 else 0
+    kernel_size = cfg.get("kernel_size")
+    pooling_type = cfg.get("pooling_type")
+    num_dense_layers = cfg.get("num_dense_layers")
+    dense_units_1 = cfg.get("dense_units_1")
+    dense_units_2 = cfg.get("dense_units_2") if num_dense_layers >= 2 else 0
+    dense_units_3 = cfg.get("dense_units_3") if num_dense_layers >= 3 else 0
+    dropout_rate = cfg.get("dropout_rate")
+    optimizer_name = cfg.get("optimizer")
+    adam_beta1 = cfg.get("adam_beta1") if optimizer_name == 'adam' else 0.9
+    adam_beta2 = cfg.get("adam_beta2") if optimizer_name == 'adam' else 0.999
+    sgd_momentum = cfg.get("sgd_momentum") if optimizer_name == 'sgd' else 0.0
+    rmsprop_rho = cfg.get("rmsprop_rho") if optimizer_name == 'rmsprop' else 0.9
+
+
+    # Define CNN model
+    class CNN(nn.Module):
+        def __init__(self, num_classes):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, filters_layer_1, kernel_size=kernel_size)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+
+            conv_layers = [self.conv1, self.relu1, self.pool1]
+            in_channels = filters_layer_1
+
+            if num_conv_layers >= 2:
+                self.conv2 = nn.Conv2d(in_channels, filters_layer_2, kernel_size=kernel_size)
+                self.relu2 = nn.ReLU()
+                self.pool2 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv2, self.relu2, self.pool2])
+                in_channels = filters_layer_2
+            else:
+                self.conv2 = self.relu2 = self.pool2 = None
+
+            if num_conv_layers >= 3:
+                self.conv3 = nn.Conv2d(in_channels, filters_layer_3, kernel_size=kernel_size)
+                self.relu3 = nn.ReLU()
+                self.pool3 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv3, self.relu3, self.pool3])
+                in_channels = filters_layer_3
+            else:
+                 self.conv3 = self.relu3 = self.pool3 = None
+
+            if num_conv_layers >= 4:
+                self.conv4 = nn.Conv2d(in_channels, filters_layer_4, kernel_size=kernel_size)
+                self.relu4 = nn.ReLU()
+                self.pool4 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv4, self.relu4, self.pool4])
+                in_channels = filters_layer_4
+            else:
+                 self.conv4 = self.relu4 = self.pool4 = None
+
+            if num_conv_layers >= 5:
+                self.conv5 = nn.Conv2d(in_channels, filters_layer_5, kernel_size=kernel_size)
+                self.relu5 = nn.ReLU()
+                self.pool5 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+                conv_layers.extend([self.conv5, self.relu5, self.pool5])
+            else:
+                 self.conv5 = self.relu5 = self.pool5 = None
+
+            self.conv_layers = nn.Sequential(*conv_layers)
+
+            # Calculate the output size of the convolutional layers dynamically
+            test_input = torch.randn(1, 1, height, width)
+            with torch.no_grad():
+                output_conv = self.conv_layers(test_input)
+            conv_output_size = output_conv.view(1, -1).size(1)
+
+            dense_layers = []
+            in_features = conv_output_size
+
+            self.fc1 = nn.Linear(in_features, dense_units_1)
+            self.relu_fc1 = nn.ReLU()
+            self.dropout1 = nn.Dropout(dropout_rate)
+            dense_layers.extend([self.fc1, self.relu_fc1, self.dropout1])
+            in_features = dense_units_1
+
+            if num_dense_layers >= 2:
+                self.fc2 = nn.Linear(in_features, dense_units_2)
+                self.relu_fc2 = nn.ReLU()
+                self.dropout2 = nn.Dropout(dropout_rate)
+                dense_layers.extend([self.fc2, self.relu_fc2, self.dropout2])
+                in_features = dense_units_2
+            else:
+                 self.fc2 = self.relu_fc2 = self.dropout2 = None
+
+            if num_dense_layers >= 3:
+                self.fc3 = nn.Linear(in_features, dense_units_3)
+                self.relu_fc3 = nn.ReLU()
+                self.dropout3 = nn.Dropout(dropout_rate)
+                dense_layers.extend([self.fc3, self.relu_fc3, self.dropout3])
+            else:
+                 self.fc3 = self.relu_fc3 = self.dropout3 = None
+
+            self.dense_layers = nn.Sequential(*dense_layers)
+            in_features = dense_units_3 if num_dense_layers == 3 else dense_units_2 if num_dense_layers == 2 else dense_units_1
+
+            self.fc_out = nn.Linear(in_features, num_classes)
+
+        def forward(self, x):
+            x = self.conv_layers(x)
+            x = x.view(x.size(0), -1)  # Flatten
+            x = self.dense_layers(x)
+            x = self.fc_out(x)
+            return x
+
+    # Instantiate the model
+    model = CNN(num_classes)
+
+    # Define loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # Define optimizer
+    if optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(adam_beta1, adam_beta2))
+    elif optimizer_name == "sgd":
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=sgd_momentum)
+    elif optimizer_name == "rmsprop":
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, rho=rmsprop_rho)
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_name}")
+
+    # Create data loader
+    dataset = TensorDataset(X, y)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    # Training loop
+    model.train()
+    for epoch in range(epochs):
+        for inputs, labels in dataloader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+    # Return the final loss
+    model.eval()
+    with torch.no_grad():
+        outputs = model(X)
+        loss = criterion(outputs, y).item()
+
+    return float(loss)
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-08 11:28:37] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
