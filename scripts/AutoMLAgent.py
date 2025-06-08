@@ -127,7 +127,8 @@ class AutoMLAgent:
         self.ui_agent.code(self.scenario, language="python")
 
         # Training Function
-        train_plan = instructor_response.recommended_configuration + "\n\n".join(instructor_response.dataset_instructions)
+        # train_plan = instructor_response.recommended_configuration + "\n\n".join(instructor_response.dataset_instructions)
+        train_plan = instructor_response.recommended_configuration
         self.prompts["train_function"] = self._create_train_prompt(train_plan)
         self.train_function_code = self.llm.generate(self.prompts["train_function"])
         self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
@@ -259,7 +260,7 @@ class AutoMLAgent:
         """
         smac_file_name = self.llm.model_name.replace(" ", "_").lower() + self.dataset_name.replace(" ", "_").lower() + time.strftime("%Y%m%d_%H%M%S")
         with open("templates/scenario_prompt.txt", "r") as f:
-            base_prompt = f.read().format(dataset=self.dataset_description, smac_file_name=smac_file_name, scenario_plan=scenario_plan)
+            base_prompt = f.read().format(dataset_description=self.dataset_description, smac_file_name=smac_file_name, scenario_plan=scenario_plan)
 
         return base_prompt
 

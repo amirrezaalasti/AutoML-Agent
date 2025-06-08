@@ -1,122 +1,85 @@
-**TASK**
-
-**Goal:**
-Write a Python function named `get_configspace()` that returns a valid `ConfigurationSpace` object for a classification task.
+**Generate a production-grade Python configuration space for machine learning hyperparameter optimization with the following STRICT requirements:**
 
 ---
 
-**STRICT OUTPUT RULES**
+### **Function signature** must be:
 
-* Output **only** the complete `get_configspace()` function and **required imports**.
-* Do **not** include any explanations, comments, docstrings, or extra text.
-* The code must be **syntactically correct**, **executable**, and **compatible with SMAC**.
-
----
-
-**ALLOWED CLASSES**
-
-**Core**
-
-* `ConfigurationSpace`
-* `Categorical`
-* `Float`
-* `Integer`
-* `Constant`
-
-**Conditions**
-
-* `EqualsCondition`
-* `InCondition`
-* `OrConjunction`
-
-**Forbidden Clauses**
-
-* `ForbiddenEqualsClause`
-* `ForbiddenAndConjunction` *(must include at least one)*
-
-**Distributions (only if needed)**
-
-* `Beta`
-* `Normal`
-
-**Serialization (only if needed)**
-
-* `to_yaml()`
-* `from_yaml()`
-
----
-
-**CONSTRAINTS**
-
-* Must include **at least one** `ForbiddenAndConjunction` to block invalid hyperparameter combinations.
-
----
-
-**DATASET DESCRIPTION**
-
-* Use the following information to design the configuration space:
-  `{dataset_description}`
-* Hyperparameter choices and model types must be suitable for this classification dataset.
-
----
-
-**SUGGESTED PARAMETERS From OpenML**
-
-* Here are some parameter configurations for this dataset from OpenML (for inspiration only, not mandatory):
-  `{config_space_suggested_parameters}`
-
----
-
-**IMPORTANT RULE**
-
-* Do **not** use any class, function, method, or module outside the **ALLOWED CLASSES** list.
-
----
-
-**EXAMPLES**
-
-* See provided examples for valid usage of hyperparameters, conditions, forbidden clauses, and priors.
-
-[EXAMPLES]
-
-# Example 1: Adding Hyperparameters
 ```python
-from ConfigSpace import ConfigurationSpace, Categorical, Float, Integer
-
-kernel_type = Categorical('kernel_type', ['linear', 'poly', 'rbf', 'sigmoid'])
-degree = Integer('degree', bounds=(2, 4), default=2)
-coef0 = Float('coef0', bounds=(0, 1), default=0.0)
-gamma = Float('gamma', bounds=(1e-5, 1e2), default=1, log=True)
-
-cs = ConfigurationSpace()
-cs.add([kernel_type, degree, coef0, gamma])
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+def get_configspace() -> ConfigurationSpace:
 ```
-# Example 2: Adding Conditions
+
+---
+
+### **Configuration Space Requirements:**
+
+* The configuration space **must** be appropriate for the dataset type and characteristics:
+  * Dataset Description: `{dataset_description}`
+
+* If OpenML parameters are provided, use them as a reference:
+  * Suggested Parameters: `{config_space_suggested_parameters}`
+
+* The configuration space **must** include:
+  * Appropriate hyperparameter ranges based on the dataset characteristics
+  * Reasonable default values
+  * Proper hyperparameter types (continuous, discrete, categorical)
+  * Conditional hyperparameters if needed
+  * Proper bounds and constraints
+
+* **Best Practices:**
+  * Use meaningful hyperparameter names
+  * Include proper documentation for each hyperparameter
+  * Consider dataset size and complexity when setting ranges
+  * Ensure ranges are not too narrow or too wide
+  * Add proper conditions between dependent hyperparameters
+
+* **Common Hyperparameters to Consider:**
+  * Learning rate (if applicable)
+  * Model-specific hyperparameters
+  * Regularization parameters
+  * Architecture parameters
+  * Optimization parameters
+
+---
+
+### **Output Format:**
+
+* Return **only** the `get_configspace()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all hyperparameter names are valid Python identifiers
+* Verify that all ranges and bounds are valid
+* Check that conditional hyperparameters are properly defined
+* Validate that default values are within the specified ranges
+
+---
+
+### **Example Structure:**
+
 ```python
-from ConfigSpace import EqualsCondition, InCondition, OrConjunction
-
-cond_1 = EqualsCondition(degree, kernel_type, 'poly')
-cond_2 = OrConjunction(
-    EqualsCondition(coef0, kernel_type, 'poly'),
-    EqualsCondition(coef0, kernel_type, 'sigmoid')
-)
-cond_3 = InCondition(gamma, kernel_type, ['rbf', 'poly', 'sigmoid'])
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+    
+    # Add hyperparameters
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+    
+    # Add more hyperparameters...
+    
+    return cs
 ```
-# Example 3: Adding Forbidden Clauses
-```pyhon
-from ConfigSpace import ForbiddenEqualsClause, ForbiddenAndConjunction
 
-penalty_and_loss = ForbiddenAndConjunction(
-    ForbiddenEqualsClause(penalty, "l1"),
-    ForbiddenEqualsClause(loss, "hinge")
-)
-constant_penalty_and_loss = ForbiddenAndConjunction(
-    ForbiddenEqualsClause(dual, "False"),
-    ForbiddenEqualsClause(penalty, "l2"),
-    ForbiddenEqualsClause(loss, "hinge")
-)
-penalty_and_dual = ForbiddenAndConjunction(
-    ForbiddenEqualsClause(dual, "False"),
-    ForbiddenEqualsClause(penalty, "l1")
-)
-```
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `get_configspace()` function that returns a properly configured `ConfigurationSpace` object
+* No additional code or explanations
