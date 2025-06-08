@@ -1,140 +1,81 @@
 from typing import Any
-import numpy as np
-import pandas as pd
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from sklearn.neural_network import MLPRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from ConfigSpace import Configuration
+import sklearn.svm
+import sklearn.tree
+from sklearn.model_selection import cross_val_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+import numpy as np
 
 
 def train(cfg: Configuration, dataset: Any, seed: int) -> float:
     """
-    Trains a machine learning model based on the provided configuration and dataset.
+    Trains a model based on the given configuration and dataset.
 
     Args:
         cfg (Configuration): Configuration object containing hyperparameters.
-        dataset (Any): Dataset dictionary with 'X' (features) and 'y' (labels).
+        dataset (Any): Dictionary containing 'X' (features) and 'y' (labels).
         seed (int): Random seed for reproducibility.
 
     Returns:
-        float: Average training loss over 10 epochs.
+        float: Cross-validation score (negative mean cross-validation score, as SMAC minimizes).
     """
     X = dataset["X"]
     y = dataset["y"]
 
-    # Convert data to numpy arrays if it is a pandas DataFrame
-    if isinstance(X, pd.DataFrame):
-        X = X.values
-    if isinstance(y, pd.Series):
-        y = y.values
+    # Infer input and output dimensions dynamically
+    n_features = X.shape[1]
+    n_classes = len(np.unique(y))
 
-    model_type = cfg.get("model_type")
-    learning_rate = cfg.get("learning_rate")
+    # Data preprocessing: StandardScaler
+    scaler = StandardScaler()
 
-    # PyTorch-related setup
-    if model_type in ["LSTM", "GRU", "MLP"]:
-        X_tensor = torch.tensor(X, dtype=torch.float32)
-        y_tensor = torch.tensor(y, dtype=torch.float32)
+    # Model selection and configuration
+    classifier_type = cfg.get("classifier_type")
+
+    if classifier_type == "SVM":
+        # SVM Model
+        svm_kernel = cfg.get("svm_kernel")
+        svm_C = cfg.get("svm_C")
+        svm_gamma = cfg.get("svm_gamma")
+        svm_degree = cfg.get("svm_degree")
+
+        model = sklearn.svm.SVC(
+            kernel=svm_kernel,
+            C=svm_C,
+            gamma=svm_gamma,
+            degree=svm_degree,
+            random_state=seed,  # Add random_state for reproducibility
+            probability=True,  # Required for cross_val_predict with decision_function
+        )
+    elif classifier_type == "DecisionTree":
+        # Decision Tree Model
+        dt_criterion = cfg.get("dt_criterion")
+        dt_max_depth = cfg.get("dt_max_depth")
+        dt_min_samples_split = cfg.get("dt_min_samples_split")
+        dt_min_samples_leaf = cfg.get("dt_min_samples_leaf")
+
+        model = sklearn.tree.DecisionTreeClassifier(
+            criterion=dt_criterion,
+            max_depth=dt_max_depth,
+            min_samples_split=dt_min_samples_split,
+            min_samples_leaf=dt_min_samples_leaf,
+            random_state=seed,  # Add random_state for reproducibility
+        )
     else:
-        raise ValueError(f"Unsupported model type: {model_type}")
+        raise ValueError(f"Unknown classifier type: {classifier_type}")
 
-    if X_tensor.ndim == 1:
-        X_tensor = X_tensor.unsqueeze(1)
-    if y_tensor.ndim == 1:
-        y_tensor = y_tensor.unsqueeze(1)
+    # Create a pipeline with scaling and the model
+    pipeline = Pipeline([("scaler", scaler), ("classifier", model)])
 
-    if model_type in ["LSTM", "GRU"]:
-        # Reshape X_tensor to 3D if it's not already
-        if X_tensor.ndim == 2:
-            X_tensor = X_tensor.unsqueeze(0)  # Add a batch dimension
-        if X_tensor.ndim != 3:
-            raise ValueError(f"Expected 3D input (batch, seq_len, features) for {model_type}, got {X_tensor.shape}")
+    # Cross-validation
+    try:
+        scores = cross_val_score(pipeline, X, y, cv=5, scoring="neg_log_loss")  # Use neg_log_loss, as SMAC minimizes. Fallback for probabilities.
+        loss = np.mean(scores)  # Lower loss is better
+    except ValueError as e:
+        # Handle cases where probabilities are required but not available (e.g., decision_function not applicable)
+        # or when cross-validation fails because of class imbalance in a split
+        print(f"Cross-validation failed: {e}. Returning a large loss value.")
+        loss = -10.0  # Return a large loss value to penalize the configuration
 
-    if model_type == "LSTM":
-        input_size = X_tensor.shape[2] if X_tensor.ndim == 3 else X_tensor.shape[1]
-        hidden_size = cfg.get("lstm_units")
-        num_layers = cfg.get("lstm_layers")
-        dropout = cfg.get("lstm_dropout")
-        output_size = 1  # Regression task
-
-        class LSTMModel(nn.Module):
-            def __init__(self, input_size, hidden_size, num_layers, output_size, dropout):
-                super(LSTMModel, self).__init__()
-                self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, dropout=dropout)
-                self.linear = nn.Linear(hidden_size, output_size)
-
-            def forward(self, x):
-                out, _ = self.lstm(x)
-                out = self.linear(out[:, -1, :])  # Use only the last time step's output
-                return out
-
-        model = LSTMModel(input_size, hidden_size, num_layers, output_size, dropout)
-
-    elif model_type == "GRU":
-        input_size = X_tensor.shape[2] if X_tensor.ndim == 3 else X_tensor.shape[1]
-        hidden_size = cfg.get("gru_units")
-        num_layers = cfg.get("gru_layers")
-        dropout = cfg.get("gru_dropout")
-        output_size = 1  # Regression task
-
-        class GRUModel(nn.Module):
-            def __init__(self, input_size, hidden_size, num_layers, output_size, dropout):
-                super(GRUModel, self).__init__()
-                self.gru = nn.GRU(input_size, hidden_size, num_layers, batch_first=True, dropout=dropout)
-                self.linear = nn.Linear(hidden_size, output_size)
-
-            def forward(self, x):
-                out, _ = self.gru(x)
-                out = self.linear(out[:, -1, :])  # Use only the last time step's output
-                return out
-
-        model = GRUModel(input_size, hidden_size, num_layers, output_size, dropout)
-
-    elif model_type == "MLP":
-        input_size = X_tensor.shape[1] if X_tensor.ndim == 2 else X_tensor.shape[1] * X_tensor.shape[2]
-        hidden_size = cfg.get("mlp_units")
-        num_layers = cfg.get("mlp_layers")
-        dropout = cfg.get("mlp_dropout")
-        output_size = 1  # Regression task
-
-        class MLPModel(nn.Module):
-            def __init__(self, input_size, hidden_size, num_layers, output_size, dropout):
-                super(MLPModel, self).__init__()
-                self.flatten = nn.Flatten()
-                layers = []
-                for i in range(num_layers - 1):
-                    layers.append(nn.Linear(input_size if i == 0 else hidden_size, hidden_size))
-                    layers.append(nn.ReLU())
-                    layers.append(nn.Dropout(dropout))
-                layers.append(nn.Linear(input_size if num_layers == 1 else hidden_size, output_size))
-                self.layers = nn.Sequential(*layers)
-
-            def forward(self, x):
-                x = self.flatten(x)
-                return self.layers(x)
-
-        model = MLPModel(input_size, hidden_size, num_layers, output_size, dropout)
-
-    else:
-        raise ValueError(f"Unsupported model type: {model_type}")
-
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
-    # Training loop
-    model.train()
-    epochs = 10
-    total_loss = 0.0
-    for epoch in range(epochs):
-        optimizer.zero_grad()
-        outputs = model(X_tensor)
-        loss = criterion(outputs, y_tensor)
-        loss.backward()
-        optimizer.step()
-        total_loss += loss.item()
-
-    avg_loss = total_loss / epochs
-    return float(avg_loss)
+    return loss

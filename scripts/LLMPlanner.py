@@ -3,6 +3,8 @@ import instructor
 from configs.api_keys import GOOGLE_API_KEY  # Your API key
 from google import genai
 from scripts.Logger import Logger
+import os
+import json
 
 
 class InstructorInfo(BaseModel):
@@ -11,6 +13,7 @@ class InstructorInfo(BaseModel):
     dataset_instructions: list[str]
     openml_url: str
     recommended_configuration: str
+    scenario_plan: str
 
 
 class LLMPlanner:
@@ -54,6 +57,34 @@ class LLMPlanner:
             {config_space_suggested_parameters}
             """
 
+        if os.path.exists("collected_docs/smac_docs.json"):
+            with open("collected_docs/smac_docs.json", "r") as f:
+                smac_docs = json.load(f)
+
+            # Add specific guidance about using the documentation
+            doc_context = """
+            Based on the following SMAC documentation, analyze the dataset characteristics and choose appropriate:
+            1. Facade type (e.g., MultiFidelityFacade for multi-fidelity optimization)
+            2. Budget settings (min_budget and max_budget)
+            3. Number of workers (n_workers)
+            4. Other relevant scenario parameters
+
+            SMAC Documentation:
+            """
+            doc_context += "\n\n".join([doc["content"] for doc in smac_docs])
+
+            # Add specific questions to guide the LLM
+            doc_context += """
+            Please analyze the dataset and documentation to determine:
+            1. Should multi-fidelity optimization be used? (Consider dataset size and training time)
+            2. What budget range is appropriate? (Consider training epochs or data subsets)
+            3. How many workers should be used? (Consider available resources)
+            4. Are there any special considerations for this dataset type?
+
+            Then generate a scenario configuration that best suits this dataset.
+            """
+            self.scenario_plan_instruction = doc_context
+
         self.logger = Logger(
             model_name="gemini-2.0-flash",
             dataset_name=self.dataset_name,
@@ -70,6 +101,8 @@ class LLMPlanner:
             self.instruction += self.instruction_for_configuration_based_on_openml.format(
                 config_space_suggested_parameters=config_space_suggested_parameters
             )
+        if self.scenario_plan_instruction:
+            self.instruction += self.scenario_plan_instruction
 
         google_client = genai.Client(api_key=GOOGLE_API_KEY)
         client = instructor.from_genai(google_client, model="models/gemini-2.0-flash")

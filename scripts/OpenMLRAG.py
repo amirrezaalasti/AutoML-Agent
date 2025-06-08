@@ -81,7 +81,7 @@ class OpenMLRAG:
             output_format="dataframe",
             sort_order="desc",
         )
-        top_evaluations = evaluations.head(2)
+        top_evaluations = evaluations.head(1)
 
         setup_parameters = []
         for evaluation in top_evaluations["setup_id"].unique():

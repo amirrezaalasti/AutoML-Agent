@@ -18,7 +18,7 @@ Generate a **Python function** named `generate_scenario(cs)` that returns a vali
 **Functional Requirements:**
 
 * The input `cs` is a `ConfigurationSpace` object.
-* Return a `Scenario` configured with the following:
+* Return a `Scenario` with the following parameters passed separately (not as a single object):
   * `name`: `"{smac_file_name}"`
   * `output_directory`: `"./automl_results"`
   * `deterministic`: `False` (enable variability)
@@ -83,9 +83,18 @@ configspace : ConfigurationSpace
         The number of workers to use for parallelization. If `n_workers` is greather than 1, SMAC will use
         Dask to parallelize the optimization.
 
+**Simple Example:**
+* scenario = Scenario(configspace, deterministic=True, n_trials=200)
+
+---
+**Suggested Scenario Plan:**
+{scenario_plan}
+---
 **Reminder:** The output must be limited to:
 
 * Valid `import` statements
 * A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
+* Do not pass the parameters to Scenario as a single dictionary or object. Pass each parameter separately using individual keyword arguments (e.g., Scenario(name="run1", n_trials=10, ...)).
 
 ---
+
