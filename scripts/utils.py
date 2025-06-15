@@ -151,6 +151,22 @@ def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
     return description
 
 
+def generate_general_dataset_task_types(dataset_type: str) -> list[str]:
+    """
+    Generate a list of task types for a given dataset type.
+    """
+    if dataset_type == "tabular":
+        return ["classification", "regression"]
+    elif dataset_type == "time_series":
+        return ["clustering"]
+    elif dataset_type == "image":
+        return ["classification", "clustering"]
+    elif dataset_type == "categorical":
+        return ["classification", "clustering"]
+    elif dataset_type == "text":
+        return ["clustering"]
+
+
 def log_message(message: str, log_file: str = "./logs/logs.txt"):
     """
     DEPRECATED: Use the Logger class instead.

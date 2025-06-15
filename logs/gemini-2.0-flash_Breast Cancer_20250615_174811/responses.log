@@ -1,0 +1,778 @@
+[2025-06-15 17:48:17] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100,
+        q=10,  # Quantization: increments of 10
+        doc="Number of boosting stages to perform"
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True,
+        doc="Step size shrinkage prevents overfitting"
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3,
+        doc="Maximum depth of the individual regression estimators"
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2,
+        doc="Minimum number of samples required to split an internal node"
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1,
+        doc="Minimum number of samples required to be at a leaf node"
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of samples used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of features used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0,
+        doc="Minimum loss reduction required to make a further partition on a leaf node of the tree."
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=0.0, log=True,
+        doc="L1 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True,
+        doc="L2 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:17] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100,
+        q=10,  # Quantization: increments of 10
+        doc="Number of boosting stages to perform"
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True,
+        doc="Step size shrinkage prevents overfitting"
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3,
+        doc="Maximum depth of the individual regression estimators"
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2,
+        doc="Minimum number of samples required to split an internal node"
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1,
+        doc="Minimum number of samples required to be at a leaf node"
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of samples used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of features used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0,
+        doc="Minimum loss reduction required to make a further partition on a leaf node of the tree."
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=0.0, log=True,
+        doc="L1 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True,
+        doc="L2 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:17] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:21] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100,
+        doc="Number of boosting stages to perform"
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True,
+        doc="Step size shrinkage prevents overfitting"
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3,
+        doc="Maximum depth of the individual regression estimators"
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2,
+        doc="Minimum number of samples required to split an internal node"
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1,
+        doc="Minimum number of samples required to be at a leaf node"
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of samples used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of features used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0,
+        doc="Minimum loss reduction required to make a further partition on a leaf node of the tree."
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=0.0, log=True,
+        doc="L1 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True,
+        doc="L2 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:21] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100,
+        doc="Number of boosting stages to perform"
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True,
+        doc="Step size shrinkage prevents overfitting"
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3,
+        doc="Maximum depth of the individual regression estimators"
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2,
+        doc="Minimum number of samples required to split an internal node"
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1,
+        doc="Minimum number of samples required to be at a leaf node"
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of samples used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0,
+        doc="Fraction of features used for fitting the individual base learners"
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0,
+        doc="Minimum loss reduction required to make a further partition on a leaf node of the tree."
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=0.0, log=True,
+        doc="L1 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True,
+        doc="L2 regularization term on weights"
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:21] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'doc'
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:24] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=0.0, log=True
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:24] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=0.0, log=True
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:24] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Illegal default value 0.0 for hyperparamter 'reg_alpha'.
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:28] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=1e-8, log=True
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:28] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for a machine learning model suitable for the given dataset.
+    Based on the dataset characteristics (tabular, 569 samples, 30 features),
+    this configuration space is tailored for a gradient boosting machine (GBM) model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=500, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=0.2, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=2, upper=10, default_value=3
+    )
+    cs.add_hyperparameter(max_depth)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=20, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "min_samples_leaf", lower=1, upper=10, default_value=1
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    subsample = UniformFloatHyperparameter(
+        "subsample", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(subsample)
+
+    colsample_bytree = UniformFloatHyperparameter(
+        "colsample_bytree", lower=0.5, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(colsample_bytree)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.0, upper=1.0, default_value=0.0
+    )
+    cs.add_hyperparameter(gamma)
+
+    # Add regularization parameters (L1 and L2)
+    reg_alpha = UniformFloatHyperparameter(
+        "reg_alpha", lower=1e-8, upper=1.0, default_value=1e-8, log=True
+    )
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter(
+        "reg_lambda", lower=1e-8, upper=1.0, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(reg_lambda)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:28] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:29] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration tailored for the breast cancer dataset.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample configurations.
+
+    Returns:
+        Scenario: A configured SMAC scenario object.
+    """
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashbreast_cancer20250615_174828",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_trials=10,
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:29] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration tailored for the breast cancer dataset.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample configurations.
+
+    Returns:
+        Scenario: A configured SMAC scenario object.
+    """
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashbreast_cancer20250615_174828",
+        output_directory="./automl_results",
+        deterministic=False,
+        n_trials=10,
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:29] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:33] [Metadata: {'component': 'train_function'}] ```python
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+from typing import Any
+import logging
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset (X, y).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Mean cross-validation score (negative log loss).
+    """
+    try:
+        # Extract data
+        X = dataset['X']
+        y = dataset['y']
+
+        # Validate data types and shapes
+        if not isinstance(X, (pd.DataFrame, np.ndarray)):
+            raise ValueError("X must be a pandas DataFrame or numpy array")
+        if not isinstance(y, (pd.Series, np.ndarray)):
+            raise ValueError("y must be a pandas Series or numpy array")
+
+        if isinstance(X, pd.DataFrame):
+            X = X.values  # Convert to numpy array
+        if isinstance(y, pd.Series):
+            y = y.values  # Convert to numpy array
+
+        if X.shape[0] != len(y):
+            raise ValueError("X and y must have the same number of samples")
+
+        # Extract hyperparameters from configuration
+        n_estimators = cfg.get('n_estimators', 100)  # Default value
+        max_depth = cfg.get('max_depth', None)  # Default value
+        min_samples_split = cfg.get('min_samples_split', 2) # Default value
+        min_samples_leaf = cfg.get('min_samples_leaf', 1) # Default value
+        
+        # Validate hyperparameters
+        if not isinstance(n_estimators, int) or n_estimators <= 0:
+            raise ValueError("n_estimators must be a positive integer")
+        if max_depth is not None and (not isinstance(max_depth, int) or max_depth <= 0):
+            raise ValueError("max_depth must be a positive integer or None")
+        if not isinstance(min_samples_split, int) or min_samples_split <= 0:
+            raise ValueError("min_samples_split must be a positive integer")
+        if not isinstance(min_samples_leaf, int) or min_samples_leaf <= 0:
+            raise ValueError("min_samples_leaf must be a positive integer")
+
+        # Initialize RandomForestClassifier with hyperparameters
+        model = RandomForestClassifier(
+            n_estimators=n_estimators,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            random_state=seed,
+            n_jobs=-1 # Use all available cores
+        )
+
+        # Perform cross-validation
+        cv_scores = cross_val_score(model, X, y, cv=5, scoring='neg_log_loss', n_jobs=-1) # Use all available cores
+
+        # Return mean cross-validation score
+        return np.mean(cv_scores)
+
+    except Exception as e:
+        logging.error(f"Training failed: {e}")
+        return -np.inf  # Return worst possible score on failure
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:33] [Metadata: {'component': 'train_function', 'action': 'run'}] import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+from ConfigSpace import Configuration
+from typing import Any
+import logging
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing the dataset (X, y).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Mean cross-validation score (negative log loss).
+    """
+    try:
+        # Extract data
+        X = dataset['X']
+        y = dataset['y']
+
+        # Validate data types and shapes
+        if not isinstance(X, (pd.DataFrame, np.ndarray)):
+            raise ValueError("X must be a pandas DataFrame or numpy array")
+        if not isinstance(y, (pd.Series, np.ndarray)):
+            raise ValueError("y must be a pandas Series or numpy array")
+
+        if isinstance(X, pd.DataFrame):
+            X = X.values  # Convert to numpy array
+        if isinstance(y, pd.Series):
+            y = y.values  # Convert to numpy array
+
+        if X.shape[0] != len(y):
+            raise ValueError("X and y must have the same number of samples")
+
+        # Extract hyperparameters from configuration
+        n_estimators = cfg.get('n_estimators', 100)  # Default value
+        max_depth = cfg.get('max_depth', None)  # Default value
+        min_samples_split = cfg.get('min_samples_split', 2) # Default value
+        min_samples_leaf = cfg.get('min_samples_leaf', 1) # Default value
+        
+        # Validate hyperparameters
+        if not isinstance(n_estimators, int) or n_estimators <= 0:
+            raise ValueError("n_estimators must be a positive integer")
+        if max_depth is not None and (not isinstance(max_depth, int) or max_depth <= 0):
+            raise ValueError("max_depth must be a positive integer or None")
+        if not isinstance(min_samples_split, int) or min_samples_split <= 0:
+            raise ValueError("min_samples_split must be a positive integer")
+        if not isinstance(min_samples_leaf, int) or min_samples_leaf <= 0:
+            raise ValueError("min_samples_leaf must be a positive integer")
+
+        # Initialize RandomForestClassifier with hyperparameters
+        model = RandomForestClassifier(
+            n_estimators=n_estimators,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            random_state=seed,
+            n_jobs=-1 # Use all available cores
+        )
+
+        # Perform cross-validation
+        cv_scores = cross_val_score(model, X, y, cv=5, scoring='neg_log_loss', n_jobs=-1) # Use all available cores
+
+        # Return mean cross-validation score
+        return np.mean(cv_scores)
+
+    except Exception as e:
+        logging.error(f"Training failed: {e}")
+        return -np.inf  # Return worst possible score on failure
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:48:35] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': -0.1291806533218558}] Training executed successfully, loss: -0.1291806533218558
+--------------------------------------------------------------------------------

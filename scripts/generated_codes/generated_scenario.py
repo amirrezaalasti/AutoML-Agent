@@ -1,56 +1,27 @@
-import os
-from smac.scenario import Scenario
+from smac import Scenario
 from ConfigSpace import ConfigurationSpace
+from pathlib import Path
 
 
 def generate_scenario(cs: ConfigurationSpace) -> Scenario:
     """
-    Generates a SMAC scenario for hyperparameter optimization, specifically tailored for image datasets.
+    Generates a SMAC scenario configuration for hyperparameter optimization.
 
     Args:
-        cs (ConfigurationSpace): The configuration space to be optimized.
+        cs (ConfigurationSpace): The configuration space from which to sample configurations.
 
     Returns:
         Scenario: A configured SMAC Scenario object.
     """
 
-    # Define the output directory for SMAC results
-    output_dir = "./smac_output"
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Determine the number of available cores.  Using os.cpu_count() may not be appropriate
-    # in all environments (e.g., Docker containers).  Consider using a resource-aware method.
-    n_workers = os.cpu_count() or 1  # Default to 1 worker if os.cpu_count() is None
-
-    # Define budget settings: min_budget, max_budget
-    # These depend heavily on the complexity of the model and the dataset size.
-    # For an image dataset with 10 classes and ~60k examples,
-    # these values need careful consideration.
-    # Example: budget is based on the number of epochs/iterations
-    min_budget = 3  # Minimum number of epochs/iterations
-    max_budget = 27  # Maximum number of epochs/iterations
-
-    # Set walltime and CPU time limits (in seconds)
-    walltime_limit = 3600  # 1 hour
-
-    # Define resource limits for each trial
-    memory_limit = 4096  # 4GB memory limit (in MB)
-
-    n_trials = 10  # Define n_trials, the number of trials
-
     scenario = Scenario(
         configspace=cs,
-        name="image_dataset_optimization",
-        output_directory=output_dir,
-        deterministic=False,  # Enable for reproducibility during testing
-        # but disable for better generalization during actual optimization
-        n_trials=n_trials,
-        walltime_limit=walltime_limit,
-        min_budget=min_budget,
-        max_budget=max_budget,
-        n_workers=n_workers,
+        name="image_classification_experiment",
+        output_directory=Path("automl_results"),
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+        min_budget=1,
+        max_budget=5,
     )
-
-    # scenario.memory_limit = memory_limit # Setting memory limit after initialization - invalid
-
     return scenario

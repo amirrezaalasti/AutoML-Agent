@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 from ConfigSpace import Configuration
 from typing import Any
@@ -10,234 +9,214 @@ import pandas as pd
 
 
 def train(cfg: Configuration, dataset: Any, seed: int) -> float:
-    """
-    Trains a CNN model on the given dataset using the provided configuration.
+    """Trains a model based on the given configuration and dataset.
+
+    Args:
+        cfg (Configuration): Configuration object containing hyperparameters.
+        dataset (Any): Dictionary containing 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The loss value after training.
     """
     torch.manual_seed(seed)
     np.random.seed(seed)
 
-    # Extract data and labels
     X, y = dataset["X"], dataset["y"]
 
-    # Check if X is a Pandas DataFrame and convert to NumPy array
-    if isinstance(X, pd.DataFrame):
-        X = X.values
-
-    # Check if y is a Pandas DataFrame or Series and convert to NumPy array
-    if isinstance(y, pd.DataFrame) or isinstance(y, pd.Series):
-        y = y.values
-
-    # Determine input shape and handle data format
+    # Determine input shape and number of classes
     n_samples = X.shape[0]
-    if isinstance(X, np.ndarray):
-        if len(X.shape) == 2:
-            n_features = X.shape[1]
-        elif len(X.shape) == 3:
-            n_features = X.shape[1] * X.shape[2]
-        elif len(X.shape) == 4:
-            n_features = X.shape[1] * X.shape[2] * X.shape[3]
-        else:
-            raise ValueError("Input data must be 2D, 3D, or 4D array.")
-    else:
-        raise TypeError("Input data X must be a numpy array.")
 
-    num_classes = len(torch.unique(torch.tensor(y)))
+    if isinstance(X, pd.DataFrame):
+        X = X.values  # Convert DataFrame to NumPy array
 
-    if len(X.shape) == 2:
-        # Flattened input
+    if len(X.shape) == 2:  # Flattened input
+        n_features = X.shape[1]
         height = width = int(math.sqrt(n_features))
-        if height * height != n_features:
-            # Attempt to reshape to a rectangular image if not square
-            aspect_ratio = X.shape[1]
-            width = int(math.sqrt(aspect_ratio))
-            while aspect_ratio % width != 0:
-                width -= 1
-            height = aspect_ratio // width
-            X = X.reshape(n_samples, 1, height, width)
+        assert height * width == n_features, "Input features are not square."
+        X = X.reshape(n_samples, 1, height, width)  # Reshape to (N, 1, H, W)
+    elif len(X.shape) == 3:  # 3D input (N, H, W)
+        X = X.reshape(n_samples, 1, X.shape[1], X.shape[2])  # Add channel dimension
+    elif len(X.shape) == 4:  # 4D input
+        pass  # Assume (N, C, H, W) or (N, H, W, C) and handle in model
 
-        else:
-            X = X.reshape(n_samples, 1, height, width)  # NCHW format
-    elif len(X.shape) == 3:
-        # 3D input (N, H, W)
-        X = X.reshape(n_samples, 1, X.shape[1], X.shape[2])  # NCHW format
-    elif len(X.shape) == 4:
-        # Already in NCHW format, do nothing
-        pass
-    else:
-        raise ValueError("Input data must be 2D, 3D, or 4D array.")
+    num_classes = len(np.unique(y))
 
-    # Normalize pixel values to [0, 1]
+    # Normalize data to [0, 1]
     X = X.astype(np.float32) / 255.0
 
     # Convert data to PyTorch tensors
-    X = torch.tensor(X, dtype=torch.float32)
-    y = torch.tensor(y, dtype=torch.long)
+    X = torch.tensor(X)
+    y = torch.tensor(y, dtype=torch.long)  # Ensure labels are long type
 
-    # Data augmentation (basic)
-    data_augmentation = cfg.get("data_augmentation")
-    if data_augmentation == "horizontal_flip":
-        X = torch.cat([X, torch.flip(X, dims=[3])], dim=0)
-        y = torch.cat([y, y], dim=0)
-    elif data_augmentation == "random_rotation":
-        degrees = cfg.get("random_rotation_degree")
-        # Simple rotation (replace with a proper augmentation library for better results)
-        angle = np.random.uniform(-degrees, degrees)
-        # rotation logic here would significantly increase code size
+    # Device configuration
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    X = X.to(device)
+    y = y.to(device)
 
-    # Define hyperparameters
+    # Extract hyperparameters from configuration
+    model_type = cfg.get("model_type")
     batch_size = cfg.get("batch_size")
     learning_rate = cfg.get("learning_rate")
-    epochs = cfg.get("epochs")
-    num_conv_layers = cfg.get("num_conv_layers")
-    filters_layer_1 = cfg.get("filters_layer_1")
-    filters_layer_2 = cfg.get("filters_layer_2") if num_conv_layers >= 2 else 0
-    filters_layer_3 = cfg.get("filters_layer_3") if num_conv_layers >= 3 else 0
-    filters_layer_4 = cfg.get("filters_layer_4") if num_conv_layers >= 4 else 0
-    filters_layer_5 = cfg.get("filters_layer_5") if num_conv_layers >= 5 else 0
-    kernel_size = cfg.get("kernel_size")
-    pooling_type = cfg.get("pooling_type")
-    num_dense_layers = cfg.get("num_dense_layers")
-    dense_units_1 = cfg.get("dense_units_1")
-    dense_units_2 = cfg.get("dense_units_2") if num_dense_layers >= 2 else 0
-    dense_units_3 = cfg.get("dense_units_3") if num_dense_layers >= 3 else 0
-    dropout_rate = cfg.get("dropout_rate")
     optimizer_name = cfg.get("optimizer")
-    adam_beta1 = cfg.get("adam_beta1") if optimizer_name == "adam" else 0.9
-    adam_beta2 = cfg.get("adam_beta2") if optimizer_name == "adam" else 0.999
-    sgd_momentum = cfg.get("sgd_momentum") if optimizer_name == "sgd" else 0.0
-    rmsprop_rho = cfg.get("rmsprop_rho") if optimizer_name == "rmsprop" else 0.9
+    num_epochs = 5  # Constant epochs for faster execution
 
-    # Define CNN model
+    # Model definition
     class CNN(nn.Module):
-        def __init__(self, num_classes, height, width):
+        def __init__(self, num_classes, cfg):
             super(CNN, self).__init__()
-            self.conv1 = nn.Conv2d(1, filters_layer_1, kernel_size=kernel_size)
-            self.relu1 = nn.ReLU()
-            self.pool1 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
+            num_conv_layers = cfg.get("num_conv_layers")
+            conv_filters_1 = cfg.get("conv_filters_1")
+            conv_filters_2 = cfg.get("conv_filters_2") if num_conv_layers >= 2 else 0
+            conv_filters_3 = cfg.get("conv_filters_3") if num_conv_layers == 3 else 0
+            kernel_size = cfg.get("kernel_size")
+            pooling_type = cfg.get("pooling_type")
+            normalization_strategy = cfg.get("normalization_strategy")
 
-            conv_layers = [self.conv1, self.relu1, self.pool1]
-            in_channels = filters_layer_1
+            self.conv1 = nn.Conv2d(1, conv_filters_1, kernel_size=kernel_size)
+            self.bn1 = nn.BatchNorm2d(conv_filters_1) if normalization_strategy == "batchnorm" else nn.Identity()
+            self.ln1 = (
+                nn.LayerNorm([conv_filters_1, X.shape[2] - kernel_size + 1, X.shape[3] - kernel_size + 1])
+                if normalization_strategy == "layernorm"
+                else nn.Identity()
+            )
 
-            if num_conv_layers >= 2:
-                self.conv2 = nn.Conv2d(in_channels, filters_layer_2, kernel_size=kernel_size)
-                self.relu2 = nn.ReLU()
-                self.pool2 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
-                conv_layers.extend([self.conv2, self.relu2, self.pool2])
-                in_channels = filters_layer_2
+            if pooling_type == "max":
+                self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
             else:
-                self.conv2 = self.relu2 = self.pool2 = None
+                self.pool1 = nn.AvgPool2d(kernel_size=2, stride=2)
 
-            if num_conv_layers >= 3:
-                self.conv3 = nn.Conv2d(in_channels, filters_layer_3, kernel_size=kernel_size)
-                self.relu3 = nn.ReLU()
-                self.pool3 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
-                conv_layers.extend([self.conv3, self.relu3, self.pool3])
-                in_channels = filters_layer_3
+            self.conv2 = nn.Conv2d(conv_filters_1, conv_filters_2, kernel_size=kernel_size) if num_conv_layers >= 2 else None
+            self.bn2 = nn.BatchNorm2d(conv_filters_2) if num_conv_layers >= 2 and normalization_strategy == "batchnorm" else nn.Identity()
+            self.ln2 = (
+                nn.LayerNorm([conv_filters_2, (X.shape[2] - kernel_size + 1) // 2, (X.shape[3] - kernel_size + 1) // 2])
+                if num_conv_layers >= 2 and normalization_strategy == "layernorm"
+                else nn.Identity()
+            )
+
+            if pooling_type == "max":
+                self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2) if num_conv_layers >= 2 else None
             else:
-                self.conv3 = self.relu3 = self.pool3 = None
+                self.pool2 = nn.AvgPool2d(kernel_size=2, stride=2) if num_conv_layers >= 2 else None
 
-            if num_conv_layers >= 4:
-                self.conv4 = nn.Conv2d(in_channels, filters_layer_4, kernel_size=kernel_size)
-                self.relu4 = nn.ReLU()
-                self.pool4 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
-                conv_layers.extend([self.conv4, self.relu4, self.pool4])
-                in_channels = filters_layer_4
+            self.conv3 = nn.Conv2d(conv_filters_2, conv_filters_3, kernel_size=kernel_size) if num_conv_layers == 3 else None
+            self.bn3 = nn.BatchNorm2d(conv_filters_3) if num_conv_layers == 3 and normalization_strategy == "batchnorm" else nn.Identity()
+            self.ln3 = (
+                nn.LayerNorm([conv_filters_3, ((X.shape[2] - kernel_size + 1) // 2) // 2, ((X.shape[3] - kernel_size + 1) // 2) // 2])
+                if num_conv_layers == 3 and normalization_strategy == "layernorm"
+                else nn.Identity()
+            )
+
+            if pooling_type == "max":
+                self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2) if num_conv_layers == 3 else None
             else:
-                self.conv4 = self.relu4 = self.pool4 = None
+                self.pool3 = nn.AvgPool2d(kernel_size=2, stride=2) if num_conv_layers == 3 else None
 
-            if num_conv_layers >= 5:
-                self.conv5 = nn.Conv2d(in_channels, filters_layer_5, kernel_size=kernel_size)
-                self.relu5 = nn.ReLU()
-                self.pool5 = nn.MaxPool2d(2) if pooling_type == "max" else nn.AvgPool2d(2)
-                conv_layers.extend([self.conv5, self.relu5, self.pool5])
-            else:
-                self.conv5 = self.relu5 = self.pool5 = None
+            # Calculate the output size of the convolutional layers
+            if num_conv_layers == 1:
+                conv_out_size = (X.shape[2] - kernel_size + 1) // 2 * (X.shape[3] - kernel_size + 1) // 2 * conv_filters_1
+            elif num_conv_layers == 2:
+                conv_out_size = ((X.shape[2] - kernel_size + 1) // 2) // 2 * ((X.shape[3] - kernel_size + 1) // 2) // 2 * conv_filters_2
+            else:  # num_conv_layers == 3
+                conv_out_size = (((X.shape[2] - kernel_size + 1) // 2) // 2) // 2 * (((X.shape[3] - kernel_size + 1) // 2) // 2) // 2 * conv_filters_3
 
-            self.conv_layers = nn.Sequential(*conv_layers)
+            self.fc1 = nn.Linear(conv_out_size, cfg.get("dense_size_1"))
+            self.bn_fc1 = nn.BatchNorm1d(cfg.get("dense_size_1")) if normalization_strategy == "batchnorm" else nn.Identity()
+            self.ln_fc1 = nn.LayerNorm(cfg.get("dense_size_1")) if normalization_strategy == "layernorm" else nn.Identity()
 
-            # Calculate the output size of the convolutional layers dynamically
-            test_input = torch.randn(1, 1, height, width)
-            with torch.no_grad():
-                output_conv = self.conv_layers(test_input)
-            conv_output_size = output_conv.view(1, -1).size(1)
-
-            dense_layers = []
-            in_features = conv_output_size
-
-            self.fc1 = nn.Linear(in_features, dense_units_1)
-            self.relu_fc1 = nn.ReLU()
-            self.dropout1 = nn.Dropout(dropout_rate)
-            dense_layers.extend([self.fc1, self.relu_fc1, self.dropout1])
-            in_features = dense_units_1
-
-            if num_dense_layers >= 2:
-                self.fc2 = nn.Linear(in_features, dense_units_2)
-                self.relu_fc2 = nn.ReLU()
-                self.dropout2 = nn.Dropout(dropout_rate)
-                dense_layers.extend([self.fc2, self.relu_fc2, self.dropout2])
-                in_features = dense_units_2
-            else:
-                self.fc2 = self.relu_fc2 = self.dropout2 = None
-
-            if num_dense_layers >= 3:
-                self.fc3 = nn.Linear(in_features, dense_units_3)
-                self.relu_fc3 = nn.ReLU()
-                self.dropout3 = nn.Dropout(dropout_rate)
-                dense_layers.extend([self.fc3, self.relu_fc3, self.dropout3])
-            else:
-                self.fc3 = self.relu_fc3 = self.dropout3 = None
-
-            self.dense_layers = nn.Sequential(*dense_layers)
-            in_features = dense_units_3 if num_dense_layers == 3 else dense_units_2 if num_dense_layers == 2 else dense_units_1
-
-            self.fc_out = nn.Linear(in_features, num_classes)
+            self.fc2 = nn.Linear(cfg.get("dense_size_1"), num_classes)
 
         def forward(self, x):
-            x = self.conv_layers(x)
-            x = x.view(x.size(0), -1)  # Flatten
-            x = self.dense_layers(x)
+            x = torch.relu(self.conv1(x))
+            x = self.bn1(x)
+            x = self.ln1(x)
+            x = self.pool1(x)
+
+            if self.conv2 is not None:
+                x = torch.relu(self.conv2(x))
+                x = self.bn2(x)
+                x = self.ln2(x)
+                x = self.pool2(x)
+
+            if self.conv3 is not None:
+                x = torch.relu(self.conv3(x))
+                x = self.bn3(x)
+                x = self.ln3(x)
+                x = self.pool3(x)
+
+            x = torch.flatten(x, 1)
+            x = torch.relu(self.fc1(x))
+            x = self.bn_fc1(x)
+            x = self.ln_fc1(x)
+            x = self.fc2(x)
+            return x
+
+    class MLP(nn.Module):
+        def __init__(self, num_classes, cfg):
+            super(MLP, self).__init__()
+            dense_size_1 = cfg.get("dense_size_1")
+            dense_size_2 = cfg.get("dense_size_2")
+            dropout_rate = cfg.get("dropout_rate")
+            normalization_strategy = cfg.get("normalization_strategy")
+            num_dense_layers = cfg.get("num_dense_layers")
+
+            self.fc1 = nn.Linear(X.shape[1] * X.shape[2] * X.shape[3], dense_size_1)
+            self.bn1 = nn.BatchNorm1d(dense_size_1) if normalization_strategy == "batchnorm" else nn.Identity()
+            self.ln1 = nn.LayerNorm(dense_size_1) if normalization_strategy == "layernorm" else nn.Identity()
+            self.dropout1 = nn.Dropout(dropout_rate)
+
+            self.fc2 = nn.Linear(dense_size_1, dense_size_2) if num_dense_layers == 2 else None
+            self.bn2 = nn.BatchNorm1d(dense_size_2) if num_dense_layers == 2 and normalization_strategy == "batchnorm" else nn.Identity()
+            self.ln2 = nn.LayerNorm(dense_size_2) if num_dense_layers == 2 and normalization_strategy == "layernorm" else nn.Identity()
+            self.dropout2 = nn.Dropout(dropout_rate) if num_dense_layers == 2 else None
+
+            self.fc_out = nn.Linear(dense_size_2 if num_dense_layers == 2 else dense_size_1, num_classes)
+
+        def forward(self, x):
+            x = torch.flatten(x, 1)
+            x = torch.relu(self.fc1(x))
+            x = self.bn1(x)
+            x = self.ln1(x)
+            x = self.dropout1(x)
+
+            if self.fc2 is not None:
+                x = torch.relu(self.fc2(x))
+                x = self.bn2(x)
+                x = self.ln2(x)
+                x = self.dropout2(x)
+
             x = self.fc_out(x)
             return x
 
-    # Instantiate the model
-    # Determine height and width based on the reshaped data
-    if len(X.shape) == 4:
-        height, width = X.shape[2], X.shape[3]
-    else:
-        raise ValueError("X tensor should have 4 dimensions after reshaping")
-    model = CNN(num_classes, height, width)
+    if model_type == "cnn":
+        model = CNN(num_classes, cfg).to(device)
+    else:  # model_type == "mlp"
+        model = MLP(num_classes, cfg).to(device)
 
-    # Define loss function
-    criterion = nn.CrossEntropyLoss()
-
-    # Define optimizer
+    # Optimizer definition
     if optimizer_name == "adam":
-        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(adam_beta1, adam_beta2))
-    elif optimizer_name == "sgd":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    else:  # optimizer_name == "sgd"
+        sgd_momentum = cfg.get("sgd_momentum")
         optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=sgd_momentum)
-    elif optimizer_name == "rmsprop":
-        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, rho=rmsprop_rho)
-    else:
-        raise ValueError(f"Unknown optimizer: {{optimizer_name}}")
 
-    # Create data loader
-    dataset = TensorDataset(X, y)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    # Loss function
+    criterion = nn.CrossEntropyLoss()
 
     # Training loop
     model.train()
-    for epoch in range(epochs):
-        for inputs, labels in dataloader:
+    for epoch in range(num_epochs):
+        for i in range(0, n_samples, batch_size):
+            X_batch = X[i : i + batch_size]
+            y_batch = y[i : i + batch_size]
+
+            # Forward pass
+            outputs = model(X_batch)
+            loss = criterion(outputs, y_batch)
+
+            # Backward and optimize
             optimizer.zero_grad()
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
-    # Return the final loss
-    model.eval()
-    with torch.no_grad():
-        outputs = model(X)
-        loss = criterion(outputs, y).item()
-
-    return float(loss)
+    return loss.item()

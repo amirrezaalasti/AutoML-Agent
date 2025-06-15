@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import zipfile
+import io
+from datetime import datetime
 
 # Core dataset libraries (conflict‑free)
 from sklearn.datasets import (
@@ -46,7 +49,7 @@ DATASET_OPTIONS = {
         "MNIST",
         "Fashion‑MNIST",
     ],
-    "time_series": ["Sunspots"],
+    "time_series": ["Sunspot"],
     "text": ["20 Newsgroups"],
     "categorical": ["Breast Cancer", "Wine", "Adult Income"],
 }
@@ -57,6 +60,7 @@ class AutoMLAppUI:
         self.dataset = None
         self.data_type = None
         self.model_choice = None
+        self.dataset_name = None
 
     def load_dataset(self, data_type, dataset_name):
         # 1. Tabular
@@ -160,6 +164,7 @@ class AutoMLAppUI:
                     api_key = GROQ_API_KEY
 
                 llm_client = LLMClient(api_key=api_key, model_name=self.model_choice)
+                self.dataset_name = dataset_choice
                 agent = AutoMLAgent(
                     dataset=self.dataset,
                     llm_client=llm_client,
@@ -175,8 +180,45 @@ class AutoMLAppUI:
                     prompts,
                 ) = agent.generate_components()
 
-                st.success("AutoML Agent setup complete!")
-                st.subheader("Loss Value")
-                st.write(loss)
                 st.subheader("Prompts Used")
                 st.write(prompts)
+
+                # Add download button for generated code and prompts
+                zip_buffer = self.create_download_zip(config_code, scenario_code, train_code, prompts)
+                st.download_button(
+                    label="Download Generated Code and Prompts",
+                    data=zip_buffer,
+                    file_name=f"automl_generated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
+                    mime="application/zip",
+                )
+
+    def create_download_zip(self, config_code, scenario_code, train_code, prompts):
+        """Create a zip file containing all generated code and prompts."""
+        zip_buffer = io.BytesIO()
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+            # Add code files
+            zip_file.writestr("config.py", config_code)
+            zip_file.writestr("scenario.py", scenario_code)
+            zip_file.writestr("train.py", train_code)
+
+            # Add prompts
+            zip_file.writestr("prompts.txt", "\n\n".join(prompts))
+
+            # Add a README
+            readme_content = f"""AutoML Generated Code
+            Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+            Dataset: {self.data_type} - {self.dataset_name}
+            Model: {self.model_choice}
+
+            This zip contains:
+            - config.py: Configuration code
+            - scenario.py: Scenario implementation
+            - train.py: Training code
+            - prompts.txt: All prompts used during generation
+            """
+            zip_file.writestr("README.txt", readme_content)
+
+        zip_buffer.seek(0)
+        return zip_buffer

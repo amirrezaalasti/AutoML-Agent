@@ -5,9 +5,11 @@ from scripts.utils import (
     save_code,
     format_dataset,
     extract_code_block,
+    generate_general_dataset_task_types,
 )
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
+from configs.api_keys import OPENML_API_KEY, CSV_PATH
 from scripts.LLMPlanner import LLMPlanner
 from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
@@ -71,42 +73,25 @@ class AutoMLAgent:
             base_log_dir="./logs",
         )
 
-        self.openML = OpenMLRAG()
+        self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=CSV_PATH)
         self.LLMInstructor = LLMPlanner(
             dataset_name=self.dataset_name,
             dataset_description=self.dataset_description,
             dataset_type=self.dataset_type,
         )
 
-    def extract_suggested_config_space_parameters(self, dataset_name_in_openml: str = None):
-        """
-        Extract suggested configuration space parameters from OpenML related datasets.
-        :param dataset_name_in_openml: The name of the dataset in OpenML to find related datasets.
-        :return: A dictionary of suggested parameters for the configuration space.
-        """
-        sample_datasets = self.openML.get_related_datasets(dataset_name=dataset_name_in_openml)
-        if sample_datasets is None or sample_datasets.empty:
-            self.logger.log_error(
-                f"No related datasets found for {dataset_name_in_openml}",
-                error_type="DATASET_NOT_FOUND",
-            )
-            self.ui_agent.error(f"No related datasets found for {dataset_name_in_openml} in OpenML.")
-            return {}
-
-        tasks = self.openML.get_related_tasks_of_dataset(dataset_id=sample_datasets.did, task_type="classification")
-        task_ids = tasks["tid"].tolist()
-
-        parameters = self.openML.get_setup_parameters_of_tasks(task_ids=task_ids)
-
-        return parameters
-
     def generate_components(self):
         """
         Generate the configuration space, scenario, and training function code using LLM.
         :return: Tuple containing the generated configuration space, scenario, training function code, last loss, and prompts.
         """
-        config_space_suggested_parameters = self.extract_suggested_config_space_parameters(dataset_name_in_openml=self.dataset_name)
-        instructor_response = self.LLMInstructor.generate_instructions(config_space_suggested_parameters)
+        config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
+            dataset_name_in_openml=self.dataset_name,
+            task_types=generate_general_dataset_task_types(self.dataset_type),
+        )
+        instructor_response = self.LLMInstructor.generate_instructions(
+            config_space_suggested_parameters,
+        )
 
         # Configuration Space
         self.prompts["config"] = self._create_config_prompt(config_space_suggested_parameters)
@@ -143,6 +128,13 @@ class AutoMLAgent:
         save_code(self.train_function, "scripts/generated_codes/generated_train_function.py")
 
         from scripts.generated_codes.generated_train_function import train
+
+        self.ui_agent.success("AutoML Agent setup complete!")
+        self.ui_agent.subheader("Loss Value")
+        self.ui_agent.write(self.last_loss)
+
+        self.ui_agent.subheader("Starting Optimization Process")
+        self.ui_agent.write("Starting Optimization Process")
 
         self.run_scenario(self.scenario_obj, train, self.dataset, self.config_space_obj)
 
@@ -260,7 +252,11 @@ class AutoMLAgent:
         """
         smac_file_name = self.llm.model_name.replace(" ", "_").lower() + self.dataset_name.replace(" ", "_").lower() + time.strftime("%Y%m%d_%H%M%S")
         with open("templates/scenario_prompt.txt", "r") as f:
-            base_prompt = f.read().format(dataset_description=self.dataset_description, smac_file_name=smac_file_name, scenario_plan=scenario_plan)
+            base_prompt = f.read().format(
+                dataset_description=self.dataset_description,
+                smac_file_name=smac_file_name,
+                scenario_plan=scenario_plan,
+            )
 
         return base_prompt
 
