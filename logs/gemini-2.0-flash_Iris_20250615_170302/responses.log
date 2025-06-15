@@ -1,0 +1,739 @@
+[2025-06-15 17:03:15] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100,
+        q=1,  # Quantization: step size of 1
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0,
+        doc="The number of features to consider when looking for the best split."
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2,
+        q=1,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1,
+        q=1,
+        doc="The minimum number of samples required to be at a leaf node."
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True,
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True,
+        doc="Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’."
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5,
+        q=1,
+        doc="Number of neighbors to use by default for kneighbors queries."
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform",
+        doc="Weight function used in prediction.  'uniform' : uniform weights.  'distance' : weight points by the inverse of their distance."
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True,
+        doc="Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization."
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs",
+        doc="Algorithm to use in the optimization problem. 'lbfgs' is a good default choice for many cases.",
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:15] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100,
+        q=1,  # Quantization: step size of 1
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0,
+        doc="The number of features to consider when looking for the best split."
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2,
+        q=1,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1,
+        q=1,
+        doc="The minimum number of samples required to be at a leaf node."
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True,
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True,
+        doc="Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’."
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5,
+        q=1,
+        doc="Number of neighbors to use by default for kneighbors queries."
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform",
+        doc="Weight function used in prediction.  'uniform' : uniform weights.  'distance' : weight points by the inverse of their distance."
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True,
+        doc="Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization."
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs",
+        doc="Algorithm to use in the optimization problem. 'lbfgs' is a good default choice for many cases.",
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:15] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:19] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100,
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0,
+        doc="The number of features to consider when looking for the best split."
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1,
+        doc="The minimum number of samples required to be at a leaf node."
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True,
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True,
+        doc="Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’."
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5,
+        doc="Number of neighbors to use by default for kneighbors queries."
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform",
+        doc="Weight function used in prediction.  'uniform' : uniform weights.  'distance' : weight points by the inverse of their distance."
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True,
+        doc="Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization."
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs",
+        doc="Algorithm to use in the optimization problem. 'lbfgs' is a good default choice for many cases.",
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:19] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100,
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0,
+        doc="The number of features to consider when looking for the best split."
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1,
+        doc="The minimum number of samples required to be at a leaf node."
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True,
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True,
+        doc="Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’."
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5,
+        doc="Number of neighbors to use by default for kneighbors queries."
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform",
+        doc="Weight function used in prediction.  'uniform' : uniform weights.  'distance' : weight points by the inverse of their distance."
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True,
+        doc="Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization."
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs",
+        doc="Algorithm to use in the optimization problem. 'lbfgs' is a good default choice for many cases.",
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:19] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'doc'
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:23] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform"
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs"
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:23] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform"
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs"
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:23] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:24] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration for hyperparameter optimization.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample the configurations.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+    scenario = Scenario(
+        configspace=cs,
+        name="iris_optimization",
+        output_directory="automl_results",
+        deterministic=False,
+        walltime_limit=60,
+        cputime_limit=60,
+        n_trials=100,
+        n_workers=1,
+        trial_walltime_limit=30,
+        trial_memory_limit=2048,
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:24] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration for hyperparameter optimization.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample the configurations.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+    scenario = Scenario(
+        configspace=cs,
+        name="iris_optimization",
+        output_directory="automl_results",
+        deterministic=False,
+        walltime_limit=60,
+        cputime_limit=60,
+        n_trials=100,
+        n_workers=1,
+        trial_walltime_limit=30,
+        trial_memory_limit=2048,
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:24] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:28] [Metadata: {'component': 'train_function'}] ```python
+import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from ConfigSpace import Configuration
+from typing import Any
+import warnings
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the feature matrix 'X' and labels 'y'.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average cross-validation score.  Returns -1.0 if a warning is encountered during training.
+    """
+    try:
+        X = dataset['X']
+        y = dataset['y']
+
+        # Random Forest
+        if all(key in cfg for key in ["rf_n_estimators", "rf_max_features", "rf_min_samples_split", "rf_min_samples_leaf"]):
+            model = RandomForestClassifier(
+                n_estimators=cfg.get("rf_n_estimators"),
+                max_features=cfg.get("rf_max_features"),
+                min_samples_split=cfg.get("rf_min_samples_split"),
+                min_samples_leaf=cfg.get("rf_min_samples_leaf"),
+                random_state=seed,
+                n_jobs=1 # Ensure reproducibility and limit memory usage
+            )
+        # SVM
+        elif all(key in cfg for key in ["svm_C", "svm_gamma"]):
+            model = SVC(
+                C=cfg.get("svm_C"),
+                gamma=cfg.get("svm_gamma"),
+                random_state=seed
+            )
+        # KNN
+        elif all(key in cfg for key in ["knn_n_neighbors", "knn_weights"]):
+            model = KNeighborsClassifier(
+                n_neighbors=cfg.get("knn_n_neighbors"),
+                weights=cfg.get("knn_weights")
+            )
+        # Logistic Regression
+        elif all(key in cfg for key in ["lr_C", "lr_solver"]):
+            model = LogisticRegression(
+                C=cfg.get("lr_C"),
+                solver=cfg.get("lr_solver"),
+                random_state=seed,
+                max_iter=1000 # Add max_iter to prevent convergence warnings
+            )
+        else:
+            # Default: Random Forest with some reasonable defaults if no coherent config is found
+             model = RandomForestClassifier(
+                n_estimators=100,
+                max_features=0.7,
+                min_samples_split=2,
+                min_samples_leaf=1,
+                random_state=seed,
+                n_jobs=1
+            )
+            
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")  # Ignore warnings during cross-validation
+            scores = cross_val_score(model, X, y, cv=5, scoring='accuracy', n_jobs=1) #Explicitly set n_jobs=1 to avoid shared memory issues
+            return np.mean(scores)
+
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return -1.0
+```
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:28] [Metadata: {'component': 'train_function', 'action': 'run'}] import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from ConfigSpace import Configuration
+from typing import Any
+import warnings
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the feature matrix 'X' and labels 'y'.
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The average cross-validation score.  Returns -1.0 if a warning is encountered during training.
+    """
+    try:
+        X = dataset['X']
+        y = dataset['y']
+
+        # Random Forest
+        if all(key in cfg for key in ["rf_n_estimators", "rf_max_features", "rf_min_samples_split", "rf_min_samples_leaf"]):
+            model = RandomForestClassifier(
+                n_estimators=cfg.get("rf_n_estimators"),
+                max_features=cfg.get("rf_max_features"),
+                min_samples_split=cfg.get("rf_min_samples_split"),
+                min_samples_leaf=cfg.get("rf_min_samples_leaf"),
+                random_state=seed,
+                n_jobs=1 # Ensure reproducibility and limit memory usage
+            )
+        # SVM
+        elif all(key in cfg for key in ["svm_C", "svm_gamma"]):
+            model = SVC(
+                C=cfg.get("svm_C"),
+                gamma=cfg.get("svm_gamma"),
+                random_state=seed
+            )
+        # KNN
+        elif all(key in cfg for key in ["knn_n_neighbors", "knn_weights"]):
+            model = KNeighborsClassifier(
+                n_neighbors=cfg.get("knn_n_neighbors"),
+                weights=cfg.get("knn_weights")
+            )
+        # Logistic Regression
+        elif all(key in cfg for key in ["lr_C", "lr_solver"]):
+            model = LogisticRegression(
+                C=cfg.get("lr_C"),
+                solver=cfg.get("lr_solver"),
+                random_state=seed,
+                max_iter=1000 # Add max_iter to prevent convergence warnings
+            )
+        else:
+            # Default: Random Forest with some reasonable defaults if no coherent config is found
+             model = RandomForestClassifier(
+                n_estimators=100,
+                max_features=0.7,
+                min_samples_split=2,
+                min_samples_leaf=1,
+                random_state=seed,
+                n_jobs=1
+            )
+            
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")  # Ignore warnings during cross-validation
+            scores = cross_val_score(model, X, y, cv=5, scoring='accuracy', n_jobs=1) #Explicitly set n_jobs=1 to avoid shared memory issues
+            return np.mean(scores)
+
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return -1.0
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:29] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 0.9466666666666665}] Training executed successfully, loss: 0.9466666666666665
+--------------------------------------------------------------------------------

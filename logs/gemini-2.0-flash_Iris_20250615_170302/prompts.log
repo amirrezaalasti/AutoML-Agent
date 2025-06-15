@@ -1,0 +1,2533 @@
+[2025-06-15 17:03:15] [Metadata: {'component': 'config'}] **Generate a production-grade Python configuration space for machine learning hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+def get_configspace() -> ConfigurationSpace:
+```
+
+---
+
+### **Configuration Space Requirements:**
+
+* The configuration space **must** be appropriate for the dataset type and characteristics:
+  * Dataset Description: `This is a tabular dataset.
+It has 150 samples and 4 features.
+Feature columns and types:
+- 0: float64
+- 1: float64
+- 2: float64
+- 3: float64
+
+Feature statistical summary:
+                0           1           2           3
+count  150.000000  150.000000  150.000000  150.000000
+mean     5.843333    3.057333    3.758000    1.199333
+std      0.828066    0.435866    1.765298    0.762238
+min      4.300000    2.000000    1.000000    0.100000
+25%      5.100000    2.800000    1.600000    0.300000
+50%      5.800000    3.000000    4.350000    1.300000
+75%      6.400000    3.300000    5.100000    1.800000
+max      7.900000    4.400000    6.900000    2.500000
+
+Label distribution:
+0    50
+1    50
+2    50
+Name: count, dtype: int64`
+
+* If OpenML parameters are provided, use them as a reference:
+  * Suggested Parameters: `[]`
+
+* The configuration space **must** include:
+  * Appropriate hyperparameter ranges based on the dataset characteristics
+  * Reasonable default values
+  * Proper hyperparameter types (continuous, discrete, categorical)
+  * Conditional hyperparameters if needed
+  * Proper bounds and constraints
+
+* **Best Practices:**
+  * Use meaningful hyperparameter names
+  * Include proper documentation for each hyperparameter
+  * Consider dataset size and complexity when setting ranges
+  * Ensure ranges are not too narrow or too wide
+  * Add proper conditions between dependent hyperparameters
+
+* **Common Hyperparameters to Consider:**
+  * Learning rate (if applicable)
+  * Model-specific hyperparameters
+  * Regularization parameters
+  * Architecture parameters
+  * Optimization parameters
+
+---
+
+### **Output Format:**
+
+* Return **only** the `get_configspace()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all hyperparameter names are valid Python identifiers
+* Verify that all ranges and bounds are valid
+* Check that conditional hyperparameters are properly defined
+* Validate that default values are within the specified ranges
+
+---
+
+### **Example Structure:**
+
+```python
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+    
+    # Add hyperparameters
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+    
+    # Add more hyperparameters...
+    
+    return cs
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `get_configspace()` function that returns a properly configured `ConfigurationSpace` object
+* No additional code or explanations
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:15] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:15] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:15] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100,
+        q=1,  # Quantization: step size of 1
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0,
+        doc="The number of features to consider when looking for the best split."
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2,
+        q=1,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1,
+        q=1,
+        doc="The minimum number of samples required to be at a leaf node."
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True,
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True,
+        doc="Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’."
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5,
+        q=1,
+        doc="Number of neighbors to use by default for kneighbors queries."
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform",
+        doc="Weight function used in prediction.  'uniform' : uniform weights.  'distance' : weight points by the inverse of their distance."
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True,
+        doc="Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization."
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs",
+        doc="Algorithm to use in the optimization problem. 'lbfgs' is a good default choice for many cases.",
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:19] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:19] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'doc'
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:19] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'doc'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100,
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0,
+        doc="The number of features to consider when looking for the best split."
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1,
+        doc="The minimum number of samples required to be at a leaf node."
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True,
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True,
+        doc="Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’."
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5,
+        doc="Number of neighbors to use by default for kneighbors queries."
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform",
+        doc="Weight function used in prediction.  'uniform' : uniform weights.  'distance' : weight points by the inverse of their distance."
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True,
+        doc="Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization."
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs",
+        doc="Algorithm to use in the optimization problem. 'lbfgs' is a good default choice for many cases.",
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:23] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:24] [Metadata: {'component': 'scenario'}] **Generate a production-grade Python scenario configuration for SMAC hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+```
+
+---
+
+### **Scenario Configuration Requirements:**
+
+* The scenario **must** be optimized for the dataset characteristics:
+  * Dataset Description: `This is a tabular dataset.
+It has 150 samples and 4 features.
+Feature columns and types:
+- 0: float64
+- 1: float64
+- 2: float64
+- 3: float64
+
+Feature statistical summary:
+                0           1           2           3
+count  150.000000  150.000000  150.000000  150.000000
+mean     5.843333    3.057333    3.758000    1.199333
+std      0.828066    0.435866    1.765298    0.762238
+min      4.300000    2.000000    1.000000    0.100000
+25%      5.100000    2.800000    1.600000    0.300000
+50%      5.800000    3.000000    4.350000    1.300000
+75%      6.400000    3.300000    5.100000    1.800000
+max      7.900000    4.400000    6.900000    2.500000
+
+Label distribution:
+0    50
+1    50
+2    50
+Name: count, dtype: int64`
+
+* The scenario **must** include:
+  * Appropriate budget settings (min_budget, max_budget)
+  * Optimal number of workers for parallelization
+  * Reasonable walltime and CPU time limits
+  * Proper trial resource constraints
+  * Appropriate number of trials
+
+* **Best Practices:**
+  * Set deterministic=False for better generalization
+  * Use multi-fidelity optimization when appropriate
+  * Configure proper output directory structure
+  * Set appropriate trial resource limits
+  * Enable parallel optimization when possible
+
+* **Resource Management:**
+  * Set appropriate memory limits for trials
+  * Configure proper walltime limits
+  * Enable parallel processing when beneficial
+  * Consider dataset size for budget settings
+
+---
+
+### **Available Parameters:**
+    configspace : ConfigurationSpace
+        The configuration space from which to sample the configurations.
+    name : str | None, defaults to None
+        The name of the run. If no name is passed, SMAC generates a hash from the meta data.
+        Specify this argument to identify your run easily.
+    output_directory : Path, defaults to Path("smac3_output")
+        The directory in which to save the output. The files are saved in `./output_directory/name/seed`.
+    deterministic : bool, defaults to False
+        If deterministic is set to true, only one seed is passed to the target function.
+        Otherwise, multiple seeds (if n_seeds of the intensifier is greater than 1) are passed
+        to the target function to ensure generalization.
+    objectives : str | list[str] | None, defaults to "cost"
+        The objective(s) to optimize. This argument is required for multi-objective optimization.
+    crash_cost : float | list[float], defaults to np.inf
+        Defines the cost for a failed trial. In case of multi-objective, each objective can be associated with
+        a different cost.
+    termination_cost_threshold : float | list[float], defaults to np.inf
+        Defines a cost threshold when the optimization should stop. In case of multi-objective, each objective *must* be
+        associated with a cost. The optimization stops when all objectives crossed the threshold.
+    walltime_limit : float, defaults to np.inf
+        The maximum time in seconds that SMAC is allowed to run.
+    cputime_limit : float, defaults to np.inf
+        The maximum CPU time in seconds that SMAC is allowed to run.
+    trial_walltime_limit : float | None, defaults to None
+        The maximum time in seconds that a trial is allowed to run. If not specified,
+        no constraints are enforced. Otherwise, the process will be spawned by pynisher.
+    trial_memory_limit : int | None, defaults to None
+        The maximum memory in MB that a trial is allowed to use. If not specified,
+        no constraints are enforced. Otherwise, the process will be spawned by pynisher.
+    n_trials : int, defaults to 100
+        The maximum number of trials (combination of configuration, seed, budget, and instance, depending on the task)
+        to run.
+    use_default_config: bool, defaults to False.
+        If True, the configspace's default configuration is evaluated in the initial design.
+        For historic benchmark reasons, this is False by default.
+        Notice, that this will result in n_configs + 1 for the initial design. Respecting n_trials,
+        this will result in one fewer evaluated configuration in the optimization.
+    instances : list[str] | None, defaults to None
+        Names of the instances to use. If None, no instances are used.
+        Instances could be dataset names, seeds, subsets, etc.
+    instance_features : dict[str, list[float]] | None, defaults to None
+        Instances can be associated with features. For example, meta data of the dataset (mean, var, ...) can be
+        incorporated which are then further used to expand the training data of the surrogate model.
+    min_budget : float | int | None, defaults to None
+        The minimum budget (epochs, subset size, number of instances, ...) that is used for the optimization.
+        Use this argument if you use multi-fidelity or instance optimization.
+    max_budget : float | int | None, defaults to None
+        The maximum budget (epochs, subset size, number of instances, ...) that is used for the optimization.
+        Use this argument if you use multi-fidelity or instance optimization.
+    seed : int, defaults to 0
+        The seed is used to make results reproducible. If seed is -1, SMAC will generate a random seed.
+    n_workers : int, defaults to 1
+        The number of workers to use for parallelization. If `n_workers` is greather than 1, SMAC will use
+        Dask to parallelize the optimization.
+
+--- 
+
+### **Output Format:**
+
+* Return **only** the `generate_scenario(cs)` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all parameters are within valid ranges
+* Verify that resource limits are reasonable
+* Check that budget settings are appropriate
+* Validate that parallelization settings are correct
+* Ensure the training function can be pickled for parallel processing
+
+---
+
+### **Example Structure:**
+
+```python
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashiris20250615_170323",
+        output_directory="./automl_results", //this is important and should not be changed
+        deterministic=True,
+        //other parameters based on the information
+    )
+    return scenario
+```
+
+---
+
+### **Suggested Scenario Plan:**
+
+Based on the Iris dataset's characteristics, multi-fidelity optimization is not necessary due to the dataset's small size and fast training time. Instead, a BlackBoxFacade or HyperparameterOptimizationFacade is more appropriate. Given the dataset's simplicity, using a single worker (n_workers=1) is sufficient. For scenario parameters, define a configuration space relevant to the model's hyperparameters and set a reasonable walltime_limit (e.g., 60 seconds) and n_trials (e.g., 100) for the optimization process. 
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
+* No additional code or explanations
+* The output_directory should be "automl_results"
+
+
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:24] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:28] [Metadata: {'component': 'train_function'}] **Generate a production-grade Python training function for machine learning with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import Configuration
+from typing import Any
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+```
+
+---
+
+### **Function Behavior Requirements:**
+
+* The function **must** handle the dataset properly:
+  * Dataset Description: `This is a tabular dataset.
+It has 150 samples and 4 features.
+Feature columns and types:
+- 0: float64
+- 1: float64
+- 2: float64
+- 3: float64
+
+Feature statistical summary:
+                0           1           2           3
+count  150.000000  150.000000  150.000000  150.000000
+mean     5.843333    3.057333    3.758000    1.199333
+std      0.828066    0.435866    1.765298    0.762238
+min      4.300000    2.000000    1.000000    0.100000
+25%      5.100000    2.800000    1.600000    0.300000
+50%      5.800000    3.000000    4.350000    1.300000
+75%      6.400000    3.300000    5.100000    1.800000
+max      7.900000    4.400000    6.900000    2.500000
+
+Label distribution:
+0    50
+1    50
+2    50
+Name: count, dtype: int64`
+  * ConfigSpace Definition: `from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+
+    This configuration space is designed for a tabular dataset with 150 samples and 4 numerical features.
+    It focuses on hyperparameters relevant for common machine learning algorithms suitable for this type of data.
+    """
+
+    cs = ConfigurationSpace()
+
+    # =========================================================================
+    # Random Forest hyperparameters
+    # =========================================================================
+    n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=10, upper=200, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+
+    max_features = UniformFloatHyperparameter(
+        "rf_max_features", lower=0.1, upper=1.0, default_value=1.0
+    )
+    cs.add_hyperparameter(max_features)
+
+    min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=20, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=20, default_value=1
+    )
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # =========================================================================
+    # SVM hyperparameters (rbf kernel)
+    # =========================================================================
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=100, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(svm_C)
+
+    svm_gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.0001, upper=10, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(svm_gamma)
+
+    # =========================================================================
+    # k-Nearest Neighbors hyperparameters
+    # =========================================================================
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=1, upper=20, default_value=5
+    )
+    cs.add_hyperparameter(knn_n_neighbors)
+
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", choices=["uniform", "distance"], default_value="uniform"
+    )
+    cs.add_hyperparameter(knn_weights)
+
+    # =========================================================================
+    # Logistic Regression hyperparameters
+    # =========================================================================
+    lr_C = UniformFloatHyperparameter(
+        "lr_C", lower=0.001, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(lr_C)
+
+    lr_solver = CategoricalHyperparameter(
+        "lr_solver", choices=["lbfgs", "liblinear", "newton-cg", "sag", "saga"], default_value="lbfgs"
+    )
+    cs.add_hyperparameter(lr_solver)
+
+    return cs
+`
+  * SMAC Scenario: `from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration for hyperparameter optimization.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample the configurations.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+    scenario = Scenario(
+        configspace=cs,
+        name="iris_optimization",
+        output_directory="automl_results",
+        deterministic=False,
+        walltime_limit=60,
+        cputime_limit=60,
+        n_trials=100,
+        n_workers=1,
+        trial_walltime_limit=30,
+        trial_memory_limit=2048,
+    )
+    return scenario
+`
+
+* The function **must** accept a `dataset` dictionary with:
+  * `dataset['X']`: feature matrix or input tensor
+  * `dataset['y']`: label vector or label tensor
+
+* The function **must** handle the configuration properly:
+  * Access primitive values using `cfg.get('key')`
+  * Handle all hyperparameters defined in the configuration space
+  * Apply proper type conversion and validation
+  * Handle conditional hyperparameters correctly
+
+* **Model Requirements:**
+  * Infer input and output dimensions dynamically
+  * Follow data format requirements
+  * Handle necessary data transformations
+  * Implement proper model initialization
+  * Use appropriate loss functions
+  * Apply proper regularization
+  * Handle model-specific requirements
+
+* **Training Requirements:**
+  * Implement proper training loop
+  * Handle batch processing
+  * Apply proper optimization
+  * Implement early stopping if needed
+  * Handle validation if required
+  * Return appropriate loss value
+
+* **Performance Optimization Requirements:**
+  * Minimize memory usage and allocations
+  * Use vectorized operations where possible
+  * Avoid unnecessary data copying
+  * Optimize data loading and preprocessing
+  * Use efficient data structures
+  * Minimize CPU/GPU synchronization
+  * Implement efficient batch processing
+  * Use appropriate device placement (CPU/GPU)
+  * Optimize model forward/backward passes
+  * Minimize Python overhead
+
+* **Code Optimization Requirements:**
+  * Keep code minimal and focused
+  * Avoid redundant computations
+  * Use efficient algorithms
+  * Minimize function calls
+  * Optimize loops and iterations
+  * Use appropriate data types
+  * Avoid unnecessary object creation
+  * Implement efficient error handling
+  * Use appropriate caching strategies
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement proper logging
+  * Handle edge cases
+  * Ensure reproducibility
+  * Optimize performance
+  * Follow framework best practices
+
+---
+
+### **Frameworks:**
+
+Choose **one** of the following frameworks based on the dataset and requirements:
+* **PyTorch**: For deep learning tasks
+* **TensorFlow**: For deep learning tasks
+* **scikit-learn**: For traditional ML tasks
+
+---
+
+### **Output Format:**
+
+* Return **only** the `train()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+* Code must be minimal and optimized for performance
+
+---
+
+### **Error Prevention:**
+
+* Validate all inputs
+* Handle missing or invalid hyperparameters
+* Check data types and shapes
+* Handle edge cases
+* Implement proper error messages
+
+---
+
+### **Example Structure:**
+
+```python
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    # Set random seed for reproducibility
+    torch.manual_seed(seed)
+    
+    # Extract hyperparameters efficiently
+    lr, bs = cfg.get('learning_rate'), cfg.get('batch_size')
+    
+    # Prepare data efficiently
+    X, y = dataset['X'], dataset['y']
+    
+    # Initialize model with optimized parameters
+    model = Model(X.shape[1], **cfg).to(device)
+    
+    # Optimized training loop
+    for epoch in range(10):
+        loss = train_epoch(model, X, y, lr, bs)
+    
+    return loss
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `train()` function that returns a float loss value
+* No additional code or explanations
+* Code must be optimized for performance and minimal in size
+  G
+
+i
+
+v
+
+e
+
+n
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+s
+
+m
+
+a
+
+l
+
+l
+
+ 
+
+s
+
+i
+
+z
+
+e
+
+ 
+
+a
+
+n
+
+d
+
+ 
+
+q
+
+u
+
+i
+
+c
+
+k
+
+ 
+
+t
+
+r
+
+a
+
+i
+
+n
+
+i
+
+n
+
+g
+
+ 
+
+t
+
+i
+
+m
+
+e
+
+ 
+
+o
+
+f
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+I
+
+r
+
+i
+
+s
+
+ 
+
+d
+
+a
+
+t
+
+a
+
+s
+
+e
+
+t
+
+,
+
+ 
+
+m
+
+u
+
+l
+
+t
+
+i
+
+-
+
+f
+
+i
+
+d
+
+e
+
+l
+
+i
+
+t
+
+y
+
+ 
+
+o
+
+p
+
+t
+
+i
+
+m
+
+i
+
+z
+
+a
+
+t
+
+i
+
+o
+
+n
+
+ 
+
+i
+
+s
+
+ 
+
+l
+
+i
+
+k
+
+e
+
+l
+
+y
+
+ 
+
+u
+
+n
+
+n
+
+e
+
+c
+
+e
+
+s
+
+s
+
+a
+
+r
+
+y
+
+.
+
+ 
+
+A
+
+ 
+
+B
+
+l
+
+a
+
+c
+
+k
+
+B
+
+o
+
+x
+
+F
+
+a
+
+c
+
+a
+
+d
+
+e
+
+ 
+
+o
+
+r
+
+ 
+
+H
+
+y
+
+p
+
+e
+
+r
+
+p
+
+a
+
+r
+
+a
+
+m
+
+e
+
+t
+
+e
+
+r
+
+O
+
+p
+
+t
+
+i
+
+m
+
+i
+
+z
+
+a
+
+t
+
+i
+
+o
+
+n
+
+F
+
+a
+
+c
+
+a
+
+d
+
+e
+
+ 
+
+w
+
+o
+
+u
+
+l
+
+d
+
+ 
+
+b
+
+e
+
+ 
+
+m
+
+o
+
+r
+
+e
+
+ 
+
+s
+
+u
+
+i
+
+t
+
+a
+
+b
+
+l
+
+e
+
+.
+
+
+
+
+
+
+
+B
+
+u
+
+d
+
+g
+
+e
+
+t
+
+ 
+
+S
+
+e
+
+t
+
+t
+
+i
+
+n
+
+g
+
+s
+
+:
+
+ 
+
+N
+
+o
+
+t
+
+ 
+
+a
+
+p
+
+p
+
+l
+
+i
+
+c
+
+a
+
+b
+
+l
+
+e
+
+ 
+
+f
+
+o
+
+r
+
+ 
+
+B
+
+l
+
+a
+
+c
+
+k
+
+B
+
+o
+
+x
+
+F
+
+a
+
+c
+
+a
+
+d
+
+e
+
+ 
+
+o
+
+r
+
+ 
+
+H
+
+y
+
+p
+
+e
+
+r
+
+p
+
+a
+
+r
+
+a
+
+m
+
+e
+
+t
+
+e
+
+r
+
+O
+
+p
+
+t
+
+i
+
+m
+
+i
+
+z
+
+a
+
+t
+
+i
+
+o
+
+n
+
+F
+
+a
+
+c
+
+a
+
+d
+
+e
+
+.
+
+
+
+
+
+
+
+N
+
+u
+
+m
+
+b
+
+e
+
+r
+
+ 
+
+o
+
+f
+
+ 
+
+W
+
+o
+
+r
+
+k
+
+e
+
+r
+
+s
+
+:
+
+ 
+
+T
+
+h
+
+e
+
+ 
+
+I
+
+r
+
+i
+
+s
+
+ 
+
+d
+
+a
+
+t
+
+a
+
+s
+
+e
+
+t
+
+ 
+
+t
+
+r
+
+a
+
+i
+
+n
+
+s
+
+ 
+
+q
+
+u
+
+i
+
+c
+
+k
+
+l
+
+y
+
+.
+
+ 
+
+U
+
+s
+
+i
+
+n
+
+g
+
+ 
+
+n
+
+_
+
+w
+
+o
+
+r
+
+k
+
+e
+
+r
+
+s
+
+=
+
+1
+
+ 
+
+i
+
+s
+
+ 
+
+s
+
+u
+
+f
+
+f
+
+i
+
+c
+
+i
+
+e
+
+n
+
+t
+
+,
+
+ 
+
+a
+
+s
+
+ 
+
+p
+
+a
+
+r
+
+a
+
+l
+
+l
+
+e
+
+l
+
+i
+
+s
+
+m
+
+ 
+
+m
+
+i
+
+g
+
+h
+
+t
+
+ 
+
+i
+
+n
+
+t
+
+r
+
+o
+
+d
+
+u
+
+c
+
+e
+
+ 
+
+o
+
+v
+
+e
+
+r
+
+h
+
+e
+
+a
+
+d
+
+ 
+
+t
+
+h
+
+a
+
+t
+
+ 
+
+o
+
+u
+
+t
+
+w
+
+e
+
+i
+
+g
+
+h
+
+s
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+b
+
+e
+
+n
+
+e
+
+f
+
+i
+
+t
+
+s
+
+.
+
+
+
+
+
+
+
+S
+
+c
+
+e
+
+n
+
+a
+
+r
+
+i
+
+o
+
+ 
+
+P
+
+a
+
+r
+
+a
+
+m
+
+e
+
+t
+
+e
+
+r
+
+s
+
+:
+
+
+
+
+c
+
+o
+
+n
+
+f
+
+i
+
+g
+
+s
+
+p
+
+a
+
+c
+
+e
+
+:
+
+ 
+
+D
+
+e
+
+f
+
+i
+
+n
+
+e
+
+ 
+
+a
+
+ 
+
+c
+
+o
+
+n
+
+f
+
+i
+
+g
+
+u
+
+r
+
+a
+
+t
+
+i
+
+o
+
+n
+
+ 
+
+s
+
+p
+
+a
+
+c
+
+e
+
+ 
+
+w
+
+i
+
+t
+
+h
+
+ 
+
+h
+
+y
+
+p
+
+e
+
+r
+
+p
+
+a
+
+r
+
+a
+
+m
+
+e
+
+t
+
+e
+
+r
+
+s
+
+ 
+
+r
+
+e
+
+l
+
+e
+
+v
+
+a
+
+n
+
+t
+
+ 
+
+t
+
+o
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+c
+
+h
+
+o
+
+s
+
+e
+
+n
+
+ 
+
+m
+
+o
+
+d
+
+e
+
+l
+
+ 
+
+(
+
+e
+
+.
+
+g
+
+.
+
+,
+
+ 
+
+l
+
+e
+
+a
+
+r
+
+n
+
+i
+
+n
+
+g
+
+ 
+
+r
+
+a
+
+t
+
+e
+
+,
+
+ 
+
+r
+
+e
+
+g
+
+u
+
+l
+
+a
+
+r
+
+i
+
+z
+
+a
+
+t
+
+i
+
+o
+
+n
+
+ 
+
+s
+
+t
+
+r
+
+e
+
+n
+
+g
+
+t
+
+h
+
+)
+
+.
+
+
+
+
+w
+
+a
+
+l
+
+l
+
+t
+
+i
+
+m
+
+e
+
+_
+
+l
+
+i
+
+m
+
+i
+
+t
+
+:
+
+ 
+
+S
+
+e
+
+t
+
+ 
+
+a
+
+ 
+
+r
+
+e
+
+a
+
+s
+
+o
+
+n
+
+a
+
+b
+
+l
+
+e
+
+ 
+
+w
+
+a
+
+l
+
+l
+
+t
+
+i
+
+m
+
+e
+
+_
+
+l
+
+i
+
+m
+
+i
+
+t
+
+ 
+
+(
+
+e
+
+.
+
+g
+
+.
+
+,
+
+ 
+
+6
+
+0
+
+ 
+
+s
+
+e
+
+c
+
+o
+
+n
+
+d
+
+s
+
+)
+
+ 
+
+t
+
+o
+
+ 
+
+p
+
+r
+
+e
+
+v
+
+e
+
+n
+
+t
+
+ 
+
+e
+
+x
+
+c
+
+e
+
+s
+
+s
+
+i
+
+v
+
+e
+
+l
+
+y
+
+ 
+
+l
+
+o
+
+n
+
+g
+
+ 
+
+o
+
+p
+
+t
+
+i
+
+m
+
+i
+
+z
+
+a
+
+t
+
+i
+
+o
+
+n
+
+ 
+
+r
+
+u
+
+n
+
+s
+
+.
+
+
+
+
+n
+
+_
+
+t
+
+r
+
+i
+
+a
+
+l
+
+s
+
+:
+
+ 
+
+S
+
+e
+
+t
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+n
+
+u
+
+m
+
+b
+
+e
+
+r
+
+ 
+
+o
+
+f
+
+ 
+
+t
+
+r
+
+i
+
+a
+
+l
+
+s
+
+ 
+
+(
+
+e
+
+.
+
+g
+
+.
+
+,
+
+ 
+
+1
+
+0
+
+0
+
+)
+
+ 
+
+t
+
+o
+
+ 
+
+e
+
+x
+
+p
+
+l
+
+o
+
+r
+
+e
+
+ 
+
+a
+
+ 
+
+s
+
+u
+
+f
+
+f
+
+i
+
+c
+
+i
+
+e
+
+n
+
+t
+
+ 
+
+n
+
+u
+
+m
+
+b
+
+e
+
+r
+
+ 
+
+o
+
+f
+
+ 
+
+h
+
+y
+
+p
+
+e
+
+r
+
+p
+
+a
+
+r
+
+a
+
+m
+
+e
+
+t
+
+e
+
+r
+
+ 
+
+c
+
+o
+
+n
+
+f
+
+i
+
+g
+
+u
+
+r
+
+a
+
+t
+
+i
+
+o
+
+n
+
+s
+
+.
+--------------------------------------------------------------------------------
+[2025-06-15 17:03:28] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------

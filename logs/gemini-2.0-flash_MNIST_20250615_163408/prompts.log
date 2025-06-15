@@ -1,0 +1,2345 @@
+[2025-06-15 16:34:23] [Metadata: {'component': 'config'}] **Generate a production-grade Python configuration space for machine learning hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+def get_configspace() -> ConfigurationSpace:
+```
+
+---
+
+### **Configuration Space Requirements:**
+
+* The configuration space **must** be appropriate for the dataset type and characteristics:
+  * Dataset Description: `This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+`
+
+* If OpenML parameters are provided, use them as a reference:
+  * Suggested Parameters: `[{'batch_size': '128', 'build_fn': '{"oml-python:serialized_object": "function", "value": "__main__.vggnet_fmnist_fmnist_5_128_False"}', 'epochs': '5', 'layer0': '{"class_name": "Reshape", "config": {"batch_input_shape": [null, 784], "dtype": "float32", "name": "reshape_99", "target_shape": [28, 28, 1], "trainable": true}}', 'layer1': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_687", "padding": "same", "strides": [1, 1], "trainable": false, "use_bias": true}}', 'layer10': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_692", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer11': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_693", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer12': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_297", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer13': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_297", "scale": true, "trainable": true}}', 'layer14': '{"class_name": "Flatten", "config": {"data_format": "channels_last", "name": "flatten_99", "trainable": true}}', 'layer15': '{"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_295", "trainable": true, "units": 4096, "use_bias": true}}', 'layer16': '{"class_name": "Dropout", "config": {"name": "dropout_197", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}', 'layer17': '{"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_296", "trainable": true, "units": 4096, "use_bias": true}}', 'layer18': '{"class_name": "Dropout", "config": {"name": "dropout_198", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}', 'layer19': '{"class_name": "Dense", "config": {"activation": "softmax", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_297", "trainable": true, "units": 10, "use_bias": true}}', 'layer2': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_688", "padding": "same", "strides": [1, 1], "trainable": false, "use_bias": true}}', 'layer3': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_295", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer4': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_295", "scale": true, "trainable": true}}', 'layer5': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_689", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer6': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_690", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer7': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_296", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer8': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_296", "scale": true, "trainable": true}}', 'layer9': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_691", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'verbose': '2'}, {'batch_size': '32', 'build_fn': '{"oml-python:serialized_object": "function", "value": "__main__.vggnet_fmnist_fmnist_5_32_False"}', 'epochs': '5', 'layer0': '{"class_name": "Reshape", "config": {"batch_input_shape": [null, 784], "dtype": "float32", "name": "reshape_99", "target_shape": [28, 28, 1], "trainable": true}}', 'layer1': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_687", "padding": "same", "strides": [1, 1], "trainable": false, "use_bias": true}}', 'layer10': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_692", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer11': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_693", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer12': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_297", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer13': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_297", "scale": true, "trainable": true}}', 'layer14': '{"class_name": "Flatten", "config": {"data_format": "channels_last", "name": "flatten_99", "trainable": true}}', 'layer15': '{"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_295", "trainable": true, "units": 4096, "use_bias": true}}', 'layer16': '{"class_name": "Dropout", "config": {"name": "dropout_197", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}', 'layer17': '{"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_296", "trainable": true, "units": 4096, "use_bias": true}}', 'layer18': '{"class_name": "Dropout", "config": {"name": "dropout_198", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}', 'layer19': '{"class_name": "Dense", "config": {"activation": "softmax", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_297", "trainable": true, "units": 10, "use_bias": true}}', 'layer2': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_688", "padding": "same", "strides": [1, 1], "trainable": false, "use_bias": true}}', 'layer3': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_295", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer4': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_295", "scale": true, "trainable": true}}', 'layer5': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_689", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer6': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_690", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer7': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_296", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer8': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_296", "scale": true, "trainable": true}}', 'layer9': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_691", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'verbose': '2'}, {'batch_size': '32', 'build_fn': '{"oml-python:serialized_object": "function", "value": "__main__.vggnet_fmnist_fmnist_5_32_True"}', 'epochs': '5', 'layer0': '{"class_name": "Reshape", "config": {"batch_input_shape": [null, 784], "dtype": "float32", "name": "reshape_99", "target_shape": [28, 28, 1], "trainable": true}}', 'layer1': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_687", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer10': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_692", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer11': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_693", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer12': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_297", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer13': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_297", "scale": true, "trainable": true}}', 'layer14': '{"class_name": "Flatten", "config": {"data_format": "channels_last", "name": "flatten_99", "trainable": true}}', 'layer15': '{"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_295", "trainable": true, "units": 4096, "use_bias": true}}', 'layer16': '{"class_name": "Dropout", "config": {"name": "dropout_197", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}', 'layer17': '{"class_name": "Dense", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_296", "trainable": true, "units": 4096, "use_bias": true}}', 'layer18': '{"class_name": "Dropout", "config": {"name": "dropout_198", "noise_shape": null, "rate": 0.5, "seed": null, "trainable": true}}', 'layer19': '{"class_name": "Dense", "config": {"activation": "softmax", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "name": "dense_297", "trainable": true, "units": 10, "use_bias": true}}', 'layer2': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 64, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_688", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer3': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_295", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer4': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_295", "scale": true, "trainable": true}}', 'layer5': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_689", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer6': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 128, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_690", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'layer7': '{"class_name": "MaxPooling2D", "config": {"data_format": "channels_last", "name": "max_pooling2d_296", "padding": "valid", "pool_size": [2, 2], "strides": [2, 2], "trainable": true}}', 'layer8': '{"class_name": "BatchNormalization", "config": {"axis": -1, "beta_constraint": null, "beta_initializer": {"class_name": "Zeros", "config": {}}, "beta_regularizer": null, "center": true, "epsilon": 0.001, "gamma_constraint": null, "gamma_initializer": {"class_name": "Ones", "config": {}}, "gamma_regularizer": null, "momentum": 0.99, "moving_mean_initializer": {"class_name": "Zeros", "config": {}}, "moving_variance_initializer": {"class_name": "Ones", "config": {}}, "name": "batch_normalization_296", "scale": true, "trainable": true}}', 'layer9': '{"class_name": "Conv2D", "config": {"activation": "relu", "activity_regularizer": null, "bias_constraint": null, "bias_initializer": {"class_name": "Zeros", "config": {}}, "bias_regularizer": null, "data_format": "channels_last", "dilation_rate": [1, 1], "filters": 256, "kernel_constraint": null, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"distribution": "uniform", "mode": "fan_avg", "scale": 1.0, "seed": null}}, "kernel_regularizer": null, "kernel_size": [3, 3], "name": "conv2d_691", "padding": "same", "strides": [1, 1], "trainable": true, "use_bias": true}}', 'verbose': '2'}]`
+
+* The configuration space **must** include:
+  * Appropriate hyperparameter ranges based on the dataset characteristics
+  * Reasonable default values
+  * Proper hyperparameter types (continuous, discrete, categorical)
+  * Conditional hyperparameters if needed
+  * Proper bounds and constraints
+
+* **Best Practices:**
+  * Use meaningful hyperparameter names
+  * Include proper documentation for each hyperparameter
+  * Consider dataset size and complexity when setting ranges
+  * Ensure ranges are not too narrow or too wide
+  * Add proper conditions between dependent hyperparameters
+
+* **Common Hyperparameters to Consider:**
+  * Learning rate (if applicable)
+  * Model-specific hyperparameters
+  * Regularization parameters
+  * Architecture parameters
+  * Optimization parameters
+
+---
+
+### **Output Format:**
+
+* Return **only** the `get_configspace()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all hyperparameter names are valid Python identifiers
+* Verify that all ranges and bounds are valid
+* Check that conditional hyperparameters are properly defined
+* Validate that default values are within the specified ranges
+
+---
+
+### **Example Structure:**
+
+```python
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+    
+    # Add hyperparameters
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+    
+    # Add more hyperparameters...
+    
+    return cs
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `get_configspace()` function that returns a properly configured `ConfigurationSpace` object
+* No additional code or explanations
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:23] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:23] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:23] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, EqualsCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for hyperparameter optimization of a CNN
+    for image classification.
+    """
+    cs = ConfigurationSpace()
+
+    # --- Learning Rate ---
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate",
+        lower=1e-5,
+        upper=1e-2,
+        default_value=1e-3,
+        log=True,
+        q=None,
+        doc="Initial learning rate for the optimizer"
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    # --- Optimizer ---
+    optimizer = CategoricalHyperparameter(
+        "optimizer",
+        choices=["Adam", "SGD", "RMSprop"],
+        default_value="Adam",
+        doc="The optimization algorithm to use"
+    )
+    cs.add_hyperparameter(optimizer)
+
+    # --- Batch Size ---
+    batch_size = UniformIntegerHyperparameter(
+        "batch_size",
+        lower=32,
+        upper=256,
+        default_value=64,
+        log=True,
+        q=None,
+        doc="Number of samples per batch"
+    )
+    cs.add_hyperparameter(batch_size)
+
+    # --- Number of Epochs ---
+    epochs = UniformIntegerHyperparameter(
+        "epochs",
+        lower=5,
+        upper=50,
+        default_value=10,
+        log=False,
+        q=None,
+        doc="Number of training epochs"
+    )
+    cs.add_hyperparameter(epochs)
+
+    # --- Momentum (only for SGD) ---
+    momentum = UniformFloatHyperparameter(
+        "momentum",
+        lower=0.0,
+        upper=0.99,
+        default_value=0.9,
+        q=None,
+        doc="Momentum for SGD optimizer",
+    )
+    cs.add_hyperparameter(momentum)
+    condition_momentum = EqualsCondition(momentum, optimizer, "SGD")
+    cs.add_condition(condition_momentum)
+
+    # --- Weight Decay (L2 Regularization) ---
+    weight_decay = UniformFloatHyperparameter(
+        "weight_decay",
+        lower=1e-6,
+        upper=1e-3,
+        default_value=1e-4,
+        log=True,
+        q=None,
+        doc="L2 regularization strength"
+    )
+    cs.add_hyperparameter(weight_decay)
+
+    # --- Number of Convolutional Layers ---
+    num_conv_layers = UniformIntegerHyperparameter(
+        "num_conv_layers",
+        lower=1,
+        upper=5,
+        default_value=3,
+        log=False,
+        q=None,
+        doc="Number of convolutional layers"
+    )
+    cs.add_hyperparameter(num_conv_layers)
+
+    # --- Number of Filters (Conv Layers) ---
+    num_filters_l1 = UniformIntegerHyperparameter(
+        "num_filters_l1",
+        lower=32,
+        upper=128,
+        default_value=64,
+        log=True,
+        q=None,
+        doc="Number of filters in the first convolutional layer"
+    )
+    cs.add_hyperparameter(num_filters_l1)
+
+    num_filters_mult = UniformFloatHyperparameter(
+        "num_filters_mult",
+        lower=1.0,
+        upper=2.0,
+        default_value=1.5,
+        log=False,
+        q=None,
+        doc="Multiplier for the number of filters in subsequent convolutional layers"
+    )
+    cs.add_hyperparameter(num_filters_mult)
+
+
+    # --- Dropout Rate ---
+    dropout_rate = UniformFloatHyperparameter(
+        "dropout_rate",
+        lower=0.0,
+        upper=0.7,
+        default_value=0.25,
+        q=None,
+        doc="Dropout rate for regularization"
+    )
+    cs.add_hyperparameter(dropout_rate)
+
+    # --- Number of Dense Layers ---
+    num_dense_layers = UniformIntegerHyperparameter(
+        "num_dense_layers",
+        lower=1,
+        upper=3,
+        default_value=2,
+        log=False,
+        q=None,
+        doc="Number of dense (fully connected) layers"
+    )
+    cs.add_hyperparameter(num_dense_layers)
+
+    # --- Number of Units (Dense Layers) ---
+    num_units_l1 = UniformIntegerHyperparameter(
+        "num_units_l1",
+        lower=64,
+        upper=512,
+        default_value=256,
+        log=True,
+        q=None,
+        doc="Number of units in the first dense layer"
+    )
+    cs.add_hyperparameter(num_units_l1)
+
+    num_units_mult = UniformFloatHyperparameter(
+        "num_units_mult",
+        lower=0.25,
+        upper=1.0,
+        default_value=0.5,
+        log=False,
+        q=None,
+        doc="Multiplier for the number of units in subsequent dense layers"
+    )
+    cs.add_hyperparameter(num_units_mult)
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:29] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:29] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'doc'
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:29] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'doc'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, EqualsCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for hyperparameter optimization of a CNN
+    for image classification.
+    """
+    cs = ConfigurationSpace()
+
+    # --- Learning Rate ---
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate",
+        lower=1e-5,
+        upper=1e-2,
+        default_value=1e-3,
+        log=True,
+        doc="Initial learning rate for the optimizer"
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    # --- Optimizer ---
+    optimizer = CategoricalHyperparameter(
+        "optimizer",
+        choices=["Adam", "SGD", "RMSprop"],
+        default_value="Adam",
+        doc="The optimization algorithm to use"
+    )
+    cs.add_hyperparameter(optimizer)
+
+    # --- Batch Size ---
+    batch_size = UniformIntegerHyperparameter(
+        "batch_size",
+        lower=32,
+        upper=256,
+        default_value=64,
+        log=True,
+        doc="Number of samples per batch"
+    )
+    cs.add_hyperparameter(batch_size)
+
+    # --- Number of Epochs ---
+    epochs = UniformIntegerHyperparameter(
+        "epochs",
+        lower=5,
+        upper=50,
+        default_value=10,
+        log=False,
+        doc="Number of training epochs"
+    )
+    cs.add_hyperparameter(epochs)
+
+    # --- Momentum (only for SGD) ---
+    momentum = UniformFloatHyperparameter(
+        "momentum",
+        lower=0.0,
+        upper=0.99,
+        default_value=0.9,
+        doc="Momentum for SGD optimizer",
+    )
+    cs.add_hyperparameter(momentum)
+    condition_momentum = EqualsCondition(momentum, optimizer, "SGD")
+    cs.add_condition(condition_momentum)
+
+    # --- Weight Decay (L2 Regularization) ---
+    weight_decay = UniformFloatHyperparameter(
+        "weight_decay",
+        lower=1e-6,
+        upper=1e-3,
+        default_value=1e-4,
+        log=True,
+        doc="L2 regularization strength"
+    )
+    cs.add_hyperparameter(weight_decay)
+
+    # --- Number of Convolutional Layers ---
+    num_conv_layers = UniformIntegerHyperparameter(
+        "num_conv_layers",
+        lower=1,
+        upper=5,
+        default_value=3,
+        log=False,
+        doc="Number of convolutional layers"
+    )
+    cs.add_hyperparameter(num_conv_layers)
+
+    # --- Number of Filters (Conv Layers) ---
+    num_filters_l1 = UniformIntegerHyperparameter(
+        "num_filters_l1",
+        lower=32,
+        upper=128,
+        default_value=64,
+        log=True,
+        doc="Number of filters in the first convolutional layer"
+    )
+    cs.add_hyperparameter(num_filters_l1)
+
+    num_filters_mult = UniformFloatHyperparameter(
+        "num_filters_mult",
+        lower=1.0,
+        upper=2.0,
+        default_value=1.5,
+        log=False,
+        doc="Multiplier for the number of filters in subsequent convolutional layers"
+    )
+    cs.add_hyperparameter(num_filters_mult)
+
+
+    # --- Dropout Rate ---
+    dropout_rate = UniformFloatHyperparameter(
+        "dropout_rate",
+        lower=0.0,
+        upper=0.7,
+        default_value=0.25,
+        doc="Dropout rate for regularization"
+    )
+    cs.add_hyperparameter(dropout_rate)
+
+    # --- Number of Dense Layers ---
+    num_dense_layers = UniformIntegerHyperparameter(
+        "num_dense_layers",
+        lower=1,
+        upper=3,
+        default_value=2,
+        log=False,
+        doc="Number of dense (fully connected) layers"
+    )
+    cs.add_hyperparameter(num_dense_layers)
+
+    # --- Number of Units (Dense Layers) ---
+    num_units_l1 = UniformIntegerHyperparameter(
+        "num_units_l1",
+        lower=64,
+        upper=512,
+        default_value=256,
+        log=True,
+        doc="Number of units in the first dense layer"
+    )
+    cs.add_hyperparameter(num_units_l1)
+
+    num_units_mult = UniformFloatHyperparameter(
+        "num_units_mult",
+        lower=0.25,
+        upper=1.0,
+        default_value=0.5,
+        log=False,
+        doc="Multiplier for the number of units in subsequent dense layers"
+    )
+    cs.add_hyperparameter(num_units_mult)
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:34] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:36] [Metadata: {'component': 'scenario'}] **Generate a production-grade Python scenario configuration for SMAC hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+```
+
+---
+
+### **Scenario Configuration Requirements:**
+
+* The scenario **must** be optimized for the dataset characteristics:
+  * Dataset Description: `This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+`
+
+* The scenario **must** include:
+  * Appropriate budget settings (min_budget, max_budget)
+  * Optimal number of workers for parallelization
+  * Reasonable walltime and CPU time limits
+  * Proper trial resource constraints
+  * Appropriate number of trials
+
+* **Best Practices:**
+  * Set deterministic=False for better generalization
+  * Use multi-fidelity optimization when appropriate
+  * Configure proper output directory structure
+  * Set appropriate trial resource limits
+  * Enable parallel optimization when possible
+
+* **Resource Management:**
+  * Set appropriate memory limits for trials
+  * Configure proper walltime limits
+  * Enable parallel processing when beneficial
+  * Consider dataset size for budget settings
+
+---
+
+### **Available Parameters:**
+    configspace : ConfigurationSpace
+        The configuration space from which to sample the configurations.
+    name : str | None, defaults to None
+        The name of the run. If no name is passed, SMAC generates a hash from the meta data.
+        Specify this argument to identify your run easily.
+    output_directory : Path, defaults to Path("smac3_output")
+        The directory in which to save the output. The files are saved in `./output_directory/name/seed`.
+    deterministic : bool, defaults to False
+        If deterministic is set to true, only one seed is passed to the target function.
+        Otherwise, multiple seeds (if n_seeds of the intensifier is greater than 1) are passed
+        to the target function to ensure generalization.
+    objectives : str | list[str] | None, defaults to "cost"
+        The objective(s) to optimize. This argument is required for multi-objective optimization.
+    crash_cost : float | list[float], defaults to np.inf
+        Defines the cost for a failed trial. In case of multi-objective, each objective can be associated with
+        a different cost.
+    termination_cost_threshold : float | list[float], defaults to np.inf
+        Defines a cost threshold when the optimization should stop. In case of multi-objective, each objective *must* be
+        associated with a cost. The optimization stops when all objectives crossed the threshold.
+    walltime_limit : float, defaults to np.inf
+        The maximum time in seconds that SMAC is allowed to run.
+    cputime_limit : float, defaults to np.inf
+        The maximum CPU time in seconds that SMAC is allowed to run.
+    trial_walltime_limit : float | None, defaults to None
+        The maximum time in seconds that a trial is allowed to run. If not specified,
+        no constraints are enforced. Otherwise, the process will be spawned by pynisher.
+    trial_memory_limit : int | None, defaults to None
+        The maximum memory in MB that a trial is allowed to use. If not specified,
+        no constraints are enforced. Otherwise, the process will be spawned by pynisher.
+    n_trials : int, defaults to 100
+        The maximum number of trials (combination of configuration, seed, budget, and instance, depending on the task)
+        to run.
+    use_default_config: bool, defaults to False.
+        If True, the configspace's default configuration is evaluated in the initial design.
+        For historic benchmark reasons, this is False by default.
+        Notice, that this will result in n_configs + 1 for the initial design. Respecting n_trials,
+        this will result in one fewer evaluated configuration in the optimization.
+    instances : list[str] | None, defaults to None
+        Names of the instances to use. If None, no instances are used.
+        Instances could be dataset names, seeds, subsets, etc.
+    instance_features : dict[str, list[float]] | None, defaults to None
+        Instances can be associated with features. For example, meta data of the dataset (mean, var, ...) can be
+        incorporated which are then further used to expand the training data of the surrogate model.
+    min_budget : float | int | None, defaults to None
+        The minimum budget (epochs, subset size, number of instances, ...) that is used for the optimization.
+        Use this argument if you use multi-fidelity or instance optimization.
+    max_budget : float | int | None, defaults to None
+        The maximum budget (epochs, subset size, number of instances, ...) that is used for the optimization.
+        Use this argument if you use multi-fidelity or instance optimization.
+    seed : int, defaults to 0
+        The seed is used to make results reproducible. If seed is -1, SMAC will generate a random seed.
+    n_workers : int, defaults to 1
+        The number of workers to use for parallelization. If `n_workers` is greather than 1, SMAC will use
+        Dask to parallelize the optimization.
+
+--- 
+
+### **Output Format:**
+
+* Return **only** the `generate_scenario(cs)` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all parameters are within valid ranges
+* Verify that resource limits are reasonable
+* Check that budget settings are appropriate
+* Validate that parallelization settings are correct
+* Ensure the training function can be pickled for parallel processing
+
+---
+
+### **Example Structure:**
+
+```python
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="gemini-2.0-flashmnist20250615_163434",
+        output_directory="./automl_results", //this is important and should not be changed
+        deterministic=True,
+        //other parameters based on the information
+    )
+    return scenario
+```
+
+---
+
+### **Suggested Scenario Plan:**
+
+For the MNIST dataset, given its moderate size and the need for efficient hyperparameter optimization, a MultiFidelityFacade is suitable.
+
+1.  Facade Type: MultiFidelityFacade
+2.  Budget Settings:
+    *   min_budget: 1 (epoch)
+    *   max_budget: 5 (epochs)
+3.  Number of Workers: n_workers = 4 (adjust based on available resources)
+
+Here's a sample scenario configuration:
+
+scenario = Scenario(
+    configspace=cs,  # Configuration Space (define hyperparameters here)
+    name="MNIST_experiment",
+    output_directory=Path("output_dir"),
+    walltime_limit=3600,  # Time limit in seconds
+    n_trials=100,       # Number of optimization trials
+    n_workers=4,
+    min_budget=1,
+    max_budget=5
+)
+
+
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
+* No additional code or explanations
+
+
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:36] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:44] [Metadata: {'component': 'train_function'}] **Generate a production-grade Python training function for machine learning with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import Configuration
+from typing import Any
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+```
+
+---
+
+### **Function Behavior Requirements:**
+
+* The function **must** handle the dataset properly:
+  * Dataset Description: `This is an image dataset.
+
+Number of classes: 10
+Class distribution:
+1    6742
+7    6265
+3    6131
+2    5958
+9    5949
+0    5923
+6    5918
+8    5851
+4    5842
+5    5421
+Name: count, dtype: int64
+
+Image Data Handling Requirements:
+1. Input Format Requirements:
+   - For CNN models: Input must be in (batch, channels, height, width) format
+   - For dense/linear layers: Input should be flattened
+
+2. Data Processing Steps:
+   a) For flattened input (2D):
+      - Calculate dimensions: height = width = int(sqrt(n_features))
+      - Verify square dimensions: height * height == n_features
+      - Reshape to (N, 1, H, W) for CNNs
+   b) For 3D input (N, H, W):
+      - Add channel dimension: reshape to (N, 1, H, W)
+   c) For 4D input:
+      - Verify channel order matches framework requirements
+
+3. Framework-Specific Format:
+   - PyTorch: (N, C, H, W)
+   - TensorFlow: (N, H, W, C)
+   - Convert between formats if necessary
+
+4. Normalization:
+   - Scale pixel values to [0, 1] by dividing by 255.0
+   - Or standardize to mean=0, std=1
+`
+  * ConfigSpace Definition: `from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, EqualsCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace for hyperparameter optimization of a CNN
+    for image classification.
+    """
+    cs = ConfigurationSpace()
+
+    # --- Learning Rate ---
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate",
+        lower=1e-5,
+        upper=1e-2,
+        default_value=1e-3,
+        log=True,
+    )
+    cs.add_hyperparameter(learning_rate)
+
+    # --- Optimizer ---
+    optimizer = CategoricalHyperparameter(
+        "optimizer",
+        choices=["Adam", "SGD", "RMSprop"],
+        default_value="Adam",
+    )
+    cs.add_hyperparameter(optimizer)
+
+    # --- Batch Size ---
+    batch_size = UniformIntegerHyperparameter(
+        "batch_size",
+        lower=32,
+        upper=256,
+        default_value=64,
+        log=True,
+    )
+    cs.add_hyperparameter(batch_size)
+
+    # --- Number of Epochs ---
+    epochs = UniformIntegerHyperparameter(
+        "epochs",
+        lower=5,
+        upper=50,
+        default_value=10,
+        log=False,
+    )
+    cs.add_hyperparameter(epochs)
+
+    # --- Momentum (only for SGD) ---
+    momentum = UniformFloatHyperparameter(
+        "momentum",
+        lower=0.0,
+        upper=0.99,
+        default_value=0.9,
+    )
+    cs.add_hyperparameter(momentum)
+    condition_momentum = EqualsCondition(momentum, optimizer, "SGD")
+    cs.add_condition(condition_momentum)
+
+    # --- Weight Decay (L2 Regularization) ---
+    weight_decay = UniformFloatHyperparameter(
+        "weight_decay",
+        lower=1e-6,
+        upper=1e-3,
+        default_value=1e-4,
+        log=True,
+    )
+    cs.add_hyperparameter(weight_decay)
+
+    # --- Number of Convolutional Layers ---
+    num_conv_layers = UniformIntegerHyperparameter(
+        "num_conv_layers",
+        lower=1,
+        upper=5,
+        default_value=3,
+        log=False,
+    )
+    cs.add_hyperparameter(num_conv_layers)
+
+    # --- Number of Filters (Conv Layers) ---
+    num_filters_l1 = UniformIntegerHyperparameter(
+        "num_filters_l1",
+        lower=32,
+        upper=128,
+        default_value=64,
+        log=True,
+    )
+    cs.add_hyperparameter(num_filters_l1)
+
+    num_filters_mult = UniformFloatHyperparameter(
+        "num_filters_mult",
+        lower=1.0,
+        upper=2.0,
+        default_value=1.5,
+        log=False,
+    )
+    cs.add_hyperparameter(num_filters_mult)
+
+
+    # --- Dropout Rate ---
+    dropout_rate = UniformFloatHyperparameter(
+        "dropout_rate",
+        lower=0.0,
+        upper=0.7,
+        default_value=0.25,
+    )
+    cs.add_hyperparameter(dropout_rate)
+
+    # --- Number of Dense Layers ---
+    num_dense_layers = UniformIntegerHyperparameter(
+        "num_dense_layers",
+        lower=1,
+        upper=3,
+        default_value=2,
+        log=False,
+    )
+    cs.add_hyperparameter(num_dense_layers)
+
+    # --- Number of Units (Dense Layers) ---
+    num_units_l1 = UniformIntegerHyperparameter(
+        "num_units_l1",
+        lower=64,
+        upper=512,
+        default_value=256,
+        log=True,
+    )
+    cs.add_hyperparameter(num_units_l1)
+
+    num_units_mult = UniformFloatHyperparameter(
+        "num_units_mult",
+        lower=0.25,
+        upper=1.0,
+        default_value=0.5,
+        log=False,
+    )
+    cs.add_hyperparameter(num_units_mult)
+    return cs
+`
+  * SMAC Scenario: `from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+from pathlib import Path
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration for hyperparameter optimization.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample configurations.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    scenario = Scenario(
+        configspace=cs,
+        name="image_classification_optimization",
+        output_directory=Path("smac3_output"),
+        deterministic=False,
+        walltime_limit=7200,  # 2 hours
+        cputime_limit=7200,  # 2 hours CPU time
+        trial_walltime_limit=600,  # 10 minutes per trial
+        trial_memory_limit=8192,  # 8 GB per trial
+        n_trials=100,
+        n_workers=4,  # Adjust based on available resources
+        min_budget=1,
+        max_budget=5,
+        seed=42,
+    )
+    return scenario
+`
+
+* The function **must** accept a `dataset` dictionary with:
+  * `dataset['X']`: feature matrix or input tensor
+  * `dataset['y']`: label vector or label tensor
+
+* The function **must** handle the configuration properly:
+  * Access primitive values using `cfg.get('key')`
+  * Handle all hyperparameters defined in the configuration space
+  * Apply proper type conversion and validation
+  * Handle conditional hyperparameters correctly
+
+* **Model Requirements:**
+  * Infer input and output dimensions dynamically
+  * Follow data format requirements
+  * Handle necessary data transformations
+  * Implement proper model initialization
+  * Use appropriate loss functions
+  * Apply proper regularization
+  * Handle model-specific requirements
+
+* **Training Requirements:**
+  * Implement proper training loop
+  * Handle batch processing
+  * Apply proper optimization
+  * Implement early stopping if needed
+  * Handle validation if required
+  * Return appropriate loss value
+
+* **Performance Optimization Requirements:**
+  * Minimize memory usage and allocations
+  * Use vectorized operations where possible
+  * Avoid unnecessary data copying
+  * Optimize data loading and preprocessing
+  * Use efficient data structures
+  * Minimize CPU/GPU synchronization
+  * Implement efficient batch processing
+  * Use appropriate device placement (CPU/GPU)
+  * Optimize model forward/backward passes
+  * Minimize Python overhead
+
+* **Code Optimization Requirements:**
+  * Keep code minimal and focused
+  * Avoid redundant computations
+  * Use efficient algorithms
+  * Minimize function calls
+  * Optimize loops and iterations
+  * Use appropriate data types
+  * Avoid unnecessary object creation
+  * Implement efficient error handling
+  * Use appropriate caching strategies
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement proper logging
+  * Handle edge cases
+  * Ensure reproducibility
+  * Optimize performance
+  * Follow framework best practices
+
+---
+
+### **Frameworks:**
+
+Choose **one** of the following frameworks based on the dataset and requirements:
+* **PyTorch**: For deep learning tasks
+* **TensorFlow**: For deep learning tasks
+* **scikit-learn**: For traditional ML tasks
+
+---
+
+### **Output Format:**
+
+* Return **only** the `train()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+* Code must be minimal and optimized for performance
+
+---
+
+### **Error Prevention:**
+
+* Validate all inputs
+* Handle missing or invalid hyperparameters
+* Check data types and shapes
+* Handle edge cases
+* Implement proper error messages
+
+---
+
+### **Example Structure:**
+
+```python
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    # Set random seed for reproducibility
+    torch.manual_seed(seed)
+    
+    # Extract hyperparameters efficiently
+    lr, bs = cfg.get('learning_rate'), cfg.get('batch_size')
+    
+    # Prepare data efficiently
+    X, y = dataset['X'], dataset['y']
+    
+    # Initialize model with optimized parameters
+    model = Model(X.shape[1], **cfg).to(device)
+    
+    # Optimized training loop
+    for epoch in range(10):
+        loss = train_epoch(model, X, y, lr, bs)
+    
+    return loss
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `train()` function that returns a float loss value
+* No additional code or explanations
+* Code must be optimized for performance and minimal in size
+  B
+
+a
+
+s
+
+e
+
+d
+
+ 
+
+o
+
+n
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+p
+
+r
+
+o
+
+v
+
+i
+
+d
+
+e
+
+d
+
+ 
+
+p
+
+a
+
+r
+
+a
+
+m
+
+e
+
+t
+
+e
+
+r
+
+s
+
+,
+
+ 
+
+a
+
+ 
+
+V
+
+G
+
+G
+
+-
+
+s
+
+t
+
+y
+
+l
+
+e
+
+ 
+
+C
+
+N
+
+N
+
+ 
+
+a
+
+r
+
+c
+
+h
+
+i
+
+t
+
+e
+
+c
+
+t
+
+u
+
+r
+
+e
+
+ 
+
+i
+
+s
+
+ 
+
+s
+
+u
+
+i
+
+t
+
+a
+
+b
+
+l
+
+e
+
+.
+
+ 
+
+T
+
+h
+
+e
+
+ 
+
+m
+
+o
+
+d
+
+e
+
+l
+
+ 
+
+c
+
+o
+
+n
+
+s
+
+i
+
+s
+
+t
+
+s
+
+ 
+
+o
+
+f
+
+ 
+
+c
+
+o
+
+n
+
+v
+
+o
+
+l
+
+u
+
+t
+
+i
+
+o
+
+n
+
+a
+
+l
+
+ 
+
+l
+
+a
+
+y
+
+e
+
+r
+
+s
+
+ 
+
+w
+
+i
+
+t
+
+h
+
+ 
+
+R
+
+e
+
+L
+
+U
+
+ 
+
+a
+
+c
+
+t
+
+i
+
+v
+
+a
+
+t
+
+i
+
+o
+
+n
+
+,
+
+ 
+
+m
+
+a
+
+x
+
+ 
+
+p
+
+o
+
+o
+
+l
+
+i
+
+n
+
+g
+
+,
+
+ 
+
+b
+
+a
+
+t
+
+c
+
+h
+
+ 
+
+n
+
+o
+
+r
+
+m
+
+a
+
+l
+
+i
+
+z
+
+a
+
+t
+
+i
+
+o
+
+n
+
+,
+
+ 
+
+a
+
+n
+
+d
+
+ 
+
+d
+
+r
+
+o
+
+p
+
+o
+
+u
+
+t
+
+.
+
+ 
+
+T
+
+h
+
+e
+
+ 
+
+i
+
+n
+
+p
+
+u
+
+t
+
+ 
+
+i
+
+s
+
+ 
+
+r
+
+e
+
+s
+
+h
+
+a
+
+p
+
+e
+
+d
+
+ 
+
+t
+
+o
+
+ 
+
+(
+
+2
+
+8
+
+,
+
+ 
+
+2
+
+8
+
+,
+
+ 
+
+1
+
+)
+
+.
+
+ 
+
+T
+
+h
+
+e
+
+ 
+
+a
+
+r
+
+c
+
+h
+
+i
+
+t
+
+e
+
+c
+
+t
+
+u
+
+r
+
+e
+
+ 
+
+i
+
+n
+
+c
+
+l
+
+u
+
+d
+
+e
+
+s
+
+ 
+
+c
+
+o
+
+n
+
+v
+
+o
+
+l
+
+u
+
+t
+
+i
+
+o
+
+n
+
+a
+
+l
+
+ 
+
+l
+
+a
+
+y
+
+e
+
+r
+
+s
+
+ 
+
+w
+
+i
+
+t
+
+h
+
+ 
+
+6
+
+4
+
+,
+
+ 
+
+1
+
+2
+
+8
+
+,
+
+ 
+
+a
+
+n
+
+d
+
+ 
+
+2
+
+5
+
+6
+
+ 
+
+f
+
+i
+
+l
+
+t
+
+e
+
+r
+
+s
+
+,
+
+ 
+
+f
+
+o
+
+l
+
+l
+
+o
+
+w
+
+e
+
+d
+
+ 
+
+b
+
+y
+
+ 
+
+m
+
+a
+
+x
+
+ 
+
+p
+
+o
+
+o
+
+l
+
+i
+
+n
+
+g
+
+ 
+
+a
+
+n
+
+d
+
+ 
+
+b
+
+a
+
+t
+
+c
+
+h
+
+ 
+
+n
+
+o
+
+r
+
+m
+
+a
+
+l
+
+i
+
+z
+
+a
+
+t
+
+i
+
+o
+
+n
+
+.
+
+ 
+
+D
+
+e
+
+n
+
+s
+
+e
+
+ 
+
+l
+
+a
+
+y
+
+e
+
+r
+
+s
+
+ 
+
+w
+
+i
+
+t
+
+h
+
+ 
+
+4
+
+0
+
+9
+
+6
+
+ 
+
+u
+
+n
+
+i
+
+t
+
+s
+
+ 
+
+a
+
+n
+
+d
+
+ 
+
+d
+
+r
+
+o
+
+p
+
+o
+
+u
+
+t
+
+ 
+
+a
+
+r
+
+e
+
+ 
+
+u
+
+s
+
+e
+
+d
+
+ 
+
+b
+
+e
+
+f
+
+o
+
+r
+
+e
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+f
+
+i
+
+n
+
+a
+
+l
+
+ 
+
+s
+
+o
+
+f
+
+t
+
+m
+
+a
+
+x
+
+ 
+
+l
+
+a
+
+y
+
+e
+
+r
+
+.
+
+ 
+
+B
+
+a
+
+t
+
+c
+
+h
+
+ 
+
+s
+
+i
+
+z
+
+e
+
+ 
+
+i
+
+s
+
+ 
+
+s
+
+e
+
+t
+
+ 
+
+t
+
+o
+
+ 
+
+1
+
+2
+
+8
+
+,
+
+ 
+
+a
+
+n
+
+d
+
+ 
+
+t
+
+h
+
+e
+
+ 
+
+m
+
+o
+
+d
+
+e
+
+l
+
+ 
+
+i
+
+s
+
+ 
+
+t
+
+r
+
+a
+
+i
+
+n
+
+e
+
+d
+
+ 
+
+f
+
+o
+
+r
+
+ 
+
+5
+
+ 
+
+e
+
+p
+
+o
+
+c
+
+h
+
+s
+
+.
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:44] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:44] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): 'DataFrame' object has no attribute 'reshape'
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:44] [Metadata: {'component': 'train_function', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+'DataFrame' object has no attribute 'reshape'
+
+---
+
+### **Code to Fix:**
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from ConfigSpace import Configuration
+from typing import Any
+import numpy as np
+from math import sqrt
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """Trains a CNN model on the given dataset using the provided configuration."""
+    torch.manual_seed(seed)
+
+    X, y = dataset['X'], dataset['y']
+
+    # Data Preprocessing
+    if X.ndim == 2:
+        n_features = X.shape[1]
+        height = width = int(sqrt(n_features))
+        if height * width != n_features:
+            raise ValueError("Input features are not a square image.")
+        X = X.reshape(-1, 1, height, width)  # (N, 1, H, W)
+    elif X.ndim == 3:
+        X = X.reshape(-1, 1, X.shape[1], X.shape[2])  # (N, 1, H, W)
+    elif X.ndim == 4:
+        pass  # Assume (N, C, H, W) or (N, H, W, C) - PyTorch default is NCHW
+    else:
+        raise ValueError("Invalid input data dimension.  Must be 2, 3, or 4.")
+
+    X = X.astype(np.float32) / 255.0  # Normalize to [0, 1]
+    y = y.astype(np.int64)
+
+    X = torch.tensor(X)
+    y = torch.tensor(y)
+
+    # Hyperparameter Extraction
+    lr = cfg.get('learning_rate')
+    batch_size = cfg.get('batch_size')
+    epochs = cfg.get('epochs')
+    weight_decay = cfg.get('weight_decay')
+    num_conv_layers = cfg.get('num_conv_layers')
+    num_filters_l1 = cfg.get('num_filters_l1')
+    num_filters_mult = cfg.get('num_filters_mult')
+    dropout_rate = cfg.get('dropout_rate')
+    num_dense_layers = cfg.get('num_dense_layers')
+    num_units_l1 = cfg.get('num_units_l1')
+    num_units_mult = cfg.get('num_units_mult')
+    optimizer_name = cfg.get('optimizer')
+    
+    momentum = cfg.get('momentum') if 'momentum' in cfg else 0.9 # Handle conditional hyperparameter
+
+    # Model Definition
+    class CNN(nn.Module):
+        def __init__(self, num_classes, num_conv_layers, num_filters_l1, num_filters_mult, dropout_rate, num_dense_layers, num_units_l1, num_units_mult):
+            super().__init__()
+            self.features = nn.ModuleList()
+            in_channels = 1  # Assuming grayscale images
+            num_filters = num_filters_l1
+            for i in range(num_conv_layers):
+                self.features.append(nn.Conv2d(in_channels, num_filters, kernel_size=3, padding=1))
+                self.features.append(nn.ReLU(inplace=True))
+                self.features.append(nn.BatchNorm2d(num_filters))
+                self.features.append(nn.MaxPool2d(kernel_size=2, stride=2))
+                in_channels = num_filters
+                num_filters = int(num_filters * num_filters_mult)
+                
+            self.features = nn.Sequential(*self.features)
+            
+            self.avgpool = nn.AdaptiveAvgPool2d((7, 7))  # Ensure consistent feature map size
+            
+            self.classifier = nn.ModuleList()
+            in_features = 512 * 7 * 7 if num_conv_layers > 0 else X.shape[1]  #Dynamically infer input size
+            num_units = num_units_l1
+            for i in range(num_dense_layers):
+                self.classifier.append(nn.Linear(in_features, num_units))
+                self.classifier.append(nn.ReLU(inplace=True))
+                self.classifier.append(nn.Dropout(p=dropout_rate))
+                in_features = num_units
+                num_units = int(num_units * num_units_mult)
+
+            self.classifier.append(nn.Linear(in_features, num_classes))
+            self.classifier = nn.Sequential(*self.classifier)
+
+        def forward(self, x):
+            x = self.features(x)
+            x = self.avgpool(x)
+            x = torch.flatten(x, 1)
+            x = self.classifier(x)
+            return x
+
+    model = CNN(num_classes=10,
+                  num_conv_layers=num_conv_layers,
+                  num_filters_l1=num_filters_l1,
+                  num_filters_mult=num_filters_mult,
+                  dropout_rate=dropout_rate,
+                  num_dense_layers=num_dense_layers,
+                  num_units_l1=num_units_l1,
+                  num_units_mult=num_units_mult)
+
+    # Optimizer Selection
+    if optimizer_name == "Adam":
+        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    elif optimizer_name == "SGD":
+        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
+    elif optimizer_name == "RMSprop":
+        optimizer = optim.RMSprop(model.parameters(), lr=lr, weight_decay=weight_decay)
+    else:
+        raise ValueError(f"Unsupported optimizer: {optimizer_name}")
+
+    # Loss Function
+    criterion = nn.CrossEntropyLoss()
+
+    # Data Loader
+    dataset = TensorDataset(X, y)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+
+    # Training Loop
+    model.train()
+    for epoch in range(epochs):
+        running_loss = 0.0
+        for inputs, labels in dataloader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
+
+    # Return final loss
+    return running_loss / len(dataloader)
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+
+--------------------------------------------------------------------------------
+[2025-06-15 16:34:51] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------
