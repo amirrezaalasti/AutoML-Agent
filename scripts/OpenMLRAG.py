@@ -4,9 +4,6 @@ import numpy as np
 from amltk.metalearning import dataset_distance
 from collections import OrderedDict
 
-# This should be configured securely, e.g., via environment variables
-# from configs.api_keys import OPENML_API_KEY
-
 
 class OpenMLRAG:
     """
@@ -15,47 +12,41 @@ class OpenMLRAG:
     """
 
     def __init__(self, openml_api_key: str, metafeatures_csv_path: str):
-        """
-        Initializes the OpenMLRAG helper.
-
-        Args:
-            openml_api_key: Your API key for OpenML.
-            metafeatures_csv_path: The file path to your pre-generated CSV
-                                   of OpenML meta-features.
-        """
         openml.config.apikey = openml_api_key
         self.metafeatures_df = pd.read_csv(metafeatures_csv_path, index_col="did")
+        # CHANGE: Proactively filter for only active datasets on initialization
+        self.active_metafeatures_df = self.metafeatures_df[self.metafeatures_df["status"] == "active"].copy()
 
     def search_datasets(self, keyword: str) -> pd.DataFrame:
-        """
-        Searches for active OpenML datasets by a keyword in their name using the local CSV.
-        """
         if not keyword or keyword.isspace():
             return pd.DataFrame()
-
-        # Use the pre-loaded DataFrame for a fast, local search
-        search_results = self.metafeatures_df[self.metafeatures_df["name"].str.contains(keyword, case=False, na=False)]
+        # CHANGE: Search within the active datasets dataframe
+        search_results = self.active_metafeatures_df[self.active_metafeatures_df["name"].str.contains(keyword, case=False, na=False)]
         return search_results
 
     def get_source_dataset(self, dataset_name: str) -> pd.Series | None:
-        """
-        Finds a single source dataset from the local CSV based on a name.
-        """
         datasets = self.search_datasets(dataset_name)
-        # Return the first search result if any are found
         return datasets.iloc[0] if not datasets.empty else None
 
-    def find_similar_datasets(self, source_dataset_id: int, n_similar: int = 5) -> pd.DataFrame:
+    # CORRECTED FUNCTION
+    def find_similar_datasets(self, source_dataset_id: int, n_similar: int = 3) -> pd.DataFrame:
         """
-        Finds datasets similar to a source dataset using the FAST local CSV method.
+        Finds datasets similar to a source dataset, filtering for 'active' status
+        and excluding all other datasets with the same name.
         """
-        if source_dataset_id not in self.metafeatures_df.index:
-            raise ValueError(f"Source dataset ID {source_dataset_id} not found in the local CSV.")
+        if source_dataset_id not in self.active_metafeatures_df.index:
+            raise ValueError(f"Source dataset ID {source_dataset_id} not found in the active local CSV.")
 
-        source_metafeatures = self.metafeatures_df.loc[source_dataset_id]
-        other_metafeatures_df = self.metafeatures_df.drop(source_dataset_id)
+        source_metafeatures = self.active_metafeatures_df.loc[source_dataset_id]
+        source_name = source_metafeatures["name"]
 
-        # Align columns and select only numeric features for distance calculation
+        # CHANGE: Exclude the source ID AND all other datasets with the same name
+        # from the pool of candidates.
+        other_metafeatures_df = self.active_metafeatures_df[self.active_metafeatures_df["name"] != source_name]
+
+        if other_metafeatures_df.empty:
+            raise ValueError(f"No other active datasets found to compare with '{source_name}'.")
+
         common_features = source_metafeatures.index.intersection(other_metafeatures_df.columns)
         source_aligned = source_metafeatures[common_features]
         others_aligned = other_metafeatures_df[common_features]
@@ -68,7 +59,6 @@ class OpenMLRAG:
         source_final = source_numeric[final_common_features]
         others_final = others_numeric[final_common_features]
 
-        # Calculate distances to find the most similar datasets
         distances = dataset_distance(
             target=source_final,
             dataset_metafeatures=others_final.T.to_dict("series"),
@@ -76,82 +66,67 @@ class OpenMLRAG:
             scaler="minmax",
             closest_n=n_similar,
         )
+        return self.active_metafeatures_df.loc[distances.index]
 
-        # Return the metadata for the most similar datasets from our local CSV
-        return self.metafeatures_df.loc[distances.index]
+    # In your OpenMLRAG class:
 
-    def get_related_tasks_of_dataset(
+    def get_top_setups_for_dataset(
         self,
         dataset_id: int,
-        task_types: list[str] = ["classification"],
-        n_tasks: int = 3,
-    ) -> pd.DataFrame:
-        """
-        Gets a sample of top tasks related to a specific dataset ID.
-        """
-        # --- MINOR IMPROVEMENT: Use task_type parameter directly for cleaner code ---
-        tasks = openml.tasks.list_tasks(data_id=dataset_id, output_format="dataframe")
-        if task_types:
-            # get tasks that have one of the task types
-            for task_type in task_types:
-                tasks = tasks[tasks["ttid"].astype(str).str.lower().str.contains(task_type.lower())]
-                if not tasks.empty:
-                    # task_types is a list of task types, so we need to get the first task type that is found
-                    break
-        return tasks.head(n_tasks)
-
-    def get_top_setups_for_tasks(
-        self,
-        task_ids: list[int],
         function: str = "predictive_accuracy",
         n_setups: int = 3,
     ) -> list[dict]:
         """
-        Gets the top performing setups (algorithm + hyperparameters) for a list of tasks.
+        Gets top setups for a dataset by first finding all its tasks,
+        then getting the best evaluations for those tasks.
         """
-        if not task_ids:
+        tasks_df = openml.tasks.list_tasks(data_id=dataset_id, output_format="dataframe")
+        if tasks_df.empty:
+            print(f"   -> No tasks found for dataset_id: {dataset_id}")
             return []
 
+        task_ids = tasks_df["tid"].tolist()
         evaluations = openml.evaluations.list_evaluations(
-            tasks=task_ids,
             function=function,
-            output_format="dataframe",
+            tasks=task_ids,
             sort_order="desc",
+            output_format="dataframe",
         )
 
-        # --- FIX: The main reason for the error. Handle cases where no evaluations are found. ---
         if evaluations.empty:
-            print(f"   -> No evaluations found for tasks: {task_ids}")
+            print(f"   -> No evaluations found for any tasks on dataset_id: {dataset_id}")
             return []
-        # --- End of FIX ---
 
-        top_evaluations = evaluations.head(n_setups)
+        top_evaluations = evaluations.drop_duplicates(subset=["flow_id"]).head(n_setups)
 
         setups = []
-        # Use unique setup IDs to avoid fetching the same setup multiple times
         for setup_id in top_evaluations["setup_id"].unique():
-            setup = openml.setups.get_setup(setup_id)
-            # Find the corresponding flow name and performance from the evaluation table
-            evaluation_row = top_evaluations[top_evaluations["setup_id"] == setup_id].iloc[0]
-            params = {p.parameter_name: p.value for p in setup.parameters.values()}
+            # CHANGE: Broaden the exception handling to catch any error with a
+            # single problematic setup, making the loop more robust.
+            try:
+                setup = openml.setups.get_setup(setup_id)
+                evaluation_row = top_evaluations[top_evaluations["setup_id"] == setup_id].iloc[0]
 
-            setups.append(
-                {
-                    "flow_name": evaluation_row["flow_name"],
-                    "performance": round(evaluation_row["value"], 4),
-                    "hyperparameters": params,
-                }
-            )
+                # Check if parameters exist before trying to access them
+                if setup.parameters is None:
+                    print(f"   -> Skipping setup {setup_id}: No parameters found.")
+                    continue
+
+                params = {p.parameter_name: p.value for p in setup.parameters.values()}
+                setups.append(
+                    {
+                        "flow_name": evaluation_row["flow_name"],
+                        "performance": round(evaluation_row["value"], 4),
+                        "hyperparameters": params,
+                    }
+                )
+            except Exception as e:
+                # This will now catch AttributeError, OpenMLServerException, and others.
+                print(f"   -> Could not process setup {setup_id}. Reason: {e}")
+                continue
         return setups
 
-    def extract_suggested_config_space_parameters(self, dataset_name_in_openml: str, task_types: list[str] = ["classification"]) -> list[dict]:
-        """
-        Extracts a clean list of suggested hyperparameter configurations from datasets
-        similar to the provided one.
-        :param dataset_name_in_openml: The name of the dataset in OpenML to find related datasets.
-        :param task_types: The types of tasks to search for. the order of the list is important. the first task type is the most important.
-        :return: A list of suggested hyperparameter configurations.
-        """
+    def extract_suggested_config_space_parameters(self, dataset_name_in_openml: str) -> list[dict]:
         print(f"1. Searching for source dataset: '{dataset_name_in_openml}'...")
         source_dataset = self.get_source_dataset(dataset_name=dataset_name_in_openml)
         if source_dataset is None:
@@ -162,28 +137,28 @@ class OpenMLRAG:
         print(f"   ✅ Found '{source_dataset['name']}' with ID: {source_id}")
 
         print(f"\n2. Finding the top 3 datasets similar to '{source_dataset['name']}'...")
-        similar_datasets = self.find_similar_datasets(source_dataset_id=source_id, n_similar=3)
-        print("   ✅ Found similar datasets:", similar_datasets["name"].tolist())
+        try:
+            similar_datasets = self.find_similar_datasets(source_dataset_id=source_id, n_similar=3)
+            print("   ✅ Found similar datasets:", similar_datasets["name"].tolist())
+        except ValueError as e:
+            print(f"❌ Error: {e}")
+            return []
 
         print("\n3. Gathering top-performing setups from these similar datasets...")
         all_setups = []
         for dataset_id, dataset_row in similar_datasets.iterrows():
-            # --- MINOR IMPROVEMENT: Added a print statement for better logging ---
             print(f" -> Processing similar dataset: '{dataset_row['name']}' (ID: {dataset_id})")
-            tasks_df = self.get_related_tasks_of_dataset(dataset_id, task_types=task_types)
-            task_ids = tasks_df["tid"].tolist()
-            if task_ids:
-                setups = self.get_top_setups_for_tasks(task_ids)
+            setups = self.get_top_setups_for_dataset(dataset_id, n_setups=3)
+            if setups:
                 all_setups.extend(setups)
 
+        if not all_setups:
+            print("❌ Error: Could not find any valid setups for the similar datasets.")
+            return []
+
         print(f"\n   ✅ Gathered {len(all_setups)} total setups.")
-
-        print("\n4. Cleaning and simplifying the final list for the LLM...")
-        # This step extracts only the hyperparameter dictionaries
+        print("\n4. Cleaning and simplifying the final list...")
         final_hyperparameters = [setup["hyperparameters"] for setup in all_setups]
-
-        # De-duplicate the list of dictionaries
-        # Dictionaries are not hashable, so we convert them to a hashable form (tuple of items)
         unique_configs = list(OrderedDict((tuple(sorted(d.items())), d) for d in final_hyperparameters).values())
         print(f"   ✅ Final unique configurations found: {len(unique_configs)}")
         return unique_configs

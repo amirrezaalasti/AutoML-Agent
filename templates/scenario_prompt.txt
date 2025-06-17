@@ -122,8 +122,8 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
 def generate_scenario(cs: ConfigurationSpace) -> Scenario:
     scenario = Scenario(
         configspace=cs,
-        name="{smac_file_name}",
-        output_directory="./automl_results", //this is important and should not be changed
+        name="HyperparameterOptimization",
+        output_directory="{output_directory}" //this is important and should not be changed
         deterministic=True,
         //other parameters based on the information
     )
@@ -142,7 +142,7 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
 * Valid `import` statements
 * A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
 * No additional code or explanations
-* The output_directory should be "automl_results"
+* The output_directory should be "{output_directory}"
 * Set the number of trials to 10 for sufficient exploration
-* Set not resource limits
 * set the number of workers to 1
+* do not set these parameters: walltime_limit, cputime_limit, trial_walltime_limit ,trial_memory_limit=

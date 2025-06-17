@@ -87,14 +87,24 @@ class AutoMLAgent:
         """
         config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
             dataset_name_in_openml=self.dataset_name,
-            task_types=generate_general_dataset_task_types(self.dataset_type),
         )
         instructor_response = self.LLMInstructor.generate_instructions(
             config_space_suggested_parameters,
         )
 
+        self.ui_agent.subheader("Instructor Response")
+        # configuration plan:
+        self.ui_agent.subheader("Configuration Plan")
+        self.ui_agent.write(instructor_response.recommended_configuration)
+        # scenario plan:
+        self.ui_agent.subheader("Scenario Plan")
+        self.ui_agent.write(instructor_response.scenario_plan)
+        # train function plan:
+        self.ui_agent.subheader("Train Function Plan")
+        self.ui_agent.write(instructor_response.train_function_plan)
+
         # Configuration Space
-        self.prompts["config"] = self._create_config_prompt(config_space_suggested_parameters)
+        self.prompts["config"] = self._create_config_prompt(instructor_response.recommended_configuration)
         self.config_code = self.llm.generate(self.prompts["config"])
         self.logger.log_prompt(self.prompts["config"], {"component": "config"})
         self.logger.log_response(self.config_code, {"component": "config"})
@@ -112,8 +122,7 @@ class AutoMLAgent:
         self.ui_agent.code(self.scenario, language="python")
 
         # Training Function
-        # train_plan = instructor_response.recommended_configuration + "\n\n".join(instructor_response.dataset_instructions)
-        train_plan = instructor_response.recommended_configuration
+        train_plan = instructor_response.train_function_plan
         self.prompts["train_function"] = self._create_train_prompt(train_plan)
         self.train_function_code = self.llm.generate(self.prompts["train_function"])
         self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
@@ -145,6 +154,7 @@ class AutoMLAgent:
             self.train_function,
             self.last_loss,
             self.prompts,
+            self.logger.experiment_dir,
         )
 
     def _run_generated(self, component: str):
@@ -233,7 +243,7 @@ class AutoMLAgent:
                     self.logger.log_response(fixed, {"component": component, "action": "fix"})
                     setattr(self, code_attr, fixed)
 
-    def _create_config_prompt(self, config_space_suggested_parameters) -> str:
+    def _create_config_prompt(self, recommended_configuration) -> str:
         """
         Create a prompt for generating the configuration space code.
         :param config_space_suggested_parameters: Suggested parameters for the configuration space.
@@ -242,7 +252,7 @@ class AutoMLAgent:
         with open("templates/config_prompt.txt", "r") as f:
             return f.read().format(
                 dataset_description=self.dataset_description,
-                config_space_suggested_parameters=config_space_suggested_parameters,
+                recommended_configuration=recommended_configuration,
             )
 
     def _create_scenario_prompt(self, scenario_plan) -> str:
@@ -250,12 +260,12 @@ class AutoMLAgent:
         Create a prompt for generating the scenario code.
         :return: A formatted prompt string for the LLM.
         """
-        smac_file_name = self.llm.model_name.replace(" ", "_").lower() + self.dataset_name.replace(" ", "_").lower() + time.strftime("%Y%m%d_%H%M%S")
+
         with open("templates/scenario_prompt.txt", "r") as f:
             base_prompt = f.read().format(
                 dataset_description=self.dataset_description,
-                smac_file_name=smac_file_name,
                 scenario_plan=scenario_plan,
+                output_directory=self.logger.experiment_dir,
             )
 
         return base_prompt
@@ -276,7 +286,7 @@ class AutoMLAgent:
         # Add specific instructions for the training function
         print("Adding training function instructions")
         print(train_function_instructions)
-        prompt += "\n\n".join(train_function_instructions)
+        prompt += train_function_instructions
         return prompt
 
     def _create_fix_prompt(self, errors: str, code: str) -> str:

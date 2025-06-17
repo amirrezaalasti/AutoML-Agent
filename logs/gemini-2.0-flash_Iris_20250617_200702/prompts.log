@@ -1,0 +1,3162 @@
+[2025-06-17 20:07:19] [Metadata: {'component': 'config'}] **Generate a production-grade Python configuration space for machine learning hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+def get_configspace() -> ConfigurationSpace:
+```
+
+---
+
+### **Configuration Space Requirements:**
+
+* The configuration space **must** be appropriate for the dataset type and characteristics:
+  * Dataset Description: `This is a tabular dataset.
+It has 150 samples and 4 features.
+Feature columns and types:
+- 0: float64
+- 1: float64
+- 2: float64
+- 3: float64
+
+Feature statistical summary:
+                0           1           2           3
+count  150.000000  150.000000  150.000000  150.000000
+mean     5.843333    3.057333    3.758000    1.199333
+std      0.828066    0.435866    1.765298    0.762238
+min      4.300000    2.000000    1.000000    0.100000
+25%      5.100000    2.800000    1.600000    0.300000
+50%      5.800000    3.000000    4.350000    1.300000
+75%      6.400000    3.300000    5.100000    1.800000
+max      7.900000    4.400000    6.900000    2.500000
+
+Label distribution:
+0    50
+1    50
+2    50
+Name: count, dtype: int64`
+
+* Recommended Configuration based on the planner:
+  * `For the Iris dataset, consider a configuration space with hyperparameters for a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN). For SVM, tune 'C' (regularization strength, e.g., 0.01 to 10) and 'kernel' (e.g., 'linear', 'rbf', 'poly'). If using 'rbf', tune 'gamma' (kernel coefficient, e.g., 'scale', 'auto', or a range like 0.001 to 1). For KNN, tune 'n_neighbors' (number of neighbors, e.g., 3 to 10) and 'weights' (e.g., 'uniform', 'distance'). Since the dataset is small, focus on exploring a wider range of hyperparameters rather than extensive fine-tuning on a single configuration. Given the dataset size, Bayesian Optimization with a Gaussian Process surrogate model is a reasonable starting point.  Also, consider setting a random_state for reproducibility.`
+
+* The configuration space **must** include:
+  * Appropriate hyperparameter ranges based on the dataset characteristics
+  * Reasonable default values
+  * Proper hyperparameter types (continuous, discrete, categorical)
+  * Conditional hyperparameters if needed
+  * Proper bounds and constraints
+
+* **Best Practices:**
+  * Use meaningful hyperparameter names
+  * Include proper documentation for each hyperparameter
+  * Consider dataset size and complexity when setting ranges
+  * Ensure ranges are not too narrow or too wide
+  * Add proper conditions between dependent hyperparameters
+
+* **Common Hyperparameters to Consider:**
+  * Learning rate (if applicable)
+  * Model-specific hyperparameters
+  * Regularization parameters
+  * Architecture parameters
+  * Optimization parameters
+
+---
+
+### **Output Format:**
+
+* Return **only** the `get_configspace()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all hyperparameter names are valid Python identifiers
+* Verify that all ranges and bounds are valid
+* Check that conditional hyperparameters are properly defined
+* Validate that default values are within the specified ranges
+
+---
+
+### **Example Structure:**
+
+```python
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+    
+    # Add hyperparameters
+    learning_rate = UniformFloatHyperparameter(
+        "learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True
+    )
+    cs.add_hyperparameter(learning_rate)
+    
+    # Add more hyperparameters...
+    
+    return cs
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `get_configspace()` function that returns a properly configured `ConfigurationSpace` object
+* No additional code or explanations
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:19] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:19] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:19] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True,
+        docstring="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf",
+        docstring="Specifies the kernel type to be used in the algorithm."
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale",
+        docstring="Kernel coefficient for 'rbf', 'poly' and 'sigmoid'.\n"
+                  "- if ``gamma='scale'`` (default) is passed then it uses\n"
+                  "  1 / (n_features * X.var()) as value of gamma,\n"
+                  "- if 'auto', uses 1 / n_features."
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3,
+        docstring="Degree of the polynomial kernel function ('poly'). Ignored by all other kernels.",
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0,
+        docstring="Independent term in kernel function. It is only significant in 'poly' and 'sigmoid'."
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5,
+        docstring="Number of neighbors to use by default for :meth:`kneighbors` queries."
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform",
+        docstring="Weight function used in prediction. Possible values:\n"
+                  '- \'uniform\' : uniform weights.  All points in each neighborhood are weighted equally.\n'
+                  '- \'distance\' : weight points by the inverse of their distance. in this case, closer neighbors of a query point will have a greater influence than neighbors which are further away.'
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean",
+        docstring="The distance metric to use for the tree. The default metric is minkowski, and with p=2 is equivalent to the standard Euclidean metric. "
+                  "See the documentation for scikit-learn metric classes for a list of available metrics."
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2,
+        docstring="Power parameter for the Minkowski metric. When p = 1, this is equivalent to using manhattan_distance (l1), and euclidean_distance (l2) for p = 2. For arbitrary p, minkowski_distance (l_p) is used."
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([model_type, svm_C, svm_kernel, svm_gamma, knn_n_neighbors, knn_weights, knn_metric, knn_p, svm_degree, svm_coef0])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    model_is_svm = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    cs.add_condition(model_is_svm)
+    cs.add_condition(InCondition(child=svm_kernel, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_gamma, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_degree, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_coef0, parent=model_type, values=["svm"]))
+
+    kernel_is_rbf = InCondition(child=svm_gamma, parent=svm_kernel, values=["rbf", "poly", "sigmoid"])
+    cs.add_condition(kernel_is_rbf)
+
+    kernel_is_poly = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    cs.add_condition(kernel_is_poly)
+    kernel_is_poly_coef0 = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    cs.add_condition(kernel_is_poly_coef0)
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    model_is_knn = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    cs.add_condition(model_is_knn)
+    cs.add_condition(InCondition(child=knn_weights, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_metric, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_p, parent=model_type, values=["knn"]))
+
+    metric_is_minkowski = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(metric_is_minkowski)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:25] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:25] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:25] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([model_type, svm_C, svm_kernel, svm_gamma, knn_n_neighbors, knn_weights, knn_metric, knn_p, svm_degree, svm_coef0])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    model_is_svm = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    cs.add_condition(model_is_svm)
+    cs.add_condition(InCondition(child=svm_kernel, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_gamma, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_degree, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_coef0, parent=model_type, values=["svm"]))
+
+    kernel_is_rbf = InCondition(child=svm_gamma, parent=svm_kernel, values=["rbf", "poly", "sigmoid"])
+    cs.add_condition(kernel_is_rbf)
+
+    kernel_is_poly = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    cs.add_condition(kernel_is_poly)
+    kernel_is_poly_coef0 = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    cs.add_condition(kernel_is_poly_coef0)
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    model_is_knn = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    cs.add_condition(model_is_knn)
+    cs.add_condition(InCondition(child=knn_weights, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_metric, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_p, parent=model_type, values=["knn"]))
+
+    metric_is_minkowski = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(metric_is_minkowski)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:31] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:31] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:31] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([svm_C, svm_kernel, svm_gamma, knn_n_neighbors, knn_weights, knn_metric, knn_p, svm_degree, svm_coef0])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    model_is_svm = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    cs.add_condition(model_is_svm)
+    cs.add_condition(InCondition(child=svm_kernel, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_gamma, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_degree, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_coef0, parent=model_type, values=["svm"]))
+
+    kernel_is_rbf = InCondition(child=svm_gamma, parent=svm_kernel, values=["rbf"])
+    cs.add_condition(kernel_is_rbf)
+
+    kernel_is_poly = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    cs.add_condition(kernel_is_poly)
+    kernel_is_poly_coef0 = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    cs.add_condition(kernel_is_poly_coef0)
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    model_is_knn = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    cs.add_condition(model_is_knn)
+    cs.add_condition(InCondition(child=knn_weights, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_metric, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_p, parent=model_type, values=["knn"]))
+
+    metric_is_minkowski = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(metric_is_minkowski)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:36] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:36] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:36] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.util import ForbiddenInClause, ForbiddenEqualsClause
+from ConfigSpace.forbidden import ForbiddenAndConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([svm_C, svm_kernel, svm_gamma, knn_n_neighbors, knn_weights, knn_metric, knn_p, svm_degree, svm_coef0])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    cs.add_condition(InCondition(child=svm_C, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_kernel, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_gamma, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_degree, parent=model_type, values=["svm"]))
+    cs.add_condition(InCondition(child=svm_coef0, parent=model_type, values=["svm"]))
+
+    # Conditions/Forbiddens depending on the kernel type
+    cs.add_condition(InCondition(child=svm_degree, parent=svm_kernel, values=["poly"]))
+    cs.add_condition(InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"]))
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    cs.add_condition(InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_weights, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_metric, parent=model_type, values=["knn"]))
+    cs.add_condition(InCondition(child=knn_p, parent=model_type, values=["knn"]))
+
+    cs.add_condition(InCondition(child=knn_p, parent=knn_metric, values=["minkowski"]))
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:43] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:43] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#5): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:43] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.forbidden import ForbiddenAndConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([svm_C, svm_kernel, svm_gamma, knn_n_neighbors, knn_weights, knn_metric, knn_p, svm_degree, svm_coef0])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    svm_C_condition = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    svm_kernel_condition = InCondition(child=svm_kernel, parent=model_type, values=["svm"])
+    svm_gamma_condition = InCondition(child=svm_gamma, parent=model_type, values=["svm"])
+    svm_degree_condition = InCondition(child=svm_degree, parent=model_type, values=["svm"])
+    svm_coef0_condition = InCondition(child=svm_coef0, parent=model_type, values=["svm"])
+
+    cs.add_condition(svm_C_condition)
+    cs.add_condition(svm_kernel_condition)
+    cs.add_condition(svm_gamma_condition)
+    cs.add_condition(svm_degree_condition)
+    cs.add_condition(svm_coef0_condition)
+
+    # Conditions/Forbiddens depending on the kernel type
+    degree_condition = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    coef0_condition = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    cs.add_condition(degree_condition)
+    cs.add_condition(coef0_condition)
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    knn_n_neighbors_condition = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    knn_weights_condition = InCondition(child=knn_weights, parent=model_type, values=["knn"])
+    knn_metric_condition = InCondition(child=knn_metric, parent=model_type, values=["knn"])
+    knn_p_condition = InCondition(child=knn_p, parent=model_type, values=["knn"])
+
+    cs.add_condition(knn_n_neighbors_condition)
+    cs.add_condition(knn_weights_condition)
+    cs.add_condition(knn_metric_condition)
+    cs.add_condition(knn_p_condition)
+
+    knn_p_condition_minkowski = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(knn_p_condition_minkowski)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:49] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:49] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#6): cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:49] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.forbidden import ForbiddenAndConjunction
+from ConfigSpace.util import ForbiddenInClause, OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([svm_C, svm_kernel, svm_gamma, knn_n_neighbors, knn_weights, knn_metric, knn_p, svm_degree, svm_coef0])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    svm_C_condition = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    svm_kernel_condition = InCondition(child=svm_kernel, parent=model_type, values=["svm"])
+    svm_gamma_condition = InCondition(child=svm_gamma, parent=model_type, values=["svm"])
+    svm_degree_condition = InCondition(child=svm_degree, parent=model_type, values=["svm"])
+    svm_coef0_condition = InCondition(child=svm_coef0, parent=model_type, values=["svm"])
+
+    cs.add_condition(svm_C_condition)
+    cs.add_condition(svm_kernel_condition)
+    cs.add_condition(svm_gamma_condition)
+    cs.add_condition(svm_degree_condition)
+    cs.add_condition(svm_coef0_condition)
+
+    # Conditions/Forbiddens depending on the kernel type
+    degree_condition = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    coef0_condition = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    cs.add_condition(degree_condition)
+    cs.add_condition(coef0_condition)
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    knn_n_neighbors_condition = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    knn_weights_condition = InCondition(child=knn_weights, parent=model_type, values=["knn"])
+    knn_metric_condition = InCondition(child=knn_metric, parent=model_type, values=["knn"])
+    knn_p_condition = InCondition(child=knn_p, parent=model_type, values=["knn"])
+
+    cs.add_condition(knn_n_neighbors_condition)
+    cs.add_condition(knn_weights_condition)
+    cs.add_condition(knn_metric_condition)
+    cs.add_condition(knn_p_condition)
+
+    p_condition = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(p_condition)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:55] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:55] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#7): cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:07:55] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.forbidden import ForbiddenAndConjunction
+from ConfigSpace.util import OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([svm_C, svm_kernel, svm_gamma, svm_n_neighbors, svm_weights, svm_metric, svm_p, svm_degree, svm_coef0])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    svm_C_condition = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    svm_kernel_condition = InCondition(child=svm_kernel, parent=model_type, values=["svm"])
+    svm_gamma_condition = InCondition(child=svm_gamma, parent=model_type, values=["svm"])
+    svm_degree_condition = InCondition(child=svm_degree, parent=model_type, values=["svm"])
+    svm_coef0_condition = InCondition(child=svm_coef0, parent=model_type, values=["svm"])
+
+    cs.add_condition(svm_C_condition)
+    cs.add_condition(svm_kernel_condition)
+    cs.add_condition(svm_gamma_condition)
+    cs.add_condition(svm_degree_condition)
+    cs.add_condition(svm_coef0_condition)
+
+    # Conditions/Forbiddens depending on the kernel type
+    degree_condition = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    coef0_condition = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    cs.add_condition(degree_condition)
+    cs.add_condition(coef0_condition)
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    knn_n_neighbors_condition = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    knn_weights_condition = InCondition(child=knn_weights, parent=model_type, values=["knn"])
+    knn_metric_condition = InCondition(child=knn_metric, parent=model_type, values=["knn"])
+    knn_p_condition = InCondition(child=knn_p, parent=model_type, values=["knn"])
+
+    cs.add_condition(knn_n_neighbors_condition)
+    cs.add_condition(knn_weights_condition)
+    cs.add_condition(knn_metric_condition)
+    cs.add_condition(knn_p_condition)
+
+    p_condition = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(p_condition)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:01] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:01] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#8): cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:01] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.forbidden import ForbiddenAndConjunction
+from ConfigSpace.util import OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([svm_C, svm_kernel, svm_gamma, svm_degree, svm_coef0, knn_n_neighbors, knn_weights, knn_metric, knn_p])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    svm_C_condition = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    svm_kernel_condition = InCondition(child=svm_kernel, parent=model_type, values=["svm"])
+    svm_gamma_condition = InCondition(child=svm_gamma, parent=model_type, values=["svm"])
+    svm_degree_condition = InCondition(child=svm_degree, parent=model_type, values=["svm"])
+    svm_coef0_condition = InCondition(child=svm_coef0, parent=model_type, values=["svm"])
+
+    cs.add_conditions([svm_C_condition, svm_kernel_condition, svm_gamma_condition, svm_degree_condition, svm_coef0_condition])
+
+    # Conditions/Forbiddens depending on the kernel type
+    degree_condition = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    coef0_condition = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    cs.add_conditions([degree_condition, coef0_condition])
+
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    knn_n_neighbors_condition = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    knn_weights_condition = InCondition(child=knn_weights, parent=model_type, values=["knn"])
+    knn_metric_condition = InCondition(child=knn_metric, parent=model_type, values=["knn"])
+    knn_p_condition = InCondition(child=knn_p, parent=model_type, values=["knn"])
+
+    cs.add_conditions([knn_n_neighbors_condition, knn_weights_condition, knn_metric_condition, knn_p_condition])
+
+    p_condition = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(p_condition)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:07] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:07] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#9): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:07] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'docstring'
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.forbidden import ForbiddenAndConjunction
+from ConfigSpace.conditions import OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Defines the configuration space for hyperparameter optimization.
+    This configuration space is tailored for a tabular dataset with 150 samples and 4 features,
+    considering either a Support Vector Machine (SVM) or K-Nearest Neighbors (KNN) as the model.
+    """
+    cs = ConfigurationSpace()
+
+    # Define the model choice
+    model_type = CategoricalHyperparameter("model_type", ["svm", "knn"], default_value="svm")
+    cs.add_hyperparameter(model_type)
+
+    # SVM hyperparameters
+    svm_C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    svm_kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly", "sigmoid"], default_value="rbf"
+    )
+    svm_gamma = CategoricalHyperparameter(
+        "svm_gamma", ["scale", "auto"], default_value="scale"
+    )
+
+    svm_degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    svm_coef0 = UniformFloatHyperparameter(
+        "svm_coef0", lower=-1.0, upper=1.0, default_value=0.0
+    )
+
+    # KNN hyperparameters
+    knn_n_neighbors = UniformIntegerHyperparameter(
+        "knn_n_neighbors", lower=3, upper=10, default_value=5
+    )
+    knn_weights = CategoricalHyperparameter(
+        "knn_weights", ["uniform", "distance"], default_value="uniform"
+    )
+    knn_metric = CategoricalHyperparameter(
+        "knn_metric", ["euclidean", "manhattan", "minkowski"], default_value="euclidean"
+    )
+    knn_p = UniformIntegerHyperparameter(
+        "knn_p", lower=1, upper=5, default_value=2
+    )
+
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([svm_C, svm_kernel, svm_gamma, svm_degree, svm_coef0, knn_n_neighbors, knn_weights, knn_metric, knn_p])
+
+    # Define conditional hyperparameters (only activate when the model is SVM)
+    svm_C_condition = InCondition(child=svm_C, parent=model_type, values=["svm"])
+    svm_kernel_condition = InCondition(child=svm_kernel, parent=model_type, values=["svm"])
+    svm_gamma_condition = InCondition(child=svm_gamma, parent=model_type, values=["svm"])
+    svm_degree_condition = InCondition(child=svm_degree, parent=model_type, values=["svm"])
+    svm_coef0_condition = InCondition(child=svm_coef0, parent=model_type, values=["svm"])
+
+    cs.add_conditions([svm_C_condition, svm_kernel_condition, svm_gamma_condition, svm_degree_condition, svm_coef0_condition])
+
+    # Conditions/Forbiddens depending on the kernel type
+    degree_condition = InCondition(child=svm_degree, parent=svm_kernel, values=["poly"])
+    coef0_condition = InCondition(child=svm_coef0, parent=svm_kernel, values=["poly", "sigmoid"])
+    kernel_condition = OrConjunction(InCondition(child=svm_gamma, parent=svm_kernel, values=["rbf"]),
+                                     InCondition(child=svm_gamma, parent=model_type, values=["svm"]))
+    degree_condition2 = OrConjunction(InCondition(child=svm_degree, parent=svm_kernel, values=["poly"]),
+                                     InCondition(child=svm_degree, parent=model_type, values=["svm"]))
+
+    cs.add_conditions([degree_condition, coef0_condition])
+    # Define conditional hyperparameters (only activate when the model is KNN)
+    knn_n_neighbors_condition = InCondition(child=knn_n_neighbors, parent=model_type, values=["knn"])
+    knn_weights_condition = InCondition(child=knn_weights, parent=model_type, values=["knn"])
+    knn_metric_condition = InCondition(child=knn_metric, parent=model_type, values=["knn"])
+    knn_p_condition = InCondition(child=knn_p, parent=model_type, values=["knn"])
+
+    cs.add_conditions([knn_n_neighbors_condition, knn_weights_condition, knn_metric_condition, knn_p_condition])
+
+    p_condition = InCondition(child=knn_p, parent=knn_metric, values=["minkowski"])
+    cs.add_condition(p_condition)
+
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:15] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:15] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#10): Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:15] [Metadata: {'component': 'config', 'action': 'retry'}] Retry limit reached for config. Fetching fresh code from LLM.
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:18] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:18] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:18] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+New one: model_type, Type: Categorical, Choices: {svm, knn}, Default: svm
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, Condition, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "C", lower=0.01, upper=10, default_value=1.0, log=True,
+        q=None, # No quantization.
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "gamma", lower=0.001, upper=1.0, default_value=0.1, log=True,
+        q=None,  # No quantization.
+        doc="Kernel coefficient for 'rbf', 'poly' and 'sigmoid'. If gamma is 'auto' then 1/n_features will be used instead."
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "degree", lower=2, upper=5, default_value=3,
+        q=1, # Quantize to integer values.
+        doc="Degree of the polynomial kernel function ('poly'). Ignored by all other kernels."
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:21] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:21] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:21] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_gamma | model_type in {'svm'}
+New one: svm_gamma | svm_kernel in {'rbf'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+import ConfigSpace.util
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True,
+        q=None, # No quantization.
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True,
+        q=None,  # No quantization.
+        doc="Kernel coefficient for 'rbf', 'poly' and 'sigmoid'. If gamma is 'auto' then 1/n_features will be used instead."
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3,
+        q=1, # Quantize to integer values.
+        doc="Degree of the polynomial kernel function ('poly'). Ignored by all other kernels."
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:24] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:24] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#3): cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:24] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.util import ForbiddenInClause, OrConjunction
+from ConfigSpace import Condition
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True,
+        doc="Regularization parameter. The strength of the regularization is inversely proportional to C."
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True,
+        doc="Kernel coefficient for 'rbf', 'poly' and 'sigmoid'. If gamma is 'auto' then 1/n_features will be used instead."
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3,
+        doc="Degree of the polynomial kernel function ('poly'). Ignored by all other kernels."
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:26] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:26] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#4): cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:26] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.util import OrConjunction
+from ConfigSpace import Condition
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:29] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:29] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#5): cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:29] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.util import OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:31] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:31] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#6): cannot import name 'ForbiddenClause' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:31] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'ForbiddenClause' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition, ForbiddenClause, ForbiddenInClause
+from ConfigSpace. ForbiddenArea import ForbiddenArea
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:34] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:34] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#7): No module named 'ConfigSpace.ForbiddenArea'
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:34] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'ForbiddenClause' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+No module named 'ConfigSpace.ForbiddenArea'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace. ForbiddenArea import ForbiddenArea
+from ConfigSpace. forbidden import ForbiddenClause, ForbiddenInClause
+from ConfigSpace. conjunction import AndConjunction, OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:36] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:36] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#8): No module named 'ConfigSpace.conjunction'
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:36] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'ForbiddenClause' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+No module named 'ConfigSpace.ForbiddenArea'
+No module named 'ConfigSpace.conjunction'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.forbidden import ForbiddenClause, ForbiddenInClause
+from ConfigSpace. conjunction import AndConjunction, OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:38] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:38] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#9): No module named 'ConfigSpace.conjunction'
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:38] [Metadata: {'component': 'config', 'action': 'fix'}] **Fix the following Python code that has encountered errors during execution.**
+
+---
+
+### **Error Information:**
+Adding a second parent condition for a for a hyperparameter is ambiguous and therefore forbidden. Use an `OrConjunction` or `AndConjunction` to combine conditions instead.
+Already inserted: svm_degree | model_type in {'svm'}
+New one: svm_degree | svm_kernel in {'poly'}
+cannot import name 'Condition' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+UniformFloatHyperparameter.__init__() got an unexpected keyword argument 'q'
+cannot import name 'ForbiddenInClause' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'OrConjunction' from 'ConfigSpace.util' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/util.py)
+cannot import name 'ForbiddenClause' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+No module named 'ConfigSpace.ForbiddenArea'
+No module named 'ConfigSpace.conjunction'
+No module named 'ConfigSpace.conjunction'
+
+---
+
+### **Code to Fix:**
+```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+from ConfigSpace.forbidden import ForbiddenClause, ForbiddenInClause
+from ConfigSpace. conjunction import AndConjunction, OrConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+```
+
+---
+
+### **Fix Requirements:**
+
+* **Function Preservation:**
+  * Maintain the original function name and signature
+  * Preserve the function's core purpose and behavior
+  * Keep the return type and value format
+
+* **Error Resolution:**
+  * Fix all syntax errors
+  * Resolve runtime errors
+  * Handle edge cases
+  * Validate inputs properly
+  * Ensure proper error handling
+
+* **Code Quality:**
+  * Maintain code readability
+  * Follow Python best practices
+  * Use proper type hints
+  * Add necessary imports
+  * Ensure proper documentation
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement input validation
+  * Handle edge cases
+  * Ensure code is maintainable
+  * Follow framework conventions
+
+---
+
+### **Output Format:**
+
+* Return **only** the fixed function code
+* Include necessary imports
+* No explanations or comments
+* The code must be executable
+
+---
+
+### **Example Structure:**
+
+```python
+def fixed_function():
+    # Fixed code here
+    return result
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* The fixed function code
+* No additional code or explanations
+* Do not cheat and do not use try except
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:41] [Metadata: {'component': 'config', 'action': 'run'}] Running config code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:42] [Metadata: {'component': 'scenario'}] **Generate a production-grade Python scenario configuration for SMAC hyperparameter optimization with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+```
+
+---
+
+### **Scenario Configuration Requirements:**
+
+* The scenario **must** be optimized for the dataset characteristics:
+  * Dataset Description: `This is a tabular dataset.
+It has 150 samples and 4 features.
+Feature columns and types:
+- 0: float64
+- 1: float64
+- 2: float64
+- 3: float64
+
+Feature statistical summary:
+                0           1           2           3
+count  150.000000  150.000000  150.000000  150.000000
+mean     5.843333    3.057333    3.758000    1.199333
+std      0.828066    0.435866    1.765298    0.762238
+min      4.300000    2.000000    1.000000    0.100000
+25%      5.100000    2.800000    1.600000    0.300000
+50%      5.800000    3.000000    4.350000    1.300000
+75%      6.400000    3.300000    5.100000    1.800000
+max      7.900000    4.400000    6.900000    2.500000
+
+Label distribution:
+0    50
+1    50
+2    50
+Name: count, dtype: int64`
+
+* The scenario **must** include:
+  * Appropriate budget settings (min_budget, max_budget)
+  * Optimal number of workers for parallelization
+  * Reasonable walltime and CPU time limits
+  * Proper trial resource constraints
+  * Appropriate number of trials
+
+* **Best Practices:**
+  * Set deterministic=False for better generalization
+  * Use multi-fidelity optimization when appropriate
+  * Configure proper output directory structure
+  * Set appropriate trial resource limits
+  * Enable parallel optimization when possible
+
+* **Resource Management:**
+  * Set appropriate memory limits for trials
+  * Configure proper walltime limits
+  * Enable parallel processing when beneficial
+  * Consider dataset size for budget settings
+
+---
+
+### **Available Parameters:**
+    configspace : ConfigurationSpace
+        The configuration space from which to sample the configurations.
+    name : str | None, defaults to None
+        The name of the run. If no name is passed, SMAC generates a hash from the meta data.
+        Specify this argument to identify your run easily.
+    output_directory : Path, defaults to Path("smac3_output")
+        The directory in which to save the output. The files are saved in `./output_directory/name/seed`.
+    deterministic : bool, defaults to False
+        If deterministic is set to true, only one seed is passed to the target function.
+        Otherwise, multiple seeds (if n_seeds of the intensifier is greater than 1) are passed
+        to the target function to ensure generalization.
+    objectives : str | list[str] | None, defaults to "cost"
+        The objective(s) to optimize. This argument is required for multi-objective optimization.
+    crash_cost : float | list[float], defaults to np.inf
+        Defines the cost for a failed trial. In case of multi-objective, each objective can be associated with
+        a different cost.
+    termination_cost_threshold : float | list[float], defaults to np.inf
+        Defines a cost threshold when the optimization should stop. In case of multi-objective, each objective *must* be
+        associated with a cost. The optimization stops when all objectives crossed the threshold.
+    walltime_limit : float, defaults to np.inf
+        The maximum time in seconds that SMAC is allowed to run.
+    cputime_limit : float, defaults to np.inf
+        The maximum CPU time in seconds that SMAC is allowed to run.
+    trial_walltime_limit : float | None, defaults to None
+        The maximum time in seconds that a trial is allowed to run. If not specified,
+        no constraints are enforced. Otherwise, the process will be spawned by pynisher.
+    trial_memory_limit : int | None, defaults to None
+        The maximum memory in MB that a trial is allowed to use. If not specified,
+        no constraints are enforced. Otherwise, the process will be spawned by pynisher.
+    n_trials : int, defaults to 100
+        The maximum number of trials (combination of configuration, seed, budget, and instance, depending on the task)
+        to run.
+    use_default_config: bool, defaults to False.
+        If True, the configspace's default configuration is evaluated in the initial design.
+        For historic benchmark reasons, this is False by default.
+        Notice, that this will result in n_configs + 1 for the initial design. Respecting n_trials,
+        this will result in one fewer evaluated configuration in the optimization.
+    instances : list[str] | None, defaults to None
+        Names of the instances to use. If None, no instances are used.
+        Instances could be dataset names, seeds, subsets, etc.
+    instance_features : dict[str, list[float]] | None, defaults to None
+        Instances can be associated with features. For example, meta data of the dataset (mean, var, ...) can be
+        incorporated which are then further used to expand the training data of the surrogate model.
+    min_budget : float | int | None, defaults to None
+        The minimum budget (epochs, subset size, number of instances, ...) that is used for the optimization.
+        Use this argument if you use multi-fidelity or instance optimization.
+    max_budget : float | int | None, defaults to None
+        The maximum budget (epochs, subset size, number of instances, ...) that is used for the optimization.
+        Use this argument if you use multi-fidelity or instance optimization.
+    seed : int, defaults to 0
+        The seed is used to make results reproducible. If seed is -1, SMAC will generate a random seed.
+    n_workers : int, defaults to 1
+        The number of workers to use for parallelization. If `n_workers` is greather than 1, SMAC will use
+        Dask to parallelize the optimization.
+
+--- 
+
+### **Output Format:**
+
+* Return **only** the `generate_scenario(cs)` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+
+---
+
+### **Error Prevention:**
+
+* Ensure all parameters are within valid ranges
+* Verify that resource limits are reasonable
+* Check that budget settings are appropriate
+* Validate that parallelization settings are correct
+* Ensure the training function can be pickled for parallel processing
+
+---
+
+### **Example Structure:**
+
+```python
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Iris_20250617_200702" //this is important and should not be changed
+        deterministic=True,
+        //other parameters based on the information
+    )
+    return scenario
+```
+
+---
+
+### **Suggested Scenario Plan:**
+
+Given the small size of the Iris dataset, multi-fidelity optimization is likely unnecessary. A standard Black-Box optimization facade (HPOFacade) is suitable. Set a walltime_limit (e.g., 60-120 seconds) and n_trials (e.g., 100-200) based on available computational resources.  One worker (n_workers=1) should suffice given the small dataset size and presumed fast evaluation time. Key scenario parameters include the configuration space, walltime_limit, and n_trials. The Iris dataset does not require instance-specific configurations.
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
+* No additional code or explanations
+* The output_directory should be "./logs/gemini-2.0-flash_Iris_20250617_200702"
+* Set the number of trials to 10 for sufficient exploration
+* set the number of workers to 1
+* do not set these parameters: walltime_limit, cputime_limit, trial_walltime_limit ,trial_memory_limit=
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:42] [Metadata: {'component': 'scenario', 'action': 'run'}] Running scenario code:
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:45] [Metadata: {'component': 'train_function'}] **Generate a production-grade Python training function for machine learning with the following STRICT requirements:**
+
+---
+
+### **Function signature** must be:
+
+```python
+from ConfigSpace import Configuration
+from typing import Any
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+```
+
+---
+
+### **Function Behavior Requirements:**
+
+* The function **must** handle the dataset properly:
+  * Dataset Description: `This is a tabular dataset.
+It has 150 samples and 4 features.
+Feature columns and types:
+- 0: float64
+- 1: float64
+- 2: float64
+- 3: float64
+
+Feature statistical summary:
+                0           1           2           3
+count  150.000000  150.000000  150.000000  150.000000
+mean     5.843333    3.057333    3.758000    1.199333
+std      0.828066    0.435866    1.765298    0.762238
+min      4.300000    2.000000    1.000000    0.100000
+25%      5.100000    2.800000    1.600000    0.300000
+50%      5.800000    3.000000    4.350000    1.300000
+75%      6.400000    3.300000    5.100000    1.800000
+max      7.900000    4.400000    6.900000    2.500000
+
+Label distribution:
+0    50
+1    50
+2    50
+Name: count, dtype: int64`
+  * ConfigSpace Definition: `from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition, AndConjunction
+
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters for SVM
+    kernel = CategoricalHyperparameter(
+        "svm_kernel", ["linear", "rbf", "poly"], default_value="rbf"
+    )
+    cs.add_hyperparameter(kernel)
+
+    C = UniformFloatHyperparameter(
+        "svm_C", lower=0.01, upper=10, default_value=1.0, log=True
+    )
+    cs.add_hyperparameter(C)
+
+    gamma = UniformFloatHyperparameter(
+        "svm_gamma", lower=0.001, upper=1.0, default_value=0.1, log=True
+    )
+    cs.add_hyperparameter(gamma)
+
+    degree = UniformIntegerHyperparameter(
+        "svm_degree", lower=2, upper=5, default_value=3
+    )
+    cs.add_hyperparameter(degree)
+
+    # Add conditions
+    condition_gamma = InCondition(child=gamma, parent=kernel, values=["rbf", "poly"])
+    cs.add_condition(condition_gamma)
+
+    condition_degree = InCondition(child=degree, parent=kernel, values=["poly"])
+    cs.add_condition(condition_degree)
+    
+    return cs
+`
+  * SMAC Scenario: `from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Iris_20250617_200702",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+    )
+    return scenario
+`
+
+* The function **must** accept a `dataset` dictionary with:
+  * `dataset['X']`: feature matrix or input tensor
+  * `dataset['y']`: label vector or label tensor
+
+* The function **must** handle the configuration properly:
+  * Access primitive values using `cfg.get('key')`
+  * Handle all hyperparameters defined in the configuration space
+  * Apply proper type conversion and validation
+  * Handle conditional hyperparameters correctly
+
+* **Model Requirements:**
+  * Infer input and output dimensions dynamically
+  * Follow data format requirements
+  * Handle necessary data transformations
+  * Implement proper model initialization
+  * Use appropriate loss functions
+  * Apply proper regularization
+  * Handle model-specific requirements
+
+* **Training Requirements:**
+  * Implement proper training loop
+  * Handle batch processing
+  * Apply proper optimization
+  * Implement early stopping if needed
+  * Handle validation if required
+  * Return appropriate loss value
+
+* **Performance Optimization Requirements:**
+  * Minimize memory usage and allocations
+  * Use vectorized operations where possible
+  * Avoid unnecessary data copying
+  * Optimize data loading and preprocessing
+  * Use efficient data structures
+  * Minimize CPU/GPU synchronization
+  * Implement efficient batch processing
+  * Use appropriate device placement (CPU/GPU)
+  * Optimize model forward/backward passes
+  * Minimize Python overhead
+
+* **Code Optimization Requirements:**
+  * Keep code minimal and focused
+  * Avoid redundant computations
+  * Use efficient algorithms
+  * Minimize function calls
+  * Optimize loops and iterations
+  * Use appropriate data types
+  * Avoid unnecessary object creation
+  * Implement efficient error handling
+  * Use appropriate caching strategies
+  * The train function should be computational efficient
+
+* **Best Practices:**
+  * Use proper error handling
+  * Implement proper logging
+  * Handle edge cases
+  * Ensure reproducibility
+  * Optimize performance
+  * Follow framework best practices
+  * For tracking the progress add prints
+
+---
+
+### **Frameworks:**
+
+Choose **one** of the following frameworks based on the dataset and requirements:
+* **PyTorch**: For deep learning tasks
+* **TensorFlow**: For deep learning tasks
+* **scikit-learn**: For traditional ML tasks
+
+---
+
+### **Output Format:**
+
+* Return **only** the `train()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+* Code must be minimal and optimized for performance
+
+---
+
+### **Error Prevention:**
+
+* Validate all inputs
+* Handle missing or invalid hyperparameters
+* Check data types and shapes
+* Handle edge cases
+* Implement proper error messages
+
+---
+
+### **Example Structure:**
+
+```python
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    # Set random seed for reproducibility
+    torch.manual_seed(seed)
+    
+    # Extract hyperparameters efficiently
+    lr, bs = cfg.get('learning_rate'), cfg.get('batch_size')
+    
+    # Prepare data efficiently
+    X, y = dataset['X'], dataset['y']
+    
+    # Initialize model with optimized parameters
+    model = Model(X.shape[1], **cfg).to(device)
+    
+    # Optimized training loop
+    for epoch in range(10):
+        loss = train_epoch(model, X, y, lr, bs)
+    
+    return loss
+```
+
+---
+
+**Reminder:** The output must be limited to:
+* Valid `import` statements
+* A single `train()` function that returns a float loss value
+* No additional code or explanations
+* Code must be optimized for performance and minimal in size
+* Return negative loss/error since SMAC minimizes the objective
+* For accuracy metrics, return negative accuracy (e.g. -accuracy)
+* For error metrics, return the raw error value (e.g. mse, rmse)
+* Ensure consistent sign convention across all metrics
+* Do not cheat in order to escape an Error and do not use Try ExceptThe train function should receive a configuration (hyperparameter settings) and a seed as input. Inside the train function, create an instance of the chosen model (e.g., SVM or KNN) using the provided configuration. Train the model on the entire Iris dataset. Evaluate the model's performance using cross-validation (e.g., 5-fold) and return the average validation accuracy as the target function value (SMAC minimizes, so return 1 - accuracy). Ensure that the seed is used for reproducibility (e.g., setting random_state in the model and cross-validation). The train function should handle potential exceptions and return a reasonable default value (e.g., 1.0) in case of failure.
+--------------------------------------------------------------------------------
+[2025-06-17 20:08:45] [Metadata: {'component': 'train_function', 'action': 'run'}] Running train_function code:
+--------------------------------------------------------------------------------

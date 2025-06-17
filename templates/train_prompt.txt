@@ -68,6 +68,7 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
   * Avoid unnecessary object creation
   * Implement efficient error handling
   * Use appropriate caching strategies
+  * The train function should be computational efficient
 
 * **Best Practices:**
   * Use proper error handling
@@ -76,6 +77,7 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
   * Ensure reproducibility
   * Optimize performance
   * Follow framework best practices
+  * For tracking the progress add prints
 
 ---
 
@@ -138,4 +140,8 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
 * A single `train()` function that returns a float loss value
 * No additional code or explanations
 * Code must be optimized for performance and minimal in size
-  
+* Return negative loss/error since SMAC minimizes the objective
+* For accuracy metrics, return negative accuracy (e.g. -accuracy)
+* For error metrics, return the raw error value (e.g. mse, rmse)
+* Ensure consistent sign convention across all metrics
+* Do not cheat in order to escape an Error and do not use Try Except

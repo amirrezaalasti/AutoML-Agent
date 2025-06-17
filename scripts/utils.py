@@ -156,15 +156,15 @@ def generate_general_dataset_task_types(dataset_type: str) -> list[str]:
     Generate a list of task types for a given dataset type.
     """
     if dataset_type == "tabular":
-        return ["classification", "regression"]
+        return ["classification", "regression", "clustering"]
     elif dataset_type == "time_series":
-        return ["clustering"]
+        return ["clustering", "regression", "classification"]
     elif dataset_type == "image":
         return ["classification", "clustering"]
     elif dataset_type == "categorical":
         return ["classification", "clustering"]
     elif dataset_type == "text":
-        return ["clustering"]
+        return ["clustering", "classification"]
 
 
 def log_message(message: str, log_file: str = "./logs/logs.txt"):
@@ -271,3 +271,18 @@ def extract_code_block(code: str) -> str:
     pattern = r"```python\n(.*?)```"
     match = re.search(pattern, code, re.DOTALL)
     return match.group(1) if match else code
+
+
+def convert_to_csv(dataset: dict) -> str:
+    """
+    Convert the dataset to a CSV string.
+    """
+    X, y = dataset["X"], dataset["y"]
+    if isinstance(X, pd.DataFrame):
+        X.to_csv("dataset.csv", index=False)
+        y.to_csv("target.csv", index=False)
+    elif isinstance(X, np.ndarray):
+        pd.DataFrame(X).to_csv("dataset.csv", index=False)
+        pd.Series(y).to_csv("target.csv", index=False)
+    else:
+        raise ValueError("Unsupported dataset format")
