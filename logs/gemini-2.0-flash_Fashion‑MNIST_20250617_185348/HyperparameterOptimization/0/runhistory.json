@@ -1,0 +1,37 @@
+{
+  "stats": {
+    "submitted": 1,
+    "finished": 1,
+    "running": 0
+  },
+  "data": [
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -1.9684720582962036,
+      "time": 580.7512888908386,
+      "cpu_time": 1505.0003840000002,
+      "status": 1,
+      "starttime": 1750179469.451139,
+      "endtime": 1750180050.204799,
+      "additional_info": {}
+    }
+  ],
+  "configs": {
+    "1": {
+      "batch_size": 32,
+      "dropout_rate": 0.3102823477238,
+      "kernel_size": 3,
+      "learning_rate": 4.31845811e-05,
+      "num_filters": 192,
+      "num_layers": 3,
+      "optimizer": "SGD",
+      "momentum": 0.6420511074364
+    }
+  },
+  "config_origins": {
+    "1": "Initial Design: Sobol"
+  }
+}

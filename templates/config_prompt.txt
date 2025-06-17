@@ -16,8 +16,8 @@ def get_configspace() -> ConfigurationSpace:
 * The configuration space **must** be appropriate for the dataset type and characteristics:
   * Dataset Description: `{dataset_description}`
 
-* If OpenML parameters are provided, use them as a reference:
-  * Suggested Parameters: `{config_space_suggested_parameters}`
+* Recommended Configuration based on the planner:
+  * `{recommended_configuration}`
 
 * The configuration space **must** include:
   * Appropriate hyperparameter ranges based on the dataset characteristics

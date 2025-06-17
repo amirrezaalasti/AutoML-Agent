@@ -1,0 +1,183 @@
+{
+  "stats": {
+    "submitted": 10,
+    "finished": 10,
+    "running": 0
+  },
+  "data": [
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.9733333333333334,
+      "time": 0.01763296127319336,
+      "cpu_time": 0.0194139999999976,
+      "status": 1,
+      "starttime": 1750173195.808217,
+      "endtime": 1750173195.826587,
+      "additional_info": {}
+    },
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.9733333333333334,
+      "time": 0.012063026428222656,
+      "cpu_time": 0.012447999999999126,
+      "status": 1,
+      "starttime": 1750173195.827753,
+      "endtime": 1750173195.840457,
+      "additional_info": {}
+    },
+    {
+      "config_id": 2,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.96,
+      "time": 0.007848262786865234,
+      "cpu_time": 0.007843000000001155,
+      "status": 1,
+      "starttime": 1750173195.841511,
+      "endtime": 1750173195.84992,
+      "additional_info": {}
+    },
+    {
+      "config_id": 2,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.96,
+      "time": 0.00826883316040039,
+      "cpu_time": 0.008595999999997161,
+      "status": 1,
+      "starttime": 1750173195.850792,
+      "endtime": 1750173195.859612,
+      "additional_info": {}
+    },
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": -0.9733333333333334,
+      "time": 0.0116729736328125,
+      "cpu_time": 0.012184000000004858,
+      "status": 1,
+      "starttime": 1750173195.860785,
+      "endtime": 1750173195.872989,
+      "additional_info": {}
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.9800000000000001,
+      "time": 0.010341882705688477,
+      "cpu_time": 0.010340999999996825,
+      "status": 1,
+      "starttime": 1750173196.049076,
+      "endtime": 1750173196.059901,
+      "additional_info": {}
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.9800000000000001,
+      "time": 0.009978055953979492,
+      "cpu_time": 0.01002300000000389,
+      "status": 1,
+      "starttime": 1750173196.0608902,
+      "endtime": 1750173196.0713239,
+      "additional_info": {}
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": -0.9800000000000001,
+      "time": 0.010372161865234375,
+      "cpu_time": 0.010640999999999678,
+      "status": 1,
+      "starttime": 1750173196.07233,
+      "endtime": 1750173196.083243,
+      "additional_info": {}
+    },
+    {
+      "config_id": 4,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.9800000000000001,
+      "time": 0.007644176483154297,
+      "cpu_time": 0.007638000000000034,
+      "status": 1,
+      "starttime": 1750173196.084942,
+      "endtime": 1750173196.0930848,
+      "additional_info": {}
+    },
+    {
+      "config_id": 4,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.9800000000000001,
+      "time": 0.0077362060546875,
+      "cpu_time": 0.008017000000002383,
+      "status": 1,
+      "starttime": 1750173196.094147,
+      "endtime": 1750173196.102409,
+      "additional_info": {}
+    }
+  ],
+  "configs": {
+    "1": {
+      "knn__metric": "euclidean",
+      "knn__n_neighbors": 5,
+      "knn__weights": "uniform",
+      "svm__C": 0.043184581081,
+      "svm__gamma": "auto",
+      "svm__kernel": "rbf",
+      "svm__gamma_numeric": 0.8316699870286
+    },
+    "2": {
+      "knn__metric": "manhattan",
+      "knn__n_neighbors": 3,
+      "knn__weights": "distance",
+      "svm__C": 9.5633477410468,
+      "svm__gamma": "scale",
+      "svm__kernel": "poly",
+      "svm__gamma_numeric": 0.0231284198523
+    },
+    "3": {
+      "knn__metric": "euclidean",
+      "knn__n_neighbors": 7,
+      "knn__weights": "uniform",
+      "svm__C": 0.051019321947,
+      "svm__gamma": "auto",
+      "svm__kernel": "linear",
+      "svm__gamma_numeric": 0.4896760104483
+    },
+    "4": {
+      "knn__metric": "euclidean",
+      "knn__n_neighbors": 6,
+      "knn__weights": "distance",
+      "svm__C": 0.1157539156059,
+      "svm__gamma": "auto",
+      "svm__kernel": "rbf",
+      "svm__gamma_numeric": 0.8316699870286
+    }
+  },
+  "config_origins": {
+    "1": "Initial Design: Sobol",
+    "2": "Initial Design: Sobol",
+    "3": "Acquisition Function Maximizer: Local Search",
+    "4": "Acquisition Function Maximizer: Local Search"
+  }
+}

@@ -3,6 +3,7 @@ import pandas as pd
 import zipfile
 import io
 from datetime import datetime
+import os
 
 # Core dataset libraries (conflict‑free)
 from sklearn.datasets import (
@@ -20,6 +21,7 @@ import seaborn as sns
 from configs.api_keys import GROQ_API_KEY, GOOGLE_API_KEY
 from scripts.LLMClient import LLMClient
 from scripts.AutoMLAgent import AutoMLAgent
+from scripts.utils import convert_to_csv
 
 # Available GROQ models
 AVAILABLE_MODELS = [
@@ -178,6 +180,7 @@ class AutoMLAppUI:
                     train_code,
                     loss,
                     prompts,
+                    logger_dir,
                 ) = agent.generate_components()
 
                 st.subheader("Prompts Used")
@@ -185,6 +188,7 @@ class AutoMLAppUI:
 
                 # Add download button for generated code and prompts
                 zip_buffer = self.create_download_zip(config_code, scenario_code, train_code, prompts)
+
                 st.download_button(
                     label="Download Generated Code and Prompts",
                     data=zip_buffer,
@@ -202,6 +206,16 @@ class AutoMLAppUI:
             zip_file.writestr("config.py", config_code)
             zip_file.writestr("scenario.py", scenario_code)
             zip_file.writestr("train.py", train_code)
+
+            # Add the requirements.txt file
+            with open("requirements.txt", "r") as req_file:
+                zip_file.writestr("requirements.txt", req_file.read())
+
+            # add the dataset
+            # Convert DataFrame to CSV string before writing
+            convert_to_csv(self.dataset)
+            zip_file.write("dataset.csv", "dataset.csv")
+            zip_file.write("target.csv", "target.csv")
 
             # Add prompts
             zip_file.writestr("prompts.txt", "\n\n".join(prompts))

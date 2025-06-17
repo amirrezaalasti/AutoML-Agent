@@ -1,0 +1,258 @@
+[2025-06-17 20:10:08] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter
+def get_configspace() -> ConfigurationSpace:
+    """
+    Define the configuration space for a Random Forest model on the Iris dataset.
+    
+    This configuration space includes hyperparameters for:
+    - n_estimators: The number of trees in the forest.
+    - max_depth: The maximum depth of the trees.
+    - min_samples_split: The minimum number of samples required to split an internal node.
+    """
+    cs = ConfigurationSpace()
+    
+    # Number of trees in the forest
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=200, default_value=100, q=50,
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+    
+    # Maximum depth of the trees
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=4, upper=10, default_value=6, q=2,
+        doc="The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples."
+    )
+    cs.add_hyperparameter(max_depth)
+    
+    # Minimum number of samples required to split an internal node
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:08] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter
+def get_configspace() -> ConfigurationSpace:
+    """
+    Define the configuration space for a Random Forest model on the Iris dataset.
+    
+    This configuration space includes hyperparameters for:
+    - n_estimators: The number of trees in the forest.
+    - max_depth: The maximum depth of the trees.
+    - min_samples_split: The minimum number of samples required to split an internal node.
+    """
+    cs = ConfigurationSpace()
+    
+    # Number of trees in the forest
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=200, default_value=100, q=50,
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+    
+    # Maximum depth of the trees
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=4, upper=10, default_value=6, q=2,
+        doc="The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples."
+    )
+    cs.add_hyperparameter(max_depth)
+    
+    # Minimum number of samples required to split an internal node
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:08] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'q'
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:11] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter
+def get_configspace() -> ConfigurationSpace:
+    """
+    Define the configuration space for a Random Forest model on the Iris dataset.
+    
+    This configuration space includes hyperparameters for:
+    - n_estimators: The number of trees in the forest.
+    - max_depth: The maximum depth of the trees.
+    - min_samples_split: The minimum number of samples required to split an internal node.
+    """
+    cs = ConfigurationSpace()
+    
+    # Number of trees in the forest
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=200, default_value=100,
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+    
+    # Maximum depth of the trees
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=4, upper=10, default_value=6,
+        doc="The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples."
+    )
+    cs.add_hyperparameter(max_depth)
+    
+    # Minimum number of samples required to split an internal node
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:11] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter
+def get_configspace() -> ConfigurationSpace:
+    """
+    Define the configuration space for a Random Forest model on the Iris dataset.
+    
+    This configuration space includes hyperparameters for:
+    - n_estimators: The number of trees in the forest.
+    - max_depth: The maximum depth of the trees.
+    - min_samples_split: The minimum number of samples required to split an internal node.
+    """
+    cs = ConfigurationSpace()
+    
+    # Number of trees in the forest
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=200, default_value=100,
+        doc="The number of trees in the forest."
+    )
+    cs.add_hyperparameter(n_estimators)
+    
+    # Maximum depth of the trees
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=4, upper=10, default_value=6,
+        doc="The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples."
+    )
+    cs.add_hyperparameter(max_depth)
+    
+    # Minimum number of samples required to split an internal node
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node."
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:11] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): UniformIntegerHyperparameter.__init__() got an unexpected keyword argument 'doc'
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:13] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter
+def get_configspace() -> ConfigurationSpace:
+    """
+    Define the configuration space for a Random Forest model on the Iris dataset.
+    
+    This configuration space includes hyperparameters for:
+    - n_estimators: The number of trees in the forest.
+    - max_depth: The maximum depth of the trees.
+    - min_samples_split: The minimum number of samples required to split an internal node.
+    """
+    cs = ConfigurationSpace()
+    
+    # Number of trees in the forest
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=200, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+    
+    # Maximum depth of the trees
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=4, upper=10, default_value=6
+    )
+    cs.add_hyperparameter(max_depth)
+    
+    # Minimum number of samples required to split an internal node
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=10, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:13] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter
+def get_configspace() -> ConfigurationSpace:
+    """
+    Define the configuration space for a Random Forest model on the Iris dataset.
+    
+    This configuration space includes hyperparameters for:
+    - n_estimators: The number of trees in the forest.
+    - max_depth: The maximum depth of the trees.
+    - min_samples_split: The minimum number of samples required to split an internal node.
+    """
+    cs = ConfigurationSpace()
+    
+    # Number of trees in the forest
+    n_estimators = UniformIntegerHyperparameter(
+        "n_estimators", lower=50, upper=200, default_value=100
+    )
+    cs.add_hyperparameter(n_estimators)
+    
+    # Maximum depth of the trees
+    max_depth = UniformIntegerHyperparameter(
+        "max_depth", lower=4, upper=10, default_value=6
+    )
+    cs.add_hyperparameter(max_depth)
+    
+    # Minimum number of samples required to split an internal node
+    min_samples_split = UniformIntegerHyperparameter(
+        "min_samples_split", lower=2, upper=10, default_value=2
+    )
+    cs.add_hyperparameter(min_samples_split)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:13] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:14] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration optimized for the Iris dataset.
+    """
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Iris_20250617_200958",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:14] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration optimized for the Iris dataset.
+    """
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Iris_20250617_200958",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-17 20:10:14] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------

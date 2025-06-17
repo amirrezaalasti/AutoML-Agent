@@ -65,3 +65,4 @@ def fixed_function():
 * Valid `import` statements
 * The fixed function code
 * No additional code or explanations
+* Do not cheat and do not use try except

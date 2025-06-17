@@ -1,39 +1,65 @@
+from typing import Optional
 from pydantic import BaseModel
 import instructor
-from configs.api_keys import GOOGLE_API_KEY  # Your API key
 from google import genai
-from scripts.Logger import Logger
 import os
 import json
+from configs.api_keys import GOOGLE_API_KEY
+from scripts.Logger import Logger
 
 
 class InstructorInfo(BaseModel):
+    """Structured response model for LLM instructions."""
+
     dataset_name: str
     dataset_tag: str
-    dataset_instructions: list[str]
-    openml_url: str
     recommended_configuration: str
     scenario_plan: str
+    train_function_plan: str
 
 
 class LLMPlanner:
+    """Planner class that uses LLM to generate structured instructions for AutoML tasks."""
+
+    # Constants
+    DEFAULT_MODEL = "gemini-2.0-flash"
+    LOGS_DIR = "./logs/instructor"
+    SMAC_DOCS_PATH = "collected_docs/smac_docs.json"
+
     def __init__(
         self,
         dataset_name: str,
         dataset_description: str,
         dataset_type: str,
-    ):
+    ) -> None:
         """
-        Initializes the LLMPlanner with dataset details and constructs the instruction for the LLM.
-        :param dataset_name: Name of the dataset.
-        :param dataset_description: Description of the dataset.
-        :param dataset_type: Type of the dataset (e.g., classification, regression).
-        """
+        Initialize the LLMPlanner with dataset details.
 
+        Args:
+            dataset_name: Name of the dataset
+            dataset_description: Description of the dataset
+            dataset_type: Type of the dataset (e.g., classification, regression)
+        """
         self.dataset_name = dataset_name
         self.dataset_description = dataset_description
         self.dataset_type = dataset_type
-        self.instruction = (
+
+        # Initialize instructions
+        self.instruction = self._create_base_instruction()
+        self.instruction_for_configuration = self._create_configuration_instruction()
+        self.scenario_plan_instruction = self._create_scenario_instruction()
+        self.train_function_plan_instruction = self._create_train_function_instruction()
+
+        # Initialize logger
+        self.logger = Logger(
+            model_name=self.DEFAULT_MODEL,
+            dataset_name=self.dataset_name,
+            base_log_dir=self.LOGS_DIR,
+        )
+
+    def _create_base_instruction(self) -> str:
+        """Create the base instruction for the LLM."""
+        return (
             f"You are a data science expert with deep knowledge of {self.dataset_type} datasets. "
             f"Your task is to generate structured, and comprehensive instructions for effectively working with the dataset '{self.dataset_name}'. "
             f"Dataset description: {self.dataset_description}\n\n"
@@ -44,24 +70,34 @@ class LLMPlanner:
             "4. If this dataset exists on OpenML:\n"
             "   - Provide the exact dataset name as listed on OpenML.\n"
             "   - Include the dataset's tag(s) on OpenML.\n"
-            "   - Provide the direct OpenML URL to the dataset.\n\n"
             "Return all the above in a structured JSON format matching the following fields:\n"
             "- dataset_name (str)\n"
             "- dataset_tag (str)\n"
-            "- dataset_instructions (list of str)\n"
+            "- recommended_configuration (str)\n"
+            "- scenario_plan (str)\n"
+            "- train_function_plan (str)\n"
         )
 
-        self.instruction_for_configuration_based_on_openml = """
+    def _create_configuration_instruction(self) -> str:
+        """Create the configuration instruction template."""
+        return """
             Below, I am providing a set of parameters that were used on the top-performing models evaluated on the dataset.
             Please generate an instruction for creating a configuration for the dataset based on the following parameters:
             {config_space_suggested_parameters}
+            * This is just a Suggestion, you can use it as a reference,
+            but you can also ignore it because the task type can be different from your goal and generate your own configuration space.
+            * for recommended_configuration you should suggest the best parameters to set in Configuration Space.
             """
 
-        if os.path.exists("collected_docs/smac_docs.json"):
-            with open("collected_docs/smac_docs.json", "r") as f:
+    def _create_scenario_instruction(self) -> Optional[str]:
+        """Create the scenario instruction based on SMAC documentation if available."""
+        if not os.path.exists(self.SMAC_DOCS_PATH):
+            return None
+
+        try:
+            with open(self.SMAC_DOCS_PATH, "r") as f:
                 smac_docs = json.load(f)
 
-            # Add specific guidance about using the documentation
             doc_context = """
             Based on the following SMAC documentation, analyze the dataset characteristics and choose appropriate:
             1. Facade type (e.g., MultiFidelityFacade for multi-fidelity optimization)
@@ -73,49 +109,60 @@ class LLMPlanner:
             """
             doc_context += "\n\n".join([doc["content"] for doc in smac_docs])
 
-            # Add specific questions to guide the LLM
             doc_context += """
             Please analyze the dataset and documentation to determine:
             1. Should multi-fidelity optimization be used? (Consider dataset size and training time)
             2. What budget range is appropriate? (Consider training epochs or data subsets)
             3. How many workers should be used? (Consider available resources)
             4. Are there any special considerations for this dataset type?
+            5. Do not suggest name and output directory for the scenario, it will be generated by the agent.
+            6. Do not suggest any code for the scenario, it will be generated by the agent.
 
             Then generate a scenario configuration that best suits this dataset.
             """
-            self.scenario_plan_instruction = doc_context
+            return doc_context
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Error reading SMAC documentation: {e}")
+            return None
 
-        self.logger = Logger(
-            model_name="gemini-2.0-flash",
-            dataset_name=self.dataset_name,
-            base_log_dir="./logs/instructor",
-        )
-
-    def generate_instructions(self, config_space_suggested_parameters: str | None = None) -> InstructorInfo:
-        """
-        Generates structured instructions for the dataset using the Gemini LLM.
-        :return: An InstructorInfo object containing the generated instructions.
+    def _create_train_function_instruction(self) -> str:
+        """Create the train function instruction."""
+        return """
+        Based on the previous instructions and knowledge of the dataset, generate a plan for the train function.
+        * Do not suggest any code for the train function, it will be generated by the agent.
         """
 
+    def generate_instructions(self, config_space_suggested_parameters: Optional[str] = None) -> InstructorInfo:
+        """
+        Generate structured instructions for the dataset using the Gemini LLM.
+
+        Args:
+            config_space_suggested_parameters: Optional parameters from OpenML for configuration space
+
+        Returns:
+            InstructorInfo: Structured response containing the generated instructions
+        """
+        # Build complete instruction
+        instruction = self.instruction
         if config_space_suggested_parameters:
-            self.instruction += self.instruction_for_configuration_based_on_openml.format(
-                config_space_suggested_parameters=config_space_suggested_parameters
-            )
+            instruction += self.instruction_for_configuration.format(config_space_suggested_parameters=config_space_suggested_parameters)
         if self.scenario_plan_instruction:
-            self.instruction += self.scenario_plan_instruction
+            instruction += self.scenario_plan_instruction
+        if self.train_function_plan_instruction:
+            instruction += self.train_function_plan_instruction
 
+        # Initialize LLM client
         google_client = genai.Client(api_key=GOOGLE_API_KEY)
-        client = instructor.from_genai(google_client, model="models/gemini-2.0-flash")
+        client = instructor.from_genai(google_client, model=f"models/{self.DEFAULT_MODEL}")
+
+        # Generate response
         response = client.chat.completions.create(
             response_model=InstructorInfo,
-            messages=[
-                {
-                    "role": "user",
-                    "content": self.instruction,
-                }
-            ],
+            messages=[{"role": "user", "content": instruction}],
         )
 
-        self.logger.log_prompt(prompt=self.instruction, metadata={"dataset_name": self.dataset_name})
+        # Log the interaction
+        self.logger.log_prompt(prompt=instruction, metadata={"dataset_name": self.dataset_name})
         self.logger.log_response(response, metadata={"dataset_name": self.dataset_name})
+
         return response

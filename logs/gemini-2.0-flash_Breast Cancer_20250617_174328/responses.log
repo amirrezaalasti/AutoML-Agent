@@ -1,0 +1,804 @@
+[2025-06-17 17:43:40] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization of a machine learning model.
+    This configuration space is tailored for categorical datasets with a moderate number of samples (around 500-600)
+    and focuses on common hyperparameters for models that handle categorical features well.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+
+    # Model type (Random Forest or Gradient Boosting)
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["random_forest", "gradient_boosting"], default_value="random_forest",
+        doc="The type of model to use. Random Forest or Gradient Boosting Machine."
+    )
+    cs.add_hyperparameter(model_type)
+
+    # Random Forest hyperparameters
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=50, upper=200, default_value=100,
+        doc="The number of trees in the random forest.",
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "rf_max_depth", lower=2, upper=10, default_value=5,
+        doc="The maximum depth of the trees in the random forest.",
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node.",
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=5, default_value=1,
+        doc="The minimum number of samples required to be at a leaf node.",
+    )
+
+    # Gradient Boosting hyperparameters
+    gb_n_estimators = UniformIntegerHyperparameter(
+        "gb_n_estimators", lower=50, upper=200, default_value=100,
+        doc="The number of boosting stages to perform.",
+    )
+    gb_learning_rate = UniformFloatHyperparameter(
+        "gb_learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True,
+        doc="Boosting learning rate shrinks the contribution of each tree.",
+    )
+    gb_max_depth = UniformIntegerHyperparameter(
+        "gb_max_depth", lower=2, upper=10, default_value=3,
+        doc="Maximum depth of the individual regression estimators.",
+    )
+    gb_min_samples_split = UniformIntegerHyperparameter(
+        "gb_min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node.",
+    )
+    gb_min_samples_leaf = UniformIntegerHyperparameter(
+        "gb_min_samples_leaf", lower=1, upper=5, default_value=1,
+        doc="The minimum number of samples required to be at a leaf node.",
+    )
+    
+    # Regularization hyperparameters applicable to both
+    l1_ratio = UniformFloatHyperparameter(
+        "l1_ratio", lower=0.0, upper=1.0, default_value=0.0,
+        doc="Elastic Net mixing parameter. l1_ratio=0 corresponds to L2 penalty, l1_ratio=1 to L1."
+    )
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([
+        model_type,
+        rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf,
+        gb_n_estimators, gb_learning_rate, gb_max_depth, gb_min_samples_split, gb_min_samples_leaf,
+        l1_ratio
+    ])
+
+    # Define conditional hyperparameters
+    from ConfigSpace.conditions import InCondition
+
+    rf_condition = InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+
+    gb_condition = InCondition(child=gb_n_estimators, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_learning_rate, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_max_depth, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_split, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_leaf, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:40] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization of a machine learning model.
+    This configuration space is tailored for categorical datasets with a moderate number of samples (around 500-600)
+    and focuses on common hyperparameters for models that handle categorical features well.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+
+    # Model type (Random Forest or Gradient Boosting)
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["random_forest", "gradient_boosting"], default_value="random_forest",
+        doc="The type of model to use. Random Forest or Gradient Boosting Machine."
+    )
+    cs.add_hyperparameter(model_type)
+
+    # Random Forest hyperparameters
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=50, upper=200, default_value=100,
+        doc="The number of trees in the random forest.",
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "rf_max_depth", lower=2, upper=10, default_value=5,
+        doc="The maximum depth of the trees in the random forest.",
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node.",
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=5, default_value=1,
+        doc="The minimum number of samples required to be at a leaf node.",
+    )
+
+    # Gradient Boosting hyperparameters
+    gb_n_estimators = UniformIntegerHyperparameter(
+        "gb_n_estimators", lower=50, upper=200, default_value=100,
+        doc="The number of boosting stages to perform.",
+    )
+    gb_learning_rate = UniformFloatHyperparameter(
+        "gb_learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True,
+        doc="Boosting learning rate shrinks the contribution of each tree.",
+    )
+    gb_max_depth = UniformIntegerHyperparameter(
+        "gb_max_depth", lower=2, upper=10, default_value=3,
+        doc="Maximum depth of the individual regression estimators.",
+    )
+    gb_min_samples_split = UniformIntegerHyperparameter(
+        "gb_min_samples_split", lower=2, upper=10, default_value=2,
+        doc="The minimum number of samples required to split an internal node.",
+    )
+    gb_min_samples_leaf = UniformIntegerHyperparameter(
+        "gb_min_samples_leaf", lower=1, upper=5, default_value=1,
+        doc="The minimum number of samples required to be at a leaf node.",
+    )
+    
+    # Regularization hyperparameters applicable to both
+    l1_ratio = UniformFloatHyperparameter(
+        "l1_ratio", lower=0.0, upper=1.0, default_value=0.0,
+        doc="Elastic Net mixing parameter. l1_ratio=0 corresponds to L2 penalty, l1_ratio=1 to L1."
+    )
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([
+        model_type,
+        rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf,
+        gb_n_estimators, gb_learning_rate, gb_max_depth, gb_min_samples_split, gb_min_samples_leaf,
+        l1_ratio
+    ])
+
+    # Define conditional hyperparameters
+    from ConfigSpace.conditions import InCondition
+
+    rf_condition = InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+
+    gb_condition = InCondition(child=gb_n_estimators, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_learning_rate, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_max_depth, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_split, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_leaf, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:40] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): CategoricalHyperparameter.__init__() got an unexpected keyword argument 'doc'
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:46] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization of a machine learning model.
+    This configuration space is tailored for categorical datasets with a moderate number of samples (around 500-600)
+    and focuses on common hyperparameters for models that handle categorical features well.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+
+    # Model type (Random Forest or Gradient Boosting)
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["random_forest", "gradient_boosting"], default_value="random_forest"
+    )
+    cs.add_hyperparameter(model_type)
+
+    # Random Forest hyperparameters
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "rf_max_depth", lower=2, upper=10, default_value=5,
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+
+    # Gradient Boosting hyperparameters
+    gb_n_estimators = UniformIntegerHyperparameter(
+        "gb_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    gb_learning_rate = UniformFloatHyperparameter(
+        "gb_learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True,
+    )
+    gb_max_depth = UniformIntegerHyperparameter(
+        "gb_max_depth", lower=2, upper=10, default_value=3,
+    )
+    gb_min_samples_split = UniformIntegerHyperparameter(
+        "gb_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    gb_min_samples_leaf = UniformIntegerHyperparameter(
+        "gb_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+    
+    # Regularization hyperparameters applicable to both
+    l1_ratio = UniformFloatHyperparameter(
+        "l1_ratio", lower=0.0, upper=1.0, default_value=0.0,
+    )
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([
+        model_type,
+        rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf,
+        gb_n_estimators, gb_learning_rate, gb_max_depth, gb_min_samples_split, gb_min_samples_leaf,
+        l1_ratio
+    ])
+
+    # Define conditional hyperparameters
+    from ConfigSpace.conditions import InCondition
+
+    rf_condition = InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+
+    gb_condition = InCondition(child=gb_n_estimators, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_learning_rate, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_max_depth, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_split, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_leaf, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:46] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization of a machine learning model.
+    This configuration space is tailored for categorical datasets with a moderate number of samples (around 500-600)
+    and focuses on common hyperparameters for models that handle categorical features well.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+
+    # Model type (Random Forest or Gradient Boosting)
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["random_forest", "gradient_boosting"], default_value="random_forest"
+    )
+    cs.add_hyperparameter(model_type)
+
+    # Random Forest hyperparameters
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "rf_max_depth", lower=2, upper=10, default_value=5,
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+
+    # Gradient Boosting hyperparameters
+    gb_n_estimators = UniformIntegerHyperparameter(
+        "gb_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    gb_learning_rate = UniformFloatHyperparameter(
+        "gb_learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True,
+    )
+    gb_max_depth = UniformIntegerHyperparameter(
+        "gb_max_depth", lower=2, upper=10, default_value=3,
+    )
+    gb_min_samples_split = UniformIntegerHyperparameter(
+        "gb_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    gb_min_samples_leaf = UniformIntegerHyperparameter(
+        "gb_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+    
+    # Regularization hyperparameters applicable to both
+    l1_ratio = UniformFloatHyperparameter(
+        "l1_ratio", lower=0.0, upper=1.0, default_value=0.0,
+    )
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([
+        model_type,
+        rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf,
+        gb_n_estimators, gb_learning_rate, gb_max_depth, gb_min_samples_split, gb_min_samples_leaf,
+        l1_ratio
+    ])
+
+    # Define conditional hyperparameters
+    from ConfigSpace.conditions import InCondition
+
+    rf_condition = InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+
+    gb_condition = InCondition(child=gb_n_estimators, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_learning_rate, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_max_depth, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_split, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_leaf, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:46] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#2): Hyperparameter 'model_type' already exists in space.
+Existing: model_type, Type: Categorical, Choices: {random_forest, gradient_boosting}, Default: random_forest
+New one: model_type, Type: Categorical, Choices: {random_forest, gradient_boosting}, Default: random_forest
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:52] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+from ConfigSpace.conditions import InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization of a machine learning model.
+    This configuration space is tailored for categorical datasets with a moderate number of samples (around 500-600)
+    and focuses on common hyperparameters for models that handle categorical features well.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+
+    # Model type (Random Forest or Gradient Boosting)
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["random_forest", "gradient_boosting"], default_value="random_forest"
+    )
+    cs.add_hyperparameter(model_type)
+
+    # Random Forest hyperparameters
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "rf_max_depth", lower=2, upper=10, default_value=5,
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+
+    # Gradient Boosting hyperparameters
+    gb_n_estimators = UniformIntegerHyperparameter(
+        "gb_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    gb_learning_rate = UniformFloatHyperparameter(
+        "gb_learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True,
+    )
+    gb_max_depth = UniformIntegerHyperparameter(
+        "gb_max_depth", lower=2, upper=10, default_value=3,
+    )
+    gb_min_samples_split = UniformIntegerHyperparameter(
+        "gb_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    gb_min_samples_leaf = UniformIntegerHyperparameter(
+        "gb_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+    
+    # Regularization hyperparameters applicable to both
+    l1_ratio = UniformFloatHyperparameter(
+        "l1_ratio", lower=0.0, upper=1.0, default_value=0.0,
+    )
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([
+        rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf,
+        gb_n_estimators, gb_learning_rate, gb_max_depth, gb_min_samples_split, gb_min_samples_leaf,
+        l1_ratio
+    ])
+
+    # Define conditional hyperparameters
+
+    rf_condition = InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+
+    gb_condition = InCondition(child=gb_n_estimators, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_learning_rate, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_max_depth, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_split, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_leaf, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:52] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
+from ConfigSpace.conditions import InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization of a machine learning model.
+    This configuration space is tailored for categorical datasets with a moderate number of samples (around 500-600)
+    and focuses on common hyperparameters for models that handle categorical features well.
+    """
+    cs = ConfigurationSpace()
+
+    # Define hyperparameters
+
+    # Model type (Random Forest or Gradient Boosting)
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["random_forest", "gradient_boosting"], default_value="random_forest"
+    )
+    cs.add_hyperparameter(model_type)
+
+    # Random Forest hyperparameters
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "rf_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "rf_max_depth", lower=2, upper=10, default_value=5,
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "rf_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "rf_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+
+    # Gradient Boosting hyperparameters
+    gb_n_estimators = UniformIntegerHyperparameter(
+        "gb_n_estimators", lower=50, upper=200, default_value=100,
+    )
+    gb_learning_rate = UniformFloatHyperparameter(
+        "gb_learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True,
+    )
+    gb_max_depth = UniformIntegerHyperparameter(
+        "gb_max_depth", lower=2, upper=10, default_value=3,
+    )
+    gb_min_samples_split = UniformIntegerHyperparameter(
+        "gb_min_samples_split", lower=2, upper=10, default_value=2,
+    )
+    gb_min_samples_leaf = UniformIntegerHyperparameter(
+        "gb_min_samples_leaf", lower=1, upper=5, default_value=1,
+    )
+    
+    # Regularization hyperparameters applicable to both
+    l1_ratio = UniformFloatHyperparameter(
+        "l1_ratio", lower=0.0, upper=1.0, default_value=0.0,
+    )
+
+    # Add hyperparameters to the configuration space
+    cs.add_hyperparameters([
+        rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf,
+        gb_n_estimators, gb_learning_rate, gb_max_depth, gb_min_samples_split, gb_min_samples_leaf,
+        l1_ratio
+    ])
+
+    # Define conditional hyperparameters
+
+    rf_condition = InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+    rf_condition = InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"])
+    cs.add_condition(rf_condition)
+
+    gb_condition = InCondition(child=gb_n_estimators, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_learning_rate, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_max_depth, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_split, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+    gb_condition = InCondition(child=gb_min_samples_leaf, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gb_condition)
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:52] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:53] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Breast Cancer_20250617_174328",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+    )
+    return scenario
+```
+
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:53] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Breast Cancer_20250617_174328",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:53] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:58] [Metadata: {'component': 'train_function'}] ```python
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, make_scorer, f1_score
+from ConfigSpace import Configuration
+from typing import Any
+import warnings
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' for features, 'y' for labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The negative accuracy score on the validation set.
+    """
+    np.random.seed(seed)
+
+    try:
+        X = dataset['X']
+        y = dataset['y']
+
+        # Convert to DataFrame for easier preprocessing
+        X = pd.DataFrame(X)
+        y = pd.Series(y)
+
+        # Identify categorical and numerical features (simplified)
+        categorical_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_features = X.select_dtypes(include=['number']).columns.tolist()
+
+        # Preprocessing pipelines
+        numerical_pipeline = Pipeline([
+            ('imputer', SimpleImputer(strategy='mean')),
+            ('scaler', StandardScaler())
+        ])
+
+        categorical_pipeline = Pipeline([
+            ('imputer', SimpleImputer(strategy='most_frequent')),
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
+        ])
+
+        # Column Transformer
+        preprocessor = ColumnTransformer([
+            ('numerical', numerical_pipeline, numerical_features),
+            ('categorical', categorical_pipeline, categorical_features)
+        ], remainder='passthrough') # or 'drop' if you don't want to keep the rest
+
+        # Split data
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed, stratify=y)
+
+        X_train = preprocessor.fit_transform(X_train)
+        X_val = preprocessor.transform(X_val)
+
+        # Model selection and configuration
+        model_type = cfg.get("model_type")
+
+        if model_type == "random_forest":
+            model = RandomForestClassifier(
+                n_estimators=cfg.get("rf_n_estimators"),
+                max_depth=cfg.get("rf_max_depth"),
+                min_samples_split=cfg.get("rf_min_samples_split"),
+                min_samples_leaf=cfg.get("rf_min_samples_leaf"),
+                random_state=seed,
+                n_jobs=-1,
+                class_weight="balanced",
+            )
+        elif model_type == "gradient_boosting":
+            model = GradientBoostingClassifier(
+                n_estimators=cfg.get("gb_n_estimators"),
+                learning_rate=cfg.get("gb_learning_rate"),
+                max_depth=cfg.get("gb_max_depth"),
+                min_samples_split=cfg.get("gb_min_samples_split"),
+                min_samples_leaf=cfg.get("gb_min_samples_leaf"),
+                random_state=seed,
+            )
+        else:
+            raise ValueError(f"Unknown model type: {model_type}")
+
+        # Train model
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning) # Suppress some warnings related to convergence
+            model.fit(X_train, y_train)
+
+        # Evaluate model
+        y_pred = model.predict(X_val)
+        accuracy = accuracy_score(y_val, y_pred)
+        print(f"Accuracy: {accuracy}")
+
+        return -accuracy  # Return negative accuracy to be minimized by SMAC
+
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return -0.0  # Return a very low accuracy if training fails
+```
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:58] [Metadata: {'component': 'train_function', 'action': 'run'}] import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, make_scorer, f1_score
+from ConfigSpace import Configuration
+from typing import Any
+import warnings
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a machine learning model based on the provided configuration and dataset.
+
+    Args:
+        cfg (Configuration): A ConfigurationSpace object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' for features, 'y' for labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The negative accuracy score on the validation set.
+    """
+    np.random.seed(seed)
+
+    try:
+        X = dataset['X']
+        y = dataset['y']
+
+        # Convert to DataFrame for easier preprocessing
+        X = pd.DataFrame(X)
+        y = pd.Series(y)
+
+        # Identify categorical and numerical features (simplified)
+        categorical_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_features = X.select_dtypes(include=['number']).columns.tolist()
+
+        # Preprocessing pipelines
+        numerical_pipeline = Pipeline([
+            ('imputer', SimpleImputer(strategy='mean')),
+            ('scaler', StandardScaler())
+        ])
+
+        categorical_pipeline = Pipeline([
+            ('imputer', SimpleImputer(strategy='most_frequent')),
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
+        ])
+
+        # Column Transformer
+        preprocessor = ColumnTransformer([
+            ('numerical', numerical_pipeline, numerical_features),
+            ('categorical', categorical_pipeline, categorical_features)
+        ], remainder='passthrough') # or 'drop' if you don't want to keep the rest
+
+        # Split data
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed, stratify=y)
+
+        X_train = preprocessor.fit_transform(X_train)
+        X_val = preprocessor.transform(X_val)
+
+        # Model selection and configuration
+        model_type = cfg.get("model_type")
+
+        if model_type == "random_forest":
+            model = RandomForestClassifier(
+                n_estimators=cfg.get("rf_n_estimators"),
+                max_depth=cfg.get("rf_max_depth"),
+                min_samples_split=cfg.get("rf_min_samples_split"),
+                min_samples_leaf=cfg.get("rf_min_samples_leaf"),
+                random_state=seed,
+                n_jobs=-1,
+                class_weight="balanced",
+            )
+        elif model_type == "gradient_boosting":
+            model = GradientBoostingClassifier(
+                n_estimators=cfg.get("gb_n_estimators"),
+                learning_rate=cfg.get("gb_learning_rate"),
+                max_depth=cfg.get("gb_max_depth"),
+                min_samples_split=cfg.get("gb_min_samples_split"),
+                min_samples_leaf=cfg.get("gb_min_samples_leaf"),
+                random_state=seed,
+            )
+        else:
+            raise ValueError(f"Unknown model type: {model_type}")
+
+        # Train model
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning) # Suppress some warnings related to convergence
+            model.fit(X_train, y_train)
+
+        # Evaluate model
+        y_pred = model.predict(X_val)
+        accuracy = accuracy_score(y_val, y_pred)
+        print(f"Accuracy: {accuracy}")
+
+        return -accuracy  # Return negative accuracy to be minimized by SMAC
+
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return -0.0  # Return a very low accuracy if training fails
+
+--------------------------------------------------------------------------------
+[2025-06-17 17:43:58] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': -0.956140350877193}] Training executed successfully, loss: -0.956140350877193
+--------------------------------------------------------------------------------
