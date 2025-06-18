@@ -3,3 +3,6 @@ smac3_output
 configs/api_keys.py
 __pycache__
 test.ipynb
+dataset.csv
+test.csv
+.pytest_cache
