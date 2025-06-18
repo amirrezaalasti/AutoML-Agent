@@ -1,6 +1,8 @@
 # Agent SMAC
 
-<img src="logo.png">
+<div align="center">
+  <img src="logo.png" alt="AutoML-Agent Logo" width="300" style="margin: 20px 0;">
+</div>
 
 **AutoML-Agent** is a prototype framework designed to automate the end-to-end machine learning pipeline using a multi-agent system powered by Large Language Models (LLMs). This project aims to simplify the process of building, training, and deploying machine learning models by interpreting natural language instructions and orchestrating specialized agents for each stage of the pipeline.
 
