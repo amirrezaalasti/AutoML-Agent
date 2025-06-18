@@ -306,4 +306,6 @@ class AutoMLAgent:
             smac_train_function,  # We pass the target function here
             overwrite=True,  # Overrides any previous results that are found that are inconsistent with the meta-data
         )
-        smac.optimize()
+        incumbent = smac.optimize()
+
+        default_cost = smac.validate(self.config_space_obj.get_default_configuration())
