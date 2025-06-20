@@ -1,0 +1,48 @@
+2025-06-20 10:09:48,557  | py-experimenter - INFO     | Found 4 keyfields
+2025-06-20 10:09:48,558  | py-experimenter - INFO     | Found 5 resultfields
+2025-06-20 10:09:48,559  | py-experimenter - WARNING  | No logtables given
+2025-06-20 10:09:48,559  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 10:09:48,559  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 10:09:48,561  | py-experimenter - INFO     | Initialized and connected to database
+2025-06-20 10:12:37,083  | py-experimenter - INFO     | 1 rows successfully added to database. 0 rows were skipped.
+2025-06-20 10:15:40,740  | py-experimenter - INFO     | All configured executions finished.
+2025-06-20 10:16:06,104  | py-experimenter - INFO     | All configured executions finished.
+2025-06-20 10:16:43,240  | py-experimenter - INFO     | 1 rows successfully added to database. 0 rows were skipped.
+2025-06-20 11:13:43,724  | py-experimenter - INFO     | Found 5 keyfields
+2025-06-20 11:13:43,724  | py-experimenter - INFO     | Found 12 resultfields
+2025-06-20 11:13:43,724  | py-experimenter - WARNING  | No logtables given
+2025-06-20 11:13:43,724  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 11:13:43,724  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 11:13:43,728  | py-experimenter - INFO     | Initialized and connected to database
+2025-06-20 11:18:38,022  | py-experimenter - INFO     | Found 5 keyfields
+2025-06-20 11:18:38,023  | py-experimenter - INFO     | Found 10 resultfields
+2025-06-20 11:18:38,023  | py-experimenter - WARNING  | No logtables given
+2025-06-20 11:18:38,023  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 11:18:38,023  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 11:18:38,023  | py-experimenter - INFO     | Initialized and connected to database
+2025-06-20 11:23:34,166  | py-experimenter - INFO     | Found 5 keyfields
+2025-06-20 11:23:34,166  | py-experimenter - INFO     | Found 10 resultfields
+2025-06-20 11:23:34,166  | py-experimenter - WARNING  | No logtables given
+2025-06-20 11:23:34,166  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 11:23:34,166  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 11:23:34,166  | py-experimenter - INFO     | Initialized and connected to database
+2025-06-20 11:24:57,682  | py-experimenter - INFO     | Found 5 keyfields
+2025-06-20 11:24:57,684  | py-experimenter - INFO     | Found 10 resultfields
+2025-06-20 11:24:57,684  | py-experimenter - WARNING  | No logtables given
+2025-06-20 11:24:57,685  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 11:24:57,686  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 11:24:57,689  | py-experimenter - INFO     | Initialized and connected to database
+2025-06-20 11:25:45,387  | py-experimenter - INFO     | Found 5 keyfields
+2025-06-20 11:25:45,388  | py-experimenter - INFO     | Found 10 resultfields
+2025-06-20 11:25:45,388  | py-experimenter - WARNING  | No logtables given
+2025-06-20 11:25:45,389  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 11:25:45,389  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 11:25:45,390  | py-experimenter - INFO     | Initialized and connected to database
+2025-06-20 11:25:45,392  | py-experimenter - INFO     | 1 rows successfully added to database. 0 rows were skipped.
+2025-06-20 11:26:42,331  | py-experimenter - INFO     | Found 5 keyfields
+2025-06-20 11:26:42,332  | py-experimenter - INFO     | Found 10 resultfields
+2025-06-20 11:26:42,332  | py-experimenter - WARNING  | No logtables given
+2025-06-20 11:26:42,332  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 11:26:42,332  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 11:26:42,332  | py-experimenter - INFO     | Initialized and connected to database
+2025-06-20 11:27:46,897  | py-experimenter - INFO     | 1 rows successfully added to database. 0 rows were skipped.

@@ -1,61 +1,90 @@
-import sklearn.svm
-from sklearn.model_selection import cross_val_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
-from sklearn.pipeline import Pipeline
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
 from ConfigSpace import Configuration
 from typing import Any
-import numpy as np
 
 
 def train(cfg: Configuration, dataset: Any, seed: int) -> float:
     """
-    Trains an SVM model on the given dataset using the provided configuration.
+    Trains a machine learning model based on the provided configuration and dataset.
 
     Args:
-        cfg (Configuration): The configuration for the SVM model.
-        dataset (Any): A dictionary containing the feature matrix 'X' and label vector 'y'.
-        seed (int): The random seed for reproducibility.
+        cfg (Configuration): A Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): Random seed for reproducibility.
 
     Returns:
-        float: The average cross-validation error (1 - accuracy).
+        float: Negative validation accuracy.
     """
-    try:
-        X = dataset["X"]
-        y = dataset["y"]
+    np.random.seed(seed)
 
-        # Handle missing values with imputation
-        imputer = SimpleImputer(strategy="mean")  # or 'median', 'most_frequent', 'constant'
-        X = imputer.fit_transform(X)
+    X = dataset["X"].copy()
+    y = dataset["y"].copy()
 
-        # Standardize features
-        scaler = StandardScaler()
-        X = scaler.fit_transform(X)
+    # Preprocessing: Handle non-numeric values and scale
+    for col in X.columns:
+        if pd.api.types.is_object_dtype(X[col]):
+            # Attempt conversion to numeric, coercing errors to NaN
+            X[col] = pd.to_numeric(X[col], errors="coerce")
+            # Fill NaN values resulting from failed conversion with the median
+            X[col] = X[col].fillna(X[col].median())
+            # If there are still NaN values after filling with median, use Label Encoding
+            if X[col].isnull().any():
+                le = LabelEncoder()
+                X[col] = le.fit_transform(X[col].astype(str))
+        elif pd.api.types.is_numeric_dtype(X[col]):
+            X[col] = X[col].fillna(X[col].median())  # Fill NaN with median
+        else:
+            # Handle cases where the column is neither object nor numeric
+            X[col] = X[col].astype(str)
+            le = LabelEncoder()
+            X[col] = le.fit_transform(X[col])
 
-        # Extract hyperparameters from configuration
-        kernel = cfg.get("svm_kernel")
-        C = cfg.get("svm_C")
-        gamma = cfg.get("svm_gamma") if "svm_gamma" in cfg else "scale"  # Handle conditional gamma
-        degree = cfg.get("svm_degree") if "svm_degree" in cfg else 3  # Handle conditional degree
+    scaler = StandardScaler()
+    X = scaler.fit_transform(X)
 
-        # Create SVM model with configuration
-        model = sklearn.svm.SVC(
-            kernel=kernel,
-            C=C,
-            gamma=gamma,
-            degree=degree,
+    # Split data
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed, stratify=y)
+
+    model_type = cfg.get("model_type")
+
+    if model_type == "logistic_regression":
+        C = cfg.get("logistic_regression:C")
+        penalty = cfg.get("logistic_regression:penalty")
+        model = LogisticRegression(C=C, penalty=penalty, solver="liblinear", random_state=seed)
+    elif model_type == "random_forest":
+        n_estimators = cfg.get("random_forest:n_estimators")
+        max_depth = cfg.get("random_forest:max_depth")
+        min_samples_split = cfg.get("random_forest:min_samples_split")
+        min_samples_leaf = cfg.get("random_forest:min_samples_leaf")
+        model = RandomForestClassifier(
+            n_estimators=n_estimators,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
             random_state=seed,
-            probability=False,  # probability=True makes training slower
+            n_jobs=-1,
         )
+    elif model_type == "svm":
+        C = cfg.get("svm:C")
+        kernel = cfg.get("svm:kernel")
+        gamma = cfg.get("svm:gamma")
+        degree = cfg.get("svm:degree")
+        model = SVC(C=C, kernel=kernel, gamma=gamma, degree=degree, random_state=seed)
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
 
-        # Perform cross-validation
-        cv_scores = cross_val_score(model, X, y, cv=5, scoring="accuracy", n_jobs=1)  # n_jobs=1 for reproducibility in SMAC
-        avg_accuracy = np.mean(cv_scores)
+    # Train model
+    model.fit(X_train, y_train)
 
-        # Return 1 - accuracy as SMAC minimizes the objective
-        return -(avg_accuracy)
+    # Evaluate model
+    y_pred = model.predict(X_val)
+    accuracy = accuracy_score(y_val, y_pred)
 
-    except Exception as e:
-        print(f"Error during training: {e}")
-        # Return a large error value in case of failure
-        return 1.0
+    return -accuracy

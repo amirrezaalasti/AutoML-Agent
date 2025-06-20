@@ -4,6 +4,7 @@ from smac import HyperparameterOptimizationFacade, Scenario
 import warnings
 from typing import Any
 import re
+from sklearn.model_selection import train_test_split
 
 
 def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
@@ -264,6 +265,27 @@ def format_dataset(dataset: Any) -> dict:
         raise ValueError("Unsupported dataset format")
 
     return {"X": X, "y": y}
+
+
+def split_dataset(dataset: dict, test_size: float = 0.2) -> tuple[dict, dict]:
+    """
+    Split the dataset into training and testing sets.
+    """
+    X, y = dataset["X"], dataset["y"]
+
+    # If X is a DataFrame, preserve the index
+    if isinstance(X, pd.DataFrame):
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+        # Reset index to ensure continuous indices
+        X_train = X_train.reset_index(drop=True)
+        X_test = X_test.reset_index(drop=True)
+        if isinstance(y_train, pd.Series):
+            y_train = y_train.reset_index(drop=True)
+            y_test = y_test.reset_index(drop=True)
+    else:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+
+    return {"X": X_train, "y": y_train}, {"X": X_test, "y": y_test}
 
 
 def extract_code_block(code: str) -> str:

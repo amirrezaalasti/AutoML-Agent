@@ -4,6 +4,7 @@ import zipfile
 import io
 from datetime import datetime
 import os
+from sklearn.datasets import fetch_openml
 
 # Core dataset libraries (conflict‑free)
 from sklearn.datasets import (
@@ -18,10 +19,10 @@ from keras.datasets import mnist, fashion_mnist, cifar10, cifar100
 import statsmodels.api as sm
 import seaborn as sns
 
-from configs.api_keys import GROQ_API_KEY, GOOGLE_API_KEY
+from config.api_keys import GROQ_API_KEY, GOOGLE_API_KEY
 from scripts.LLMClient import LLMClient
 from scripts.AutoMLAgent import AutoMLAgent
-from scripts.utils import convert_to_csv
+from scripts.utils import convert_to_csv, format_dataset
 
 # Available GROQ models
 AVAILABLE_MODELS = [
@@ -54,7 +55,10 @@ DATASET_OPTIONS = {
     "time_series": ["Sunspot"],
     "text": ["20 Newsgroups"],
     "categorical": ["Breast Cancer", "Wine", "Adult Income"],
+    "openml": ["OpenML Dataset"],
 }
+
+TASK_OPTIONS = ["classification", "regression", "clustering"]
 
 
 class AutoMLAppUI:
@@ -63,10 +67,42 @@ class AutoMLAppUI:
         self.data_type = None
         self.model_choice = None
         self.dataset_name = None
+        self.task_type = None
 
     def load_dataset(self, data_type, dataset_name):
+        if data_type == "openml":
+            # First, let user choose the dataset type
+            openml_dataset_type = st.selectbox(
+                "Select the type of OpenML dataset",
+                ["tabular", "image", "text", "time_series", "categorical"],
+                key="openml_dataset_type",
+            )
+
+            # Then, let user enter the dataset ID
+            dataset_name = st.text_input("Enter OpenML Dataset Name (e.g., iris)", key="openml_dataset_id")
+
+            if dataset_name:
+                try:
+                    # Load the dataset from OpenML
+                    X, y = fetch_openml(dataset_name, return_X_y=True)
+
+                    # Format the dataset
+                    self.dataset = format_dataset({"X": X, "y": y})
+                    self.data_type = openml_dataset_type
+                    self.dataset_name = dataset_name
+
+                    # Display dataset info
+                    st.info(f"Dataset loaded successfully: {dataset_name}")
+                    st.info(f"Number of features: {X.shape[1]}")
+                    st.info(f"Number of instances: {X.shape[0]}")
+
+                    return self.dataset
+                except Exception as e:
+                    st.error(f"Error loading OpenML dataset: {str(e)}")
+                    return None
+            return None
         # 1. Tabular
-        if data_type == "tabular":
+        elif data_type == "tabular":
             if dataset_name == "Iris":
                 X, y = load_iris(return_X_y=True)
                 return {"X": X, "y": y}
@@ -148,11 +184,24 @@ class AutoMLAppUI:
     def display(self):
         st.title("AutoML Agent Interface")
 
-        self.data_type = st.selectbox("Select the dataset type", list(DATASET_OPTIONS.keys()))
-        dataset_choice = st.selectbox("Choose a dataset", DATASET_OPTIONS[self.data_type])
+        # Step 1: Select dataset type
+        self.data_type = st.selectbox(
+            "Select the dataset type",
+            list(DATASET_OPTIONS.keys()),
+            key="main_dataset_type",
+        )
+
+        # Step 2: Choose dataset
+        dataset_choice = st.selectbox("Choose a dataset", DATASET_OPTIONS[self.data_type], key="dataset_choice")
+
+        # Step 3: Load dataset
         self.dataset = self.load_dataset(self.data_type, dataset_choice)
 
-        self.model_choice = st.selectbox("Select a GROQ LLM Model", AVAILABLE_MODELS)
+        # Step 4: Select task type (for all datasets)
+        self.task_type = st.selectbox("Select the ML task for this dataset", TASK_OPTIONS, key="task_type")
+
+        # Step 5: Select model
+        self.model_choice = st.selectbox("Select a GROQ LLM Model", AVAILABLE_MODELS, key="model_choice")
 
         if st.button("Run AutoML Agent"):
             if self.dataset is None:
@@ -166,13 +215,16 @@ class AutoMLAppUI:
                     api_key = GROQ_API_KEY
 
                 llm_client = LLMClient(api_key=api_key, model_name=self.model_choice)
-                self.dataset_name = dataset_choice
+                if dataset_choice != "OpenML Dataset":
+                    self.dataset_name = dataset_choice
+
                 agent = AutoMLAgent(
                     dataset=self.dataset,
                     llm_client=llm_client,
                     dataset_type=self.data_type,
                     ui_agent=st,
-                    dataset_name=dataset_choice,
+                    dataset_name=self.dataset_name,
+                    task_type=self.task_type,
                 )
                 (
                     config_code,

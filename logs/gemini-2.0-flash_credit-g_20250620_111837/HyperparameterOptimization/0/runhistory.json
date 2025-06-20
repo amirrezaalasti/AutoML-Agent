@@ -1,0 +1,175 @@
+{
+  "stats": {
+    "submitted": 10,
+    "finished": 10,
+    "running": 0
+  },
+  "data": [
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.75,
+      "time": 0.044927120208740234,
+      "cpu_time": 0.21196700000000135,
+      "status": 1,
+      "starttime": 1750411146.1679208,
+      "endtime": 1750411146.214247,
+      "additional_info": {}
+    },
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.73125,
+      "time": 0.03240823745727539,
+      "cpu_time": 0.32335199999999986,
+      "status": 1,
+      "starttime": 1750411146.216337,
+      "endtime": 1750411146.252744,
+      "additional_info": {}
+    },
+    {
+      "config_id": 2,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.75,
+      "time": 0.030247926712036133,
+      "cpu_time": 0.33354200000000134,
+      "status": 1,
+      "starttime": 1750411146.253987,
+      "endtime": 1750411146.2850702,
+      "additional_info": {}
+    },
+    {
+      "config_id": 2,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.73125,
+      "time": 0.019573450088500977,
+      "cpu_time": 0.20538200000000018,
+      "status": 1,
+      "starttime": 1750411146.287134,
+      "endtime": 1750411146.308799,
+      "additional_info": {}
+    },
+    {
+      "config_id": 1,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": -0.71875,
+      "time": 0.018628835678100586,
+      "cpu_time": 0.2128940000000057,
+      "status": 1,
+      "starttime": 1750411146.309946,
+      "endtime": 1750411146.3293738,
+      "additional_info": {}
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.75,
+      "time": 0.019091129302978516,
+      "cpu_time": 0.20816899999999805,
+      "status": 1,
+      "starttime": 1750411146.331868,
+      "endtime": 1750411146.352854,
+      "additional_info": {}
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.73125,
+      "time": 0.015664100646972656,
+      "cpu_time": 0.17407700000000403,
+      "status": 1,
+      "starttime": 1750411146.3540149,
+      "endtime": 1750411146.370471,
+      "additional_info": {}
+    },
+    {
+      "config_id": 3,
+      "instance": null,
+      "seed": 924231285,
+      "budget": null,
+      "cost": -0.71875,
+      "time": 0.018693923950195312,
+      "cpu_time": 0.20703499999999764,
+      "status": 1,
+      "starttime": 1750411146.372729,
+      "endtime": 1750411146.392931,
+      "additional_info": {}
+    },
+    {
+      "config_id": 4,
+      "instance": null,
+      "seed": 209652396,
+      "budget": null,
+      "cost": -0.75,
+      "time": 0.012024641036987305,
+      "cpu_time": 0.01496399999999909,
+      "status": 1,
+      "starttime": 1750411146.762511,
+      "endtime": 1750411146.7752478,
+      "additional_info": {}
+    },
+    {
+      "config_id": 4,
+      "instance": null,
+      "seed": 398764591,
+      "budget": null,
+      "cost": -0.73125,
+      "time": 0.011172056198120117,
+      "cpu_time": 0.14552000000000476,
+      "status": 1,
+      "starttime": 1750411146.7765539,
+      "endtime": 1750411146.788437,
+      "additional_info": {}
+    }
+  ],
+  "configs": {
+    "1": {
+      "model_type": "logistic_regression",
+      "logistic_regression__C": 9.2154715686052,
+      "logistic_regression__penalty": "l1",
+      "logistic_regression__solver": "liblinear"
+    },
+    "2": {
+      "model_type": "random_forest",
+      "random_forest__criterion": "gini",
+      "random_forest__max_depth": 19,
+      "random_forest__min_samples_leaf": 4,
+      "random_forest__min_samples_split": 5,
+      "random_forest__n_estimators": 91
+    },
+    "3": {
+      "model_type": "logistic_regression",
+      "logistic_regression__C": 1.0,
+      "logistic_regression__penalty": "l2",
+      "logistic_regression__solver": "liblinear"
+    },
+    "4": {
+      "model_type": "random_forest",
+      "random_forest__criterion": "gini",
+      "random_forest__max_depth": 22,
+      "random_forest__min_samples_leaf": 14,
+      "random_forest__min_samples_split": 6,
+      "random_forest__n_estimators": 97
+    }
+  },
+  "config_origins": {
+    "1": "Initial Design: Sobol",
+    "2": "Initial Design: Sobol",
+    "3": "Initial Design: Default configuration",
+    "4": "Acquisition Function Maximizer: Local Search"
+  }
+}
