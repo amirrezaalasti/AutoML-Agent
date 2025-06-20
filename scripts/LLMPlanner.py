@@ -4,7 +4,7 @@ import instructor
 from google import genai
 import os
 import json
-from configs.api_keys import GOOGLE_API_KEY
+from config.api_keys import GOOGLE_API_KEY
 from scripts.Logger import Logger
 
 
@@ -31,6 +31,7 @@ class LLMPlanner:
         dataset_name: str,
         dataset_description: str,
         dataset_type: str,
+        task_type: str | None = None,
     ) -> None:
         """
         Initialize the LLMPlanner with dataset details.
@@ -43,7 +44,7 @@ class LLMPlanner:
         self.dataset_name = dataset_name
         self.dataset_description = dataset_description
         self.dataset_type = dataset_type
-
+        self.task_type = task_type
         # Initialize instructions
         self.instruction = self._create_base_instruction()
         self.instruction_for_configuration = self._create_configuration_instruction()
@@ -76,6 +77,10 @@ class LLMPlanner:
             "- recommended_configuration (str)\n"
             "- scenario_plan (str)\n"
             "- train_function_plan (str)\n"
+            "- you have to do the task type: {self.task_type}\n"
+            "- do not suggest error handling code, the agent should not handle errors, it should be handled by the user."
+            "- your instructions should be a step by step guide for the agent to follow."
+            "- if a dataset and a task needs to be done on GPU, you should suggest to use GPU."
         )
 
     def _create_configuration_instruction(self) -> str:

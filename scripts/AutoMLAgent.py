@@ -5,19 +5,18 @@ from scripts.utils import (
     save_code,
     format_dataset,
     extract_code_block,
-    generate_general_dataset_task_types,
+    split_dataset,
 )
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
-from configs.api_keys import OPENML_API_KEY, CSV_PATH
+from config.api_keys import OPENML_API_KEY
+from config.configs_path import OPENML_CSV_PATH, EXPERIMENTER_CONFIG_PATH
 from scripts.LLMPlanner import LLMPlanner
 from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
 )
 from smac import Scenario
-import os
-import json
-import time
+from py_experimenter.experimenter import PyExperimenter
 
 
 class AutoMLAgent:
@@ -31,6 +30,7 @@ class AutoMLAgent:
         dataset_type: str,
         ui_agent: Any,
         dataset_name: str = None,
+        task_type: str = None,
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -41,9 +41,11 @@ class AutoMLAgent:
         :param dataset_name: Optional name of the dataset for logging and display.
         """
         self.dataset = format_dataset(dataset)
+        self.dataset, self.dataset_test = split_dataset(self.dataset)
         self.dataset_type = dataset_type
         self.dataset_description = describe_dataset(self.dataset, dataset_type)
         self.dataset_name = dataset_name if dataset_name else None
+        self.task_type = task_type if task_type else None
 
         self.llm = llm_client
 
@@ -73,12 +75,22 @@ class AutoMLAgent:
             base_log_dir="./logs",
         )
 
-        self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=CSV_PATH)
+        self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH)
         self.LLMInstructor = LLMPlanner(
             dataset_name=self.dataset_name,
             dataset_description=self.dataset_description,
             dataset_type=self.dataset_type,
+            task_type=self.task_type,
         )
+        self.experimenter = PyExperimenter(
+            experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
+            name="AutoMLAgent",
+        )
+        self.experimenter_row_dict = {
+            "dataset_name": self.dataset_name,
+            "dataset_type": self.dataset_type,
+            "task_type": self.task_type,
+        }
 
     def generate_components(self):
         """
@@ -104,7 +116,10 @@ class AutoMLAgent:
         self.ui_agent.write(instructor_response.train_function_plan)
 
         # Configuration Space
-        self.prompts["config"] = self._create_config_prompt(instructor_response.recommended_configuration)
+        self.prompts["config"] = self._create_config_prompt(
+            instructor_response.recommended_configuration,
+            # self.task_type,
+        )
         self.config_code = self.llm.generate(self.prompts["config"])
         self.logger.log_prompt(self.prompts["config"], {"component": "config"})
         self.logger.log_response(self.config_code, {"component": "config"})
@@ -123,7 +138,10 @@ class AutoMLAgent:
 
         # Training Function
         train_plan = instructor_response.train_function_plan
-        self.prompts["train_function"] = self._create_train_prompt(train_plan)
+        self.prompts["train_function"] = self._create_train_prompt(
+            train_plan,
+            # self.task_type
+        )
         self.train_function_code = self.llm.generate(self.prompts["train_function"])
         self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
         self.logger.log_response(self.train_function_code, {"component": "train_function"})
@@ -146,6 +164,8 @@ class AutoMLAgent:
         self.ui_agent.write("Starting Optimization Process")
 
         self.run_scenario(self.scenario_obj, train, self.dataset, self.config_space_obj)
+        print(self.experimenter_row_dict)
+        self.experimenter.fill_table_with_rows(rows=[self.experimenter_row_dict])
 
         # Return results and last training loss
         return (
@@ -309,3 +329,21 @@ class AutoMLAgent:
         incumbent = smac.optimize()
 
         default_cost = smac.validate(self.config_space_obj.get_default_configuration())
+        self.ui_agent.subheader("Default Cost")
+        self.ui_agent.write(default_cost)
+        self.experimenter_row_dict["default_train_accuracy"] = default_cost
+
+        incubment_cost = smac.validate(incumbent)
+        self.ui_agent.subheader("Incumbent Cost")
+        self.ui_agent.write(incubment_cost)
+        self.experimenter_row_dict["incumbent_train_accuracy"] = incubment_cost
+
+        self.test_incumbent(train_fn, incumbent, self.dataset_test, self.config_space_obj)
+
+    def test_incumbent(self, train_fn, incumbent: Any, dataset: Any, cfg: Any):
+        """Test the incumbent on the test set"""
+        loss = train_fn(cfg=incumbent, dataset=dataset, seed=0)
+        self.ui_agent.subheader("Test Loss")
+        self.ui_agent.write(loss)
+        self.experimenter_row_dict["incumbent_config"] = str(incumbent)
+        self.experimenter_row_dict["test_train_accuracy"] = loss

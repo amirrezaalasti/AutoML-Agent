@@ -1,0 +1,578 @@
+[2025-06-20 11:18:54] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+    Designed for the credit-g dataset (German Credit Data), a classification problem
+    with mixed categorical and numerical features.
+    """
+    cs = ConfigurationSpace()
+
+    # --- Model Choice: Logistic Regression or Random Forest ---
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["logistic_regression", "random_forest"], default_value="logistic_regression",
+        doc="Choose between Logistic Regression and Random Forest."
+    )
+    cs.add_hyperparameter(model_type)
+
+    # --- Logistic Regression Hyperparameters ---
+    lr_penalty = CategoricalHyperparameter(
+        "logistic_regression__penalty", choices=["l1", "l2", "elasticnet"], default_value="l2",
+        doc="Regularization penalty for Logistic Regression (l1, l2, elasticnet)."
+    )
+    lr_C = UniformFloatHyperparameter(
+        "logistic_regression__C", lower=1e-4, upper=1e4, default_value=1.0, log=True,
+        doc="Inverse of regularization strength for Logistic Regression."
+    )
+    lr_solver = CategoricalHyperparameter(
+        "logistic_regression__solver", choices=["liblinear", "saga"], default_value="liblinear",
+        doc="Solver for Logistic Regression (liblinear, saga). 'liblinear' handles l1, l2; 'saga' handles all."
+    )
+    lr_l1_ratio = UniformFloatHyperparameter(
+        "logistic_regression__l1_ratio", lower=0.0, upper=1.0, default_value=0.5,
+        doc="Elastic-Net mixing parameter (0=L2, 1=L1).  Only used when penalty='elasticnet'."
+    )
+
+    cs.add_hyperparameters([lr_penalty, lr_C, lr_solver, lr_l1_ratio])
+
+    # --- Random Forest Hyperparameters ---
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "random_forest__n_estimators", lower=10, upper=200, default_value=100,
+        doc="Number of trees in the Random Forest."
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "random_forest__max_depth", lower=2, upper=32, default_value=None,
+        doc="Maximum depth of the trees in the Random Forest. None means no limit."
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "random_forest__min_samples_split", lower=2, upper=20, default_value=2,
+        doc="Minimum number of samples required to split an internal node."
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "random_forest__min_samples_leaf", lower=1, upper=20, default_value=1,
+        doc="Minimum number of samples required to be at a leaf node."
+    )
+    rf_criterion = CategoricalHyperparameter(
+        "random_forest__criterion", choices=["gini", "entropy"], default_value="gini",
+        doc="The function to measure the quality of a split."
+    )
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf, rf_criterion])
+
+
+    # --- Conditional Parameter Relationships ---
+    cs.add_condition(InCondition(child=lr_penalty, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_C, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_solver, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_l1_ratio, parent=lr_penalty, values=["elasticnet"]))
+    cs.add_condition(InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_criterion, parent=model_type, values=["random_forest"]))
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:54] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+    Designed for the credit-g dataset (German Credit Data), a classification problem
+    with mixed categorical and numerical features.
+    """
+    cs = ConfigurationSpace()
+
+    # --- Model Choice: Logistic Regression or Random Forest ---
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["logistic_regression", "random_forest"], default_value="logistic_regression",
+        doc="Choose between Logistic Regression and Random Forest."
+    )
+    cs.add_hyperparameter(model_type)
+
+    # --- Logistic Regression Hyperparameters ---
+    lr_penalty = CategoricalHyperparameter(
+        "logistic_regression__penalty", choices=["l1", "l2", "elasticnet"], default_value="l2",
+        doc="Regularization penalty for Logistic Regression (l1, l2, elasticnet)."
+    )
+    lr_C = UniformFloatHyperparameter(
+        "logistic_regression__C", lower=1e-4, upper=1e4, default_value=1.0, log=True,
+        doc="Inverse of regularization strength for Logistic Regression."
+    )
+    lr_solver = CategoricalHyperparameter(
+        "logistic_regression__solver", choices=["liblinear", "saga"], default_value="liblinear",
+        doc="Solver for Logistic Regression (liblinear, saga). 'liblinear' handles l1, l2; 'saga' handles all."
+    )
+    lr_l1_ratio = UniformFloatHyperparameter(
+        "logistic_regression__l1_ratio", lower=0.0, upper=1.0, default_value=0.5,
+        doc="Elastic-Net mixing parameter (0=L2, 1=L1).  Only used when penalty='elasticnet'."
+    )
+
+    cs.add_hyperparameters([lr_penalty, lr_C, lr_solver, lr_l1_ratio])
+
+    # --- Random Forest Hyperparameters ---
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "random_forest__n_estimators", lower=10, upper=200, default_value=100,
+        doc="Number of trees in the Random Forest."
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "random_forest__max_depth", lower=2, upper=32, default_value=None,
+        doc="Maximum depth of the trees in the Random Forest. None means no limit."
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "random_forest__min_samples_split", lower=2, upper=20, default_value=2,
+        doc="Minimum number of samples required to split an internal node."
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "random_forest__min_samples_leaf", lower=1, upper=20, default_value=1,
+        doc="Minimum number of samples required to be at a leaf node."
+    )
+    rf_criterion = CategoricalHyperparameter(
+        "random_forest__criterion", choices=["gini", "entropy"], default_value="gini",
+        doc="The function to measure the quality of a split."
+    )
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf, rf_criterion])
+
+
+    # --- Conditional Parameter Relationships ---
+    cs.add_condition(InCondition(child=lr_penalty, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_C, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_solver, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_l1_ratio, parent=lr_penalty, values=["elasticnet"]))
+    cs.add_condition(InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_criterion, parent=model_type, values=["random_forest"]))
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:54] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): CategoricalHyperparameter.__init__() got an unexpected keyword argument 'doc'
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:58] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+    Designed for the credit-g dataset (German Credit Data), a classification problem
+    with mixed categorical and numerical features.
+    """
+    cs = ConfigurationSpace()
+
+    # --- Model Choice: Logistic Regression or Random Forest ---
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["logistic_regression", "random_forest"], default_value="logistic_regression"
+    )
+    cs.add_hyperparameter(model_type)
+
+    # --- Logistic Regression Hyperparameters ---
+    lr_penalty = CategoricalHyperparameter(
+        "logistic_regression__penalty", choices=["l1", "l2", "elasticnet"], default_value="l2"
+    )
+    lr_C = UniformFloatHyperparameter(
+        "logistic_regression__C", lower=1e-4, upper=1e4, default_value=1.0, log=True
+    )
+    lr_solver = CategoricalHyperparameter(
+        "logistic_regression__solver", choices=["liblinear", "saga"], default_value="liblinear"
+    )
+    lr_l1_ratio = UniformFloatHyperparameter(
+        "logistic_regression__l1_ratio", lower=0.0, upper=1.0, default_value=0.5
+    )
+
+    cs.add_hyperparameters([lr_penalty, lr_C, lr_solver, lr_l1_ratio])
+
+    # --- Random Forest Hyperparameters ---
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "random_forest__n_estimators", lower=10, upper=200, default_value=100
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "random_forest__max_depth", lower=2, upper=32, default_value=None
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "random_forest__min_samples_split", lower=2, upper=20, default_value=2
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "random_forest__min_samples_leaf", lower=1, upper=20, default_value=1
+    )
+    rf_criterion = CategoricalHyperparameter(
+        "random_forest__criterion", choices=["gini", "entropy"], default_value="gini"
+    )
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf, rf_criterion])
+
+
+    # --- Conditional Parameter Relationships ---
+    cs.add_condition(InCondition(child=lr_penalty, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_C, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_solver, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_l1_ratio, parent=lr_penalty, values=["elasticnet"]))
+    cs.add_condition(InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_criterion, parent=model_type, values=["random_forest"]))
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:58] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    """
+    Returns a ConfigurationSpace object for hyperparameter optimization.
+    Designed for the credit-g dataset (German Credit Data), a classification problem
+    with mixed categorical and numerical features.
+    """
+    cs = ConfigurationSpace()
+
+    # --- Model Choice: Logistic Regression or Random Forest ---
+    model_type = CategoricalHyperparameter(
+        "model_type", choices=["logistic_regression", "random_forest"], default_value="logistic_regression"
+    )
+    cs.add_hyperparameter(model_type)
+
+    # --- Logistic Regression Hyperparameters ---
+    lr_penalty = CategoricalHyperparameter(
+        "logistic_regression__penalty", choices=["l1", "l2", "elasticnet"], default_value="l2"
+    )
+    lr_C = UniformFloatHyperparameter(
+        "logistic_regression__C", lower=1e-4, upper=1e4, default_value=1.0, log=True
+    )
+    lr_solver = CategoricalHyperparameter(
+        "logistic_regression__solver", choices=["liblinear", "saga"], default_value="liblinear"
+    )
+    lr_l1_ratio = UniformFloatHyperparameter(
+        "logistic_regression__l1_ratio", lower=0.0, upper=1.0, default_value=0.5
+    )
+
+    cs.add_hyperparameters([lr_penalty, lr_C, lr_solver, lr_l1_ratio])
+
+    # --- Random Forest Hyperparameters ---
+    rf_n_estimators = UniformIntegerHyperparameter(
+        "random_forest__n_estimators", lower=10, upper=200, default_value=100
+    )
+    rf_max_depth = UniformIntegerHyperparameter(
+        "random_forest__max_depth", lower=2, upper=32, default_value=None
+    )
+    rf_min_samples_split = UniformIntegerHyperparameter(
+        "random_forest__min_samples_split", lower=2, upper=20, default_value=2
+    )
+    rf_min_samples_leaf = UniformIntegerHyperparameter(
+        "random_forest__min_samples_leaf", lower=1, upper=20, default_value=1
+    )
+    rf_criterion = CategoricalHyperparameter(
+        "random_forest__criterion", choices=["gini", "entropy"], default_value="gini"
+    )
+
+    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_split, rf_min_samples_leaf, rf_criterion])
+
+
+    # --- Conditional Parameter Relationships ---
+    cs.add_condition(InCondition(child=lr_penalty, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_C, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_solver, parent=model_type, values=["logistic_regression"]))
+    cs.add_condition(InCondition(child=lr_l1_ratio, parent=lr_penalty, values=["elasticnet"]))
+    cs.add_condition(InCondition(child=rf_n_estimators, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_max_depth, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_split, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_min_samples_leaf, parent=model_type, values=["random_forest"]))
+    cs.add_condition(InCondition(child=rf_criterion, parent=model_type, values=["random_forest"]))
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:58] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:59] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+import os
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_credit-g_20250620_111837",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+        use_default_config=True,
+
+    )
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:59] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+import os
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_credit-g_20250620_111837",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+        use_default_config=True,
+
+    )
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-20 11:18:59] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-20 11:19:06] [Metadata: {'component': 'train_function'}] ```python
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import make_scorer, f1_score, accuracy_score
+from sklearn.impute import SimpleImputer
+from sklearn.utils import resample
+
+from ConfigSpace import Configuration
+from typing import Any
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """Trains a machine learning model based on the given configuration and dataset.
+
+    Args:
+        cfg (Configuration): The hyperparameter configuration.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): The random seed for reproducibility.
+
+    Returns:
+        float: The negative F1 score of the trained model on the validation set.
+               Returns 1.0 in case of errors during training.
+    """
+    try:
+        # Set random seed
+        np.random.seed(seed)
+
+        # Prepare data
+        X = dataset['X']
+        y = dataset['y']
+        
+        # Identify categorical and numerical features
+        categorical_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+
+        # Create transformers
+        numeric_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='mean')),
+            ('scaler', StandardScaler())
+        ])
+
+        categorical_transformer = Pipeline(steps=[
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
+        ])
+
+        # Create preprocessor
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', numeric_transformer, numerical_features),
+                ('cat', categorical_transformer, categorical_features)
+            ],
+            remainder='passthrough'  # Pass through any other columns
+        )
+
+        # Split data
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed, stratify=y)
+
+        # Upsample minority class
+        df_train = pd.concat([X_train, y_train], axis=1)
+        minority_class = df_train['class'].value_counts().idxmin()
+        n_minority = len(df_train[df_train['class'] == minority_class])
+        majority_class = df_train['class'].value_counts().idxmax()
+        n_majority = len(df_train[df_train['class'] == majority_class])
+
+        if n_minority < n_majority:
+
+            df_minority_upsampled = resample(df_train[df_train['class'] == minority_class],
+                                    replace=True,
+                                    n_samples=n_majority,
+                                    random_state=seed)
+            df_upsampled = pd.concat([df_train[df_train['class'] == majority_class], df_minority_upsampled])
+
+            X_train = df_upsampled.drop('class', axis=1)
+            y_train = df_upsampled['class']
+
+        # Model selection and configuration
+        model_type = cfg.get("model_type")
+        if model_type == "logistic_regression":
+            model = LogisticRegression(
+                penalty=cfg.get("logistic_regression__penalty"),
+                C=cfg.get("logistic_regression__C"),
+                solver=cfg.get("logistic_regression__solver"),
+                l1_ratio=cfg.get("logistic_regression__l1_ratio") if cfg.get("logistic_regression__penalty") == "elasticnet" else None,
+                random_state=seed,
+                max_iter=1000  # Add max_iter to prevent convergence warnings
+            )
+        elif model_type == "random_forest":
+            model = RandomForestClassifier(
+                n_estimators=cfg.get("random_forest__n_estimators"),
+                max_depth=cfg.get("random_forest__max_depth"),
+                min_samples_split=cfg.get("random_forest__min_samples_split"),
+                min_samples_leaf=cfg.get("random_forest__min_samples_leaf"),
+                criterion=cfg.get("random_forest__criterion"),
+                random_state=seed,
+                n_jobs=-1  # Utilize all available cores
+            )
+        else:
+            raise ValueError(f"Unknown model type: {model_type}")
+
+        # Create and train pipeline
+        pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                                    ('classifier', model)])
+        pipeline.fit(X_train, y_train)
+
+        # Make predictions
+        y_pred = pipeline.predict(X_val)
+
+        # Evaluate performance (F1 score)
+        f1 = f1_score(y_val, y_pred, pos_label='good')  # Specify pos_label explicitly
+        
+        # Returning negative f1 score for minimization
+        return -f1
+
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return 1.0  # Return a bad score in case of error
+```
+--------------------------------------------------------------------------------
+[2025-06-20 11:19:06] [Metadata: {'component': 'train_function', 'action': 'run'}] import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import make_scorer, f1_score, accuracy_score
+from sklearn.impute import SimpleImputer
+from sklearn.utils import resample
+
+from ConfigSpace import Configuration
+from typing import Any
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """Trains a machine learning model based on the given configuration and dataset.
+
+    Args:
+        cfg (Configuration): The hyperparameter configuration.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): The random seed for reproducibility.
+
+    Returns:
+        float: The negative F1 score of the trained model on the validation set.
+               Returns 1.0 in case of errors during training.
+    """
+    try:
+        # Set random seed
+        np.random.seed(seed)
+
+        # Prepare data
+        X = dataset['X']
+        y = dataset['y']
+        
+        # Identify categorical and numerical features
+        categorical_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+
+        # Create transformers
+        numeric_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='mean')),
+            ('scaler', StandardScaler())
+        ])
+
+        categorical_transformer = Pipeline(steps=[
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
+        ])
+
+        # Create preprocessor
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', numeric_transformer, numerical_features),
+                ('cat', categorical_transformer, categorical_features)
+            ],
+            remainder='passthrough'  # Pass through any other columns
+        )
+
+        # Split data
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed, stratify=y)
+
+        # Upsample minority class
+        df_train = pd.concat([X_train, y_train], axis=1)
+        minority_class = df_train['class'].value_counts().idxmin()
+        n_minority = len(df_train[df_train['class'] == minority_class])
+        majority_class = df_train['class'].value_counts().idxmax()
+        n_majority = len(df_train[df_train['class'] == majority_class])
+
+        if n_minority < n_majority:
+
+            df_minority_upsampled = resample(df_train[df_train['class'] == minority_class],
+                                    replace=True,
+                                    n_samples=n_majority,
+                                    random_state=seed)
+            df_upsampled = pd.concat([df_train[df_train['class'] == majority_class], df_minority_upsampled])
+
+            X_train = df_upsampled.drop('class', axis=1)
+            y_train = df_upsampled['class']
+
+        # Model selection and configuration
+        model_type = cfg.get("model_type")
+        if model_type == "logistic_regression":
+            model = LogisticRegression(
+                penalty=cfg.get("logistic_regression__penalty"),
+                C=cfg.get("logistic_regression__C"),
+                solver=cfg.get("logistic_regression__solver"),
+                l1_ratio=cfg.get("logistic_regression__l1_ratio") if cfg.get("logistic_regression__penalty") == "elasticnet" else None,
+                random_state=seed,
+                max_iter=1000  # Add max_iter to prevent convergence warnings
+            )
+        elif model_type == "random_forest":
+            model = RandomForestClassifier(
+                n_estimators=cfg.get("random_forest__n_estimators"),
+                max_depth=cfg.get("random_forest__max_depth"),
+                min_samples_split=cfg.get("random_forest__min_samples_split"),
+                min_samples_leaf=cfg.get("random_forest__min_samples_leaf"),
+                criterion=cfg.get("random_forest__criterion"),
+                random_state=seed,
+                n_jobs=-1  # Utilize all available cores
+            )
+        else:
+            raise ValueError(f"Unknown model type: {model_type}")
+
+        # Create and train pipeline
+        pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                                    ('classifier', model)])
+        pipeline.fit(X_train, y_train)
+
+        # Make predictions
+        y_pred = pipeline.predict(X_val)
+
+        # Evaluate performance (F1 score)
+        f1 = f1_score(y_val, y_pred, pos_label='good')  # Specify pos_label explicitly
+        
+        # Returning negative f1 score for minimization
+        return -f1
+
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return 1.0  # Return a bad score in case of error
+
+--------------------------------------------------------------------------------
+[2025-06-20 11:19:06] [Metadata: {'component': 'train_function', 'status': 'success', 'loss': 1.0}] Training executed successfully, loss: 1.0
+--------------------------------------------------------------------------------

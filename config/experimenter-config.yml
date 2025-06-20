@@ -1,0 +1,45 @@
+PY_EXPERIMENTER:
+  n_jobs: 1
+
+  Database:
+    provider: sqlite
+    database: py_experimenter
+    table:
+      name: AutoMLAgentRuns
+      keyfields:
+        dataset_name:
+          type: VARCHAR(255)
+          values: ['Iris', 'Wine', 'Breast Cancer', 'Fashion-MNIST', 'Sunspot']
+        dataset_type:
+          type: VARCHAR(255)
+          values: ['tabular', 'image', 'time_series']
+        task_type:
+          type: VARCHAR(255)
+          values: ['classification', 'regression']
+        model_name:
+          type: VARCHAR(255)
+          values: ['gemini-2.0-flash']
+        seed:
+          type: int
+          values:
+            start: 1
+            stop: 2 # Only one seed to keep experiment size small
+            step: 1
+      result_timestamps: True
+      resultfields:
+        incumbent_config: LONGTEXT
+        default_train_accuracy: DECIMAL
+        incumbent_train_accuracy: DECIMAL
+        test_train_accuracy: DECIMAL
+        error_message: LONGTEXT
+
+  Custom:
+    datapath: sample_data
+
+  CodeCarbon:
+    offline_mode: True # Set to true to avoid connection issues if not configured
+    measure_power_secs: 10
+    tracking_mode: process
+    log_level: warning
+    save_to_file: True
+    output_dir: output/experimenter
