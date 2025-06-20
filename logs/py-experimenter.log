@@ -46,3 +46,9 @@
 2025-06-20 11:26:42,332  | py-experimenter - INFO     | Found 6 codecarbon values
 2025-06-20 11:26:42,332  | py-experimenter - INFO     | Initialized and connected to database
 2025-06-20 11:27:46,897  | py-experimenter - INFO     | 1 rows successfully added to database. 0 rows were skipped.
+2025-06-20 12:24:42,885  | py-experimenter - INFO     | Found 5 keyfields
+2025-06-20 12:24:42,886  | py-experimenter - INFO     | Found 10 resultfields
+2025-06-20 12:24:42,886  | py-experimenter - WARNING  | No logtables given
+2025-06-20 12:24:42,886  | py-experimenter - INFO     | Found 1 custom values
+2025-06-20 12:24:42,886  | py-experimenter - INFO     | Found 6 codecarbon values
+2025-06-20 12:24:42,889  | py-experimenter - INFO     | Initialized and connected to database

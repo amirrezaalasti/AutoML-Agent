@@ -1,0 +1,947 @@
+[2025-06-20 12:25:06] [Metadata: {'component': 'config'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, IfThenElse, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Optimizer
+    optimizer_type = CategoricalHyperparameter("optimizer_type", ["Adam", "SGD", "RMSprop"], default_value="Adam")
+    cs.add_hyperparameter(optimizer_type)
+
+    # Adam hyperparameters
+    adam_learning_rate = UniformFloatHyperparameter("adam_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    adam_beta_1 = UniformFloatHyperparameter("adam_beta_1", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    adam_beta_2 = UniformFloatHyperparameter("adam_beta_2", lower=0.9, upper=0.9999, default_value=0.999, log=False)
+    cs.add_hyperparameters([adam_learning_rate, adam_beta_1, adam_beta_2])
+
+    # SGD hyperparameters
+    sgd_learning_rate = UniformFloatHyperparameter("sgd_learning_rate", lower=1e-5, upper=1e-1, default_value=1e-2, log=True)
+    sgd_momentum = UniformFloatHyperparameter("sgd_momentum", lower=0.0, upper=0.99, default_value=0.0, log=False)
+    cs.add_hyperparameters([sgd_learning_rate, sgd_momentum])
+
+    # RMSprop hyperparameters
+    rmsprop_learning_rate = UniformFloatHyperparameter("rmsprop_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    rmsprop_rho = UniformFloatHyperparameter("rmsprop_rho", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    cs.add_hyperparameters([rmsprop_learning_rate, rmsprop_rho])
+
+
+    # Layer 1 Convolutional
+    layer1_filters = UniformIntegerHyperparameter("layer1_filters", lower=32, upper=128, default_value=64, log=True)
+    layer1_kernel_size = CategoricalHyperparameter("layer1_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer1_filters, layer1_kernel_size])
+
+    # Layer 2 Convolutional
+    layer2_filters = UniformIntegerHyperparameter("layer2_filters", lower=64, upper=256, default_value=128, log=True)
+    layer2_kernel_size = CategoricalHyperparameter("layer2_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer2_filters, layer2_kernel_size])
+
+
+    # Pooling Layers
+    pooling_type = CategoricalHyperparameter("pooling_type", ["max", "average"], default_value="max")
+    cs.add_hyperparameter(pooling_type)
+    
+    # Fully Connected Layer
+    fc_units = UniformIntegerHyperparameter("fc_units", lower=128, upper=512, default_value=256, log=True)
+    cs.add_hyperparameter(fc_units)
+
+    # Dropout Rate
+    dropout_rate = UniformFloatHyperparameter("dropout_rate", lower=0.0, upper=0.5, default_value=0.25, log=False)
+    cs.add_hyperparameter(dropout_rate)
+
+    # Batch Size
+    batch_size = CategoricalHyperparameter("batch_size", [32, 64, 128], default_value=64)
+    cs.add_hyperparameter(batch_size)
+    
+    # Conditions for optimizers
+    condition_adam = InCondition(child=adam_learning_rate, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta1 = InCondition(child=adam_beta_1, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta2 = InCondition(child=adam_beta_2, parent=optimizer_type, values=["Adam"])
+
+    condition_sgd = InCondition(child=sgd_learning_rate, parent=optimizer_type, values=["SGD"])
+    condition_sgd_momentum = InCondition(child=sgd_momentum, parent=optimizer_type, values=["SGD"])
+
+    condition_rmsprop = InCondition(child=rmsprop_learning_rate, parent=optimizer_type, values=["RMSprop"])
+    condition_rmsprop_rho = InCondition(child=rmsprop_rho, parent=optimizer_type, values=["RMSprop"])
+
+    cs.add_conditions([condition_adam, condition_sgd, condition_rmsprop, condition_adam_beta1, condition_adam_beta2, condition_sgd_momentum, condition_rmsprop_rho])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:06] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, IfThenElse, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Optimizer
+    optimizer_type = CategoricalHyperparameter("optimizer_type", ["Adam", "SGD", "RMSprop"], default_value="Adam")
+    cs.add_hyperparameter(optimizer_type)
+
+    # Adam hyperparameters
+    adam_learning_rate = UniformFloatHyperparameter("adam_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    adam_beta_1 = UniformFloatHyperparameter("adam_beta_1", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    adam_beta_2 = UniformFloatHyperparameter("adam_beta_2", lower=0.9, upper=0.9999, default_value=0.999, log=False)
+    cs.add_hyperparameters([adam_learning_rate, adam_beta_1, adam_beta_2])
+
+    # SGD hyperparameters
+    sgd_learning_rate = UniformFloatHyperparameter("sgd_learning_rate", lower=1e-5, upper=1e-1, default_value=1e-2, log=True)
+    sgd_momentum = UniformFloatHyperparameter("sgd_momentum", lower=0.0, upper=0.99, default_value=0.0, log=False)
+    cs.add_hyperparameters([sgd_learning_rate, sgd_momentum])
+
+    # RMSprop hyperparameters
+    rmsprop_learning_rate = UniformFloatHyperparameter("rmsprop_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    rmsprop_rho = UniformFloatHyperparameter("rmsprop_rho", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    cs.add_hyperparameters([rmsprop_learning_rate, rmsprop_rho])
+
+
+    # Layer 1 Convolutional
+    layer1_filters = UniformIntegerHyperparameter("layer1_filters", lower=32, upper=128, default_value=64, log=True)
+    layer1_kernel_size = CategoricalHyperparameter("layer1_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer1_filters, layer1_kernel_size])
+
+    # Layer 2 Convolutional
+    layer2_filters = UniformIntegerHyperparameter("layer2_filters", lower=64, upper=256, default_value=128, log=True)
+    layer2_kernel_size = CategoricalHyperparameter("layer2_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer2_filters, layer2_kernel_size])
+
+
+    # Pooling Layers
+    pooling_type = CategoricalHyperparameter("pooling_type", ["max", "average"], default_value="max")
+    cs.add_hyperparameter(pooling_type)
+    
+    # Fully Connected Layer
+    fc_units = UniformIntegerHyperparameter("fc_units", lower=128, upper=512, default_value=256, log=True)
+    cs.add_hyperparameter(fc_units)
+
+    # Dropout Rate
+    dropout_rate = UniformFloatHyperparameter("dropout_rate", lower=0.0, upper=0.5, default_value=0.25, log=False)
+    cs.add_hyperparameter(dropout_rate)
+
+    # Batch Size
+    batch_size = CategoricalHyperparameter("batch_size", [32, 64, 128], default_value=64)
+    cs.add_hyperparameter(batch_size)
+    
+    # Conditions for optimizers
+    condition_adam = InCondition(child=adam_learning_rate, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta1 = InCondition(child=adam_beta_1, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta2 = InCondition(child=adam_beta_2, parent=optimizer_type, values=["Adam"])
+
+    condition_sgd = InCondition(child=sgd_learning_rate, parent=optimizer_type, values=["SGD"])
+    condition_sgd_momentum = InCondition(child=sgd_momentum, parent=optimizer_type, values=["SGD"])
+
+    condition_rmsprop = InCondition(child=rmsprop_learning_rate, parent=optimizer_type, values=["RMSprop"])
+    condition_rmsprop_rho = InCondition(child=rmsprop_rho, parent=optimizer_type, values=["RMSprop"])
+
+    cs.add_conditions([condition_adam, condition_sgd, condition_rmsprop, condition_adam_beta1, condition_adam_beta2, condition_sgd_momentum, condition_rmsprop_rho])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:06] [Metadata: {'error_type': 'CONFIG_ERROR'}] [CONFIG_ERROR] Error in config (#1): cannot import name 'IfThenElse' from 'ConfigSpace' (/opt/anaconda3/envs/SMAC/lib/python3.10/site-packages/ConfigSpace/__init__.py)
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:12] [Metadata: {'component': 'config', 'action': 'fix'}] ```python
+from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Optimizer
+    optimizer_type = CategoricalHyperparameter("optimizer_type", ["Adam", "SGD", "RMSprop"], default_value="Adam")
+    cs.add_hyperparameter(optimizer_type)
+
+    # Adam hyperparameters
+    adam_learning_rate = UniformFloatHyperparameter("adam_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    adam_beta_1 = UniformFloatHyperparameter("adam_beta_1", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    adam_beta_2 = UniformFloatHyperparameter("adam_beta_2", lower=0.9, upper=0.9999, default_value=0.999, log=False)
+    cs.add_hyperparameters([adam_learning_rate, adam_beta_1, adam_beta_2])
+
+    # SGD hyperparameters
+    sgd_learning_rate = UniformFloatHyperparameter("sgd_learning_rate", lower=1e-5, upper=1e-1, default_value=1e-2, log=True)
+    sgd_momentum = UniformFloatHyperparameter("sgd_momentum", lower=0.0, upper=0.99, default_value=0.0, log=False)
+    cs.add_hyperparameters([sgd_learning_rate, sgd_momentum])
+
+    # RMSprop hyperparameters
+    rmsprop_learning_rate = UniformFloatHyperparameter("rmsprop_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    rmsprop_rho = UniformFloatHyperparameter("rmsprop_rho", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    cs.add_hyperparameters([rmsprop_learning_rate, rmsprop_rho])
+
+
+    # Layer 1 Convolutional
+    layer1_filters = UniformIntegerHyperparameter("layer1_filters", lower=32, upper=128, default_value=64, log=True)
+    layer1_kernel_size = CategoricalHyperparameter("layer1_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer1_filters, layer1_kernel_size])
+
+    # Layer 2 Convolutional
+    layer2_filters = UniformIntegerHyperparameter("layer2_filters", lower=64, upper=256, default_value=128, log=True)
+    layer2_kernel_size = CategoricalHyperparameter("layer2_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer2_filters, layer2_kernel_size])
+
+
+    # Pooling Layers
+    pooling_type = CategoricalHyperparameter("pooling_type", ["max", "average"], default_value="max")
+    cs.add_hyperparameter(pooling_type)
+    
+    # Fully Connected Layer
+    fc_units = UniformIntegerHyperparameter("fc_units", lower=128, upper=512, default_value=256, log=True)
+    cs.add_hyperparameter(fc_units)
+
+    # Dropout Rate
+    dropout_rate = UniformFloatHyperparameter("dropout_rate", lower=0.0, upper=0.5, default_value=0.25, log=False)
+    cs.add_hyperparameter(dropout_rate)
+
+    # Batch Size
+    batch_size = CategoricalHyperparameter("batch_size", [32, 64, 128], default_value=64)
+    cs.add_hyperparameter(batch_size)
+    
+    # Conditions for optimizers
+    condition_adam = InCondition(child=adam_learning_rate, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta1 = InCondition(child=adam_beta_1, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta2 = InCondition(child=adam_beta_2, parent=optimizer_type, values=["Adam"])
+
+    condition_sgd = InCondition(child=sgd_learning_rate, parent=optimizer_type, values=["SGD"])
+    condition_sgd_momentum = InCondition(child=sgd_momentum, parent=optimizer_type, values=["SGD"])
+
+    condition_rmsprop = InCondition(child=rmsprop_learning_rate, parent=optimizer_type, values=["RMSprop"])
+    condition_rmsprop_rho = InCondition(child=rmsprop_rho, parent=optimizer_type, values=["RMSprop"])
+
+    cs.add_conditions([condition_adam, condition_adam_beta1, condition_adam_beta2, condition_sgd, condition_sgd_momentum, condition_rmsprop, condition_rmsprop_rho])
+
+    return cs
+```
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:12] [Metadata: {'component': 'config', 'action': 'run'}] from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter, InCondition
+
+def get_configspace() -> ConfigurationSpace:
+    cs = ConfigurationSpace()
+
+    # Optimizer
+    optimizer_type = CategoricalHyperparameter("optimizer_type", ["Adam", "SGD", "RMSprop"], default_value="Adam")
+    cs.add_hyperparameter(optimizer_type)
+
+    # Adam hyperparameters
+    adam_learning_rate = UniformFloatHyperparameter("adam_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    adam_beta_1 = UniformFloatHyperparameter("adam_beta_1", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    adam_beta_2 = UniformFloatHyperparameter("adam_beta_2", lower=0.9, upper=0.9999, default_value=0.999, log=False)
+    cs.add_hyperparameters([adam_learning_rate, adam_beta_1, adam_beta_2])
+
+    # SGD hyperparameters
+    sgd_learning_rate = UniformFloatHyperparameter("sgd_learning_rate", lower=1e-5, upper=1e-1, default_value=1e-2, log=True)
+    sgd_momentum = UniformFloatHyperparameter("sgd_momentum", lower=0.0, upper=0.99, default_value=0.0, log=False)
+    cs.add_hyperparameters([sgd_learning_rate, sgd_momentum])
+
+    # RMSprop hyperparameters
+    rmsprop_learning_rate = UniformFloatHyperparameter("rmsprop_learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
+    rmsprop_rho = UniformFloatHyperparameter("rmsprop_rho", lower=0.8, upper=0.999, default_value=0.9, log=False)
+    cs.add_hyperparameters([rmsprop_learning_rate, rmsprop_rho])
+
+
+    # Layer 1 Convolutional
+    layer1_filters = UniformIntegerHyperparameter("layer1_filters", lower=32, upper=128, default_value=64, log=True)
+    layer1_kernel_size = CategoricalHyperparameter("layer1_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer1_filters, layer1_kernel_size])
+
+    # Layer 2 Convolutional
+    layer2_filters = UniformIntegerHyperparameter("layer2_filters", lower=64, upper=256, default_value=128, log=True)
+    layer2_kernel_size = CategoricalHyperparameter("layer2_kernel_size", [3, 5], default_value=3)
+    cs.add_hyperparameters([layer2_filters, layer2_kernel_size])
+
+
+    # Pooling Layers
+    pooling_type = CategoricalHyperparameter("pooling_type", ["max", "average"], default_value="max")
+    cs.add_hyperparameter(pooling_type)
+    
+    # Fully Connected Layer
+    fc_units = UniformIntegerHyperparameter("fc_units", lower=128, upper=512, default_value=256, log=True)
+    cs.add_hyperparameter(fc_units)
+
+    # Dropout Rate
+    dropout_rate = UniformFloatHyperparameter("dropout_rate", lower=0.0, upper=0.5, default_value=0.25, log=False)
+    cs.add_hyperparameter(dropout_rate)
+
+    # Batch Size
+    batch_size = CategoricalHyperparameter("batch_size", [32, 64, 128], default_value=64)
+    cs.add_hyperparameter(batch_size)
+    
+    # Conditions for optimizers
+    condition_adam = InCondition(child=adam_learning_rate, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta1 = InCondition(child=adam_beta_1, parent=optimizer_type, values=["Adam"])
+    condition_adam_beta2 = InCondition(child=adam_beta_2, parent=optimizer_type, values=["Adam"])
+
+    condition_sgd = InCondition(child=sgd_learning_rate, parent=optimizer_type, values=["SGD"])
+    condition_sgd_momentum = InCondition(child=sgd_momentum, parent=optimizer_type, values=["SGD"])
+
+    condition_rmsprop = InCondition(child=rmsprop_learning_rate, parent=optimizer_type, values=["RMSprop"])
+    condition_rmsprop_rho = InCondition(child=rmsprop_rho, parent=optimizer_type, values=["RMSprop"])
+
+    cs.add_conditions([condition_adam, condition_adam_beta1, condition_adam_beta2, condition_sgd, condition_sgd_momentum, condition_rmsprop, condition_rmsprop_rho])
+
+    return cs
+
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:12] [Metadata: {'component': 'config', 'status': 'success'}] Configuration space generated successfully
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:13] [Metadata: {'component': 'scenario'}] ```python
+from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration optimized for a tabular dataset.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample the configurations.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Fashion-MNIST_20250620_122442",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+        min_budget=1,
+        max_budget=3
+    )
+
+    return scenario
+```
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:13] [Metadata: {'component': 'scenario', 'action': 'run'}] from smac import Scenario
+from ConfigSpace import ConfigurationSpace
+
+def generate_scenario(cs: ConfigurationSpace) -> Scenario:
+    """
+    Generates a SMAC scenario configuration optimized for a tabular dataset.
+
+    Args:
+        cs (ConfigurationSpace): The configuration space from which to sample the configurations.
+
+    Returns:
+        Scenario: A configured SMAC Scenario object.
+    """
+
+    scenario = Scenario(
+        configspace=cs,
+        name="HyperparameterOptimization",
+        output_directory="./logs/gemini-2.0-flash_Fashion-MNIST_20250620_122442",
+        deterministic=False,
+        n_trials=10,
+        n_workers=1,
+        min_budget=1,
+        max_budget=3
+    )
+
+    return scenario
+
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:13] [Metadata: {'component': 'scenario', 'status': 'success'}] Scenario generated successfully
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:22] [Metadata: {'component': 'train_function'}] ```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+from ConfigSpace import Configuration
+from typing import Any
+from torch.utils.data import TensorDataset, DataLoader
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a convolutional neural network on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Negative validation accuracy.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # Device configuration
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # Extract data
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32).reshape(-1, 1, 28, 28)  # Reshape for CNN
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets (90/10 split)
+    train_size = int(0.9 * len(X))
+    val_size = len(X) - train_size
+    train_dataset, val_dataset = torch.utils.data.random_split(TensorDataset(X, y), [train_size, val_size], generator=torch.Generator().manual_seed(seed))
+
+    # Hyperparameters
+    batch_size = cfg.get('batch_size')
+    layer1_filters = cfg.get('layer1_filters')
+    layer1_kernel_size = cfg.get('layer1_kernel_size')
+    layer2_filters = cfg.get('layer2_filters')
+    layer2_kernel_size = cfg.get('layer2_kernel_size')
+    pooling_type = cfg.get('pooling_type')
+    fc_units = cfg.get('fc_units')
+    dropout_rate = cfg.get('dropout_rate')
+    optimizer_type = cfg.get('optimizer_type')
+
+    # Data loaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+
+
+    # Define the CNN model
+    class CNN(nn.Module):
+        def __init__(self, layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type, fc_units, dropout_rate):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, layer1_filters, kernel_size=layer1_kernel_size)
+            self.relu1 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool1 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.conv2 = nn.Conv2d(layer1_filters, layer2_filters, kernel_size=layer2_kernel_size)
+            self.relu2 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool2 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.fc1 = nn.Linear(layer2_filters * 4 * 4, fc_units)  # 4x4 is the size after two pooling layers
+            self.relu3 = nn.ReLU()
+            self.dropout = nn.Dropout(dropout_rate)
+            self.fc2 = nn.Linear(fc_units, 10)  # 10 classes for FashionMNIST
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = x.view(x.size(0), -1)  # Flatten the tensor
+            x = self.dropout(self.relu3(self.fc1(x)))
+            x = self.fc2(x)
+            return x
+
+    model = CNN(layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type, fc_units, dropout_rate).to(device)
+
+    # Loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    if optimizer_type == 'Adam':
+        learning_rate = cfg.get('adam_learning_rate')
+        beta1 = cfg.get('adam_beta_1')
+        beta2 = cfg.get('adam_beta_2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_type == 'SGD':
+        learning_rate = cfg.get('sgd_learning_rate')
+        momentum = cfg.get('sgd_momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_type == 'RMSprop':
+        learning_rate = cfg.get('rmsprop_learning_rate')
+        rho = cfg.get('rmsprop_rho')
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, alpha=rho)
+    else:
+        raise ValueError(f"Unknown optimizer type: {optimizer_type}")
+
+    # Training loop
+    num_epochs = 3
+    for epoch in range(num_epochs):
+        model.train()
+        for i, (images, labels) in enumerate(train_loader):
+            images = images.to(device)
+            labels = labels.to(device)
+
+            # Forward pass
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+    # Validation
+    model.eval()
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in val_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+        accuracy = correct / total
+    print(f"Validation Accuracy: {accuracy:.4f}")  # Track the progress
+
+    return -accuracy
+```
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:22] [Metadata: {'component': 'train_function', 'action': 'run'}] import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+from ConfigSpace import Configuration
+from typing import Any
+from torch.utils.data import TensorDataset, DataLoader
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a convolutional neural network on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Negative validation accuracy.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # Device configuration
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # Extract data
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert data to PyTorch tensors
+    X = torch.tensor(X, dtype=torch.float32).reshape(-1, 1, 28, 28)  # Reshape for CNN
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets (90/10 split)
+    train_size = int(0.9 * len(X))
+    val_size = len(X) - train_size
+    train_dataset, val_dataset = torch.utils.data.random_split(TensorDataset(X, y), [train_size, val_size], generator=torch.Generator().manual_seed(seed))
+
+    # Hyperparameters
+    batch_size = cfg.get('batch_size')
+    layer1_filters = cfg.get('layer1_filters')
+    layer1_kernel_size = cfg.get('layer1_kernel_size')
+    layer2_filters = cfg.get('layer2_filters')
+    layer2_kernel_size = cfg.get('layer2_kernel_size')
+    pooling_type = cfg.get('pooling_type')
+    fc_units = cfg.get('fc_units')
+    dropout_rate = cfg.get('dropout_rate')
+    optimizer_type = cfg.get('optimizer_type')
+
+    # Data loaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+
+
+    # Define the CNN model
+    class CNN(nn.Module):
+        def __init__(self, layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type, fc_units, dropout_rate):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, layer1_filters, kernel_size=layer1_kernel_size)
+            self.relu1 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool1 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.conv2 = nn.Conv2d(layer1_filters, layer2_filters, kernel_size=layer2_kernel_size)
+            self.relu2 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool2 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.fc1 = nn.Linear(layer2_filters * 4 * 4, fc_units)  # 4x4 is the size after two pooling layers
+            self.relu3 = nn.ReLU()
+            self.dropout = nn.Dropout(dropout_rate)
+            self.fc2 = nn.Linear(fc_units, 10)  # 10 classes for FashionMNIST
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = x.view(x.size(0), -1)  # Flatten the tensor
+            x = self.dropout(self.relu3(self.fc1(x)))
+            x = self.fc2(x)
+            return x
+
+    model = CNN(layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type, fc_units, dropout_rate).to(device)
+
+    # Loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    if optimizer_type == 'Adam':
+        learning_rate = cfg.get('adam_learning_rate')
+        beta1 = cfg.get('adam_beta_1')
+        beta2 = cfg.get('adam_beta_2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_type == 'SGD':
+        learning_rate = cfg.get('sgd_learning_rate')
+        momentum = cfg.get('sgd_momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_type == 'RMSprop':
+        learning_rate = cfg.get('rmsprop_learning_rate')
+        rho = cfg.get('rmsprop_rho')
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, alpha=rho)
+    else:
+        raise ValueError(f"Unknown optimizer type: {optimizer_type}")
+
+    # Training loop
+    num_epochs = 3
+    for epoch in range(num_epochs):
+        model.train()
+        for i, (images, labels) in enumerate(train_loader):
+            images = images.to(device)
+            labels = labels.to(device)
+
+            # Forward pass
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+    # Validation
+    model.eval()
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in val_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+        accuracy = correct / total
+    print(f"Validation Accuracy: {accuracy:.4f}")  # Track the progress
+
+    return -accuracy
+
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:22] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#1): could not determine the shape of object type 'DataFrame'
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:30] [Metadata: {'component': 'train_function', 'action': 'fix'}] ```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+from ConfigSpace import Configuration
+from typing import Any
+from torch.utils.data import TensorDataset, DataLoader
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a convolutional neural network on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Negative validation accuracy.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # Device configuration
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # Extract data
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert data to PyTorch tensors
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.Series):
+        y = y.values
+
+    X = torch.tensor(X, dtype=torch.float32).reshape(-1, 1, 28, 28)  # Reshape for CNN
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets (90/10 split)
+    train_size = int(0.9 * len(X))
+    val_size = len(X) - train_size
+    train_dataset, val_dataset = torch.utils.data.random_split(TensorDataset(X, y), [train_size, val_size],
+                                                                generator=torch.Generator().manual_seed(seed))
+
+    # Hyperparameters
+    batch_size = cfg.get('batch_size')
+    layer1_filters = cfg.get('layer1_filters')
+    layer1_kernel_size = cfg.get('layer1_kernel_size')
+    layer2_filters = cfg.get('layer2_filters')
+    layer2_kernel_size = cfg.get('layer2_kernel_size')
+    pooling_type = cfg.get('pooling_type')
+    fc_units = cfg.get('fc_units')
+    dropout_rate = cfg.get('dropout_rate')
+    optimizer_type = cfg.get('optimizer_type')
+
+    # Data loaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+
+    # Define the CNN model
+    class CNN(nn.Module):
+        def __init__(self, layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type,
+                     fc_units, dropout_rate):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, layer1_filters, kernel_size=layer1_kernel_size)
+            self.relu1 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool1 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.conv2 = nn.Conv2d(layer1_filters, layer2_filters, kernel_size=layer2_kernel_size)
+            self.relu2 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool2 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.fc1 = nn.Linear(layer2_filters * 4 * 4, fc_units)  # 4x4 is the size after two pooling layers
+            self.relu3 = nn.ReLU()
+            self.dropout = nn.Dropout(dropout_rate)
+            self.fc2 = nn.Linear(fc_units, 10)  # 10 classes for FashionMNIST
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = x.view(x.size(0), -1)  # Flatten the tensor
+            x = self.dropout(self.relu3(self.fc1(x)))
+            x = self.fc2(x)
+            return x
+
+    model = CNN(layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type, fc_units,
+                dropout_rate).to(device)
+
+    # Loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    if optimizer_type == 'Adam':
+        learning_rate = cfg.get('adam_learning_rate')
+        beta1 = cfg.get('adam_beta_1')
+        beta2 = cfg.get('adam_beta_2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_type == 'SGD':
+        learning_rate = cfg.get('sgd_learning_rate')
+        momentum = cfg.get('sgd_momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_type == 'RMSprop':
+        learning_rate = cfg.get('rmsprop_learning_rate')
+        rho = cfg.get('rmsprop_rho')
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, alpha=rho)
+    else:
+        raise ValueError(f"Unknown optimizer type: {optimizer_type}")
+
+    # Training loop
+    num_epochs = 3
+    for epoch in range(num_epochs):
+        model.train()
+        for i, (images, labels) in enumerate(train_loader):
+            images = images.to(device)
+            labels = labels.to(device)
+
+            # Forward pass
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+    # Validation
+    model.eval()
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in val_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+        accuracy = correct / total
+    print(f"Validation Accuracy: {accuracy:.4f}")  # Track the progress
+
+    return -accuracy
+```
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:30] [Metadata: {'component': 'train_function', 'action': 'run'}] import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+from ConfigSpace import Configuration
+from typing import Any
+from torch.utils.data import TensorDataset, DataLoader
+import pandas as pd
+
+
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    """
+    Trains a convolutional neural network on the given dataset using the provided configuration.
+
+    Args:
+        cfg (Configuration): A ConfigSpace Configuration object containing the hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: Negative validation accuracy.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # Device configuration
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # Extract data
+    X = dataset['X']
+    y = dataset['y']
+
+    # Convert data to PyTorch tensors
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+    if isinstance(y, pd.Series):
+        y = y.values
+
+    X = torch.tensor(X, dtype=torch.float32).reshape(-1, 1, 28, 28)  # Reshape for CNN
+    y = torch.tensor(y, dtype=torch.long)
+
+    # Split data into training and validation sets (90/10 split)
+    train_size = int(0.9 * len(X))
+    val_size = len(X) - train_size
+    train_dataset, val_dataset = torch.utils.data.random_split(TensorDataset(X, y), [train_size, val_size],
+                                                                generator=torch.Generator().manual_seed(seed))
+
+    # Hyperparameters
+    batch_size = cfg.get('batch_size')
+    layer1_filters = cfg.get('layer1_filters')
+    layer1_kernel_size = cfg.get('layer1_kernel_size')
+    layer2_filters = cfg.get('layer2_filters')
+    layer2_kernel_size = cfg.get('layer2_kernel_size')
+    pooling_type = cfg.get('pooling_type')
+    fc_units = cfg.get('fc_units')
+    dropout_rate = cfg.get('dropout_rate')
+    optimizer_type = cfg.get('optimizer_type')
+
+    # Data loaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+
+    # Define the CNN model
+    class CNN(nn.Module):
+        def __init__(self, layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type,
+                     fc_units, dropout_rate):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, layer1_filters, kernel_size=layer1_kernel_size)
+            self.relu1 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool1 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.conv2 = nn.Conv2d(layer1_filters, layer2_filters, kernel_size=layer2_kernel_size)
+            self.relu2 = nn.ReLU()
+            if pooling_type == 'max':
+                self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+            else:
+                self.pool2 = nn.AvgPool2d(kernel_size=2, stride=2)
+
+            self.fc1 = nn.Linear(layer2_filters * 4 * 4, fc_units)  # 4x4 is the size after two pooling layers
+            self.relu3 = nn.ReLU()
+            self.dropout = nn.Dropout(dropout_rate)
+            self.fc2 = nn.Linear(fc_units, 10)  # 10 classes for FashionMNIST
+
+        def forward(self, x):
+            x = self.pool1(self.relu1(self.conv1(x)))
+            x = self.pool2(self.relu2(self.conv2(x)))
+            x = x.view(x.size(0), -1)  # Flatten the tensor
+            x = self.dropout(self.relu3(self.fc1(x)))
+            x = self.fc2(x)
+            return x
+
+    model = CNN(layer1_filters, layer1_kernel_size, layer2_filters, layer2_kernel_size, pooling_type, fc_units,
+                dropout_rate).to(device)
+
+    # Loss function and optimizer
+    criterion = nn.CrossEntropyLoss()
+
+    if optimizer_type == 'Adam':
+        learning_rate = cfg.get('adam_learning_rate')
+        beta1 = cfg.get('adam_beta_1')
+        beta2 = cfg.get('adam_beta_2')
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(beta1, beta2))
+    elif optimizer_type == 'SGD':
+        learning_rate = cfg.get('sgd_learning_rate')
+        momentum = cfg.get('sgd_momentum')
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_type == 'RMSprop':
+        learning_rate = cfg.get('rmsprop_learning_rate')
+        rho = cfg.get('rmsprop_rho')
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate, alpha=rho)
+    else:
+        raise ValueError(f"Unknown optimizer type: {optimizer_type}")
+
+    # Training loop
+    num_epochs = 3
+    for epoch in range(num_epochs):
+        model.train()
+        for i, (images, labels) in enumerate(train_loader):
+            images = images.to(device)
+            labels = labels.to(device)
+
+            # Forward pass
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+    # Validation
+    model.eval()
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in val_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+        accuracy = correct / total
+    print(f"Validation Accuracy: {accuracy:.4f}")  # Track the progress
+
+    return -accuracy
+
+--------------------------------------------------------------------------------
+[2025-06-20 12:25:30] [Metadata: {'error_type': 'TRAIN_FUNCTION_ERROR'}] [TRAIN_FUNCTION_ERROR] Error in train_function (#2): too many dimensions 'str'
+--------------------------------------------------------------------------------
