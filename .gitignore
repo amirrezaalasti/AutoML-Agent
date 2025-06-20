@@ -7,3 +7,5 @@ dataset.csv
 test.csv
 .pytest_cache
 target.csv
+logs
+paper
