@@ -6,7 +6,7 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
     scenario = Scenario(
         configspace=cs,
         name="HyperparameterOptimization",
-        output_directory="./logs/gemini-2.0-flash_Breast Cancer_20250621_105728",
+        output_directory="./logs/gemini-2.0-flash_Iris_20250621_135052",
         deterministic=False,
         n_trials=10,
         n_workers=1,

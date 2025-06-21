@@ -1,63 +1,72 @@
+import pandas as pd
 import numpy as np
-import sklearn.ensemble
-import sklearn.model_selection
-import sklearn.preprocessing
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
 from ConfigSpace import Configuration
 from typing import Any
 
 
 def train(cfg: Configuration, dataset: Any, seed: int) -> float:
     """
-    Trains a RandomForestClassifier on the given dataset using the provided configuration.
+    Trains a machine learning model (KNN or SVM) based on the provided configuration
+    and dataset, and returns the negative accuracy.
 
     Args:
-        cfg (Configuration): Configuration object containing hyperparameters.
-        dataset (Any): Dictionary containing the dataset with 'X' (features) and 'y' (labels).
-        seed (int): Random seed for reproducibility.
+        cfg (Configuration): A ConfigSpace Configuration object containing
+            hyperparameter settings for the model.
+        dataset (Any): A dictionary containing the dataset with keys 'X'
+            (feature matrix) and 'y' (label vector).
+        seed (int): A random seed for reproducibility.
 
     Returns:
-        float: Negative accuracy of the model on the test set.
+        float: The negative mean cross-validation accuracy.
     """
-    try:
-        # Set random seed for reproducibility
-        np.random.seed(seed)
 
-        # Extract data
-        X = dataset["X"]
-        y = dataset["y"]
+    X = dataset["X"]
+    y = dataset["y"]
 
-        # Data Preprocessing
-        scaling_method = cfg.get("scaling")
-        if scaling_method == "standard":
-            scaler = sklearn.preprocessing.StandardScaler()
-            X = scaler.fit_transform(X)
-        elif scaling_method == "minmax":
-            scaler = sklearn.preprocessing.MinMaxScaler()
-            X = scaler.fit_transform(X)
-        # else scaling_method == "none" - Do nothing
+    # Correct way to detect numerical features:
+    numerical_features = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
+    categorical_features = X.select_dtypes(include=["object", "category"]).columns.tolist()
 
-        # Split data into training and testing sets
-        X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=0.2, random_state=seed)
+    # Preprocessing steps
+    numeric_transformer = Pipeline(steps=[("imputer", SimpleImputer(strategy="mean")), ("scaler", StandardScaler())])
 
-        # Initialize RandomForestClassifier with hyperparameters from the configuration
-        rf = sklearn.ensemble.RandomForestClassifier(
-            n_estimators=cfg.get("rf_n_estimators"),
-            max_features=cfg.get("rf_max_features"),
-            min_samples_split=cfg.get("rf_min_samples_split"),
-            min_samples_leaf=cfg.get("rf_min_samples_leaf"),
+    categorical_transformer = Pipeline(
+        steps=[("imputer", SimpleImputer(strategy="most_frequent")), ("onehot", OneHotEncoder(handle_unknown="ignore"))]
+    )
+
+    preprocessor = ColumnTransformer(
+        transformers=[("num", numeric_transformer, numerical_features), ("cat", categorical_transformer, categorical_features)]
+    )
+
+    # Determine model type and set up pipeline
+    if "knn__n_neighbors" in cfg:
+        model = KNeighborsClassifier(n_neighbors=cfg.get("knn__n_neighbors"), weights=cfg.get("knn__weights"))
+    elif "svm__C" in cfg:
+        model = SVC(
+            C=cfg.get("svm__C"),
+            kernel=cfg.get("svm__kernel"),
+            gamma=cfg.get("svm__gamma"),
+            degree=cfg.get("svm__degree"),
             random_state=seed,
-            n_jobs=1,  # Ensure single core usage,
-            oob_score=True,  # Enable OOB score calculation
+            probability=True,  # Required for cross_val_predict with decision_function
         )
 
-        # Train the model
-        rf.fit(X_train, y_train)
+    else:
+        raise ValueError("Invalid configuration: Model type not specified.")
 
-        # Calculate the accuracy on the test set
-        accuracy = rf.score(X_test, y_test)
+    pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", model)])
 
-        # Return negative accuracy, as SMAC minimizes the target function
-        return -accuracy
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return -0.0  # Return a very low score in case of error.
+    # Cross-validation
+    scores = cross_val_score(pipeline, X, y, cv=5, scoring="accuracy")
+    mean_accuracy = np.mean(scores)
+
+    # SMAC minimizes, so return negative accuracy
+    return -mean_accuracy
