@@ -587,20 +587,11 @@ def save_code_to_file(code: str, filename: str, directory: Optional[str] = None)
     Raises:
         OSError: If file cannot be written
     """
-    try:
-        if directory:
-            filepath = Path(directory) / filename
-            filepath.parent.mkdir(parents=True, exist_ok=True)
-        else:
-            filepath = Path(filename)
-
-        with open(filepath, "w", encoding="utf-8") as file:
-            file.write(code)
-
-        return filepath
-
-    except Exception as e:
-        raise OSError(f"Failed to save code to file: {e}")
+    # if file exists, delete it
+    if Path(filename).exists():
+        Path(filename).unlink()
+    with open(filename, "w") as file:
+        file.write(code)
 
 
 def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = None) -> Tuple[Path, Path]:

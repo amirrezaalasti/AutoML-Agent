@@ -191,6 +191,7 @@ def run_batch_experiments_server(
 
     # Process each dataset
     for i, dataset_config in enumerate(datasets, 1):
+        time.sleep(60)  # sleep for 60 seconds to avoid rate limiting
         dataset_name = dataset_config["dataset_name"]
         dataset_type = dataset_config["dataset_type"]
         task_type = dataset_config["task_type"]
@@ -337,35 +338,21 @@ def run_batch_experiments_server(
 # OpenML Dataset configurations
 openml_datasets = [
     {
+        "dataset_name": "credit-g",
+        "dataset_type": "tabular",
+        "task_type": "classification",
+        "model_name": "gemini-2.0-flash",
+        "seed": 42,
+    },
+    {
+        "dataset_name": "adult",
+        "dataset_type": "tabular",
+        "task_type": "classification",
+        "model_name": "gemini-2.0-flash",
+        "seed": 42,
+    },
+    {
         "dataset_name": "iris",
-        "dataset_type": "tabular",
-        "task_type": "classification",
-        "model_name": "gemini-2.0-flash",
-        "seed": 42,
-    },
-    {
-        "dataset_name": "wine",
-        "dataset_type": "tabular",
-        "task_type": "classification",
-        "model_name": "gemini-2.0-flash",
-        "seed": 42,
-    },
-    {
-        "dataset_name": "breast_cancer",
-        "dataset_type": "tabular",
-        "task_type": "classification",
-        "model_name": "gemini-2.0-flash",
-        "seed": 42,
-    },
-    {
-        "dataset_name": "diabetes",
-        "dataset_type": "tabular",
-        "task_type": "classification",
-        "model_name": "gemini-2.0-flash",
-        "seed": 42,
-    },
-    {
-        "dataset_name": "vehicle",
         "dataset_type": "tabular",
         "task_type": "classification",
         "model_name": "gemini-2.0-flash",
