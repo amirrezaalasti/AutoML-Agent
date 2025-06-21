@@ -1,69 +1,44 @@
 from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
 from ConfigSpace.conditions import InCondition
-from ConfigSpace.forbidden import ForbiddenEqualsClause, ForbiddenAndConjunction
+from ConfigSpace.hyperparameters import UnParametrizedHyperparameter
 
 
 def get_configspace() -> ConfigurationSpace:
     """
-    Returns a ConfigurationSpace object for hyperparameter optimization.
-
-    This configuration space is designed for a classification task on a tabular dataset
-    with 120 samples and 4 numerical features. The configuration space includes
-    options for data preprocessing, feature engineering, and model-specific
-    hyperparameters for a Support Vector Classifier (SVC) and a Random Forest.
-
-    Data preprocessing includes scaling options. Feature engineering consists of
-    polynomial feature expansion (degree configurable). The model choices are
-    SVC with configurable kernel, C, gamma, and Random Forest with configurable
-    number of estimators, max depth, and min samples leaf.
+    Creates a ConfigurationSpace for a machine learning pipeline suitable for the given tabular dataset.
+    This configuration space includes hyperparameters for data preprocessing (scaling) and a RandomForestClassifier.
     """
     cs = ConfigurationSpace()
 
-    # 1. Data Preprocessing
-    scaler = CategoricalHyperparameter("scaler", choices=["StandardScaler", "MinMaxScaler", "None"], default_value="StandardScaler")
-    cs.add_hyperparameter(scaler)
+    # 1. Data Preprocessing: Scaling
+    scaling = CategoricalHyperparameter("scaling", choices=["none", "standard", "minmax"], default_value="standard")
+    cs.add_hyperparameter(scaling)
 
-    # 2. Feature Engineering
-    use_feature_engineering = CategoricalHyperparameter("use_feature_engineering", choices=[True, False], default_value=False)
-    cs.add_hyperparameter(use_feature_engineering)
+    # 2. Classifier: RandomForestClassifier
+    # Add an unparameterized hyperparameter for the classifier choice
+    classifier = UnParametrizedHyperparameter("classifier", value="random_forest")
+    cs.add_hyperparameter(classifier)
 
-    poly_degree = UniformIntegerHyperparameter("poly_degree", lower=2, upper=3)
-    cs.add_hyperparameter(poly_degree)
+    n_estimators = UniformIntegerHyperparameter("rf_n_estimators", lower=50, upper=500, default_value=100)
+    cs.add_hyperparameter(n_estimators)
 
-    cs.add_condition(InCondition(child=poly_degree, parent=use_feature_engineering, values=[True]))
+    max_features = UniformFloatHyperparameter("rf_max_features", lower=0.1, upper=1.0, default_value=0.5)
+    cs.add_hyperparameter(max_features)
 
-    # 3. Model Selection
-    model_type = CategoricalHyperparameter("model_type", choices=["SVC", "RandomForest"], default_value="SVC")
-    cs.add_hyperparameter(model_type)
+    min_samples_split = UniformIntegerHyperparameter("rf_min_samples_split", lower=2, upper=20, default_value=2)
+    cs.add_hyperparameter(min_samples_split)
 
-    # 4. SVC Hyperparameters
-    svc_kernel = CategoricalHyperparameter("svc_kernel", choices=["linear", "rbf", "poly", "sigmoid"], default_value="rbf")
-    svc_C = UniformFloatHyperparameter("svc_C", lower=0.001, upper=1000, default_value=1.0, log=True)
-    svc_gamma = UniformFloatHyperparameter("svc_gamma", lower=0.0001, upper=10, default_value=0.1, log=True)
-    svc_degree = UniformIntegerHyperparameter("svc_degree", lower=2, upper=5)  # Only used for polynomial kernel
+    min_samples_leaf = UniformIntegerHyperparameter("rf_min_samples_leaf", lower=1, upper=20, default_value=1)
+    cs.add_hyperparameter(min_samples_leaf)
 
-    cs.add_hyperparameters([svc_kernel, svc_C, svc_gamma, svc_degree])
-
-    # Conditions for SVC hyperparameters
-    kernel_condition = InCondition(child=svc_kernel, parent=model_type, values=["SVC"])
-    c_condition = InCondition(child=svc_C, parent=model_type, values=["SVC"])
-    gamma_condition = InCondition(child=svc_gamma, parent=model_type, values=["SVC"])
-    degree_condition = InCondition(child=svc_degree, parent=svc_kernel, values=["poly"])  # svc_degree only relevant if kernel is poly
-
-    cs.add_conditions([kernel_condition, c_condition, gamma_condition, degree_condition])
-
-    # 5. RandomForest Hyperparameters
-    rf_n_estimators = UniformIntegerHyperparameter("rf_n_estimators", lower=10, upper=200)
-    rf_max_depth = UniformIntegerHyperparameter("rf_max_depth", lower=2, upper=10)  # Can be None, handled in code
-    rf_min_samples_leaf = UniformIntegerHyperparameter("rf_min_samples_leaf", lower=1, upper=10)
-
-    cs.add_hyperparameters([rf_n_estimators, rf_max_depth, rf_min_samples_leaf])
-
-    # Conditions for RandomForest hyperparameters
-    n_estimators_condition = InCondition(child=rf_n_estimators, parent=model_type, values=["RandomForest"])
-    max_depth_condition = InCondition(child=rf_max_depth, parent=model_type, values=["RandomForest"])
-    min_samples_leaf_condition = InCondition(child=rf_min_samples_leaf, parent=model_type, values=["RandomForest"])
-
-    cs.add_conditions([n_estimators_condition, max_depth_condition, min_samples_leaf_condition])
+    # Add condition: RandomForest parameters are only relevant if RandomForest is chosen
+    # rf_condition = InCondition(child=n_estimators, parent=classifier, values=["random_forest"])
+    # cs.add_condition(rf_condition)
+    # rf_condition = InCondition(child=max_features, parent=classifier, values=["random_forest"])
+    # cs.add_condition(rf_condition)
+    # rf_condition = InCondition(child=min_samples_split, parent=classifier, values=["random_forest"])
+    # cs.add_condition(rf_condition)
+    # rf_condition = InCondition(child=min_samples_leaf, parent=classifier, values=["random_forest"])
+    # cs.add_condition(rf_condition)
 
     return cs

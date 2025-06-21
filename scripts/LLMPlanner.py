@@ -1,9 +1,19 @@
+"""
+LLM Planner module for AutoML Agent.
+
+This module provides functionality to generate structured instructions for AutoML tasks
+using Large Language Models (LLMs) with Google's Gemini API.
+"""
+
+import json
+import os
+from pathlib import Path
 from typing import Optional
-from pydantic import BaseModel
+
 import instructor
 from google import genai
-import os
-import json
+from pydantic import BaseModel
+
 from config.api_keys import GOOGLE_API_KEY
 from scripts.Logger import Logger
 
@@ -11,11 +21,15 @@ from scripts.Logger import Logger
 class InstructorInfo(BaseModel):
     """Structured response model for LLM instructions."""
 
-    dataset_name: str
-    dataset_tag: str
     recommended_configuration: str
     scenario_plan: str
     train_function_plan: str
+
+
+class LLMPlannerError(Exception):
+    """Custom exception for LLM Planner errors."""
+
+    pass
 
 
 class LLMPlanner:
@@ -25,13 +39,22 @@ class LLMPlanner:
     DEFAULT_MODEL = "gemini-2.0-flash"
     LOGS_DIR = "./logs/instructor"
     SMAC_DOCS_PATH = "collected_docs/smac_docs.json"
+    TEMPLATES_DIR = "templates"
+
+    # Template file names
+    TEMPLATE_FILES = {
+        "base": "planner_base_prompt.txt",
+        "config": "planner_config_prompt.txt",
+        "scenario": "planner_scenario_prompt.txt",
+        "train": "planner_train_prompt.txt",
+    }
 
     def __init__(
         self,
         dataset_name: str,
         dataset_description: str,
         dataset_type: str,
-        task_type: str | None = None,
+        task_type: Optional[str] = None,
     ) -> None:
         """
         Initialize the LLMPlanner with dataset details.
@@ -40,102 +63,133 @@ class LLMPlanner:
             dataset_name: Name of the dataset
             dataset_description: Description of the dataset
             dataset_type: Type of the dataset (e.g., classification, regression)
-        """
-        self.dataset_name = dataset_name
-        self.dataset_description = dataset_description
-        self.dataset_type = dataset_type
-        self.task_type = task_type
-        # Initialize instructions
-        self.instruction = self._create_base_instruction()
-        self.instruction_for_configuration = self._create_configuration_instruction()
-        self.scenario_plan_instruction = self._create_scenario_instruction()
-        self.train_function_plan_instruction = self._create_train_function_instruction()
+            task_type: Type of task to perform (optional)
 
-        # Initialize logger
-        self.logger = Logger(
-            model_name=self.DEFAULT_MODEL,
-            dataset_name=self.dataset_name,
-            base_log_dir=self.LOGS_DIR,
-        )
+        Raises:
+            LLMPlannerError: If initialization fails
+        """
+        try:
+            self.dataset_name = dataset_name
+            self.dataset_description = dataset_description
+            self.dataset_type = dataset_type
+            self.task_type = task_type or "classification"  # Default task type
+
+            # Initialize logger
+            self.logger = Logger(
+                model_name=self.DEFAULT_MODEL,
+                dataset_name=self.dataset_name,
+                base_log_dir=self.LOGS_DIR,
+            )
+
+            # Load prompt templates
+            self._load_prompt_templates()
+
+        except Exception as e:
+            raise LLMPlannerError(f"Failed to initialize LLMPlanner: {e}")
+
+    def _load_prompt_templates(self) -> None:
+        """
+        Load prompt templates from template files.
+
+        Raises:
+            LLMPlannerError: If template files cannot be loaded
+        """
+        try:
+            templates_dir = Path(self.TEMPLATES_DIR)
+
+            # Load base instruction template
+            base_template_path = templates_dir / self.TEMPLATE_FILES["base"]
+            if not base_template_path.exists():
+                raise LLMPlannerError(f"Base template not found: {base_template_path}")
+
+            with open(base_template_path, "r", encoding="utf-8") as f:
+                self.base_template = f.read()
+
+            # Load configuration instruction template
+            config_template_path = templates_dir / self.TEMPLATE_FILES["config"]
+            if not config_template_path.exists():
+                raise LLMPlannerError(f"Config template not found: {config_template_path}")
+
+            with open(config_template_path, "r", encoding="utf-8") as f:
+                self.config_template = f.read()
+
+            # Load scenario instruction template
+            scenario_template_path = templates_dir / self.TEMPLATE_FILES["scenario"]
+            if not scenario_template_path.exists():
+                raise LLMPlannerError(f"Scenario template not found: {scenario_template_path}")
+
+            with open(scenario_template_path, "r", encoding="utf-8") as f:
+                self.scenario_template = f.read()
+
+            # Load train function instruction template
+            train_template_path = templates_dir / self.TEMPLATE_FILES["train"]
+            if not train_template_path.exists():
+                raise LLMPlannerError(f"Train template not found: {train_template_path}")
+
+            with open(train_template_path, "r", encoding="utf-8") as f:
+                self.train_template = f.read()
+
+        except Exception as e:
+            raise LLMPlannerError(f"Failed to load prompt templates: {e}")
 
     def _create_base_instruction(self) -> str:
-        """Create the base instruction for the LLM."""
-        return (
-            f"You are a data science expert with deep knowledge of {self.dataset_type} datasets. "
-            f"Your task is to generate structured, and comprehensive instructions for effectively working with the dataset '{self.dataset_name}'. "
-            f"Dataset description: {self.dataset_description}\n\n"
-            "Please perform the following tasks:\n"
-            "1. Describe the recommended data preprocessing steps specific to this dataset.\n"
-            "2. Outline useful feature engineering strategies relevant to the dataset's type and domain.\n"
-            "3. Mention any common challenges or important considerations when working with this dataset type.\n"
-            "4. If this dataset exists on OpenML:\n"
-            "   - Provide the exact dataset name as listed on OpenML.\n"
-            "   - Include the dataset's tag(s) on OpenML.\n"
-            "Return all the above in a structured JSON format matching the following fields:\n"
-            "- dataset_name (str)\n"
-            "- dataset_tag (str)\n"
-            "- recommended_configuration (str)\n"
-            "- scenario_plan (str)\n"
-            "- train_function_plan (str)\n"
-            "- you have to do the task type: {self.task_type}\n"
-            "- do not suggest error handling code, the agent should not handle errors, it should be handled by the user."
-            "- your instructions should be a step by step guide for the agent to follow."
-            "- if a dataset and a task needs to be done on GPU, you should suggest to use GPU."
+        """
+        Create the base instruction for the LLM using template.
+
+        Returns:
+            Formatted base instruction string
+        """
+        return self.base_template.format(
+            dataset_name=self.dataset_name,
+            dataset_description=self.dataset_description,
+            dataset_type=self.dataset_type,
+            task_type=self.task_type,
         )
 
-    def _create_configuration_instruction(self) -> str:
-        """Create the configuration instruction template."""
-        return """
-            Below, I am providing a set of parameters that were used on the top-performing models evaluated on the dataset.
-            Please generate an instruction for creating a configuration for the dataset based on the following parameters:
-            {config_space_suggested_parameters}
-            * This is just a Suggestion, you can use it as a reference,
-            but you can also ignore it because the task type can be different from your goal and generate your own configuration space.
-            * for recommended_configuration you should suggest the best parameters to set in Configuration Space.
-            """
+    def _create_configuration_instruction(self, config_space_suggested_parameters: str) -> str:
+        """
+        Create the configuration instruction using template.
+
+        Args:
+            config_space_suggested_parameters: Suggested parameters for configuration
+
+        Returns:
+            Formatted configuration instruction string
+        """
+        return self.config_template.format(config_space_suggested_parameters=config_space_suggested_parameters)
 
     def _create_scenario_instruction(self) -> Optional[str]:
-        """Create the scenario instruction based on SMAC documentation if available."""
-        if not os.path.exists(self.SMAC_DOCS_PATH):
+        """
+        Create the scenario instruction based on SMAC documentation if available.
+
+        Returns:
+            Formatted scenario instruction string or None if SMAC docs not available
+        """
+        smac_docs_path = Path(self.SMAC_DOCS_PATH)
+
+        if not smac_docs_path.exists():
             return None
 
         try:
-            with open(self.SMAC_DOCS_PATH, "r") as f:
+            with open(smac_docs_path, "r", encoding="utf-8") as f:
                 smac_docs = json.load(f)
 
-            doc_context = """
-            Based on the following SMAC documentation, analyze the dataset characteristics and choose appropriate:
-            1. Facade type (e.g., MultiFidelityFacade for multi-fidelity optimization)
-            2. Budget settings (min_budget and max_budget)
-            3. Number of workers (n_workers)
-            4. Other relevant scenario parameters
+            # Extract documentation content
+            doc_content = "\n\n".join([doc["content"] for doc in smac_docs])
 
-            SMAC Documentation:
-            """
-            doc_context += "\n\n".join([doc["content"] for doc in smac_docs])
+            return self.scenario_template.format(smac_documentation=doc_content)
 
-            doc_context += """
-            Please analyze the dataset and documentation to determine:
-            1. Should multi-fidelity optimization be used? (Consider dataset size and training time)
-            2. What budget range is appropriate? (Consider training epochs or data subsets)
-            3. How many workers should be used? (Consider available resources)
-            4. Are there any special considerations for this dataset type?
-            5. Do not suggest name and output directory for the scenario, it will be generated by the agent.
-            6. Do not suggest any code for the scenario, it will be generated by the agent.
-
-            Then generate a scenario configuration that best suits this dataset.
-            """
-            return doc_context
         except (json.JSONDecodeError, IOError) as e:
-            print(f"Error reading SMAC documentation: {e}")
-            return None
+            raise LLMPlannerError(f"Error reading SMAC documentation: {e}")
 
     def _create_train_function_instruction(self) -> str:
-        """Create the train function instruction."""
-        return """
-        Based on the previous instructions and knowledge of the dataset, generate a plan for the train function.
-        * Do not suggest any code for the train function, it will be generated by the agent.
         """
+        Create the train function instruction using template.
+
+        Returns:
+            Train function instruction string
+        """
+        return self.train_template
 
     def generate_instructions(self, config_space_suggested_parameters: Optional[str] = None) -> InstructorInfo:
         """
@@ -146,28 +200,41 @@ class LLMPlanner:
 
         Returns:
             InstructorInfo: Structured response containing the generated instructions
+
+        Raises:
+            LLMPlannerError: If instruction generation fails
         """
-        # Build complete instruction
-        instruction = self.instruction
-        if config_space_suggested_parameters:
-            instruction += self.instruction_for_configuration.format(config_space_suggested_parameters=config_space_suggested_parameters)
-        if self.scenario_plan_instruction:
-            instruction += self.scenario_plan_instruction
-        if self.train_function_plan_instruction:
-            instruction += self.train_function_plan_instruction
+        try:
+            # Build complete instruction
+            instruction = self._create_base_instruction()
 
-        # Initialize LLM client
-        google_client = genai.Client(api_key=GOOGLE_API_KEY)
-        client = instructor.from_genai(google_client, model=f"models/{self.DEFAULT_MODEL}")
+            if config_space_suggested_parameters:
+                instruction += self._create_configuration_instruction(config_space_suggested_parameters)
 
-        # Generate response
-        response = client.chat.completions.create(
-            response_model=InstructorInfo,
-            messages=[{"role": "user", "content": instruction}],
-        )
+            scenario_instruction = self._create_scenario_instruction()
+            if scenario_instruction:
+                instruction += scenario_instruction
 
-        # Log the interaction
-        self.logger.log_prompt(prompt=instruction, metadata={"dataset_name": self.dataset_name})
-        self.logger.log_response(response, metadata={"dataset_name": self.dataset_name})
+            instruction += self._create_train_function_instruction()
 
-        return response
+            # Initialize LLM client
+            google_client = genai.Client(api_key=GOOGLE_API_KEY)
+            client = instructor.from_genai(google_client, model=f"models/{self.DEFAULT_MODEL}")
+
+            # Generate response
+            response = client.chat.completions.create(
+                response_model=InstructorInfo,
+                messages=[
+                    {"role": "system", "content": instruction},
+                    {"role": "user", "content": "generate the instructions"},
+                ],
+            )
+
+            # Log the interaction
+            self.logger.log_prompt(prompt=instruction, metadata={"dataset_name": self.dataset_name})
+            self.logger.log_response(response, metadata={"dataset_name": self.dataset_name})
+
+            return response
+
+        except Exception as e:
+            raise LLMPlannerError(f"Failed to generate instructions: {e}")
