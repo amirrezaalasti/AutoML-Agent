@@ -2,7 +2,7 @@ from scripts.LLMClient import LLMClient
 from typing import Any
 from scripts.utils import (
     describe_dataset,
-    save_code,
+    save_code_to_file,
     format_dataset,
     extract_code_block,
     split_dataset,
@@ -148,9 +148,10 @@ class AutoMLAgent:
         self.ui_agent.code(self.train_function_code, language="python")
 
         # Save outputs
-        save_code(self.config_code, "scripts/generated_codes/generated_config_space.py")
-        save_code(self.scenario_code, "scripts/generated_codes/generated_scenario.py")
-        save_code(
+
+        save_code_to_file(self.config_code, "scripts/generated_codes/generated_config_space.py")
+        save_code_to_file(self.scenario_code, "scripts/generated_codes/generated_scenario.py")
+        save_code_to_file(
             self.train_function_code,
             "scripts/generated_codes/generated_train_function.py",
         )

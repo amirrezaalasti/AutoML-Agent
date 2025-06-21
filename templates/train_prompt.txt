@@ -23,20 +23,6 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
   * `dataset['X']`: feature matrix or input tensor
   * `dataset['y']`: label vector or label tensor
 
-* **CRITICAL: Data Type Handling**
-  * **ALWAYS** check for mixed data types (numerical + categorical)
-  * **ALWAYS** separate numerical and categorical features before preprocessing
-  * **NEVER** apply scaling to categorical features
-  * Use proper data type detection:
-    ```python
-    # Correct way to detect numerical features:
-    numerical_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
-    categorical_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
-    
-    # WRONG - this causes isnan errors:
-    # numerical_features = X.select_dtypes(include=np.number).columns.tolist()
-    ```
-
 * The function **must** handle the configuration properly:
   * Access primitive values using `cfg.get('key')`
   * Handle all hyperparameters defined in the configuration space
@@ -119,19 +105,31 @@ Choose **one** of the following frameworks based on the dataset and requirements
 * Check data types and shapes
 * Handle edge cases
 * Implement proper error messages
-* **ALWAYS handle mixed data types properly**
 
 ---
 
-### **Key Principles (NOT Examples):**
+### **Example Structure:**
 
-* **Data Type Safety**: Always detect and handle mixed data types before preprocessing
-* **Framework Appropriateness**: Choose the best framework for the specific task and dataset
-* **Configuration Consistency**: Use hyperparameters that match the provided config space
-* **Model Specificity**: Implement the specific model type indicated by the config space
-* **Preprocessing Flexibility**: Adapt preprocessing to the actual data characteristics
-* **Error Resilience**: Handle edge cases and provide meaningful error messages
-* **Performance Focus**: Optimize for computational efficiency and minimal overhead
+```python
+def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+    # Set random seed for reproducibility
+    torch.manual_seed(seed)
+    
+    # Extract hyperparameters efficiently
+    lr, bs = cfg.get('learning_rate'), cfg.get('batch_size')
+    
+    # Prepare data efficiently
+    X, y = dataset['X'], dataset['y']
+    
+    # Initialize model with optimized parameters
+    model = Model(X.shape[1], **cfg).to(device)
+    
+    # Optimized training loop
+    for epoch in range(10):
+        loss = train_epoch(model, X, y, lr, bs)
+    
+    return loss
+```
 
 ---
 
@@ -145,5 +143,3 @@ Choose **one** of the following frameworks based on the dataset and requirements
 * For error metrics, return the raw error value (e.g. mse, rmse)
 * Ensure consistent sign convention across all metrics
 * Do not cheat in order to escape an Error and do not use Try Except
-* **ALWAYS handle mixed data types properly to avoid isnan errors**
-* **Choose the most appropriate framework and model for the specific task**
