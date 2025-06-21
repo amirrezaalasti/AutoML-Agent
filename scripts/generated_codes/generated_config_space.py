@@ -1,44 +1,32 @@
 from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
-from ConfigSpace.conditions import InCondition
-from ConfigSpace.hyperparameters import UnParametrizedHyperparameter
 
 
 def get_configspace() -> ConfigurationSpace:
     """
-    Creates a ConfigurationSpace for a machine learning pipeline suitable for the given tabular dataset.
-    This configuration space includes hyperparameters for data preprocessing (scaling) and a RandomForestClassifier.
+    Define the configuration space for machine learning hyperparameter optimization.
+    This configuration space includes hyperparameters for KNN and SVM classifiers,
+    suitable for the given tabular dataset with 120 samples and 4 features.
     """
     cs = ConfigurationSpace()
 
-    # 1. Data Preprocessing: Scaling
-    scaling = CategoricalHyperparameter("scaling", choices=["none", "standard", "minmax"], default_value="standard")
-    cs.add_hyperparameter(scaling)
+    # KNN Hyperparameters
+    n_neighbors = UniformIntegerHyperparameter("knn__n_neighbors", lower=1, upper=20, default_value=5)
+    cs.add_hyperparameter(n_neighbors)
 
-    # 2. Classifier: RandomForestClassifier
-    # Add an unparameterized hyperparameter for the classifier choice
-    classifier = UnParametrizedHyperparameter("classifier", value="random_forest")
-    cs.add_hyperparameter(classifier)
+    weights = CategoricalHyperparameter("knn__weights", choices=["uniform", "distance"], default_value="uniform")
+    cs.add_hyperparameter(weights)
 
-    n_estimators = UniformIntegerHyperparameter("rf_n_estimators", lower=50, upper=500, default_value=100)
-    cs.add_hyperparameter(n_estimators)
+    # SVM Hyperparameters
+    svm_kernel = CategoricalHyperparameter("svm__kernel", choices=["linear", "rbf", "poly", "sigmoid"], default_value="rbf")
+    cs.add_hyperparameter(svm_kernel)
 
-    max_features = UniformFloatHyperparameter("rf_max_features", lower=0.1, upper=1.0, default_value=0.5)
-    cs.add_hyperparameter(max_features)
+    svm_C = UniformFloatHyperparameter("svm__C", lower=0.001, upper=1000.0, default_value=1.0, log=True)
+    cs.add_hyperparameter(svm_C)
 
-    min_samples_split = UniformIntegerHyperparameter("rf_min_samples_split", lower=2, upper=20, default_value=2)
-    cs.add_hyperparameter(min_samples_split)
+    svm_gamma = UniformFloatHyperparameter("svm__gamma", lower=0.0001, upper=10.0, default_value=0.1, log=True)
+    cs.add_hyperparameter(svm_gamma)
 
-    min_samples_leaf = UniformIntegerHyperparameter("rf_min_samples_leaf", lower=1, upper=20, default_value=1)
-    cs.add_hyperparameter(min_samples_leaf)
-
-    # Add condition: RandomForest parameters are only relevant if RandomForest is chosen
-    # rf_condition = InCondition(child=n_estimators, parent=classifier, values=["random_forest"])
-    # cs.add_condition(rf_condition)
-    # rf_condition = InCondition(child=max_features, parent=classifier, values=["random_forest"])
-    # cs.add_condition(rf_condition)
-    # rf_condition = InCondition(child=min_samples_split, parent=classifier, values=["random_forest"])
-    # cs.add_condition(rf_condition)
-    # rf_condition = InCondition(child=min_samples_leaf, parent=classifier, values=["random_forest"])
-    # cs.add_condition(rf_condition)
+    svm_degree = UniformIntegerHyperparameter("svm__degree", lower=2, upper=5, default_value=3)
+    cs.add_hyperparameter(svm_degree)
 
     return cs

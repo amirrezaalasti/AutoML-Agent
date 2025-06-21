@@ -19,3 +19,4 @@ instructor
 jsonref
 py-experimenter
 imblearn
+xgboost
