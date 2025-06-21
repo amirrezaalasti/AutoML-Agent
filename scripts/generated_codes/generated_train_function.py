@@ -1,85 +1,76 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder
-from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 from ConfigSpace import Configuration
 from typing import Any
 
 
 def train(cfg: Configuration, dataset: Any, seed: int) -> float:
     """
-    Trains a Gradient Boosting Classifier on the adult dataset using the provided
-    hyperparameters and returns the validation error.
+    Trains a classification model (k-NN or SVM) on the provided dataset using the given configuration.
+
+    Args:
+        cfg (Configuration): The configuration object containing hyperparameter settings.
+        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        float: The negative cross-validation accuracy.
     """
-    try:
-        # 1. Data Loading & Preprocessing
-        X = dataset["X"]
-        y = dataset["y"]
 
-        # Identify categorical and numerical features (explicitly defined)
-        categorical_features = [
-            "age",
-            "workclass",
-            "education",
-            "marital-status",
-            "occupation",
-            "relationship",
-            "race",
-            "sex",
-            "capitalgain",
-            "capitalloss",
-            "hoursperweek",
-            "native-country",
-        ]
-        numerical_features = ["fnlwgt", "education-num"]
+    # Input validation
+    assert isinstance(dataset, dict), "Dataset must be a dictionary."
+    assert "X" in dataset and "y" in dataset, "Dataset must contain 'X' and 'y'."
+    X = dataset["X"]
+    y = dataset["y"]
+    assert isinstance(X, pd.DataFrame), "X must be a pandas DataFrame."
+    assert isinstance(y, pd.Series), "y must be a pandas Series."
+    assert len(X) == len(y), "X and y must have the same length."
+    assert X.shape[0] > 0 and X.shape[1] > 0, "X must have at least one sample and one feature."
+    assert y.nunique() > 1, "y must have more than one class."
 
-        # Create preprocessor including OneHotEncoding for categorical features
-        # and StandardScaler for numerical features.
-        numerical_transformer = Pipeline(steps=[("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())])  # Handle missing values
+    # Hyperparameter extraction and validation
+    n_neighbors = cfg.get("n_neighbors")
+    C = cfg.get("C")
+    kernel = cfg.get("kernel")
+    degree = cfg.get("degree")
+    gamma = cfg.get("gamma")
 
-        categorical_transformer = Pipeline(
-            steps=[("imputer", SimpleImputer(strategy="most_frequent")), ("onehot", OneHotEncoder(handle_unknown="ignore"))]  # Handle missing values
-        )
+    assert isinstance(n_neighbors, int) and 1 <= n_neighbors <= 10, "n_neighbors must be an integer between 1 and 10."
+    assert isinstance(C, float) and C > 0, "C must be a positive float."
+    assert kernel in ["linear", "rbf", "poly", "sigmoid"], "kernel must be one of 'linear', 'rbf', 'poly', 'sigmoid'."
+    assert isinstance(degree, int) and 2 <= degree <= 5, "degree must be an integer between 2 and 5."
+    assert isinstance(gamma, float) and gamma > 0, "gamma must be a positive float."
 
-        preprocessor = ColumnTransformer(
-            transformers=[("num", numerical_transformer, numerical_features), ("cat", categorical_transformer, categorical_features)],
-            remainder="passthrough",  # Drop remaining columns
-        )
+    # Model selection and initialization based on hyperparameters
+    if kernel is None:
+        model = KNeighborsClassifier(n_neighbors=n_neighbors)
+    else:
+        model = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, random_state=seed, probability=False)  # probability=False for speed
 
-        # 2. Data Splitting
-        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed, stratify=y)
+    # Cross-validation setup
+    n_splits = 5  # Fixed number of splits
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-        # 3. Model Instantiation
-        model = GradientBoostingClassifier(
-            n_estimators=cfg.get("n_estimators"),
-            learning_rate=cfg.get("learning_rate"),
-            max_depth=cfg.get("max_depth"),
-            min_samples_split=cfg.get("min_samples_split"),
-            min_samples_leaf=cfg.get("min_samples_leaf"),
-            subsample=cfg.get("subsample"),
-            random_state=seed,
-            n_iter_no_change=5,
-            validation_fraction=0.1,
-            tol=0.01,
-            warm_start=False,
-        )
+    # Cross-validation loop
+    accuracies = []
+    for train_index, val_index in skf.split(X, y):
+        X_train, X_val = X.iloc[train_index], X.iloc[val_index]
+        y_train, y_val = y.iloc[train_index], y.iloc[val_index]
 
-        pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", model)])
+        # Model training
+        model.fit(X_train, y_train)
 
-        # 4. Model Training
-        pipeline.fit(X_train, y_train)
-
-        # 5. Performance Evaluation
-        y_pred = pipeline.predict(X_val)
+        # Prediction and evaluation
+        y_pred = model.predict(X_val)
         accuracy = accuracy_score(y_val, y_pred)
+        accuracies.append(accuracy)
 
-        # 6. Return Value (Validation Error)
-        return -accuracy  # SMAC minimizes, return negative accuracy
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return 1.0  # Return a large error value in case of failure
+    # Calculate mean accuracy
+    mean_accuracy = np.mean(accuracies)
+
+    # Return negative mean accuracy (SMAC minimizes)
+    return -mean_accuracy

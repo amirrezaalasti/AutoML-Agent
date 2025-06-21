@@ -2,6 +2,15 @@
 
 ---
 
+### **🚨 CRITICAL ERROR HANDLING RULE:**
+**ABSOLUTELY NO try/except BLOCKS ALLOWED!**
+* **Why**: Try/except blocks hide real errors and make debugging impossible
+* **Instead**: Use proper validation, type checking, and explicit error handling
+* **If errors occur**: Let them propagate naturally so they can be identified and fixed
+* **This is a HARD REQUIREMENT**: Any code with try/except will be rejected
+
+---
+
 ### **Error Information:**
 {errors}
 
@@ -19,12 +28,13 @@
   * Preserve the function's core purpose and behavior
   * Keep the return type and value format
 
-* **Error Resolution:**
+* **Error Resolution (NO try/except):**
   * Fix all syntax errors
   * Resolve runtime errors
-  * Handle edge cases
-  * Validate inputs properly
-  * Ensure proper error handling
+  * Handle edge cases with conditional logic
+  * Validate inputs explicitly
+  * Use proper type checking and validation
+  * Let errors propagate naturally for debugging
 
 * **Code Quality:**
   * Maintain code readability
@@ -33,12 +43,13 @@
   * Add necessary imports
   * Ensure proper documentation
 
-* **Best Practices:**
-  * Use proper error handling
-  * Implement input validation
-  * Handle edge cases
-  * Ensure code is maintainable
+* **Best Practices (NO try/except):**
+  * Use explicit validation instead of exception handling
+  * Implement proper input validation with conditional checks
+  * Handle edge cases with if/else statements
+  * Ensure code is maintainable and debuggable
   * Follow framework conventions
+  * Let errors surface naturally for proper debugging
 
 ---
 
@@ -48,21 +59,32 @@
 * Include necessary imports
 * No explanations or comments
 * The code must be executable
+* **NO try/except blocks allowed**
 
 ---
 
-### **Example Structure:**
+### **Example Structure (NO try/except):**
 
 ```python
 def fixed_function():
+    # Validate inputs explicitly
+    if not valid_input:
+        raise ValueError("Invalid input: reason")
+    
+    # Handle edge cases with conditional logic
+    if edge_case_condition:
+        return default_value
+    
     # Fixed code here
     return result
 ```
 
 ---
 
-**Reminder:** The output must be limited to:
+**🚨 FINAL REMINDER - CRITICAL REQUIREMENTS:**
 * Valid `import` statements
 * The fixed function code
 * No additional code or explanations
-* Do not cheat and do not use try except
+* **🚨 ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
+* **🚨 IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**
+* **🚨 DO NOT CHEAT BY HIDING ERRORS WITH EXCEPTION HANDLING**

@@ -156,7 +156,9 @@ class AutoMLAgent:
             "scripts/generated_codes/generated_train_function.py",
         )
 
-        from scripts.generated_codes.generated_train_function import train
+        # Use the train function that was just generated and tested, not the imported one
+        # This ensures consistency between the tested function and the one used in SMAC
+        train_fn = self.namespace["train"]
 
         self.ui_agent.success("AutoML Agent setup complete!")
         self.ui_agent.subheader("Loss Value")
@@ -165,7 +167,7 @@ class AutoMLAgent:
         self.ui_agent.subheader("Starting Optimization Process")
         self.ui_agent.write("Starting Optimization Process")
 
-        self.run_scenario(self.scenario_obj, train, self.dataset, self.config_space_obj)
+        self.run_scenario(self.scenario_obj, train_fn, self.dataset, self.config_space_obj)
         print(self.experimenter_row_dict)
         self.experimenter.fill_table_with_rows(rows=[self.experimenter_row_dict])
 
