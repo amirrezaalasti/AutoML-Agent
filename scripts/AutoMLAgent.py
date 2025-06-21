@@ -39,6 +39,7 @@ class AutoMLAgent:
         :param dataset_type: The type of dataset (e.g., "tabular", "image", etc.).
         :param ui_agent: The UI agent for displaying results and prompts.
         :param dataset_name: Optional name of the dataset for logging and display.
+        :param task_type: Optional task type for logging and display.
         """
         self.dataset = format_dataset(dataset)
         self.dataset, self.dataset_test = split_dataset(self.dataset)
@@ -47,15 +48,9 @@ class AutoMLAgent:
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
 
-        self.llm = llm_client
-
         self.config_code = None
         self.scenario_code = None
         self.train_function_code = None
-
-        self.config_space = None
-        self.scenario = None
-        self.train_function = None
 
         self.scenario_obj = None
         self.config_space_obj = None
@@ -66,6 +61,8 @@ class AutoMLAgent:
 
         # store original prompts for retries
         self.prompts = {}
+
+        self.llm = llm_client
         self.ui_agent = ui_agent
 
         # Initialize logger
@@ -121,11 +118,12 @@ class AutoMLAgent:
             # self.task_type,
         )
         self.config_code = self.llm.generate(self.prompts["config"])
+
         self.logger.log_prompt(self.prompts["config"], {"component": "config"})
         self.logger.log_response(self.config_code, {"component": "config"})
         self._run_generated("config")
         self.ui_agent.subheader("Generated Configuration Space Code")
-        self.ui_agent.code(self.config_space, language="python")
+        self.ui_agent.code(self.config_code, language="python")
 
         # Scenario
         self.prompts["scenario"] = self._create_scenario_prompt(instructor_response.scenario_plan)
@@ -134,7 +132,7 @@ class AutoMLAgent:
         self.logger.log_response(self.scenario_code, {"component": "scenario"})
         self._run_generated("scenario")
         self.ui_agent.subheader("Generated Scenario Code")
-        self.ui_agent.code(self.scenario, language="python")
+        self.ui_agent.code(self.scenario_code, language="python")
 
         # Training Function
         train_plan = instructor_response.train_function_plan
@@ -147,12 +145,15 @@ class AutoMLAgent:
         self.logger.log_response(self.train_function_code, {"component": "train_function"})
         self._run_generated("train_function")
         self.ui_agent.subheader("Generated Training Function Code")
-        self.ui_agent.code(self.train_function, language="python")
+        self.ui_agent.code(self.train_function_code, language="python")
 
         # Save outputs
-        save_code(self.config_space, "scripts/generated_codes/generated_config_space.py")
-        save_code(self.scenario, "scripts/generated_codes/generated_scenario.py")
-        save_code(self.train_function, "scripts/generated_codes/generated_train_function.py")
+        save_code(self.config_code, "scripts/generated_codes/generated_config_space.py")
+        save_code(self.scenario_code, "scripts/generated_codes/generated_scenario.py")
+        save_code(
+            self.train_function_code,
+            "scripts/generated_codes/generated_train_function.py",
+        )
 
         from scripts.generated_codes.generated_train_function import train
 
@@ -169,9 +170,9 @@ class AutoMLAgent:
 
         # Return results and last training loss
         return (
-            self.config_space,
-            self.scenario,
-            self.train_function,
+            self.config_code,
+            self.scenario_code,
+            self.train_function_code,
             self.last_loss,
             self.prompts,
             self.logger.experiment_dir,
@@ -190,8 +191,8 @@ class AutoMLAgent:
             try:
                 if component == "config":
                     exec(source, self.namespace)
+                    self.config_code = source
                     cfg = self.namespace["get_configspace"]()
-                    self.config_space = source
                     self.config_space_obj = cfg
                     self.logger.log_response(
                         f"Configuration space generated successfully",
@@ -201,8 +202,8 @@ class AutoMLAgent:
                 elif component == "scenario":
                     cfg = self.namespace["get_configspace"]()
                     exec(source, self.namespace)
+                    self.scenario_code = source
                     scenario_obj = self.namespace["generate_scenario"](cfg)
-                    self.scenario = source
                     self.scenario_obj = scenario_obj
                     self.logger.log_response(
                         f"Scenario generated successfully",
@@ -212,10 +213,10 @@ class AutoMLAgent:
                 elif component == "train_function":
                     cfg = self.namespace["get_configspace"]()
                     exec(source, self.namespace)
+                    self.train_function_code = source
                     train_fn = self.namespace["train"]
                     sampled = cfg.sample_configuration()
                     loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
-                    self.train_function = source
                     self.last_loss = loss
                     self.logger.log_response(
                         f"Training executed successfully, loss: {loss}",
@@ -300,8 +301,8 @@ class AutoMLAgent:
         with open("templates/train_prompt.txt", "r") as f:
             prompt = f.read().format(
                 dataset_description=self.dataset_description,
-                config_space=self.config_space or "",
-                scenario=self.scenario or "",
+                config_space=self.config_code or "",
+                scenario=self.scenario_code or "",
             )
         # Add specific instructions for the training function
         print("Adding training function instructions")

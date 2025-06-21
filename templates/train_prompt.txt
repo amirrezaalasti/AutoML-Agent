@@ -66,12 +66,10 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
   * Optimize loops and iterations
   * Use appropriate data types
   * Avoid unnecessary object creation
-  * Implement efficient error handling
   * Use appropriate caching strategies
   * The train function should be computational efficient
 
 * **Best Practices:**
-  * Use proper error handling
   * Implement proper logging
   * Handle edge cases
   * Ensure reproducibility
