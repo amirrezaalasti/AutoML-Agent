@@ -3,45 +3,25 @@ from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformI
 
 def get_configspace() -> ConfigurationSpace:
     """
-    Returns a ConfigurationSpace object for hyperparameter optimization.
-    This configuration space is tailored for a tabular dataset with mixed
-    categorical and numerical features, suitable for classification.
+    Define the configuration space for hyperparameter optimization.
+    This configuration space is designed for a tabular dataset with 120 samples and 4 features.
+    It includes hyperparameters for a simple classification model, such as k-NN or SVM.
     """
     cs = ConfigurationSpace()
 
-    # Define hyperparameters for a Gradient Boosting Machine (GBM)
-    # Adjust ranges based on dataset characteristics
+    # --- k-Nearest Neighbors (k-NN) ---
+    n_neighbors = UniformIntegerHyperparameter("n_neighbors", lower=1, upper=10, default_value=5)
+    cs.add_hyperparameter(n_neighbors)
 
-    # Learning Rate
-    learning_rate = UniformFloatHyperparameter("learning_rate", lower=0.001, upper=0.3, default_value=0.1, log=True)
-    cs.add_hyperparameter(learning_rate)
+    # --- Support Vector Machine (SVM) ---
+    C = UniformFloatHyperparameter("C", lower=0.1, upper=10.0, default_value=1.0, log=True)
+    kernel = CategoricalHyperparameter("kernel", choices=["linear", "rbf", "poly", "sigmoid"], default_value="rbf")
+    degree = UniformIntegerHyperparameter("degree", lower=2, upper=5, default_value=3)
+    gamma = UniformFloatHyperparameter("gamma", lower=1e-4, upper=1.0, default_value=0.1, log=True)
 
-    # Number of Estimators (Boosting Rounds)
-    n_estimators = UniformIntegerHyperparameter("n_estimators", lower=50, upper=500, default_value=100)
-    cs.add_hyperparameter(n_estimators)
-
-    # Maximum Depth of Trees
-    max_depth = UniformIntegerHyperparameter("max_depth", lower=2, upper=10, default_value=3)
-    cs.add_hyperparameter(max_depth)
-
-    # Minimum Samples Split
-    min_samples_split = UniformIntegerHyperparameter("min_samples_split", lower=2, upper=20, default_value=2)
-    cs.add_hyperparameter(min_samples_split)
-
-    # Minimum Samples Leaf
-    min_samples_leaf = UniformIntegerHyperparameter("min_samples_leaf", lower=1, upper=10, default_value=1)
-    cs.add_hyperparameter(min_samples_leaf)
-
-    # Subsample Ratio
-    subsample = UniformFloatHyperparameter("subsample", lower=0.5, upper=1.0, default_value=1.0)
-    cs.add_hyperparameter(subsample)
-
-    # L2 Regularization (L2 penalty)
-    l2_regularization = UniformFloatHyperparameter("l2_regularization", lower=1e-9, upper=1.0, default_value=1e-9, log=True)
-    cs.add_hyperparameter(l2_regularization)
-
-    # Define hyperparameters for preprocessing (OneHotEncoder)
-    use_one_hot_encoding = CategoricalHyperparameter("use_one_hot_encoding", choices=[True, False], default_value=True)
-    cs.add_hyperparameter(use_one_hot_encoding)
+    cs.add_hyperparameter(C)
+    cs.add_hyperparameter(kernel)
+    cs.add_hyperparameter(degree)
+    cs.add_hyperparameter(gamma)
 
     return cs

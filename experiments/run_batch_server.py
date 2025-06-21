@@ -358,6 +358,13 @@ openml_datasets = [
         "model_name": "gemini-2.0-flash",
         "seed": 42,
     },
+    {
+        "dataset_name": "Sick",
+        "dataset_type": "tabular",
+        "task_type": "classification",
+        "model_name": "gemini-2.0-flash",
+        "seed": 42,
+    },
 ]
 
 
