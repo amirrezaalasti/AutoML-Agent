@@ -1,0 +1,6 @@
+Below, I am providing a set of parameters that were used on the top-performing models evaluated on the dataset.
+Please generate an instruction for creating a configuration for the dataset based on the following parameters:
+{config_space_suggested_parameters}
+* This is just a Suggestion, you can use it as a reference,
+but you can also ignore it because the task type can be different from your goal and generate your own configuration space.
+* for recommended_configuration you should suggest the best parameters to set in Configuration Space. 

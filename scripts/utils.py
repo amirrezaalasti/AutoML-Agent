@@ -1,310 +1,659 @@
-import pandas as pd
-import numpy as np
-from smac import HyperparameterOptimizationFacade, Scenario
-import warnings
-from typing import Any
+"""
+Utility functions for AutoML Agent.
+
+This module provides utility functions for dataset handling, description generation,
+hyperparameter optimization, and various data processing tasks.
+"""
+
 import re
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
-def describe_dataset(dataset: dict, dataset_type: str = "tabular") -> str:
+# Constants
+DEFAULT_TEST_SIZE = 0.2
+DEFAULT_RANDOM_STATE = 42
+DEFAULT_SMAC_BUDGET = 100
+DEFAULT_SMAC_TRIALS = 10
+DEFAULT_SMAC_METRIC = "accuracy"
+
+# Supported dataset types
+SUPPORTED_DATASET_TYPES = {"tabular", "time_series", "image", "categorical", "text"}
+
+# Task types mapping
+DATASET_TASK_MAPPING = {
+    "tabular": ["classification", "regression", "clustering"],
+    "time_series": ["clustering", "regression", "classification"],
+    "image": ["classification", "clustering"],
+    "categorical": ["classification", "clustering"],
+    "text": ["clustering", "classification"],
+}
+
+
+@dataclass
+class DatasetInfo:
+    """Data class to hold dataset information."""
+
+    n_samples: int
+    n_features: int
+    feature_names: Optional[List[str]] = None
+    target_name: Optional[str] = None
+    dataset_type: str = "tabular"
+
+    def __post_init__(self):
+        """Validate dataset info after initialization."""
+        if self.dataset_type not in SUPPORTED_DATASET_TYPES:
+            raise ValueError(f"Unsupported dataset type: {self.dataset_type}")
+
+
+class DatasetError(Exception):
+    """Custom exception for dataset-related errors."""
+
+    pass
+
+
+class ValidationError(Exception):
+    """Custom exception for validation errors."""
+
+    pass
+
+
+def validate_dataset(dataset: Any) -> None:
     """
-    Generate a detailed description of the dataset based on its type.
+    Validate dataset format and structure.
 
     Args:
-        dataset (dict): A dictionary with 'X' (features) and 'y' (labels).
-        dataset_type (str): One of ['tabular', 'time_series', 'image', 'categorical', 'text', etc.]
+        dataset: Dataset to validate
 
-    Returns:
-        str: A textual description of the dataset.
+    Raises:
+        ValidationError: If dataset format is invalid
     """
-    X, y = dataset["X"], dataset["y"]
-    description = ""
+    if dataset is None:
+        raise ValidationError("Dataset cannot be None")
 
-    if dataset_type == "tabular":
-        description += "This is a tabular dataset.\n"
-        description += f"It has {X.shape[0]} samples and {X.shape[1]} features.\n"
-        description += "Feature columns and types:\n"
-        if hasattr(X, "dtypes"):
-            description += "\n".join([f"- {col}: {dtype}" for col, dtype in X.dtypes.items()])
-        if hasattr(X, "describe"):
-            description += "\n\nFeature statistical summary:\n"
-            description += str(X.describe(include="all"))
-        if hasattr(y, "value_counts"):
-            description += "\n\nLabel distribution:\n"
-            description += str(y.value_counts())
+    if isinstance(dataset, dict):
+        required_keys = {"X", "y"}
+        if not all(key in dataset for key in required_keys):
+            raise ValidationError(f"Dataset dict must contain keys: {required_keys}")
 
-    elif dataset_type == "time_series":
-        description += "This is a time series dataset.\n"
-        description += f"Number of samples: {X.shape[0]}\n"
-        if hasattr(X, "index"):
-            description += f"Time index type: {type(X.index)}\n"
-            description += f"Time range: {X.index.min()} to {X.index.max()}\n"
-        description += "Features:\n"
-        description += "\n".join([f"- {col}" for col in X.columns])
+        if dataset["X"] is None or dataset["y"] is None:
+            raise ValidationError("Dataset X and y cannot be None")
 
-        description += "\n\n### Time Series Handling Requirements\n"
-        description += "- Assume `dataset['X']` is a 3D array or tensor with shape `(num_samples, sequence_length, num_features)`.\n"
-        description += "- If `dataset['X']` is 2D, raise a `ValueError` if the model is RNN-based (`LSTM`, `GRU`, `RNN`).\n"
-        description += "- Do **not** flatten the input when using RNN-based models.\n"
-        description += "- Use `batch_first=True` in all recurrent models to maintain `(batch, seq_len, features)` format.\n"
-        description += "- Dynamically infer sequence length as `X.shape[1]` and feature dimension as `X.shape[2]`.\n"
-        description += "- If `X.ndim != 3` and a sequential model is selected, raise a clear error with shape info.\n"
-        description += "- Example input validation check:\n"
-        description += "  ```python\n"
-        description += "  if model_type in ['LSTM', 'GRU', 'RNN'] and X_tensor.ndim != 3:\n"
-        description += '      raise ValueError(f"Expected 3D input (batch, seq_len, features) for {model_type}, got {X_tensor.shape}")\n'
-        description += "  ```\n"
-        description += "- Time index or datetime values can be logged but should not be used in the model unless specified.\n"
-
-    elif dataset_type == "image":
-        description += "This is an image dataset.\n"
-        if isinstance(X, np.ndarray):
-            if X.ndim == 4:
-                n, c, h, w = X.shape if X.shape[1] <= 3 else (X.shape[0], X.shape[3], X.shape[1], X.shape[2])
-                description += f"Image format: (N={n}, C={c}, H={h}, W={w})\n"
-                description += "Note: Images are in (batch, channels, height, width) format.\n"
-            elif X.ndim == 3:
-                n, h, w = X.shape
-                description += f"Image format: (N={n}, H={h}, W={w})\n"
-                description += "Note: Images are single-channel in (batch, height, width) format.\n"
-            elif X.ndim == 2:
-                n, pixels = X.shape
-                height = int(np.sqrt(pixels))
-                if height * height == pixels:
-                    description += f"Image format: Flattened {height}x{height} images\n"
-                    description += f"Shape: (N={n}, pixels={pixels})\n"
-                    description += "Note: Images are flattened. Must be reshaped for processing.\n"
-                else:
-                    description += f"Shape: (N={n}, features={pixels})\n"
-                    description += "Warning: Feature count is not a perfect square.\n"
-
-        if hasattr(y, "nunique"):
-            description += f"\nNumber of classes: {y.nunique()}\n"
-            description += "Class distribution:\n"
-            description += str(y.value_counts())
-
-        # Add specific handling requirements for image data
-        description += "\n\nImage Data Handling Requirements:\n"
-        description += "1. Input Format Requirements:\n"
-        description += "   - For CNN models: Input must be in (batch, channels, height, width) format\n"
-        description += "   - For dense/linear layers: Input should be flattened\n\n"
-        description += "2. Data Processing Steps:\n"
-        description += "   a) For flattened input (2D):\n"
-        description += "      - Calculate dimensions: height = width = int(sqrt(n_features))\n"
-        description += "      - Verify square dimensions: height * height == n_features\n"
-        description += "      - Reshape to (N, 1, H, W) for CNNs\n"
-        description += "   b) For 3D input (N, H, W):\n"
-        description += "      - Add channel dimension: reshape to (N, 1, H, W)\n"
-        description += "   c) For 4D input:\n"
-        description += "      - Verify channel order matches framework requirements\n\n"
-        description += "3. Framework-Specific Format:\n"
-        description += "   - PyTorch: (N, C, H, W)\n"
-        description += "   - TensorFlow: (N, H, W, C)\n"
-        description += "   - Convert between formats if necessary\n\n"
-        description += "4. Normalization:\n"
-        description += "   - Scale pixel values to [0, 1] by dividing by 255.0\n"
-        description += "   - Or standardize to mean=0, std=1\n"
-
-    elif dataset_type == "categorical":
-        description += "This is a categorical dataset.\n"
-        description += f"It has {X.shape[0]} samples.\n"
-        description += "Categorical feature summary:\n"
-        for col in X.select_dtypes(include=["object", "category"]).columns:
-            description += f"- {col}: {X[col].nunique()} unique values\n"
-        if hasattr(y, "nunique"):
-            description += f"\nTarget variable has {y.nunique()} unique classes."
-        description += "\n\nCategorical Data Handling Requirements:\n"
-        description += "1. Preprocessing Steps:\n"
-        description += "   - Encode categorical variables (one-hot or label encoding)\n"
-        description += "   - Handle missing values\n"
-        description += "   - Check for cardinality of categorical variables\n\n"
-        description += "2. Model Considerations:\n"
-        description += "   - Use appropriate encoding for model type\n"
-        description += "   - Handle high cardinality features appropriately\n"
-
-    elif dataset_type == "text":
-        description += "This is a text dataset.\n"
-        description += f"Number of text entries: {X.shape[0]}\n"
-        if hasattr(X, "apply"):
-            description += f"Average text length: {X.apply(lambda x: len(str(x))).mean():.2f} characters\n"
-        if hasattr(y, "nunique"):
-            description += f"\nTarget variable has {y.nunique()} unique classes."
-
-        # Add specific handling requirements for text data
-        description += "\n\nText Data Handling Requirements:\n"
-        description += "1. Preprocessing Steps:\n"
-        description += "   - Tokenization\n"
-        description += "   - Convert to lowercase\n"
-        description += "   - Remove special characters if needed\n"
-        description += "   - Handle missing values\n\n"
-        description += "2. Feature Extraction:\n"
-        description += "   - Use TF-IDF or word embeddings\n"
-        description += "   - Consider max sequence length\n"
-        description += "   - Handle vocabulary size\n\n"
-        description += "3. Model-Specific Requirements:\n"
-        description += "   - For neural networks: Use appropriate padding/truncation\n"
-        description += "   - For traditional ML: Convert to fixed-size features\n"
-
-    else:
-        description += "Dataset type not recognized. Please provide a valid dataset type."
-
-    return description
-
-
-def generate_general_dataset_task_types(dataset_type: str) -> list[str]:
-    """
-    Generate a list of task types for a given dataset type.
-    """
-    if dataset_type == "tabular":
-        return ["classification", "regression", "clustering"]
-    elif dataset_type == "time_series":
-        return ["clustering", "regression", "classification"]
-    elif dataset_type == "image":
-        return ["classification", "clustering"]
-    elif dataset_type == "categorical":
-        return ["classification", "clustering"]
-    elif dataset_type == "text":
-        return ["clustering", "classification"]
-
-
-def log_message(message: str, log_file: str = "./logs/logs.txt"):
-    """
-    DEPRECATED: Use the Logger class instead.
-    Log a message to a specified log file.
-
-    Args:
-        message (str): The message to log.
-        log_file (str): The path to the log file. Default is "./logs/logs.txt".
-    """
-    warnings.warn(
-        "This function is deprecated. Please use the Logger class from logger.py instead.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    with open(log_file, "a") as log:
-        log.write(message + "\n")
-
-
-def save_code(code: str, filename: str):
-    """
-    Save the generated code to a file.
-
-    Args:
-        code (str): The code to save.
-        filename (str): The name of the file to save the code in.
-    """
-    with open(filename, "w") as file:
-        file.write(code)
-
-
-def run_smac(
-    scenario: Scenario,
-    train: Any,
-    metric: str = "accuracy",
-    budget: int = 100,
-    n_trials: int = 10,
-) -> Any:
-    """
-    Run the SMAC hyperparameter optimization.
-    Args:
-        scenario (Scenario): The SMAC scenario object.
-        train (Any): The training data.
-        metric (str): The evaluation metric. Default is "accuracy".
-        budget (int): The budget for the optimization. Default is 100.
-        n_trials (int): The number of trials to run. Default is 10.
-    Returns:
-        Any: The best hyperparameters found by SMAC.
-    """
-    # Placeholder for actual SMAC implementation
-    smac = HyperparameterOptimizationFacade(scenario, train)
-    smac.optimize(
-        metric=metric,
-        budget=budget,
-        n_trials=n_trials,
-    )
-    return smac.get_best_configuration()
-
-
-def format_dataset(dataset: Any) -> dict:
-    """
-    Format the dataset into a dictionary with 'X' and 'y' keys,
-    ensuring both are pandas DataFrame/Series.
-
-    Args:
-        dataset (Any): The dataset to format.
-
-    Returns:
-        dict: A dictionary with 'X' and 'y' keys as pandas objects.
-    """
-    if isinstance(dataset, pd.DataFrame):
+    elif isinstance(dataset, pd.DataFrame):
         if "target" not in dataset.columns:
-            raise ValueError("DataFrame must include a 'target' column.")
-        X = dataset.drop(columns=["target"])
-        y = dataset["target"]
-
-    elif isinstance(dataset, dict):
-        X = dataset["X"]
-        y = dataset["y"]
-
-        # Convert to pandas if they're NumPy arrays
-        if isinstance(X, np.ndarray):
-            X = pd.DataFrame(X)
-        if isinstance(y, np.ndarray):
-            y = pd.Series(y)
+            raise ValidationError("DataFrame must include a 'target' column")
 
     elif isinstance(dataset, np.ndarray):
-        # Single feature case
-        if dataset.ndim == 1:
-            X = pd.DataFrame(dataset.reshape(-1, 1))
-        else:
-            X = pd.DataFrame(dataset)
-        y = None  # No labels provided
+        if dataset.size == 0:
+            raise ValidationError("NumPy array cannot be empty")
 
     else:
-        raise ValueError("Unsupported dataset format")
-
-    return {"X": X, "y": y}
+        raise ValidationError(f"Unsupported dataset type: {type(dataset)}")
 
 
-def split_dataset(dataset: dict, test_size: float = 0.2) -> tuple[dict, dict]:
+def validate_dataset_type(dataset_type: str) -> None:
     """
-    Split the dataset into training and testing sets.
+    Validate dataset type.
+
+    Args:
+        dataset_type: Type of dataset to validate
+
+    Raises:
+        ValidationError: If dataset type is not supported
     """
+    if dataset_type not in SUPPORTED_DATASET_TYPES:
+        raise ValidationError(f"Unsupported dataset type: {dataset_type}. " f"Supported types: {SUPPORTED_DATASET_TYPES}")
+
+
+def get_dataset_info(dataset: Dict[str, Any]) -> DatasetInfo:
+    """
+    Extract basic information from dataset.
+
+    Args:
+        dataset: Dataset dictionary with 'X' and 'y' keys
+
+    Returns:
+        DatasetInfo: Dataset information object
+
+    Raises:
+        ValidationError: If dataset is invalid
+    """
+    validate_dataset(dataset)
+
     X, y = dataset["X"], dataset["y"]
 
-    # If X is a DataFrame, preserve the index
     if isinstance(X, pd.DataFrame):
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-        # Reset index to ensure continuous indices
-        X_train = X_train.reset_index(drop=True)
-        X_test = X_test.reset_index(drop=True)
+        feature_names = list(X.columns)
+        target_name = y.name if hasattr(y, "name") else None
+    else:
+        feature_names = None
+        target_name = None
+
+    return DatasetInfo(
+        n_samples=X.shape[0],
+        n_features=X.shape[1] if X.ndim > 1 else 1,
+        feature_names=feature_names,
+        target_name=target_name,
+    )
+
+
+def format_dataset(dataset: Any) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
+    """
+    Format dataset into standardized dictionary format.
+
+    Args:
+        dataset: Input dataset in various formats
+
+    Returns:
+        Dict containing 'X' (features) and 'y' (target) as pandas objects
+
+    Raises:
+        ValidationError: If dataset format is unsupported
+    """
+    try:
+        if isinstance(dataset, pd.DataFrame):
+            if "target" not in dataset.columns:
+                raise ValidationError("DataFrame must include a 'target' column")
+            X = dataset.drop(columns=["target"])
+            y = dataset["target"]
+
+        elif isinstance(dataset, dict):
+            X = dataset["X"]
+            y = dataset["y"]
+
+            # Convert NumPy arrays to pandas
+            if isinstance(X, np.ndarray):
+                X = pd.DataFrame(X)
+            if isinstance(y, np.ndarray):
+                y = pd.Series(y)
+
+        elif isinstance(dataset, np.ndarray):
+            if dataset.ndim == 1:
+                X = pd.DataFrame(dataset.reshape(-1, 1))
+            else:
+                X = pd.DataFrame(dataset)
+            y = None  # No labels provided
+
+        else:
+            raise ValidationError(f"Unsupported dataset format: {type(dataset)}")
+
+        return {"X": X, "y": y}
+
+    except Exception as e:
+        raise ValidationError(f"Failed to format dataset: {e}")
+
+
+def split_dataset(
+    dataset: Dict[str, Any],
+    test_size: float = DEFAULT_TEST_SIZE,
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> Tuple[Dict[str, Union[pd.DataFrame, pd.Series]], Dict[str, Union[pd.DataFrame, pd.Series]]]:
+    """
+    Split dataset into training and testing sets.
+
+    Args:
+        dataset: Dataset dictionary with 'X' and 'y' keys
+        test_size: Proportion of dataset to include in test split
+        random_state: Random state for reproducibility
+
+    Returns:
+        Tuple containing train and test data
+
+    Raises:
+        ValidationError: If dataset is invalid or split parameters are invalid
+    """
+    try:
+        validate_dataset(dataset)
+
+        if not 0 < test_size < 1:
+            raise ValidationError(f"test_size must be between 0 and 1, got {test_size}")
+
+        X, y = dataset["X"], dataset["y"]
+
+        # Perform train-test split
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        # Reset indices for DataFrames/Series
+        if isinstance(X_train, pd.DataFrame):
+            X_train = X_train.reset_index(drop=True)
+            X_test = X_test.reset_index(drop=True)
+
         if isinstance(y_train, pd.Series):
             y_train = y_train.reset_index(drop=True)
             y_test = y_test.reset_index(drop=True)
-    else:
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
-    return {"X": X_train, "y": y_train}, {"X": X_test, "y": y_test}
+        train_data = {"X": X_train, "y": y_train}
+        test_data = {"X": X_test, "y": y_test}
+
+        return train_data, test_data
+
+    except Exception as e:
+        raise ValidationError(f"Failed to split dataset: {e}")
+
+
+def describe_tabular_dataset(dataset: Dict[str, Any]) -> str:
+    """
+    Generate description for tabular dataset.
+
+    Args:
+        dataset: Dataset dictionary
+
+    Returns:
+        String description of the dataset
+    """
+    X, y = dataset["X"], dataset["y"]
+    info = get_dataset_info(dataset)
+
+    description = [
+        "This is a tabular dataset.",
+        f"It has {info.n_samples} samples and {info.n_features} features.",
+    ]
+
+    if hasattr(X, "dtypes"):
+        description.append("Feature columns and types:")
+        for col, dtype in X.dtypes.items():
+            description.append(f"- {col}: {dtype}")
+
+    if hasattr(X, "describe"):
+        description.append("\nFeature statistical summary:")
+        description.append(str(X.describe(include="all")))
+
+    if hasattr(y, "value_counts"):
+        description.append("\nLabel distribution:")
+        description.append(str(y.value_counts()))
+
+    return "\n".join(description)
+
+
+def describe_time_series_dataset(dataset: Dict[str, Any]) -> str:
+    """
+    Generate description for time series dataset.
+
+    Args:
+        dataset: Dataset dictionary
+
+    Returns:
+        String description of the dataset
+    """
+    X, y = dataset["X"], dataset["y"]
+    info = get_dataset_info(dataset)
+
+    description = [
+        "This is a time series dataset.",
+        f"Number of samples: {info.n_samples}",
+    ]
+
+    if hasattr(X, "index"):
+        description.extend(
+            [
+                f"Time index type: {type(X.index)}",
+                f"Time range: {X.index.min()} to {X.index.max()}",
+            ]
+        )
+
+    description.append("Features:")
+    description.extend([f"- {col}" for col in X.columns])
+
+    # Add handling requirements
+    requirements = [
+        "\n### Time Series Handling Requirements",
+        "- Assume `dataset['X']` is a 3D array or tensor with shape `(num_samples, sequence_length, num_features)`.",
+        "- If `dataset['X']` is 2D, raise a `ValueError` if the model is RNN-based (`LSTM`, `GRU`, `RNN`).",
+        "- Do **not** flatten the input when using RNN-based models.",
+        "- Use `batch_first=True` in all recurrent models to maintain `(batch, seq_len, features)` format.",
+        "- Dynamically infer sequence length as `X.shape[1]` and feature dimension as `X.shape[2]`.",
+        "- If `X.ndim != 3` and a sequential model is selected, raise a clear error with shape info.",
+        "- Example input validation check:",
+        "  ```python",
+        "  if model_type in ['LSTM', 'GRU', 'RNN'] and X_tensor.ndim != 3:",
+        '      raise ValueError(f"Expected 3D input (batch, seq_len, features) for {model_type}, got {X_tensor.shape}")',
+        "  ```",
+        "- Time index or datetime values can be logged but should not be used in the model unless specified.",
+    ]
+
+    description.extend(requirements)
+    return "\n".join(description)
+
+
+def describe_image_dataset(dataset: Dict[str, Any]) -> str:
+    """
+    Generate description for image dataset.
+
+    Args:
+        dataset: Dataset dictionary
+
+    Returns:
+        String description of the dataset
+    """
+    X, y = dataset["X"], dataset["y"]
+    info = get_dataset_info(dataset)
+
+    description = ["This is an image dataset."]
+
+    if isinstance(X, np.ndarray):
+        if X.ndim == 4:
+            n, c, h, w = X.shape if X.shape[1] <= 3 else (X.shape[0], X.shape[3], X.shape[1], X.shape[2])
+            description.extend(
+                [
+                    f"Image format: (N={n}, C={c}, H={h}, W={w})",
+                    "Note: Images are in (batch, channels, height, width) format.",
+                ]
+            )
+        elif X.ndim == 3:
+            n, h, w = X.shape
+            description.extend(
+                [
+                    f"Image format: (N={n}, H={h}, W={w})",
+                    "Note: Images are single-channel in (batch, height, width) format.",
+                ]
+            )
+        elif X.ndim == 2:
+            n, pixels = X.shape
+            height = int(np.sqrt(pixels))
+            if height * height == pixels:
+                description.extend(
+                    [
+                        f"Image format: Flattened {height}x{height} images",
+                        f"Shape: (N={n}, pixels={pixels})",
+                        "Note: Images are flattened. Must be reshaped for processing.",
+                    ]
+                )
+            else:
+                description.extend(
+                    [
+                        f"Shape: (N={n}, features={pixels})",
+                        "Warning: Feature count is not a perfect square.",
+                    ]
+                )
+
+    if hasattr(y, "nunique"):
+        description.extend(
+            [
+                f"\nNumber of classes: {y.nunique()}",
+                "Class distribution:",
+                str(y.value_counts()),
+            ]
+        )
+
+    # Add handling requirements
+    requirements = [
+        "\nImage Data Handling Requirements:",
+        "1. Input Format Requirements:",
+        "   - For CNN models: Input must be in (batch, channels, height, width) format",
+        "   - For dense/linear layers: Input should be flattened",
+        "",
+        "2. Data Processing Steps:",
+        "   a) For flattened input (2D):",
+        "      - Calculate dimensions: height = width = int(sqrt(n_features))",
+        "      - Verify square dimensions: height * height == n_features",
+        "      - Reshape to (N, 1, H, W) for CNNs",
+        "   b) For 3D input (N, H, W):",
+        "      - Add channel dimension: reshape to (N, 1, H, W)",
+        "   c) For 4D input:",
+        "      - Verify channel order matches framework requirements",
+        "",
+        "3. Framework-Specific Format:",
+        "   - PyTorch: (N, C, H, W)",
+        "   - TensorFlow: (N, H, W, C)",
+        "   - Convert between formats if necessary",
+        "",
+        "4. Normalization:",
+        "   - Scale pixel values to [0, 1] by dividing by 255.0",
+        "   - Or standardize to mean=0, std=1",
+    ]
+
+    description.extend(requirements)
+    return "\n".join(description)
+
+
+def describe_categorical_dataset(dataset: Dict[str, Any]) -> str:
+    """
+    Generate description for categorical dataset.
+
+    Args:
+        dataset: Dataset dictionary
+
+    Returns:
+        String description of the dataset
+    """
+    X, y = dataset["X"], dataset["y"]
+    info = get_dataset_info(dataset)
+
+    description = [
+        "This is a categorical dataset.",
+        f"It has {info.n_samples} samples.",
+        "Categorical feature summary:",
+    ]
+
+    categorical_cols = X.select_dtypes(include=["object", "category"]).columns
+    for col in categorical_cols:
+        description.append(f"- {col}: {X[col].nunique()} unique values")
+
+    if hasattr(y, "nunique"):
+        description.append(f"\nTarget variable has {y.nunique()} unique classes.")
+
+    # Add handling requirements
+    requirements = [
+        "\nCategorical Data Handling Requirements:",
+        "1. Preprocessing Steps:",
+        "   - Encode categorical variables (one-hot or label encoding)",
+        "   - Handle missing values",
+        "   - Check for cardinality of categorical variables",
+        "",
+        "2. Model Considerations:",
+        "   - Use appropriate encoding for model type",
+        "   - Handle high cardinality features appropriately",
+    ]
+
+    description.extend(requirements)
+    return "\n".join(description)
+
+
+def describe_text_dataset(dataset: Dict[str, Any]) -> str:
+    """
+    Generate description for text dataset.
+
+    Args:
+        dataset: Dataset dictionary
+
+    Returns:
+        String description of the dataset
+    """
+    X, y = dataset["X"], dataset["y"]
+    info = get_dataset_info(dataset)
+
+    description = [
+        "This is a text dataset.",
+        f"Number of text entries: {info.n_samples}",
+    ]
+
+    if hasattr(X, "apply"):
+        avg_length = X.apply(lambda x: len(str(x))).mean()
+        description.append(f"Average text length: {avg_length:.2f} characters")
+
+    if hasattr(y, "nunique"):
+        description.append(f"\nTarget variable has {y.nunique()} unique classes.")
+
+    # Add handling requirements
+    requirements = [
+        "\nText Data Handling Requirements:",
+        "1. Preprocessing Steps:",
+        "   - Tokenization",
+        "   - Convert to lowercase",
+        "   - Remove special characters if needed",
+        "   - Handle missing values",
+        "",
+        "2. Feature Extraction:",
+        "   - Use TF-IDF or word embeddings",
+        "   - Consider max sequence length",
+        "   - Handle vocabulary size",
+        "",
+        "3. Model-Specific Requirements:",
+        "   - For neural networks: Use appropriate padding/truncation",
+        "   - For traditional ML: Convert to fixed-size features",
+    ]
+
+    description.extend(requirements)
+    return "\n".join(description)
+
+
+def describe_dataset(dataset: Dict[str, Any], dataset_type: str = "tabular") -> str:
+    """
+    Generate detailed description of dataset based on its type.
+
+    Args:
+        dataset: Dataset dictionary with 'X' and 'y' keys
+        dataset_type: Type of dataset ('tabular', 'time_series', 'image', 'categorical', 'text')
+
+    Returns:
+        String description of the dataset
+
+    Raises:
+        ValidationError: If dataset type is not supported
+    """
+    try:
+        validate_dataset(dataset)
+        validate_dataset_type(dataset_type)
+
+        description_functions = {
+            "tabular": describe_tabular_dataset,
+            "time_series": describe_time_series_dataset,
+            "image": describe_image_dataset,
+            "categorical": describe_categorical_dataset,
+            "text": describe_text_dataset,
+        }
+
+        if dataset_type not in description_functions:
+            return "Dataset type not recognized. Please provide a valid dataset type."
+
+        return description_functions[dataset_type](dataset)
+
+    except Exception as e:
+        raise ValidationError(f"Failed to describe dataset: {e}")
+
+
+def generate_dataset_task_types(dataset_type: str) -> List[str]:
+    """
+    Generate list of task types for given dataset type.
+
+    Args:
+        dataset_type: Type of dataset
+
+    Returns:
+        List of supported task types
+
+    Raises:
+        ValidationError: If dataset type is not supported
+    """
+    try:
+        validate_dataset_type(dataset_type)
+        return DATASET_TASK_MAPPING.get(dataset_type, [])
+    except Exception as e:
+        raise ValidationError(f"Failed to generate task types: {e}")
 
 
 def extract_code_block(code: str) -> str:
-    """Extract Python code between markdown code fences"""
+    """
+    Extract Python code between markdown code fences.
+
+    Args:
+        code: String containing markdown code blocks
+
+    Returns:
+        Extracted Python code or original string if no code blocks found
+    """
     pattern = r"```python\n(.*?)```"
     match = re.search(pattern, code, re.DOTALL)
     return match.group(1) if match else code
 
 
-def convert_to_csv(dataset: dict) -> str:
+def save_code_to_file(code: str, filename: str, directory: Optional[str] = None) -> Path:
     """
-    Convert the dataset to a CSV string.
+    Save generated code to file.
+
+    Args:
+        code: Code string to save
+        filename: Name of the file
+        directory: Directory to save file in (optional)
+
+    Returns:
+        Path to saved file
+
+    Raises:
+        OSError: If file cannot be written
     """
-    X, y = dataset["X"], dataset["y"]
-    if isinstance(X, pd.DataFrame):
-        X.to_csv("dataset.csv", index=False)
-        y.to_csv("target.csv", index=False)
-    elif isinstance(X, np.ndarray):
-        pd.DataFrame(X).to_csv("dataset.csv", index=False)
-        pd.Series(y).to_csv("target.csv", index=False)
-    else:
-        raise ValueError("Unsupported dataset format")
+    try:
+        if directory:
+            filepath = Path(directory) / filename
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            filepath = Path(filename)
+
+        with open(filepath, "w", encoding="utf-8") as file:
+            file.write(code)
+
+        return filepath
+
+    except Exception as e:
+        raise OSError(f"Failed to save code to file: {e}")
+
+
+def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = None) -> Tuple[Path, Path]:
+    """
+    Convert dataset to CSV files.
+
+    Args:
+        dataset: Dataset dictionary
+        output_dir: Output directory (optional)
+
+    Returns:
+        Tuple of paths to features and target CSV files
+
+    Raises:
+        ValidationError: If dataset format is unsupported
+        OSError: If files cannot be written
+    """
+    try:
+        validate_dataset(dataset)
+
+        X, y = dataset["X"], dataset["y"]
+
+        if output_dir:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+        else:
+            output_path = Path.cwd()
+
+        features_path = output_path / "dataset.csv"
+        target_path = output_path / "target.csv"
+
+        if isinstance(X, pd.DataFrame):
+            X.to_csv(features_path, index=False)
+        elif isinstance(X, np.ndarray):
+            pd.DataFrame(X).to_csv(features_path, index=False)
+        else:
+            raise ValidationError(f"Unsupported X format: {type(X)}")
+
+        if isinstance(y, pd.Series):
+            y.to_csv(target_path, index=False)
+        elif isinstance(y, np.ndarray):
+            pd.Series(y).to_csv(target_path, index=False)
+        else:
+            raise ValidationError(f"Unsupported y format: {type(y)}")
+
+        return features_path, target_path
+
+    except Exception as e:
+        if isinstance(e, ValidationError):
+            raise
+        raise OSError(f"Failed to convert dataset to CSV: {e}")
+
+
+save_code = save_code_to_file
+generate_general_dataset_task_types = generate_dataset_task_types
+convert_to_csv = convert_dataset_to_csv
