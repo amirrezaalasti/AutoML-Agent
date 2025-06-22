@@ -1,76 +1,163 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import accuracy_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 from ConfigSpace import Configuration
 from typing import Any
 
 
 def train(cfg: Configuration, dataset: Any, seed: int) -> float:
-    """
-    Trains a classification model (k-NN or SVM) on the provided dataset using the given configuration.
+    """Trains a CNN model on the given dataset using the provided configuration.
 
     Args:
-        cfg (Configuration): The configuration object containing hyperparameter settings.
-        dataset (Any): A dictionary containing 'X' (features) and 'y' (labels).
-        seed (int): Random seed for reproducibility.
+        cfg (Configuration): The configuration object containing hyperparameters.
+        dataset (Any): A dictionary containing the training data ('X' and 'y').
+        seed (int): The random seed for reproducibility.
 
     Returns:
-        float: The negative cross-validation accuracy.
+        float: The negative accuracy on the training data.
     """
 
-    # Input validation
-    assert isinstance(dataset, dict), "Dataset must be a dictionary."
-    assert "X" in dataset and "y" in dataset, "Dataset must contain 'X' and 'y'."
+    # Set random seed for reproducibility
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    # Extract data
     X = dataset["X"]
     y = dataset["y"]
-    assert isinstance(X, pd.DataFrame), "X must be a pandas DataFrame."
-    assert isinstance(y, pd.Series), "y must be a pandas Series."
-    assert len(X) == len(y), "X and y must have the same length."
-    assert X.shape[0] > 0 and X.shape[1] > 0, "X must have at least one sample and one feature."
-    assert y.nunique() > 1, "y must have more than one class."
 
-    # Hyperparameter extraction and validation
-    n_neighbors = cfg.get("n_neighbors")
-    C = cfg.get("C")
-    kernel = cfg.get("kernel")
-    degree = cfg.get("degree")
-    gamma = cfg.get("gamma")
+    # Validate data type and shape (critical: NO try/except)
+    if not isinstance(X, pd.DataFrame):
+        raise TypeError("X must be a pandas DataFrame")
+    if not isinstance(y, pd.Series):
+        raise TypeError("y must be a pandas Series")
+    if X.shape[0] != y.shape[0]:
+        raise ValueError("X and y must have the same number of rows")
+    if X.shape[1] != 784:
+        raise ValueError("X must have 784 features")
 
-    assert isinstance(n_neighbors, int) and 1 <= n_neighbors <= 10, "n_neighbors must be an integer between 1 and 10."
-    assert isinstance(C, float) and C > 0, "C must be a positive float."
-    assert kernel in ["linear", "rbf", "poly", "sigmoid"], "kernel must be one of 'linear', 'rbf', 'poly', 'sigmoid'."
-    assert isinstance(degree, int) and 2 <= degree <= 5, "degree must be an integer between 2 and 5."
-    assert isinstance(gamma, float) and gamma > 0, "gamma must be a positive float."
+    # Data preprocessing for CNN
+    X = X.astype(np.float32).values / 255.0  # Normalize pixel values
+    X = X.reshape(-1, 1, 28, 28)  # Reshape to (N, 1, 28, 28)
+    y = y.astype(np.int64).values
 
-    # Model selection and initialization based on hyperparameters
-    if kernel is None:
-        model = KNeighborsClassifier(n_neighbors=n_neighbors)
+    # Convert to PyTorch tensors
+    X_tensor = torch.tensor(X)
+    y_tensor = torch.tensor(y)
+
+    # Extract hyperparameters
+    learning_rate = cfg.get("learning_rate")
+    batch_size = cfg.get("batch_size")
+    epochs = cfg.get("epochs")
+    optimizer_name = cfg.get("optimizer")
+    dropout_rate = cfg.get("dropout_rate")
+    num_conv_layers = cfg.get("num_conv_layers")
+    num_filters_l1 = cfg.get("num_filters_l1")
+    num_filters_l2 = cfg.get("num_filters_l2")
+    num_filters_l3 = cfg.get("num_filters_l3")
+    kernel_size = cfg.get("kernel_size")
+
+    # Validate hyperparameter values (critical: NO try/except)
+    if not isinstance(learning_rate, float) or learning_rate <= 0:
+        raise ValueError("Learning rate must be a positive float")
+    if not isinstance(batch_size, int) or batch_size <= 0:
+        raise ValueError("Batch size must be a positive integer")
+    if not isinstance(epochs, int) or epochs <= 0:
+        raise ValueError("Epochs must be a positive integer")
+    if dropout_rate < 0 or dropout_rate > 1:
+        raise ValueError("Dropout rate must be between 0 and 1")
+
+    # Define the CNN model
+    class CNN(nn.Module):
+        def __init__(self, num_conv_layers, num_filters_l1, num_filters_l2, num_filters_l3, kernel_size, dropout_rate):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, num_filters_l1, kernel_size=kernel_size)
+            self.relu1 = nn.ReLU()
+            self.pool1 = nn.MaxPool2d(kernel_size=2)
+
+            self.conv_layers = nn.ModuleList()
+            num_filters_in = num_filters_l1
+
+            if num_conv_layers > 1:
+                self.conv_layers.append(
+                    nn.Sequential(nn.Conv2d(num_filters_in, num_filters_l2, kernel_size=kernel_size), nn.ReLU(), nn.MaxPool2d(kernel_size=2))
+                )
+                num_filters_in = num_filters_l2
+
+            if num_conv_layers > 2:
+                self.conv_layers.append(
+                    nn.Sequential(nn.Conv2d(num_filters_in, num_filters_l3, kernel_size=kernel_size), nn.ReLU(), nn.MaxPool2d(kernel_size=2))
+                )
+
+            self.dropout = nn.Dropout(dropout_rate)
+
+            # Dynamically calculate the input size for the linear layer
+            example_input = torch.randn(1, 1, 28, 28)
+            x = self.conv1(example_input)
+            x = self.relu1(x)
+            x = self.pool1(x)
+            for layer in self.conv_layers:
+                x = layer(x)
+
+            self.flatten = nn.Flatten()
+            x = self.flatten(x)
+
+            self.fc = nn.Linear(x.size(1), 10)
+
+        def forward(self, x):
+            x = self.conv1(x)
+            x = self.relu1(x)
+            x = self.pool1(x)
+            for layer in self.conv_layers:
+                x = layer(x)
+            x = self.flatten(x)
+            x = self.dropout(x)
+            x = self.fc(x)
+            return x
+
+    model = CNN(num_conv_layers, num_filters_l1, num_filters_l2, num_filters_l3, kernel_size, dropout_rate)
+
+    # Define the optimizer
+    if optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    elif optimizer_name == "sgd":
+        momentum = cfg.get("momentum")
+        if not isinstance(momentum, float) or momentum < 0 or momentum > 1:
+            raise ValueError("Momentum must be between 0 and 1 for SGD")
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    elif optimizer_name == "rmsprop":
+        optimizer = optim.RMSprop(model.parameters(), lr=learning_rate)
     else:
-        model = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, random_state=seed, probability=False)  # probability=False for speed
+        raise ValueError(f"Invalid optimizer: {optimizer_name}")
 
-    # Cross-validation setup
-    n_splits = 5  # Fixed number of splits
-    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
+    # Define the loss function
+    criterion = nn.CrossEntropyLoss()
 
-    # Cross-validation loop
-    accuracies = []
-    for train_index, val_index in skf.split(X, y):
-        X_train, X_val = X.iloc[train_index], X.iloc[val_index]
-        y_train, y_val = y.iloc[train_index], y.iloc[val_index]
+    # Training loop
+    model.train()  # Set the model to training mode
+    for epoch in range(epochs):
+        for i in range(0, len(X_tensor), batch_size):
+            # Get batch
+            X_batch = X_tensor[i : i + batch_size]
+            y_batch = y_tensor[i : i + batch_size]
 
-        # Model training
-        model.fit(X_train, y_train)
+            # Forward pass
+            outputs = model(X_batch)
+            loss = criterion(outputs, y_batch)
 
-        # Prediction and evaluation
-        y_pred = model.predict(X_val)
-        accuracy = accuracy_score(y_val, y_pred)
-        accuracies.append(accuracy)
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-    # Calculate mean accuracy
-    mean_accuracy = np.mean(accuracies)
+    # Calculate accuracy on the training data
+    model.eval()  # Set the model to evaluation mode
+    with torch.no_grad():
+        outputs = model(X_tensor)
+        _, predicted = torch.max(outputs.data, 1)
+        correct = (predicted == y_tensor).sum().item()
+        accuracy = correct / len(y_tensor)
 
-    # Return negative mean accuracy (SMAC minimizes)
-    return -mean_accuracy
+    # Return negative accuracy for SMAC optimization
+    return -accuracy

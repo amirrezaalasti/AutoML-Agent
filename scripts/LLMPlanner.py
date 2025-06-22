@@ -40,14 +40,7 @@ class LLMPlanner:
     LOGS_DIR = "./logs/instructor"
     SMAC_DOCS_PATH = "collected_docs/smac_docs.json"
     TEMPLATES_DIR = "templates"
-
-    # Template file names
-    TEMPLATE_FILES = {
-        "base": "planner_base_prompt.txt",
-        "config": "planner_config_prompt.txt",
-        "scenario": "planner_scenario_prompt.txt",
-        "train": "planner_train_prompt.txt",
-    }
+    PLANNER_TEMPLATE = "planner_prompt.txt"
 
     def __init__(
         self,
@@ -81,94 +74,42 @@ class LLMPlanner:
                 base_log_dir=self.LOGS_DIR,
             )
 
-            # Load prompt templates
-            self._load_prompt_templates()
+            # Load prompt template
+            self._load_prompt_template()
 
         except Exception as e:
             raise LLMPlannerError(f"Failed to initialize LLMPlanner: {e}")
 
-    def _load_prompt_templates(self) -> None:
+    def _load_prompt_template(self) -> None:
         """
-        Load prompt templates from template files.
+        Load the planner prompt template from file.
 
         Raises:
-            LLMPlannerError: If template files cannot be loaded
+            LLMPlannerError: If template file cannot be loaded
         """
         try:
-            templates_dir = Path(self.TEMPLATES_DIR)
+            template_path = Path(self.TEMPLATES_DIR) / self.PLANNER_TEMPLATE
 
-            # Load base instruction template
-            base_template_path = templates_dir / self.TEMPLATE_FILES["base"]
-            if not base_template_path.exists():
-                raise LLMPlannerError(f"Base template not found: {base_template_path}")
+            if not template_path.exists():
+                raise LLMPlannerError(f"Planner template not found: {template_path}")
 
-            with open(base_template_path, "r", encoding="utf-8") as f:
-                self.base_template = f.read()
-
-            # Load configuration instruction template
-            config_template_path = templates_dir / self.TEMPLATE_FILES["config"]
-            if not config_template_path.exists():
-                raise LLMPlannerError(f"Config template not found: {config_template_path}")
-
-            with open(config_template_path, "r", encoding="utf-8") as f:
-                self.config_template = f.read()
-
-            # Load scenario instruction template
-            scenario_template_path = templates_dir / self.TEMPLATE_FILES["scenario"]
-            if not scenario_template_path.exists():
-                raise LLMPlannerError(f"Scenario template not found: {scenario_template_path}")
-
-            with open(scenario_template_path, "r", encoding="utf-8") as f:
-                self.scenario_template = f.read()
-
-            # Load train function instruction template
-            train_template_path = templates_dir / self.TEMPLATE_FILES["train"]
-            if not train_template_path.exists():
-                raise LLMPlannerError(f"Train template not found: {train_template_path}")
-
-            with open(train_template_path, "r", encoding="utf-8") as f:
-                self.train_template = f.read()
+            with open(template_path, "r", encoding="utf-8") as f:
+                self.planner_template = f.read()
 
         except Exception as e:
-            raise LLMPlannerError(f"Failed to load prompt templates: {e}")
+            raise LLMPlannerError(f"Failed to load prompt template: {e}")
 
-    def _create_base_instruction(self) -> str:
+    def _get_smac_documentation(self) -> str:
         """
-        Create the base instruction for the LLM using template.
+        Get SMAC documentation content if available.
 
         Returns:
-            Formatted base instruction string
-        """
-        return self.base_template.format(
-            dataset_name=self.dataset_name,
-            dataset_description=self.dataset_description,
-            dataset_type=self.dataset_type,
-            task_type=self.task_type,
-        )
-
-    def _create_configuration_instruction(self, config_space_suggested_parameters: str) -> str:
-        """
-        Create the configuration instruction using template.
-
-        Args:
-            config_space_suggested_parameters: Suggested parameters for configuration
-
-        Returns:
-            Formatted configuration instruction string
-        """
-        return self.config_template.format(config_space_suggested_parameters=config_space_suggested_parameters)
-
-    def _create_scenario_instruction(self) -> Optional[str]:
-        """
-        Create the scenario instruction based on SMAC documentation if available.
-
-        Returns:
-            Formatted scenario instruction string or None if SMAC docs not available
+            SMAC documentation content or empty string if not available
         """
         smac_docs_path = Path(self.SMAC_DOCS_PATH)
 
         if not smac_docs_path.exists():
-            return None
+            return ""
 
         try:
             with open(smac_docs_path, "r", encoding="utf-8") as f:
@@ -176,20 +117,11 @@ class LLMPlanner:
 
             # Extract documentation content
             doc_content = "\n\n".join([doc["content"] for doc in smac_docs])
-
-            return self.scenario_template.format(smac_documentation=doc_content)
+            return doc_content
 
         except (json.JSONDecodeError, IOError) as e:
-            raise LLMPlannerError(f"Error reading SMAC documentation: {e}")
-
-    def _create_train_function_instruction(self) -> str:
-        """
-        Create the train function instruction using template.
-
-        Returns:
-            Train function instruction string
-        """
-        return self.train_template
+            self.logger.log_warning(f"Error reading SMAC documentation: {e}")
+            return ""
 
     def generate_instructions(self, config_space_suggested_parameters: Optional[str] = None) -> InstructorInfo:
         """
@@ -205,17 +137,17 @@ class LLMPlanner:
             LLMPlannerError: If instruction generation fails
         """
         try:
-            # Build complete instruction
-            instruction = self._create_base_instruction()
+            # Get SMAC documentation
+            smac_documentation = self._get_smac_documentation()
 
-            if config_space_suggested_parameters:
-                instruction += self._create_configuration_instruction(config_space_suggested_parameters)
-
-            scenario_instruction = self._create_scenario_instruction()
-            if scenario_instruction:
-                instruction += scenario_instruction
-
-            instruction += self._create_train_function_instruction()
+            # Create the complete instruction using the planner template
+            instruction = self.planner_template.format(
+                dataset_name=self.dataset_name,
+                dataset_description=self.dataset_description,
+                dataset_type=self.dataset_type,
+                task_type=self.task_type,
+                smac_documentation=smac_documentation,
+            )
 
             # Initialize LLM client
             google_client = genai.Client(api_key=GOOGLE_API_KEY)
