@@ -306,11 +306,9 @@ class AutoMLAgent:
                 dataset_description=self.dataset_description,
                 config_space=self.config_code or "",
                 scenario=self.scenario_code or "",
+                train_function_plan=train_function_instructions,
             )
-        # Add specific instructions for the training function
-        print("Adding training function instructions")
-        print(train_function_instructions)
-        prompt += train_function_instructions
+
         return prompt
 
     def _create_fix_prompt(self, errors: str, code: str) -> str:

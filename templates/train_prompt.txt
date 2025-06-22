@@ -2,7 +2,7 @@
 
 ---
 
-### **🚨 CRITICAL ERROR HANDLING RULE:**
+### ** CRITICAL ERROR HANDLING RULE:**
 **ABSOLUTELY NO try/except BLOCKS ALLOWED!**
 * **Why**: Try/except blocks hide real errors and make debugging impossible
 * **Instead**: Use proper validation, type checking, and explicit error handling
@@ -143,7 +143,7 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
 
 ---
 
-**🚨 FINAL REMINDER - CRITICAL REQUIREMENTS:**
+** FINAL REMINDER - CRITICAL REQUIREMENTS:**
 * Valid `import` statements
 * A single `train()` function that returns a float loss value
 * No additional code or explanations
@@ -152,5 +152,5 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
 * For accuracy metrics, return negative accuracy (e.g. -accuracy)
 * For error metrics, return the raw error value (e.g. mse, rmse)
 * Ensure consistent sign convention across all metrics
-* **🚨 ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
-* **🚨 IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**
+* ** ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
+* ** IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**

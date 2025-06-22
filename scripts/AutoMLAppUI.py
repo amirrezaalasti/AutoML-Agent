@@ -86,6 +86,9 @@ class AutoMLAppUI:
                     # Load the dataset from OpenML
                     X, y = fetch_openml(dataset_name, return_X_y=True)
 
+                    if y is None:
+                        st.error("No target column found in the dataset.")
+
                     # Format the dataset
                     self.dataset = format_dataset({"X": X, "y": y})
                     self.data_type = openml_dataset_type

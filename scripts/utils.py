@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import math
 
 
 # Constants
@@ -166,19 +167,6 @@ def format_dataset(dataset: Any) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
             X = dataset["X"]
             y = dataset["y"]
 
-            # Convert NumPy arrays to pandas
-            if isinstance(X, np.ndarray):
-                X = pd.DataFrame(X)
-            if isinstance(y, np.ndarray):
-                y = pd.Series(y)
-
-        elif isinstance(dataset, np.ndarray):
-            if dataset.ndim == 1:
-                X = pd.DataFrame(dataset.reshape(-1, 1))
-            else:
-                X = pd.DataFrame(dataset)
-            y = None  # No labels provided
-
         else:
             raise ValidationError(f"Unsupported dataset format: {type(dataset)}")
 
@@ -322,93 +310,90 @@ def describe_time_series_dataset(dataset: Dict[str, Any]) -> str:
 
 def describe_image_dataset(dataset: Dict[str, Any]) -> str:
     """
-    Generate description for image dataset.
+    Generate a detailed and actionable description for an image dataset,
+    providing specific preprocessing recommendations to prevent common errors.
 
     Args:
-        dataset: Dataset dictionary
+        dataset: A dictionary containing 'X' (features) and 'y' (labels).
 
     Returns:
-        String description of the dataset
+        A string description of the dataset with preprocessing advice.
     """
+    if "X" not in dataset or "y" not in dataset:
+        return "Error: Dataset dictionary must contain 'X' and 'y' keys."
+
     X, y = dataset["X"], dataset["y"]
-    info = get_dataset_info(dataset)
+    description_parts = []
 
-    description = ["This is an image dataset."]
+    # --- Section 1: Data Shape, Type, and Analysis ---
+    description_parts.append("### Dataset Analysis")
 
-    if isinstance(X, np.ndarray):
-        if X.ndim == 4:
-            n, c, h, w = X.shape if X.shape[1] <= 3 else (X.shape[0], X.shape[3], X.shape[1], X.shape[2])
-            description.extend(
-                [
-                    f"Image format: (N={n}, C={c}, H={h}, W={w})",
-                    "Note: Images are in (batch, channels, height, width) format.",
-                ]
+    # Standardize X to a numpy array for consistent processing
+    if isinstance(X, (pd.DataFrame, pd.Series)):
+        description_parts.append(f"* **Input Type**: Pandas {type(X).__name__} with shape {X.shape}.")
+        X_np = X.values
+    elif isinstance(X, np.ndarray):
+        description_parts.append(f"* **Input Type**: NumPy Array with shape {X.shape}.")
+        X_np = X
+    else:
+        description_parts.append(f"* **Input Type**: {type(X).__name__}. Further analysis may be required.")
+        return "\n".join(description_parts)
+
+    n_samples = X_np.shape[0]
+
+    # --- Section 2: Preprocessing Recommendations ---
+    description_parts.append("\n### Preprocessing Recommendations for CNNs")
+
+    if X_np.ndim == 2:
+        n_features = X_np.shape[1]
+        description_parts.append(f"* **Data Format**: Flattened images, with {n_samples} samples and {n_features} features each.")
+
+        height = int(math.sqrt(n_features))
+        if height * height == n_features:
+            description_parts.append(f"* **Action**: The feature count is a perfect square. Reshape to a 2D image for CNNs.")
+            description_parts.append(f"  - **Recommended Shape**: `(N, 1, {height}, {height})`")
+        else:
+            # This is the critical part to prevent the error
+            next_height = int(math.ceil(math.sqrt(n_features)))
+            padded_size = next_height * next_height
+            padding_needed = padded_size - n_features
+            description_parts.append(f"* **Action Required**: The feature count ({n_features}) is **not** a perfect square.")
+            description_parts.append(f"  - **Solution**: Pad the features to the next perfect square size ({padded_size}) and then reshape.")
+            description_parts.append(
+                f"  - **Steps**: Pad each sample with **{padding_needed}** zeros and then reshape to `(N, 1, {next_height}, {next_height})`."
             )
-        elif X.ndim == 3:
-            n, h, w = X.shape
-            description.extend(
-                [
-                    f"Image format: (N={n}, H={h}, W={w})",
-                    "Note: Images are single-channel in (batch, height, width) format.",
-                ]
-            )
-        elif X.ndim == 2:
-            n, pixels = X.shape
-            height = int(np.sqrt(pixels))
-            if height * height == pixels:
-                description.extend(
-                    [
-                        f"Image format: Flattened {height}x{height} images",
-                        f"Shape: (N={n}, pixels={pixels})",
-                        "Note: Images are flattened. Must be reshaped for processing.",
-                    ]
-                )
-            else:
-                description.extend(
-                    [
-                        f"Shape: (N={n}, features={pixels})",
-                        "Warning: Feature count is not a perfect square.",
-                    ]
-                )
 
-    if hasattr(y, "nunique"):
-        description.extend(
-            [
-                f"\nNumber of classes: {y.nunique()}",
-                "Class distribution:",
-                str(y.value_counts()),
-            ]
-        )
+    elif X_np.ndim == 3:
+        description_parts.append("* **Data Format**: 3D array, likely `(N, H, W)`. This is a grayscale image format.")
+        description_parts.append("* **Action**: Add a channel dimension to make it compatible with most CNN frameworks.")
+        description_parts.append("  - **Recommended Shape**: `(N, 1, H, W)`.")
 
-    # Add handling requirements
-    requirements = [
-        "\nImage Data Handling Requirements:",
-        "1. Input Format Requirements:",
-        "   - For CNN models: Input must be in (batch, channels, height, width) format",
-        "   - For dense/linear layers: Input should be flattened",
-        "",
-        "2. Data Processing Steps:",
-        "   a) For flattened input (2D):",
-        "      - Calculate dimensions: height = width = int(sqrt(n_features))",
-        "      - Verify square dimensions: height * height == n_features",
-        "      - Reshape to (N, 1, H, W) for CNNs",
-        "   b) For 3D input (N, H, W):",
-        "      - Add channel dimension: reshape to (N, 1, H, W)",
-        "   c) For 4D input:",
-        "      - Verify channel order matches framework requirements",
-        "",
-        "3. Framework-Specific Format:",
-        "   - PyTorch: (N, C, H, W)",
-        "   - TensorFlow: (N, H, W, C)",
-        "   - Convert between formats if necessary",
-        "",
-        "4. Normalization:",
-        "   - Scale pixel values to [0, 1] by dividing by 255.0",
-        "   - Or standardize to mean=0, std=1",
-    ]
+    elif X_np.ndim == 4:
+        description_parts.append("* **Data Format**: 4D array, likely already in an image format `(N, C, H, W)` or `(N, H, W, C)`.")
+        description_parts.append("* **Action**: Verify the channel dimension order.")
+        description_parts.append("  - **PyTorch Convention**: `(N, C, H, W)`")
+        description_parts.append("  - **TensorFlow/Keras Convention**: `(N, H, W, C)`")
+        description_parts.append("  - Ensure the format matches your model's expectations.")
 
-    description.extend(requirements)
-    return "\n".join(description)
+    else:
+        description_parts.append(f"* **Data Format**: Unexpected {X_np.ndim}-dimensional array. Manual inspection is required.")
+
+    description_parts.append("\n* **Normalization**: Remember to scale pixel values. A common method is to divide by 255.0 to get a [0, 1] range.")
+
+    # --- Section 3: Target Variable Analysis ---
+    description_parts.append("\n### Target Variable (y)")
+
+    if hasattr(y, "nunique"):  # Works for pandas Series
+        num_classes = y.nunique()
+        class_dist = str(y.value_counts().to_dict())
+    else:  # Fallback for numpy arrays
+        num_classes = len(np.unique(y))
+        class_dist = str(dict(zip(*np.unique(y, return_counts=True))))
+
+    description_parts.append(f"* **Number of Classes**: {num_classes}")
+    description_parts.append(f"* **Class Distribution**: {class_dist}")
+
+    return "\n".join(description_parts)
 
 
 def describe_categorical_dataset(dataset: Dict[str, Any]) -> str:
@@ -531,10 +516,26 @@ def describe_dataset(dataset: Dict[str, Any], dataset_type: str = "tabular") -> 
         if dataset_type not in description_functions:
             return "Dataset type not recognized. Please provide a valid dataset type."
 
-        return description_functions[dataset_type](dataset)
+        description = description_functions[dataset_type](dataset)
+        description = add_general_description(description, dataset)
+        return description
 
     except Exception as e:
         raise ValidationError(f"Failed to describe dataset: {e}")
+
+
+def add_general_description(description: str, dataset: Dict[str, Any]) -> str:
+    """
+    Add general description to the dataset description.
+    """
+    if isinstance(dataset["X"], pd.Series):
+        description += f"The dataset is a pandas series with first few values: {dataset['X'][:5]}"
+    elif isinstance(dataset["X"], np.ndarray):
+        description += f"The dataset is a numpy array with first few values: {dataset['X'][:5]}"
+    else:
+        description += f"The dataset is a pandas dataframe with first few values: {dataset['X'][:5]}"
+
+    return description
 
 
 def generate_dataset_task_types(dataset_type: str) -> List[str]:
