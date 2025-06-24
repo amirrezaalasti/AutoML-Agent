@@ -2,12 +2,19 @@
 
 ---
 
-### **🚨 CRITICAL ERROR HANDLING RULE:**
+### ** CRITICAL ERROR HANDLING RULE:**
 **ABSOLUTELY NO try/except BLOCKS ALLOWED!**
 * **Why**: Try/except blocks hide real errors and make debugging impossible
 * **Instead**: Use proper validation, type checking, and explicit error handling
 * **If errors occur**: Let them propagate naturally so they can be identified and fixed
 * **This is a HARD REQUIREMENT**: Any code with try/except will be rejected
+
+---
+
+### ** CRITICAL GENERALIZATION RULE:**
+**ELIMINATE ALL HARDCODED DIMENSIONS!**
+* **Why**: The original code likely failed because it made incorrect assumptions about the data's shape.
+* **Action**: Replace all hardcoded numbers related to data dimensions with values derived dynamically from the inputs (e.g., `X.shape[1]`, `y.nunique()`).
 
 ---
 
@@ -81,10 +88,10 @@ def fixed_function():
 
 ---
 
-**🚨 FINAL REMINDER - CRITICAL REQUIREMENTS:**
+** FINAL REMINDER - CRITICAL REQUIREMENTS:**
 * Valid `import` statements
 * The fixed function code
 * No additional code or explanations
-* **🚨 ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
-* **🚨 IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**
-* **🚨 DO NOT CHEAT BY HIDING ERRORS WITH EXCEPTION HANDLING**
+* ** ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
+* ** IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**
+* ** DO NOT CHEAT BY HIDING ERRORS WITH EXCEPTION HANDLING**
