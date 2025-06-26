@@ -22,13 +22,16 @@
 * **This is a HARD REQUIREMENT**: Any code with hardcoded shapes will be rejected.
 
 ---
+* Recommended steps to write the train function based on the planner:
+  * `{train_function_plan}`
+---
 
 ### **Function signature** must be:
 
 ```python
 from ConfigSpace import Configuration
 from typing import Any
-def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+def train(cfg: Configuration, dataset: Any, seed: int, model_dir: str = None) -> float:
 ```
 
 ---
@@ -49,7 +52,7 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
   * Handle all hyperparameters defined in the configuration space
   * Apply proper type conversion and validation
   * Handle conditional hyperparameters correctly
-  * type of some keys like batch_size or some numeric keys can be numpy.int64, int, float, ...
+  * type of some keys like batch_size or some numeric keys can be **numpy.int64**, int, float, ...
 
 * **Model Requirements:**
   * Infer input and output dimensions dynamically
@@ -67,6 +70,17 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
   * Implement early stopping if needed
   * Handle validation if required
   * Return appropriate loss value
+
+* **Model Saving Requirements:**
+  * **MUST save the trained model** if `model_dir` is provided
+  * Create the directory if it doesn't exist
+  * Save model in appropriate format for the framework:
+    * **PyTorch**: Use `torch.save(model.state_dict(), model_path)` or `torch.save(model, model_path)`
+    * **TensorFlow**: Use `model.save(model_path)` or `tf.saved_model.save(model, model_path)`
+    * **scikit-learn**: Use `joblib.dump(model, model_path)` or `pickle.dump(model, open(model_path, 'wb'))`
+  * Generate unique model filename using timestamp or configuration hash
+  * Save model metadata (configuration, performance metrics) if possible
+  * Ensure the saved model can be loaded later for inference
 
 * **Performance Optimization Requirements:**
   * Minimize memory usage and allocations
@@ -135,7 +149,7 @@ Choose **one** of the following frameworks based on the dataset and requirements
 ### **Example Structure (NO try/except):**
 
 ```python
-def train(cfg: Configuration, dataset: Any, seed: int) -> float:
+def train(cfg: Configuration, dataset: Any, seed: int, model_dir: str = None) -> float:
     # Set random seed for reproducibility
     torch.manual_seed(seed)
     
@@ -153,6 +167,12 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
         # print the current epoch
         loss = train_epoch(model, X, y, lr, bs)
     
+    # Save model if directory is provided
+    if model_dir:
+        os.makedirs(model_dir, exist_ok=True)
+        model_path = os.path.join(model_dir, f"model_{{seed}}.pth")
+        torch.save(model.state_dict(), model_path)
+    
     return loss
 ```
 
@@ -166,5 +186,7 @@ def train(cfg: Configuration, dataset: Any, seed: int) -> float:
 * For accuracy metrics, return negative accuracy (e.g. -accuracy)
 * For error metrics, return the raw error value (e.g. mse, rmse)
 * Ensure consistent sign convention across all metrics
+* **MUST save the trained model** if `model_dir` parameter is provided
 * ** ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
 * ** IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**
+* ** The train function and the choice of model should match the configuration

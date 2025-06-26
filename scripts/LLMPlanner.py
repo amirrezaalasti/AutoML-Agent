@@ -10,7 +10,6 @@ import os
 from pathlib import Path
 from typing import Optional
 
-import instructor
 from google import genai
 from pydantic import BaseModel
 
@@ -21,7 +20,7 @@ from scripts.Logger import Logger
 class InstructorInfo(BaseModel):
     """Structured response model for LLM instructions."""
 
-    recommended_configuration: str
+    configuration_plan: str
     scenario_plan: str
     train_function_plan: str
 
@@ -74,6 +73,9 @@ class LLMPlanner:
                 base_log_dir=self.LOGS_DIR,
             )
 
+            # Initialize Google client
+            self.client = genai.Client(api_key=GOOGLE_API_KEY)
+
             # Load prompt template
             self._load_prompt_template()
 
@@ -123,6 +125,42 @@ class LLMPlanner:
             self.logger.log_warning(f"Error reading SMAC documentation: {e}")
             return ""
 
+    def _parse_json_response(self, response_text: str) -> dict:
+        """
+        Parse JSON response from LLM output.
+
+        Args:
+            response_text: Raw response text from LLM
+
+        Returns:
+            Parsed JSON dictionary
+
+        Raises:
+            LLMPlannerError: If JSON parsing fails
+        """
+        try:
+            # Try to find JSON content between ```json and ``` markers
+            if "```json" in response_text:
+                start = response_text.find("```json") + 7
+                end = response_text.find("```", start)
+                if end != -1:
+                    json_content = response_text[start:end].strip()
+                else:
+                    json_content = response_text[start:].strip()
+            else:
+                # Try to find JSON object directly
+                start = response_text.find("{")
+                end = response_text.rfind("}") + 1
+                if start != -1 and end > start:
+                    json_content = response_text[start:end]
+                else:
+                    json_content = response_text
+
+            return json.loads(json_content)
+
+        except json.JSONDecodeError as e:
+            raise LLMPlannerError(f"Failed to parse JSON response: {e}")
+
     def generate_instructions(self, config_space_suggested_parameters: Optional[str] = None) -> InstructorInfo:
         """
         Generate structured instructions for the dataset using the Gemini LLM.
@@ -149,24 +187,40 @@ class LLMPlanner:
                 smac_documentation=smac_documentation,
             )
 
-            # Initialize LLM client
-            google_client = genai.Client(api_key=GOOGLE_API_KEY)
-            client = instructor.from_genai(google_client, model=f"models/{self.DEFAULT_MODEL}")
+            # Generate response using Google Gemini
+            response = self.client.models.generate_content(
+                model=f"models/{self.DEFAULT_MODEL}",
+                contents=[{"parts": [{"text": instruction}]}],
+            )
 
-            # Generate response
-            response = client.chat.completions.create(
-                response_model=InstructorInfo,
-                messages=[
-                    {"role": "system", "content": instruction},
-                    {"role": "user", "content": "generate the instructions"},
-                ],
+            # Extract response text
+            response_text = response.candidates[0].content.parts[0].text
+
+            # Parse JSON response
+            parsed_response = self._parse_json_response(response_text)
+
+            # Validate required keys
+            required_keys = [
+                "configuration_plan",
+                "scenario_plan",
+                "train_function_plan",
+            ]
+            for key in required_keys:
+                if key not in parsed_response:
+                    raise LLMPlannerError(f"Missing required key in response: {key}")
+
+            # Create InstructorInfo object
+            instructor_info = InstructorInfo(
+                configuration_plan=parsed_response["configuration_plan"],
+                scenario_plan=parsed_response["scenario_plan"],
+                train_function_plan=parsed_response["train_function_plan"],
             )
 
             # Log the interaction
             self.logger.log_prompt(prompt=instruction, metadata={"dataset_name": self.dataset_name})
-            self.logger.log_response(response, metadata={"dataset_name": self.dataset_name})
+            self.logger.log_response(instructor_info, metadata={"dataset_name": self.dataset_name})
 
-            return response
+            return instructor_info
 
         except Exception as e:
             raise LLMPlannerError(f"Failed to generate instructions: {e}")

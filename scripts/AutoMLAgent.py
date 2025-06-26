@@ -44,9 +44,9 @@ class AutoMLAgent:
         self.dataset = format_dataset(dataset)
         self.dataset, self.dataset_test = split_dataset(self.dataset)
         self.dataset_type = dataset_type
-        self.dataset_description = describe_dataset(self.dataset, dataset_type)
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
+        self.dataset_description = describe_dataset(self.dataset, dataset_type, task_type)
 
         self.config_code = None
         self.scenario_code = None
@@ -104,7 +104,7 @@ class AutoMLAgent:
         self.ui_agent.subheader("Instructor Response")
         # configuration plan:
         self.ui_agent.subheader("Configuration Plan")
-        self.ui_agent.write(instructor_response.recommended_configuration)
+        self.ui_agent.write(instructor_response.configuration_plan)
         # scenario plan:
         self.ui_agent.subheader("Scenario Plan")
         self.ui_agent.write(instructor_response.scenario_plan)
@@ -114,7 +114,7 @@ class AutoMLAgent:
 
         # Configuration Space
         self.prompts["config"] = self._create_config_prompt(
-            instructor_response.recommended_configuration,
+            instructor_response.configuration_plan,
             # self.task_type,
         )
         self.config_code = self.llm.generate(self.prompts["config"])
@@ -344,7 +344,7 @@ class AutoMLAgent:
 
     def test_incumbent(self, train_fn, incumbent: Any, dataset: Any, cfg: Any):
         """Test the incumbent on the test set"""
-        loss = train_fn(cfg=incumbent, dataset=dataset, seed=0)
+        loss = train_fn(cfg=incumbent, dataset=dataset, seed=0, model_dir=self.logger.experiment_dir)
         self.ui_agent.subheader("Test Loss")
         self.ui_agent.write(loss)
         self.experimenter_row_dict["incumbent_config"] = str(incumbent)

@@ -5,6 +5,7 @@ import io
 from datetime import datetime
 import os
 from sklearn.datasets import fetch_openml
+import openml
 
 # Core dataset libraries (conflict‑free)
 from sklearn.datasets import (
@@ -78,13 +79,35 @@ class AutoMLAppUI:
                 key="openml_dataset_type",
             )
 
-            # Then, let user enter the dataset ID
-            dataset_name = st.text_input("Enter OpenML Dataset Name (e.g., iris)", key="openml_dataset_id")
+            # Add option to choose between name and ID
+            fetch_method = st.radio(
+                "Choose how to fetch the dataset:",
+                ["By Name", "By ID"],
+                key="fetch_method",
+            )
 
-            if dataset_name:
+            if fetch_method == "By Name":
+                # Then, let user enter the dataset name
+                dataset_name = st.text_input("Enter OpenML Dataset Name (e.g., iris)", key="openml_dataset_name")
+                dataset_id = None
+            else:
+                # Let user enter the dataset ID
+                dataset_id = st.number_input(
+                    "Enter OpenML Dataset ID (e.g., 61)",
+                    min_value=1,
+                    key="openml_dataset_id",
+                )
+                dataset_name = None
+
+            if (dataset_name and dataset_name.strip()) or dataset_id:
                 try:
                     # Load the dataset from OpenML
-                    X, y = fetch_openml(dataset_name, return_X_y=True)
+                    if dataset_id:
+                        X, y = fetch_openml(data_id=dataset_id, return_X_y=True)
+                        dataset_identifier = f"ID: {dataset_id}"
+                    else:
+                        X, y = fetch_openml(dataset_name, return_X_y=True)
+                        dataset_identifier = f"Name: {dataset_name}"
 
                     if y is None:
                         st.error("No target column found in the dataset.")
@@ -92,10 +115,10 @@ class AutoMLAppUI:
                     # Format the dataset
                     self.dataset = format_dataset({"X": X, "y": y})
                     self.data_type = openml_dataset_type
-                    self.dataset_name = dataset_name
+                    self.dataset_name = openml.datasets.get_dataset(dataset_id).name
 
                     # Display dataset info
-                    st.info(f"Dataset loaded successfully: {dataset_name}")
+                    st.info(f"Dataset loaded successfully: {dataset_identifier}")
                     st.info(f"Number of features: {X.shape[1]}")
                     st.info(f"Number of instances: {X.shape[0]}")
 

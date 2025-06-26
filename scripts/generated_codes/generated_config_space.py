@@ -1,56 +1,58 @@
 from ConfigSpace import ConfigurationSpace, UniformFloatHyperparameter, UniformIntegerHyperparameter, CategoricalHyperparameter
-from ConfigSpace.conditions import InCondition, OrConjunction
 
 
 def get_configspace() -> ConfigurationSpace:
     """
-    Defines the configuration space for hyperparameter optimization.
+    Creates a ConfigurationSpace for a regression task on a tabular dataset.
+    Includes hyperparameters for RandomForestRegressor and GradientBoostingRegressor,
+    and the option to use XGBoost with its specific regularization parameters.
     """
     cs = ConfigurationSpace()
 
-    # Optimizer
-    optimizer = CategoricalHyperparameter("optimizer", choices=["Adam", "SGD", "RMSprop"], default_value="Adam")
-    cs.add_hyperparameter(optimizer)
+    # Define hyperparameters
+    model_type = CategoricalHyperparameter("model_type", choices=["random_forest", "gradient_boosting", "xgboost"], default_value="random_forest")
+    cs.add_hyperparameter(model_type)
 
-    # Learning Rate (Conditional on Optimizer)
-    learning_rate = UniformFloatHyperparameter("learning_rate", lower=1e-5, upper=1e-2, default_value=1e-3, log=True)
-    cs.add_hyperparameter(learning_rate)
-    optimizer_cond_adam = InCondition(learning_rate, optimizer, ["Adam"])
-    optimizer_cond_sgd = InCondition(learning_rate, optimizer, ["SGD"])
-    optimizer_cond_rmsprop = InCondition(learning_rate, optimizer, ["RMSprop"])
-    optimizer_cond = OrConjunction(optimizer_cond_adam, optimizer_cond_sgd, optimizer_cond_rmsprop)
-    cs.add_condition(optimizer_cond)
+    n_estimators = UniformIntegerHyperparameter("n_estimators", lower=50, upper=200, default_value=100)
+    cs.add_hyperparameter(n_estimators)
 
-    # Batch Size
-    batch_size = UniformIntegerHyperparameter("batch_size", lower=8, upper=64, default_value=32, log=True)
-    cs.add_hyperparameter(batch_size)
-
-    # Number of Layers (NN Specific)
-    num_layers = UniformIntegerHyperparameter("num_layers", lower=1, upper=3, default_value=2)
-    cs.add_hyperparameter(num_layers)
-
-    # Dropout Rate (NN Specific)
-    dropout_rate = UniformFloatHyperparameter("dropout_rate", lower=0.0, upper=0.5, default_value=0.2)
-    cs.add_hyperparameter(dropout_rate)
-
-    # Activation Function (NN Specific)
-    activation = CategoricalHyperparameter("activation", choices=["ReLU", "Tanh", "Sigmoid"], default_value="ReLU")
-    cs.add_hyperparameter(activation)
-
-    # Number of Estimators (GB Specific)
-    num_estimators = UniformIntegerHyperparameter("num_estimators", lower=50, upper=200, default_value=100)
-    cs.add_hyperparameter(num_estimators)
-
-    # Max Depth (GB Specific)
-    max_depth = UniformIntegerHyperparameter("max_depth", lower=2, upper=6, default_value=3)
+    max_depth = UniformIntegerHyperparameter("max_depth", lower=3, upper=10, default_value=5)
     cs.add_hyperparameter(max_depth)
 
-    # Kernel (SVM specific)
-    kernel = CategoricalHyperparameter("kernel", choices=["linear", "rbf", "poly"], default_value="rbf")
-    cs.add_hyperparameter(kernel)
+    # Random Forest Specific Hyperparameters
+    min_samples_split = UniformIntegerHyperparameter("min_samples_split", lower=2, upper=10, default_value=2)
+    cs.add_hyperparameter(min_samples_split)
 
-    # C (SVM and Logistic Regression)
-    C = UniformFloatHyperparameter("C", lower=0.1, upper=10.0, default_value=1.0, log=True)
-    cs.add_hyperparameter(C)
+    min_samples_leaf = UniformIntegerHyperparameter("min_samples_leaf", lower=1, upper=10, default_value=1)
+    cs.add_hyperparameter(min_samples_leaf)
+
+    # Gradient Boosting Specific Hyperparameters
+    learning_rate = UniformFloatHyperparameter("learning_rate", lower=1e-4, upper=1e-1, default_value=1e-2, log=True)
+    cs.add_hyperparameter(learning_rate)
+
+    # XGBoost Specific Hyperparameters
+    reg_alpha = UniformFloatHyperparameter("reg_alpha", lower=1e-8, upper=1.0, default_value=1e-8, log=True)
+    cs.add_hyperparameter(reg_alpha)
+
+    reg_lambda = UniformFloatHyperparameter("reg_lambda", lower=1e-8, upper=1.0, default_value=1e-8, log=True)
+    cs.add_hyperparameter(reg_lambda)
+
+    # Define conditions
+    from ConfigSpace.conditions import InCondition
+
+    random_forest_condition = InCondition(child=min_samples_split, parent=model_type, values=["random_forest"])
+    cs.add_condition(random_forest_condition)
+
+    random_forest_condition_leaf = InCondition(child=min_samples_leaf, parent=model_type, values=["random_forest"])
+    cs.add_condition(random_forest_condition_leaf)
+
+    gradient_boosting_condition = InCondition(child=learning_rate, parent=model_type, values=["gradient_boosting"])
+    cs.add_condition(gradient_boosting_condition)
+
+    xgboost_condition_alpha = InCondition(child=reg_alpha, parent=model_type, values=["xgboost"])
+    cs.add_condition(xgboost_condition_alpha)
+
+    xgboost_condition_lambda = InCondition(child=reg_lambda, parent=model_type, values=["xgboost"])
+    cs.add_condition(xgboost_condition_lambda)
 
     return cs

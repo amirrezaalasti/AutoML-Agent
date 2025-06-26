@@ -1,20 +1,4 @@
-**Fix the following Python code that has encountered errors during execution.**
-
----
-
-### ** CRITICAL ERROR HANDLING RULE:**
-**ABSOLUTELY NO try/except BLOCKS ALLOWED!**
-* **Why**: Try/except blocks hide real errors and make debugging impossible
-* **Instead**: Use proper validation, type checking, and explicit error handling
-* **If errors occur**: Let them propagate naturally so they can be identified and fixed
-* **This is a HARD REQUIREMENT**: Any code with try/except will be rejected
-
----
-
-### ** CRITICAL GENERALIZATION RULE:**
-**ELIMINATE ALL HARDCODED DIMENSIONS!**
-* **Why**: The original code likely failed because it made incorrect assumptions about the data's shape.
-* **Action**: Replace all hardcoded numbers related to data dimensions with values derived dynamically from the inputs (e.g., `X.shape[1]`, `y.nunique()`).
+**Objective: Analyze, diagnose, and fix the provided Python code based on the execution errors. Your primary goal is to identify the root cause of the error and implement a robust, logical solution.**
 
 ---
 
@@ -28,70 +12,30 @@
 
 ---
 
-### **Fix Requirements:**
+### **Phase 1: Debugging and Root Cause Analysis (Your Thought Process)**
+Before writing any code, you must first think through the problem. Formulate a hypothesis for the root cause of the errors. Consider the following:
 
-* **Function Preservation:**
-  * Maintain the original function name and signature
-  * Preserve the function's core purpose and behavior
-  * Keep the return type and value format
-
-* **Error Resolution (NO try/except):**
-  * Fix all syntax errors
-  * Resolve runtime errors
-  * Handle edge cases with conditional logic
-  * Validate inputs explicitly
-  * Use proper type checking and validation
-  * Let errors propagate naturally for debugging
-
-* **Code Quality:**
-  * Maintain code readability
-  * Follow Python best practices
-  * Use proper type hints
-  * Add necessary imports
-  * Ensure proper documentation
-
-* **Best Practices (NO try/except):**
-  * Use explicit validation instead of exception handling
-  * Implement proper input validation with conditional checks
-  * Handle edge cases with if/else statements
-  * Ensure code is maintainable and debuggable
-  * Follow framework conventions
-  * Let errors surface naturally for proper debugging
+1.  **Data Mismatch:** Is there a discrepancy between the data type the function *expects* (e.g., `dataset: pd.DataFrame`) and the data type it's likely receiving (e.g., `dataset: Dict[str, Any]`)? What is the most common data format passed between SMAC components?
+2.  **Configuration Key Mismatch:** If `cfg.get('some_key')` returns `None`, what is the most likely cause? Is it a typo in the key name? Is the `get_configspace` function defining different keys than the `train` function is using?
+3.  **Invalid Operations:** Why did the operation fail? (e.g., `int(None)` fails because you cannot cast `None` to an integer).
 
 ---
 
-### **Output Format:**
+### **Phase 2: Fixing Strategy (Your Plan)**
+Based on your analysis in Phase 1, briefly outline your plan to fix the code.
 
-* Return **only** the fixed function code
-* Include necessary imports
-* No explanations or comments
-* The code must be executable
-* **NO try/except blocks allowed**
-
----
-
-### **Example Structure (NO try/except):**
-
-```python
-def fixed_function():
-    # Validate inputs explicitly
-    if not valid_input:
-        raise ValueError("Invalid input: reason")
-    
-    # Handle edge cases with conditional logic
-    if edge_case_condition:
-        return default_value
-    
-    # Fixed code here
-    return result
-```
+* **Example Strategy:** "My analysis suggests the `dataset` parameter is a dictionary, not a DataFrame as type-hinted. The `cfg` is also missing keys. My strategy is to:
+    1.  Correct the function signature to accept `dataset: Dict[str, Any]`.
+    2.  Extract `X` and `y` from the `dataset` dictionary at the beginning of the function.
+    3.  Use the safe `cfg.get('key', default_value)` method to retrieve all hyperparameters, providing sensible defaults to prevent `NoneType` errors.
+    4.  Ensure all hyperparameters are cast to their correct types (e.g., `int()`) *after* retrieving them with a default."
 
 ---
 
-** FINAL REMINDER - CRITICAL REQUIREMENTS:**
-* Valid `import` statements
-* The fixed function code
-* No additional code or explanations
-* ** ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
-* ** IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**
-* ** DO NOT CHEAT BY HIDING ERRORS WITH EXCEPTION HANDLING**
+### **Phase 3: Corrected Code Implementation**
+Now, provide the complete, fixed Python code.
+
+* **CRITICAL RULES:**
+    * **NO `try/except` BLOCKS.** Use explicit validation (e.g., `if value is None: ...`) to handle potential issues. Let errors that indicate a fundamental problem (e.g., a required key is missing and has no default) propagate naturally.
+    * **NO HARDCODED DIMENSIONS.** All shapes and sizes must be inferred dynamically from the input data.
+    * **ONLY OUTPUT THE FINAL, EXECUTABLE CODE.** Include all necessary imports. Do not include the analysis or strategy from Phases 1 and 2 in the final code output.
