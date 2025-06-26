@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 import math
 
 
@@ -30,9 +31,9 @@ SUPPORTED_DATASET_TYPES = {"tabular", "time_series", "image", "categorical", "te
 DATASET_TASK_MAPPING = {
     "tabular": ["classification", "regression", "clustering"],
     "time_series": ["clustering", "regression", "classification"],
-    "image": ["classification", "clustering"],
+    "image": ["classification", "clustering", "regression"],
     "categorical": ["classification", "clustering"],
-    "text": ["clustering", "classification"],
+    "text": ["clustering", "classification", "regression"],
 }
 
 
@@ -130,10 +131,10 @@ def get_dataset_info(dataset: Dict[str, Any]) -> DatasetInfo:
 
     if isinstance(X, pd.DataFrame):
         feature_names = list(X.columns)
-        target_name = y.name if hasattr(y, "name") else None
+        target_name = y.name if hasattr(y, "name") else "target"
     else:
-        feature_names = None
-        target_name = None
+        feature_names = [f"feature_{i}" for i in range(X.shape[1])] if X.ndim > 1 else ["feature_0"]
+        target_name = "target"
 
     return DatasetInfo(
         n_samples=X.shape[0],
@@ -145,16 +146,19 @@ def get_dataset_info(dataset: Dict[str, Any]) -> DatasetInfo:
 
 def format_dataset(dataset: Any) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
     """
-    Format dataset into standardized dictionary format.
+    Format dataset into a standardized, preprocessed dictionary.
+
+    This function now handles one-hot encoding for categorical features and
+    label encoding for the target variable to prevent downstream errors.
 
     Args:
-        dataset: Input dataset in various formats
+        dataset: Input dataset in various formats.
 
     Returns:
-        Dict containing 'X' (features) and 'y' (target) as pandas objects
+        A dictionary containing preprocessed 'X' (features) and 'y' (target).
 
     Raises:
-        ValidationError: If dataset format is unsupported
+        ValidationError: If the dataset format is unsupported or invalid.
     """
     try:
         if isinstance(dataset, pd.DataFrame):
@@ -162,13 +166,30 @@ def format_dataset(dataset: Any) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
                 raise ValidationError("DataFrame must include a 'target' column")
             X = dataset.drop(columns=["target"])
             y = dataset["target"]
-
         elif isinstance(dataset, dict):
             X = dataset["X"]
             y = dataset["y"]
-
         else:
             raise ValidationError(f"Unsupported dataset format: {type(dataset)}")
+
+        # Ensure X is a DataFrame for consistent processing
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+
+        # Ensure y is a Series for consistent processing
+        if not isinstance(y, pd.Series):
+            y = pd.Series(y, name="target")
+
+        # --- Data Preprocessing Step ---
+        # 1. One-hot encode categorical features in X
+        categorical_cols = X.select_dtypes(include=["object", "category"]).columns
+        if not categorical_cols.empty:
+            X = pd.get_dummies(X, columns=categorical_cols, drop_first=True, dtype=float)
+
+        # 2. Label encode the target variable y if it's a non-numeric type (for classification)
+        if pd.api.types.is_object_dtype(y) or pd.api.types.is_categorical_dtype(y):
+            le = LabelEncoder()
+            y = pd.Series(le.fit_transform(y), name=y.name)
 
         return {"X": X, "y": y}
 
@@ -206,17 +227,15 @@ def split_dataset(
         # Perform train-test split
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-        # Reset indices for DataFrames/Series
-        if isinstance(X_train, pd.DataFrame):
-            X_train = X_train.reset_index(drop=True)
-            X_test = X_test.reset_index(drop=True)
-
-        if isinstance(y_train, pd.Series):
-            y_train = y_train.reset_index(drop=True)
-            y_test = y_test.reset_index(drop=True)
-
-        train_data = {"X": X_train, "y": y_train}
-        test_data = {"X": X_test, "y": y_test}
+        # Reset indices for DataFrames/Series to ensure clean alignment
+        train_data = {
+            "X": X_train.reset_index(drop=True),
+            "y": y_train.reset_index(drop=True),
+        }
+        test_data = {
+            "X": X_test.reset_index(drop=True),
+            "y": y_test.reset_index(drop=True),
+        }
 
         return train_data, test_data
 
@@ -224,49 +243,59 @@ def split_dataset(
         raise ValidationError(f"Failed to split dataset: {e}")
 
 
-def describe_tabular_dataset(dataset: Dict[str, Any]) -> str:
+def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
     """
-    Generate description for tabular dataset.
+    Generate a description for a tabular dataset, tailored to the ML task.
 
     Args:
-        dataset: Dataset dictionary
+        dataset: A preprocessed dataset dictionary.
+        task_type: The machine learning task ('classification', 'regression', etc.).
 
     Returns:
-        String description of the dataset
+        A string description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
     info = get_dataset_info(dataset)
 
     description = [
         "This is a tabular dataset.",
-        f"It has {info.n_samples} samples and {info.n_features} features.",
+        "NOTE: Categorical features have been pre-processed using one-hot encoding.",
+        f"It has {info.n_samples} samples and {info.n_features} features after encoding.",
     ]
 
+    # Task-specific description of the target variable
+    if task_type == "classification":
+        description.append("The target variable has been label-encoded to be numeric for classification.")
+        description.append("\nEncoded label distribution:")
+        description.append(str(y.value_counts()))
+    elif task_type == "regression":
+        description.append("The target variable is continuous for this regression task.")
+        description.append("\nTarget variable statistical summary:")
+        description.append(str(y.describe()))
+    else:  # Clustering or other tasks
+        description.append("The target variable is present for evaluation purposes.")
+
     if hasattr(X, "dtypes"):
-        description.append("Feature columns and types:")
-        for col, dtype in X.dtypes.items():
-            description.append(f"- {col}: {dtype}")
+        description.append("\nFeature columns and their final data types:")
+        description.append(X.dtypes.to_string())
 
     if hasattr(X, "describe"):
-        description.append("\nFeature statistical summary:")
+        description.append("\nFeature statistical summary (post-encoding):")
         description.append(str(X.describe(include="all")))
-
-    if hasattr(y, "value_counts"):
-        description.append("\nLabel distribution:")
-        description.append(str(y.value_counts()))
 
     return "\n".join(description)
 
 
-def describe_time_series_dataset(dataset: Dict[str, Any]) -> str:
+def describe_time_series_dataset(dataset: Dict[str, Any], task_type: str) -> str:
     """
-    Generate description for time series dataset.
+    Generate a description for a time series dataset, tailored to the ML task.
 
     Args:
-        dataset: Dataset dictionary
+        dataset: Dataset dictionary.
+        task_type: The machine learning task ('classification', 'regression', etc.).
 
     Returns:
-        String description of the dataset
+        String description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
     info = get_dataset_info(dataset)
@@ -286,6 +315,16 @@ def describe_time_series_dataset(dataset: Dict[str, Any]) -> str:
 
     description.append("Features:")
     description.extend([f"- {col}" for col in X.columns])
+
+    # --- Target Variable Analysis (Task-Specific) ---
+    description.append("\n### Target Variable (y) Analysis")
+    if task_type == "classification":
+        description.append(f"* **Task**: Time series classification.")
+        description.append(f"* **Number of Classes**: {y.nunique()}")
+        description.append(f"* **Class Distribution**: {y.value_counts().to_dict()}")
+    elif task_type == "regression":
+        description.append(f"* **Task**: Time series forecasting/regression.")
+        description.append(f"* **Target Summary**: \n{y.describe().to_string()}")
 
     # Add handling requirements
     requirements = [
@@ -308,27 +347,22 @@ def describe_time_series_dataset(dataset: Dict[str, Any]) -> str:
     return "\n".join(description)
 
 
-def describe_image_dataset(dataset: Dict[str, Any]) -> str:
+def describe_image_dataset(dataset: Dict[str, Any], task_type: str) -> str:
     """
-    Generate a detailed and actionable description for an image dataset,
-    providing specific preprocessing recommendations to prevent common errors.
+    Generate a detailed description for an image dataset, tailored to the ML task.
 
     Args:
         dataset: A dictionary containing 'X' (features) and 'y' (labels).
+        task_type: The machine learning task ('classification', 'regression', etc.).
 
     Returns:
         A string description of the dataset with preprocessing advice.
     """
-    if "X" not in dataset or "y" not in dataset:
-        return "Error: Dataset dictionary must contain 'X' and 'y' keys."
-
     X, y = dataset["X"], dataset["y"]
     description_parts = []
 
     # --- Section 1: Data Shape, Type, and Analysis ---
     description_parts.append("### Dataset Analysis")
-
-    # Standardize X to a numpy array for consistent processing
     if isinstance(X, (pd.DataFrame, pd.Series)):
         description_parts.append(f"* **Input Type**: Pandas {type(X).__name__} with shape {X.shape}.")
         X_np = X.values
@@ -336,75 +370,61 @@ def describe_image_dataset(dataset: Dict[str, Any]) -> str:
         description_parts.append(f"* **Input Type**: NumPy Array with shape {X.shape}.")
         X_np = X
     else:
-        description_parts.append(f"* **Input Type**: {type(X).__name__}. Further analysis may be required.")
-        return "\n".join(description_parts)
+        return f"Unsupported input type for image dataset: {type(X).__name__}."
 
     n_samples = X_np.shape[0]
 
     # --- Section 2: Preprocessing Recommendations ---
     description_parts.append("\n### Preprocessing Recommendations for CNNs")
 
-    if X_np.ndim == 2:
+    if X_np.ndim == 2:  # Flattened images
         n_features = X_np.shape[1]
         description_parts.append(f"* **Data Format**: Flattened images, with {n_samples} samples and {n_features} features each.")
-
-        height = int(math.sqrt(n_features))
-        if height * height == n_features:
-            description_parts.append(f"* **Action**: The feature count is a perfect square. Reshape to a 2D image for CNNs.")
-            description_parts.append(f"  - **Recommended Shape**: `(N, 1, {height}, {height})`")
+        h = int(math.sqrt(n_features))
+        if h * h == n_features:
+            description_parts.append(f"* **Action**: Reshape to `(N, 1, {h}, {h})` for grayscale CNNs.")
         else:
-            # This is the critical part to prevent the error
-            next_height = int(math.ceil(math.sqrt(n_features)))
-            padded_size = next_height * next_height
-            padding_needed = padded_size - n_features
-            description_parts.append(f"* **Action Required**: The feature count ({n_features}) is **not** a perfect square.")
-            description_parts.append(f"  - **Solution**: Pad the features to the next perfect square size ({padded_size}) and then reshape.")
+            next_h = int(math.ceil(math.sqrt(n_features)))
+            pad_needed = next_h * next_h - n_features
             description_parts.append(
-                f"  - **Steps**: Pad each sample with **{padding_needed}** zeros and then reshape to `(N, 1, {next_height}, {next_height})`."
+                f"* **Action Required**: Features ({n_features}) are not a perfect square. "
+                f"Pad with {pad_needed} zeros and reshape to `(N, 1, {next_h}, {next_h})`."
             )
-
-    elif X_np.ndim == 3:
-        description_parts.append("* **Data Format**: 3D array, likely `(N, H, W)`. This is a grayscale image format.")
-        description_parts.append("* **Action**: Add a channel dimension to make it compatible with most CNN frameworks.")
-        description_parts.append("  - **Recommended Shape**: `(N, 1, H, W)`.")
-
-    elif X_np.ndim == 4:
-        description_parts.append("* **Data Format**: 4D array, likely already in an image format `(N, C, H, W)` or `(N, H, W, C)`.")
-        description_parts.append("* **Action**: Verify the channel dimension order.")
-        description_parts.append("  - **PyTorch Convention**: `(N, C, H, W)`")
-        description_parts.append("  - **TensorFlow/Keras Convention**: `(N, H, W, C)`")
-        description_parts.append("  - Ensure the format matches your model's expectations.")
-
+    elif X_np.ndim == 3:  # Grayscale images
+        description_parts.append("* **Data Format**: 3D array `(N, H, W)`. Add a channel dimension.")
+        description_parts.append("* **Action**: Reshape to `(N, 1, H, W)`.")
+    elif X_np.ndim == 4:  # Color images
+        description_parts.append("* **Data Format**: 4D array. Verify channel order (`(N, C, H, W)` vs `(N, H, W, C)`).")
     else:
-        description_parts.append(f"* **Data Format**: Unexpected {X_np.ndim}-dimensional array. Manual inspection is required.")
+        description_parts.append(f"* **Data Format**: Unexpected {X_np.ndim}D array. Manual inspection required.")
 
-    description_parts.append("\n* **Normalization**: Remember to scale pixel values. A common method is to divide by 255.0 to get a [0, 1] range.")
+    description_parts.append("\n* **Normalization**: Remember to scale pixel values (e.g., divide by 255.0).")
 
-    # --- Section 3: Target Variable Analysis ---
-    description_parts.append("\n### Target Variable (y)")
-
-    if hasattr(y, "nunique"):  # Works for pandas Series
-        num_classes = y.nunique()
-        class_dist = str(y.value_counts().to_dict())
-    else:  # Fallback for numpy arrays
-        num_classes = len(np.unique(y))
-        class_dist = str(dict(zip(*np.unique(y, return_counts=True))))
-
-    description_parts.append(f"* **Number of Classes**: {num_classes}")
-    description_parts.append(f"* **Class Distribution**: {class_dist}")
+    # --- Section 3: Target Variable Analysis (Task-Specific) ---
+    description_parts.append("\n### Target Variable (y) Analysis")
+    if task_type == "classification":
+        num_classes = y.nunique() if hasattr(y, "nunique") else len(np.unique(y))
+        class_dist = str(y.value_counts().to_dict()) if hasattr(y, "value_counts") else str(dict(zip(*np.unique(y, return_counts=True))))
+        description_parts.append(f"* **Task**: Image Classification.")
+        description_parts.append(f"* **Number of Classes**: {num_classes}")
+        description_parts.append(f"* **Class Distribution**: {class_dist}")
+    elif task_type == "regression":
+        description_parts.append(f"* **Task**: Image Regression (e.g., predicting age, angle).")
+        description_parts.append(f"* **Target Summary**: \n{y.describe().to_string()}")
 
     return "\n".join(description_parts)
 
 
-def describe_categorical_dataset(dataset: Dict[str, Any]) -> str:
+def describe_categorical_dataset(dataset: Dict[str, Any], task_type: str) -> str:
     """
-    Generate description for categorical dataset.
+    Generate description for categorical dataset, tailored to the ML task.
 
     Args:
-        dataset: Dataset dictionary
+        dataset: Dataset dictionary.
+        task_type: The machine learning task ('classification', 'clustering', etc.).
 
     Returns:
-        String description of the dataset
+        String description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
     info = get_dataset_info(dataset)
@@ -419,90 +439,95 @@ def describe_categorical_dataset(dataset: Dict[str, Any]) -> str:
     for col in categorical_cols:
         description.append(f"- {col}: {X[col].nunique()} unique values")
 
-    if hasattr(y, "nunique"):
-        description.append(f"\nTarget variable has {y.nunique()} unique classes.")
+    # Task-specific description of the target variable
+    if task_type == "classification":
+        description.append(f"\nTarget variable has {y.nunique()} unique classes for classification.")
+        description.append("Label distribution:")
+        description.append(str(y.value_counts()))
+    elif task_type == "clustering":
+        description.append("\nTarget variable is provided for clustering evaluation.")
 
     # Add handling requirements
     requirements = [
-        "\nCategorical Data Handling Requirements:",
-        "1. Preprocessing Steps:",
-        "   - Encode categorical variables (one-hot or label encoding)",
-        "   - Handle missing values",
-        "   - Check for cardinality of categorical variables",
-        "",
-        "2. Model Considerations:",
-        "   - Use appropriate encoding for model type",
-        "   - Handle high cardinality features appropriately",
+        "\n### Categorical Data Handling Requirements",
+        "- **Encoding**: Ensure categorical features are appropriately encoded (e.g., one-hot, target encoding).",
+        "- **High Cardinality**: For features with many unique values, consider target encoding or feature hashing.",
+        "- **Model Choice**: Tree-based models (like CatBoost, LightGBM) can handle categorical features natively.",
     ]
 
     description.extend(requirements)
     return "\n".join(description)
 
 
-def describe_text_dataset(dataset: Dict[str, Any]) -> str:
+def describe_text_dataset(dataset: Dict[str, Any], task_type: str) -> str:
     """
-    Generate description for text dataset.
+    Generate description for text dataset, tailored to the ML task.
 
     Args:
-        dataset: Dataset dictionary
+        dataset: Dataset dictionary.
+        task_type: The machine learning task ('classification', 'regression', etc.).
 
     Returns:
-        String description of the dataset
+        String description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
     info = get_dataset_info(dataset)
 
+    # Assuming X is a Series of text for this description
+    if not isinstance(X, pd.Series):
+        X = pd.Series(X.squeeze(), name="text_feature")
+
     description = [
         "This is a text dataset.",
         f"Number of text entries: {info.n_samples}",
+        f"Average text length: {X.str.len().mean():.2f} characters",
     ]
 
-    if hasattr(X, "apply"):
-        avg_length = X.apply(lambda x: len(str(x))).mean()
-        description.append(f"Average text length: {avg_length:.2f} characters")
-
-    if hasattr(y, "nunique"):
-        description.append(f"\nTarget variable has {y.nunique()} unique classes.")
+    # Task-specific description of the target variable
+    description.append("\n### Target Variable (y) Analysis")
+    if task_type == "classification":
+        description.append(f"* **Task**: Text Classification.")
+        description.append(f"* **Number of Classes**: {y.nunique()}")
+        description.append(f"* **Class Distribution**: {y.value_counts().to_dict()}")
+    elif task_type == "regression":
+        description.append(f"* **Task**: Text Regression (e.g., predicting a sentiment score).")
+        description.append(f"* **Target Summary**: \n{y.describe().to_string()}")
 
     # Add handling requirements
     requirements = [
-        "\nText Data Handling Requirements:",
-        "1. Preprocessing Steps:",
-        "   - Tokenization",
-        "   - Convert to lowercase",
-        "   - Remove special characters if needed",
-        "   - Handle missing values",
-        "",
-        "2. Feature Extraction:",
-        "   - Use TF-IDF or word embeddings",
-        "   - Consider max sequence length",
-        "   - Handle vocabulary size",
-        "",
-        "3. Model-Specific Requirements:",
-        "   - For neural networks: Use appropriate padding/truncation",
-        "   - For traditional ML: Convert to fixed-size features",
+        "\n### Text Data Handling Requirements",
+        "1. **Preprocessing**: Tokenization, stop-word removal, and stemming/lemmatization " "are standard.",
+        "2. **Feature Extraction**: Convert text to numerical vectors using TF-IDF, word "
+        "embeddings (Word2Vec, GloVe), or transformer-based embeddings (BERT).",
+        "3. **Model-Specific**: For RNNs/Transformers, ensure inputs are padded/truncated " "to a consistent sequence length.",
     ]
 
     description.extend(requirements)
     return "\n".join(description)
 
 
-def describe_dataset(dataset: Dict[str, Any], dataset_type: str = "tabular") -> str:
+def describe_dataset(
+    dataset: Dict[str, Any],
+    dataset_type: str = "tabular",
+    task_type: str = "classification",
+) -> str:
     """
-    Generate detailed description of dataset based on its type.
+    Generate a detailed, task-aware description of a dataset.
 
     Args:
-        dataset: Dataset dictionary with 'X' and 'y' keys
-        dataset_type: Type of dataset ('tabular', 'time_series', 'image', 'categorical', 'text')
+        dataset: Dataset dictionary with 'X' and 'y' keys.
+        dataset_type: Type of dataset ('tabular', 'time_series', 'image', 'categorical', 'text').
+        task_type: The machine learning task ('classification', 'regression', etc.).
 
     Returns:
-        String description of the dataset
+        String description of the dataset.
 
     Raises:
-        ValidationError: If dataset type is not supported
+        ValidationError: If dataset type is not supported or processing fails.
     """
     try:
-        validate_dataset(dataset)
+        # First, format the dataset which includes preprocessing
+        processed_dataset = format_dataset(dataset)
         validate_dataset_type(dataset_type)
 
         description_functions = {
@@ -513,28 +538,21 @@ def describe_dataset(dataset: Dict[str, Any], dataset_type: str = "tabular") -> 
             "text": describe_text_dataset,
         }
 
-        if dataset_type not in description_functions:
-            return "Dataset type not recognized. Please provide a valid dataset type."
-
-        description = description_functions[dataset_type](dataset)
-        description = add_general_description(description, dataset)
+        # Describe the *processed* dataset using the appropriate task-aware function
+        description = description_functions[dataset_type](processed_dataset, task_type)
+        description = add_general_description(description, processed_dataset)
         return description
 
     except Exception as e:
+        # Re-raise as a validation error for consistent error handling
         raise ValidationError(f"Failed to describe dataset: {e}")
 
 
 def add_general_description(description: str, dataset: Dict[str, Any]) -> str:
     """
-    Add general description to the dataset description.
+    Add a preview of the processed feature data to the description.
     """
-    if isinstance(dataset["X"], pd.Series):
-        description += f"The dataset is a pandas series with first few values: {dataset['X'][:5]}"
-    elif isinstance(dataset["X"], np.ndarray):
-        description += f"The dataset is a numpy array with first few values: {dataset['X'][:5]}"
-    else:
-        description += f"The dataset is a pandas dataframe with first few values: {dataset['X'][:5]}"
-
+    description += f"\n\nThe dataset features (X) start with the following values:\n{dataset['X'].head().to_string()}"
     return description
 
 
@@ -570,7 +588,7 @@ def extract_code_block(code: str) -> str:
     """
     pattern = r"```python\n(.*?)```"
     match = re.search(pattern, code, re.DOTALL)
-    return match.group(1) if match else code
+    return match.group(1).strip() if match else code
 
 
 def save_code_to_file(code: str, filename: str, directory: Optional[str] = None) -> Path:
@@ -588,11 +606,22 @@ def save_code_to_file(code: str, filename: str, directory: Optional[str] = None)
     Raises:
         OSError: If file cannot be written
     """
-    # if file exists, delete it
-    if Path(filename).exists():
-        Path(filename).unlink()
-    with open(filename, "w") as file:
-        file.write(code)
+    if directory:
+        output_path = Path(directory)
+        output_path.mkdir(parents=True, exist_ok=True)
+    else:
+        output_path = Path.cwd()
+
+    file_path = output_path / filename
+
+    try:
+        # if file exists, delete it
+        if file_path.exists():
+            file_path.unlink()
+        file_path.write_text(code)
+        return file_path
+    except OSError as e:
+        raise OSError(f"Failed to save code to {file_path}: {e}")
 
 
 def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = None) -> Tuple[Path, Path]:
@@ -612,31 +641,16 @@ def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = 
     """
     try:
         validate_dataset(dataset)
-
         X, y = dataset["X"], dataset["y"]
 
-        if output_dir:
-            output_path = Path(output_dir)
-            output_path.mkdir(parents=True, exist_ok=True)
-        else:
-            output_path = Path.cwd()
+        output_path = Path(output_dir) if output_dir else Path.cwd()
+        output_path.mkdir(parents=True, exist_ok=True)
 
         features_path = output_path / "dataset.csv"
         target_path = output_path / "target.csv"
 
-        if isinstance(X, pd.DataFrame):
-            X.to_csv(features_path, index=False)
-        elif isinstance(X, np.ndarray):
-            pd.DataFrame(X).to_csv(features_path, index=False)
-        else:
-            raise ValidationError(f"Unsupported X format: {type(X)}")
-
-        if isinstance(y, pd.Series):
-            y.to_csv(target_path, index=False)
-        elif isinstance(y, np.ndarray):
-            pd.Series(y).to_csv(target_path, index=False)
-        else:
-            raise ValidationError(f"Unsupported y format: {type(y)}")
+        pd.DataFrame(X).to_csv(features_path, index=False)
+        pd.Series(y).to_csv(target_path, index=False, header=True)  # Ensure header for series
 
         return features_path, target_path
 
@@ -646,6 +660,7 @@ def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = 
         raise OSError(f"Failed to convert dataset to CSV: {e}")
 
 
+# Alias for backward compatibility
 save_code = save_code_to_file
 generate_general_dataset_task_types = generate_dataset_task_types
 convert_to_csv = convert_dataset_to_csv
