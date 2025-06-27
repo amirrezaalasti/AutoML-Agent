@@ -2,8 +2,8 @@ PY_EXPERIMENTER:
   n_jobs: 1
 
   Database:
-    provider: sqlite
-    database: py_experimenter
+    provider: mysql
+    database: AgentSmac
     table:
       name: AutoMLAgentRuns
       keyfields:
@@ -18,7 +18,7 @@ PY_EXPERIMENTER:
           values: ['classification', 'regression']
         model_name:
           type: VARCHAR(255)
-          values: ['gemini-2.0-flash']
+          values: ['gemini-2.0-flash', 'llama-3.3-70b-instruct']
         seed:
           type: int
           values:

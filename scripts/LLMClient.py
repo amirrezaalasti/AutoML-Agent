@@ -8,20 +8,31 @@ from typing import List, Optional, Dict, Any
 import os
 import logging
 import torch
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
 
 class LLMClient:
-    def __init__(self, api_key, model_name, temperature=0, embedding_model="all-MiniLM-L6-v2"):
+    def __init__(
+        self,
+        api_key,
+        model_name,
+        temperature=0,
+        embedding_model="all-MiniLM-L6-v2",
+        base_url=None,
+    ):
         # if model name has gemini in it, use genai
         if "gemini" in model_name:
             self.client = genai.Client(api_key=api_key)
-            self.model_name = model_name
+        elif base_url:
+            self.base_url = base_url
+            self.client = OpenAI(api_key=api_key, base_url=base_url)
         else:
             # Use ChatGroq for other models
             self.client = ChatGroq(temperature=temperature, groq_api_key=api_key, model_name=model_name)
-            self.model_name = model_name
+
+        self.model_name = model_name
 
         # Initialize embeddings model with error handling
         try:
@@ -146,11 +157,11 @@ class LLMClient:
             # Construct augmented prompt
             context = "\n\n".join(relevant_docs)
             augmented_prompt = f"""Context information is below.
----------------------
-{context}
----------------------
-Given the context information and not prior knowledge, answer the following query:
-{prompt}"""
+            ---------------------
+            {context}
+            ---------------------
+            Given the context information and not prior knowledge, answer the following query:
+            {prompt}"""
 
             print(augmented_prompt)
 
@@ -168,6 +179,13 @@ Given the context information and not prior knowledge, answer the following quer
         if "gemini" in self.model_name:
             response = self.client.models.generate_content(model="gemini-2.0-flash", contents=escaped_context)
             return response.text
+
+        elif self.base_url:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": escaped_context}],
+            )
+            return response.choices[0].message.content
 
         # Create a ChatPromptTemplate with only a system message
         model_prompt = ChatPromptTemplate.from_messages([("system", escaped_context)])
