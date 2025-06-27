@@ -270,6 +270,9 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
         description.append(str(y.value_counts()))
     elif task_type == "regression":
         description.append("The target variable is continuous for this regression task.")
+        # for regression sometimes the target value is not normalized properly, so we need to normalize it
+        if y.min() < 0 or y.max() > 1:
+            description.append("The target variable is not normalized properly. Please normalize it.")
         description.append("\nTarget variable statistical summary:")
         description.append(str(y.describe()))
     else:  # Clustering or other tasks

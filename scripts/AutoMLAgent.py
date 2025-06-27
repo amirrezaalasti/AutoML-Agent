@@ -26,11 +26,13 @@ class AutoMLAgent:
     def __init__(
         self,
         dataset: Any,
-        llm_client: LLMClient,
         dataset_type: str,
         ui_agent: Any,
         dataset_name: str = None,
         task_type: str = None,
+        model_name: str = None,
+        api_key: str = None,
+        base_url: str = None,
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -62,12 +64,12 @@ class AutoMLAgent:
         # store original prompts for retries
         self.prompts = {}
 
-        self.llm = llm_client
+        self.llm = LLMClient(api_key=api_key, model_name=model_name, base_url=base_url)
         self.ui_agent = ui_agent
 
         # Initialize logger
         self.logger = Logger(
-            model_name=llm_client.model_name,
+            model_name=model_name,
             dataset_name=dataset_name,
             base_log_dir="./logs",
         )
@@ -78,6 +80,9 @@ class AutoMLAgent:
             dataset_description=self.dataset_description,
             dataset_type=self.dataset_type,
             task_type=self.task_type,
+            model_name=model_name,
+            base_url=base_url,
+            api_key=api_key,
         )
         self.experimenter = PyExperimenter(
             experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,

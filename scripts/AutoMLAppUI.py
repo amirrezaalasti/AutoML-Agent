@@ -20,14 +20,16 @@ from keras.datasets import mnist, fashion_mnist, cifar10, cifar100
 import statsmodels.api as sm
 import seaborn as sns
 
-from config.api_keys import GROQ_API_KEY, GOOGLE_API_KEY
+from config.api_keys import GROQ_API_KEY, GOOGLE_API_KEY, LOCAL_LLAMA_API_KEY
 from scripts.LLMClient import LLMClient
 from scripts.AutoMLAgent import AutoMLAgent
 from scripts.utils import convert_to_csv, format_dataset
+from config.urls import BASE_URL
 
 # Available GROQ models
 AVAILABLE_MODELS = [
     "gemini-2.0-flash",
+    "llama-3.3-70b-instruct",
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
     "llama3-70b-8192",
@@ -237,20 +239,24 @@ class AutoMLAppUI:
             with st.spinner("Setting up AutoML Agent..."):
                 if "gemini" in self.model_choice:
                     api_key = GOOGLE_API_KEY
+                elif self.model_choice == "llama-3.3-70b-instruct":
+                    api_key = LOCAL_LLAMA_API_KEY
+                    base_url = BASE_URL
                 else:
                     api_key = GROQ_API_KEY
 
-                llm_client = LLMClient(api_key=api_key, model_name=self.model_choice)
                 if dataset_choice != "OpenML Dataset":
                     self.dataset_name = dataset_choice
 
                 agent = AutoMLAgent(
                     dataset=self.dataset,
-                    llm_client=llm_client,
                     dataset_type=self.data_type,
                     ui_agent=st,
                     dataset_name=self.dataset_name,
                     task_type=self.task_type,
+                    model_name=self.model_choice,
+                    api_key=api_key,
+                    base_url=base_url,
                 )
                 (
                     config_code,

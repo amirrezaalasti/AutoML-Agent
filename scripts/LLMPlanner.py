@@ -12,8 +12,9 @@ from typing import Optional
 
 from google import genai
 from pydantic import BaseModel
+from openai import OpenAI
 
-from config.api_keys import GOOGLE_API_KEY
+from config.api_keys import GOOGLE_API_KEY, LOCAL_LLAMA_API_KEY
 from scripts.Logger import Logger
 
 
@@ -47,6 +48,9 @@ class LLMPlanner:
         dataset_description: str,
         dataset_type: str,
         task_type: Optional[str] = None,
+        model_name: str = None,
+        base_url: str = None,
+        api_key: str = None,
     ) -> None:
         """
         Initialize the LLMPlanner with dataset details.
@@ -68,13 +72,20 @@ class LLMPlanner:
 
             # Initialize logger
             self.logger = Logger(
-                model_name=self.DEFAULT_MODEL,
+                model_name=model_name,
                 dataset_name=self.dataset_name,
                 base_log_dir=self.LOGS_DIR,
             )
-
-            # Initialize Google client
-            self.client = genai.Client(api_key=GOOGLE_API_KEY)
+            if base_url:
+                self.client = OpenAI(api_key=api_key, base_url=base_url)
+                self.base_url = base_url
+                self.model_name = model_name
+            else:
+                # Initialize Google client
+                self.client = genai.Client(
+                    api_key=api_key,
+                    http_options=genai.types.HttpOptions(base_url=self.BASE_URL),
+                )
 
             # Load prompt template
             self._load_prompt_template()
@@ -186,15 +197,20 @@ class LLMPlanner:
                 task_type=self.task_type,
                 smac_documentation=smac_documentation,
             )
-
-            # Generate response using Google Gemini
-            response = self.client.models.generate_content(
-                model=f"models/{self.DEFAULT_MODEL}",
-                contents=[{"parts": [{"text": instruction}]}],
-            )
-
-            # Extract response text
-            response_text = response.candidates[0].content.parts[0].text
+            if self.base_url:
+                response = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=[{"role": "user", "content": instruction}],
+                )
+                response_text = response.choices[0].message.content
+            else:
+                # Generate response using Google Gemini
+                response = self.client.models.generate_content(
+                    model=f"models/{self.DEFAULT_MODEL}",
+                    contents=[{"parts": [{"text": instruction}]}],
+                )
+                # Extract response text
+                response_text = response.candidates[0].content.parts[0].text
 
             # Parse JSON response
             parsed_response = self._parse_json_response(response_text)
