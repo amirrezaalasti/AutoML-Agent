@@ -28,7 +28,6 @@ class OpenMLRAG:
         datasets = self.search_datasets(dataset_name)
         return datasets.iloc[0] if not datasets.empty else None
 
-    # CORRECTED FUNCTION
     def find_similar_datasets(self, source_dataset_id: int, n_similar: int = 3) -> pd.DataFrame:
         """
         Finds datasets similar to a source dataset, filtering for 'active' status
@@ -40,8 +39,6 @@ class OpenMLRAG:
         source_metafeatures = self.active_metafeatures_df.loc[source_dataset_id]
         source_name = source_metafeatures["name"]
 
-        # CHANGE: Exclude the source ID AND all other datasets with the same name
-        # from the pool of candidates.
         other_metafeatures_df = self.active_metafeatures_df[self.active_metafeatures_df["name"] != source_name]
 
         if other_metafeatures_df.empty:
