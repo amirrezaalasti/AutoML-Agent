@@ -84,10 +84,15 @@ class AutoMLAgent:
             base_url=base_url,
             api_key=api_key,
         )
-        self.experimenter = PyExperimenter(
-            experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
-            name="AutoMLAgent",
-        )
+        try:
+            self.experimenter = PyExperimenter(
+                experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
+                name="AutoMLAgent",
+            )
+        except Exception as e:
+            self.ui_agent.error(f"Error initializing experimenter: {e}")
+            self.experimenter = None
+
         self.experimenter_row_dict = {
             "dataset_name": self.dataset_name,
             "dataset_type": self.dataset_type,
@@ -173,8 +178,8 @@ class AutoMLAgent:
         self.ui_agent.write("Starting Optimization Process")
 
         self.run_scenario(self.scenario_obj, train_fn, self.dataset, self.config_space_obj)
-        print(self.experimenter_row_dict)
-        self.experimenter.fill_table_with_rows(rows=[self.experimenter_row_dict])
+        if self.experimenter:
+            self.experimenter.fill_table_with_rows(rows=[self.experimenter_row_dict])
 
         # Return results and last training loss
         return (
