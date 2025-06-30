@@ -13,25 +13,111 @@ Generate exactly three implementation guides and return them in the following JS
 {{
   "configuration_plan": "Step 1: [specific action]\nStep 2: [specific action]\n...",
   "scenario_plan": "Step 1: [specific action]\nStep 2: [specific action]\n...",
-  "train_function_plan": "Step 1: [specific action]\nStep 2: [specific action]\n..."
+  "train_function_plan": "Step 1: [specific action]\nStep 2: [specific action]\n...",
+  "suggested_facade": "Only the Facade type name"
 }}
 ```
 
 **Configuration Plan Requirements:**
 Provide 6-8 numbered steps that detail how to create a configuration space for hyperparameter optimization. Include specific parameter names, types, and ranges appropriate for the {task_type} and {dataset_type}. Each step should be a direct implementation action.
 
+Guidelines:
+- Use appropriate parameter types (Categorical, Integer, Float) based on the nature of each hyperparameter
+- Specify realistic ranges considering dataset characteristics, computational constraints, and optimization objectives
+- Include algorithm-specific hyperparameters relevant to the chosen models
+- Consider conditional parameters when they enhance the search space meaningfully
+- Adapt parameter ranges to dataset size (smaller ranges for large datasets, broader exploration for smaller datasets)
+- Balance exploration breadth with computational feasibility
+- You can suggest multiple complementary models with their respective hyperparameters when beneficial
+
 **Scenario Plan Requirements:**
 Provide 6-8 numbered steps that detail how to set up a SMAC scenario for optimization. Include specific values for trial limits, time limits, worker configuration, and facade selection based on the {dataset_description}. Each step should specify exact settings to use.
+
+Guidelines:
+- Set appropriate n_trials based on dataset complexity, search space size, and available computational budget
+- Define walltime_limit considering expected runtime per evaluation and total optimization time
+- Configure output directory and logging based on experiment requirements
+- Consider deterministic settings based on reproducibility needs
+- Specify crash_cost and cutoff_time based on evaluation characteristics and failure handling needs
+- Adapt all parameters to the specific dataset size, complexity, and computational constraints
 
 **Train Function Plan Requirements:**
 Provide 10-12 numbered steps that detail how to implement the training function. Include data handling, model initialization, training process, evaluation, and model saving. Each step should be a concrete implementation action that can be directly executed.
 
-Requirements:
+Guidelines:
+- Handle data loading and preprocessing
+- Implement proper train/validation/test splits
+- Include cross-validation when appropriate
+- Implement early stopping mechanisms
+- Return appropriate cost/score for optimization
+- Handle different model types if multiple models suggested
+
+**Scenario Facade Selection:**
+Choose the most appropriate facade based on the specific task characteristics, dataset properties, and computational constraints. Consider the following factors:
+
+**Available Facades and Their Strengths:**
+
+**BlackBoxFacade**: 
+- Strengths: Robust general-purpose optimization using Gaussian Processes, handles unknown function properties well
+- Consider when: General hyperparameter tuning, moderate search spaces, no specific fidelity dimensions available
+- Avoid when: Very large search spaces (use Hyperband), natural fidelity exists (use MultiFidelity), or simple baseline needed (use Random)
+- Characteristics: Model-based optimization with acquisition functions
+
+**HyperbandFacade**: 
+- Strengths: Extremely efficient for large search spaces and expensive evaluations through early stopping
+- Consider when: Large hyperparameter spaces, expensive model training, iterative algorithms with natural stopping points
+- Avoid when: Small search spaces, very fast evaluations, or no natural early stopping mechanism
+- Characteristics: Multi-fidelity optimization using successive halving and bandit-based resource allocation
+
+**MultiFidelityFacade**: 
+- Strengths: Leverages multiple fidelity levels (epochs, data subsets) for intelligent budget allocation
+- Consider when: Clear fidelity dimensions exist (training epochs, dataset size, resolution levels)
+- Avoid when: No natural fidelity dimensions, single-shot algorithms, or unclear fidelity-performance relationship
+- Characteristics: Multi-fidelity optimization with sophisticated budget management
+
+**HyperparameterOptimizationFacade**: 
+- Strengths: Specialized for classical ML algorithms with well-studied hyperparameter behaviors
+- Consider when: Traditional ML models (SVM, Random Forest, Gradient Boosting), well-understood parameter spaces
+- Avoid when: Deep learning models, novel algorithms, or when you need multi-fidelity optimization
+- Characteristics: Optimized specifically for conventional hyperparameter optimization patterns
+
+**RandomFacade**: 
+- Strengths: Simple, fast, provides strong baselines, robust across all problem types
+- Consider when: Quick exploration, establishing baselines, debugging, or simple search spaces
+- Avoid when: Complex optimization landscape where model-based approaches would provide significant benefit
+- Characteristics: Random sampling with aggressive racing for early configuration elimination
+
+**AlgorithmConfigurationFacade**: 
+- Strengths: Handles complex conditional and categorical parameter spaces effectively
+- Consider when: Many conditional parameters, algorithm-specific configuration, discrete parameter dominance
+- Avoid when: Primarily continuous parameters, simple parameter spaces, or standard ML hyperparameter tuning
+- Characteristics: Specialized for complex discrete and conditional parameter optimization
+
+**Decision Factors to Consider:**
+- Dataset size and complexity
+- Available computational budget
+- Nature of the algorithm (iterative vs. non-iterative)
+- Search space characteristics (continuous vs. discrete)
+- Evaluation cost and time constraints
+- Presence of natural fidelity dimensions
+- Prior knowledge about the optimization landscape
+
+**Example Considerations:**
+- Large datasets with expensive evaluations might benefit from multi-fidelity approaches
+- Small datasets with quick evaluations might work well with thorough exploration
+- Neural networks often have natural fidelity (epochs) for multi-fidelity optimization
+- Tree-based models might benefit from standard hyperparameter optimization
+- Complex conditional parameters might require specialized algorithm configuration
+
+Choose the facade that best matches the specific characteristics of your dataset and task, not just the algorithm type.
+
+**General Requirements:**
 - Each step must be specific and actionable
 - Include concrete values and parameters where appropriate
-- Steps should build sequentially
-- Focus on implementation details, not explanations
-- Adapt recommendations to the specific {task_type} and {dataset_type}
-- Return ONLY the JSON object, no other text
-- Dont give any Error handling or Exception suggestion
-- You can also tell the LLM to use multiple models
+- Steps should build sequentially toward a complete implementation
+- Focus on implementation details, not theoretical explanations
+- Adapt all recommendations to the specific {task_type} and {dataset_type}
+- Return ONLY the JSON object, no other text or explanations
+- Do not include error handling or exception suggestions in the steps
+- Consider suggesting multiple complementary models when beneficial
+- Ensure all code suggestions are directly executable
