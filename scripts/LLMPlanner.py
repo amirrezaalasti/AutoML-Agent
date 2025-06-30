@@ -84,7 +84,6 @@ class LLMPlanner:
                 # Initialize Google client
                 self.client = genai.Client(
                     api_key=api_key,
-                    http_options=genai.types.HttpOptions(base_url=self.BASE_URL),
                 )
 
             # Load prompt template

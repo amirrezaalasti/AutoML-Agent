@@ -237,6 +237,7 @@ class AutoMLAppUI:
                 return
 
             with st.spinner("Setting up AutoML Agent..."):
+                base_url = None
                 if "gemini" in self.model_choice:
                     api_key = GOOGLE_API_KEY
                 elif self.model_choice == "llama-3.3-70b-instruct":
