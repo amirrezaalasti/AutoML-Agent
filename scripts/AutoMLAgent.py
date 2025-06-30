@@ -17,6 +17,13 @@ from smac.facade.hyperparameter_optimization_facade import (
 )
 from smac import Scenario
 from py_experimenter.experimenter import PyExperimenter
+from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
+from smac.facade.random_facade import RandomFacade as RandomFacade
+from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
+from smac.facade.algorithm_configuration_facade import (
+    AlgorithmConfigurationFacade as AlgorithmConfigurationFacade,
+)
+from smac.facade.blackbox_facade import BlackBoxFacade
 
 
 class AutoMLAgent:
@@ -99,6 +106,15 @@ class AutoMLAgent:
             "task_type": self.task_type,
         }
 
+        self.smac_facades = {
+            "HyperbandFacade": HyperbandFacade,
+            "RandomFacade": RandomFacade,
+            "MultiFidelityFacade": MultiFidelityFacade,
+            "AlgorithmConfigurationFacade": AlgorithmConfigurationFacade,
+            "HyperparameterOptimizationFacade": HPOFacade,
+            "BlackBoxFacade": BlackBoxFacade,
+        }
+
     def generate_components(self):
         """
         Generate the configuration space, scenario, and training function code using LLM.
@@ -110,6 +126,7 @@ class AutoMLAgent:
         instructor_response = self.LLMInstructor.generate_instructions(
             config_space_suggested_parameters,
         )
+        self.suggested_facade = self.smac_facades[instructor_response.suggested_facade]
 
         self.ui_agent.subheader("Instructor Response")
         # configuration plan:
@@ -121,6 +138,9 @@ class AutoMLAgent:
         # train function plan:
         self.ui_agent.subheader("Train Function Plan")
         self.ui_agent.write(instructor_response.train_function_plan)
+        # scenario facade:
+        self.ui_agent.subheader("Suggested Facade")
+        self.ui_agent.write(instructor_response.suggested_facade)
 
         # Configuration Space
         self.prompts["config"] = self._create_config_prompt(
@@ -333,7 +353,7 @@ class AutoMLAgent:
             """Wrapper function to call the training function with the correct parameters"""
             return train_fn(cfg=config, dataset=dataset, seed=seed)
 
-        smac = HPOFacade(
+        smac = self.suggested_facade(
             scenario,
             smac_train_function,  # We pass the target function here
             overwrite=True,  # Overrides any previous results that are found that are inconsistent with the meta-data

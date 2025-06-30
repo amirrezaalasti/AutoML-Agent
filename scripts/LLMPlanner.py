@@ -24,6 +24,7 @@ class InstructorInfo(BaseModel):
     configuration_plan: str
     scenario_plan: str
     train_function_plan: str
+    suggested_facade: str
 
 
 class LLMPlannerError(Exception):
@@ -76,9 +77,9 @@ class LLMPlanner:
                 dataset_name=self.dataset_name,
                 base_log_dir=self.LOGS_DIR,
             )
-            if base_url:
-                self.client = OpenAI(api_key=api_key, base_url=base_url)
-                self.base_url = base_url
+            self.base_url = base_url
+            if self.base_url:
+                self.client = OpenAI(api_key=api_key, base_url=self.base_url)
                 self.model_name = model_name
             else:
                 # Initialize Google client
@@ -219,6 +220,7 @@ class LLMPlanner:
                 "configuration_plan",
                 "scenario_plan",
                 "train_function_plan",
+                "suggested_facade",
             ]
             for key in required_keys:
                 if key not in parsed_response:
@@ -229,11 +231,12 @@ class LLMPlanner:
                 configuration_plan=parsed_response["configuration_plan"],
                 scenario_plan=parsed_response["scenario_plan"],
                 train_function_plan=parsed_response["train_function_plan"],
+                suggested_facade=parsed_response["suggested_facade"],
             )
 
             # Log the interaction
             self.logger.log_prompt(prompt=instruction, metadata={"dataset_name": self.dataset_name})
-            self.logger.log_response(instructor_info, metadata={"dataset_name": self.dataset_name})
+            self.logger.log_response(response=response_text, metadata={"dataset_name": self.dataset_name})
 
             return instructor_info
 
