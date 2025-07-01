@@ -45,7 +45,7 @@ AutoML-Agent/
 
 ### Prerequisites
 
-* Python 3.8 or higher
+* Python 3.10 or higher
 * [pip](https://pip.pypa.io/en/stable/) package manager
 
 ### Installation
@@ -160,3 +160,23 @@ For questions, suggestions, or collaborations, please contact:
 ---
 
 *Disclaimer: This is a prototype project and is currently under active development. Features and functionalities are subject to change.*
+
+
+# Baselines
+
+All baseliens should be run in their own conda environment.
+
+```bash
+conda create -n AgentSmac_baseline_autogluon python=3.10
+```
+
+
+## AutoGluon
+
+```bash
+conda activate AgentSmac_baseline_autogluon
+conda install -c conda-forge mamba
+mamba install -c conda-forge autogluon
+mamba install -c conda-forge "ray-tune >=2.10.0,<2.32" "ray-default >=2.10.0,<2.32"
+pip install -e .
+```

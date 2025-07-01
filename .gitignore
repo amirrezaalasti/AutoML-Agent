@@ -14,3 +14,6 @@ py-experimenter.db
 baselines
 config/database_credentials.yml
 generated_codes/
+AutogluonModels/*
+AgentSmac.egg-info
+collected_docs/

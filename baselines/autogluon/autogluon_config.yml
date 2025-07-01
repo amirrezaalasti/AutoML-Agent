@@ -1,0 +1,54 @@
+PY_EXPERIMENTER:
+  n_jobs: 1
+
+  Database:
+    provider: mysql
+    database: AgentSmac
+    table:
+      name: AutogluonRuns
+      keyfields:
+        dataset_name:
+          type: VARCHAR(255)
+          values: ['credit-g']
+        dataset_type:
+          type: VARCHAR(255)
+          values: ['tabular']
+        task_type:
+          type: VARCHAR(255)
+          values: ['classification']
+        time_budget:
+          type: int
+          values: [120]
+        metric:
+          type: VARCHAR(255)
+          values: ['accuracy']
+        preset:
+          type: VARCHAR(255)
+          values: ['best_quality', 'high_quality', 'medium_quality', 'best_quality_hpo', 'high_quality_hpo', 'medium_quality_hpo']
+        n_folds:
+          type: int
+          values: 10
+        fold:
+          type: int
+          values:
+            start: 1
+            stop: 10 # Only one seed to keep experiment size small
+            step: 1
+      result_timestamps: True
+      resultfields:
+        incumbent_config: LONGTEXT
+        final_validation_score: DECIMAL
+        final_test_score: DECIMAL
+    logtables:
+      evaluated_configs:
+        config: LONGTEXT
+        validation_score: DECIMAL
+        error_message: LONGTEXT
+        n_trials: int
+        timestamp: TIMESTAMP
+        incumbent_config: BOOLEAN
+      final_performance:
+        metric: VARCHAR(255)
+        score: DECIMAL
+  Custom:
+    datapath: sample_data
