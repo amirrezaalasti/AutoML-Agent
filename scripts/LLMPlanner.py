@@ -196,6 +196,7 @@ class LLMPlanner:
                 dataset_type=self.dataset_type,
                 task_type=self.task_type,
                 smac_documentation=smac_documentation,
+                config_space_suggested_parameters=config_space_suggested_parameters or "No OpenML meta-learning insights available for this dataset.",
             )
             if self.base_url:
                 response = self.client.chat.completions.create(

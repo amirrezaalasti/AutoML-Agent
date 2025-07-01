@@ -1,7 +1,7 @@
 import openml
 import pandas as pd
 import numpy as np
-from amltk.metalearning import dataset_distance
+from amltk.metalearning import dataset_distance, compute_metafeatures
 from collections import OrderedDict
 
 
@@ -123,20 +123,140 @@ class OpenMLRAG:
                 continue
         return setups
 
-    def extract_suggested_config_space_parameters(self, dataset_name_in_openml: str) -> list[dict]:
-        print(f"1. Searching for source dataset: '{dataset_name_in_openml}'...")
-        source_dataset = self.get_source_dataset(dataset_name=dataset_name_in_openml)
-        if source_dataset is None:
-            print(f"❌ Error: No datasets found for '{dataset_name_in_openml}'.")
-            return []
+    def find_similar_datasets_for_dataset_that_not_in_openml(self, X: pd.DataFrame, y: pd.Series, n_similar: int = 3) -> pd.DataFrame:
+        """
+        Finds datasets similar to a source dataset that is not in OpenML,
+        by computing metafeatures and comparing with active OpenML datasets.
 
-        source_id = int(source_dataset.name)
-        print(f"   ✅ Found '{source_dataset['name']}' with ID: {source_id}")
+        Args:
+            X: Feature matrix of the source dataset
+            y: Target vector of the source dataset
+            n_similar: Number of similar datasets to return
 
-        print(f"\n2. Finding the top 3 datasets similar to '{source_dataset['name']}'...")
+        Returns:
+            DataFrame containing the most similar datasets from OpenML
+        """
+        # Define the mapping from amltk to OpenML names
+        amltk_to_openml_map = {
+            "instance_count": "NumberOfInstances",
+            "number_of_features": "NumberOfFeatures",
+            "number_of_classes": "NumberOfClasses",
+            "number_of_numeric_features": "NumberOfNumericFeatures",
+            "number_of_categorical_features": "NumberOfSymbolicFeatures",
+            "ratio_numerical_features": "PercentageOfNumericFeatures",
+            "ratio_categorical_features": "PercentageOfSymbolicFeatures",
+            "percentage_missing_values": "PercentageOfMissingValues",
+            "percentage_of_instances_with_missing_values": "PercentageOfInstancesWithMissingValues",
+            "minority_class_imbalance": "MinorityClassPercentage",
+            "majority_class_imbalance": "MajorityClassPercentage",
+            "skewness_mean": "MeanSkewnessOfNumericAtts",
+            "kurtosis_mean": "MeanKurtosisOfNumericAtts",
+        }
+
+        # Compute metafeatures with amltk
+        print("   -> Computing metafeatures for the source dataset...")
+        amltk_metafeatures = compute_metafeatures(X, y)
+
+        # Rename the metafeatures to match OpenML naming
+        openml_named_metafeatures = amltk_metafeatures.rename(index=amltk_to_openml_map)
+
+        # Find common features between computed metafeatures and OpenML data
+        common_features = list(set(openml_named_metafeatures.index).intersection(set(self.active_metafeatures_df.columns)))
+
+        if len(common_features) == 0:
+            raise ValueError("No common metafeatures found between source dataset and OpenML datasets.")
+
+        print(f"   -> Found {len(common_features)} common metafeatures")
+
+        # Extract common metafeatures for the source dataset
+        source_metafeatures = openml_named_metafeatures[common_features]
+
+        # Extract common metafeatures for OpenML datasets
+        openml_common_data = self.active_metafeatures_df[common_features]
+
+        # Remove rows with any missing values in common features
+        openml_clean = openml_common_data.dropna()
+
+        if len(openml_clean) == 0:
+            raise ValueError("No OpenML datasets left after removing missing values.")
+
+        print(f"   -> Comparing with {len(openml_clean)} clean OpenML datasets")
+
+        # Use dataset_distance from amltk for consistency with existing code
         try:
-            similar_datasets = self.find_similar_datasets(source_dataset_id=source_id, n_similar=3)
-            print("   ✅ Found similar datasets:", similar_datasets["name"].tolist())
+            # Prepare the metafeatures in the format expected by dataset_distance
+            openml_metafeatures_dict = openml_clean[common_features].T.to_dict("series")
+
+            distances = dataset_distance(
+                target=source_metafeatures,
+                dataset_metafeatures=openml_metafeatures_dict,
+                distance_metric="l2",
+                scaler="minmax",
+                closest_n=n_similar,
+            )
+
+            return self.active_metafeatures_df.loc[distances.index]
+
+        except Exception as e:
+            print(f"   -> Error with amltk dataset_distance: {e}")
+            print("   -> Falling back to simple Euclidean distance...")
+
+            # Fallback to simple standardized Euclidean distance
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.metrics.pairwise import euclidean_distances
+
+            # Prepare data for distance computation
+            all_data = pd.concat(
+                [
+                    pd.DataFrame(
+                        [source_metafeatures.values],
+                        columns=common_features,
+                        index=["source_dataset"],
+                    ),
+                    openml_clean[common_features],
+                ]
+            )
+
+            # Standardize the features
+            scaler = StandardScaler()
+            all_data_scaled = scaler.fit_transform(all_data)
+
+            # Extract standardized metafeatures
+            source_scaled = all_data_scaled[0:1]  # First row
+            openml_scaled = all_data_scaled[1:]  # Remaining rows
+
+            # Compute Euclidean distances
+            distances = euclidean_distances(source_scaled, openml_scaled)[0]
+
+            # Get indices of most similar datasets
+            similar_indices = np.argsort(distances)[:n_similar]
+            similar_dataset_ids = openml_clean.iloc[similar_indices].index
+
+            return self.active_metafeatures_df.loc[similar_dataset_ids]
+
+    def extract_suggested_config_space_parameters(self, dataset_name: str, X: pd.DataFrame = None, y: pd.Series = None) -> list[dict]:
+        print(f"1. Searching for source dataset: '{dataset_name}'...")
+        source_dataset = self.get_source_dataset(dataset_name=dataset_name)
+
+        try:
+            if source_dataset is None:
+                if X is None or y is None:
+                    print(f"❌ Error: Dataset '{dataset_name}' not found in OpenML and no X/y data provided.")
+                    print("   To find similar datasets for a custom dataset, provide X and y parameters.")
+                    return []
+
+                print(f"   -> Dataset '{dataset_name}' not found in OpenML. Using provided X/y data...")
+                similar_datasets = self.find_similar_datasets_for_dataset_that_not_in_openml(X=X, y=y, n_similar=10)
+                print(
+                    "   ✅ Found similar datasets based on computed metafeatures:",
+                    similar_datasets["name"].tolist(),
+                )
+            else:
+                source_id = int(source_dataset.name)
+                print(f"   ✅ Found '{source_dataset['name']}' with ID: {source_id}")
+                print(f"\n2. Finding the top 3 datasets similar to '{source_dataset['name']}'...")
+                similar_datasets = self.find_similar_datasets(source_dataset_id=source_id, n_similar=10)
+                print("   ✅ Found similar datasets:", similar_datasets["name"].tolist())
         except ValueError as e:
             print(f"❌ Error: {e}")
             return []
