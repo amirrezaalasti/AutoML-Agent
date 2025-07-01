@@ -7,6 +7,9 @@ Dataset Information:
 - Task: {task_type}
 - SMAC Documentation: {smac_documentation}
 
+OpenML Meta-Learning Insights:
+{config_space_suggested_parameters}
+
 Generate exactly three implementation guides and return them in the following JSON format:
 
 ```json
@@ -22,6 +25,7 @@ Generate exactly three implementation guides and return them in the following JS
 Provide 6-8 numbered steps that detail how to create a configuration space for hyperparameter optimization. Include specific parameter names, types, and ranges appropriate for the {task_type} and {dataset_type}. Each step should be a direct implementation action.
 
 Guidelines:
+- **IMPORTANT**: When OpenML meta-learning insights are available, use them to inform hyperparameter ranges and model selection based on similar datasets
 - Use appropriate parameter types (Categorical, Integer, Float) based on the nature of each hyperparameter
 - Specify realistic ranges considering dataset characteristics, computational constraints, and optimization objectives
 - Include algorithm-specific hyperparameters relevant to the chosen models
@@ -80,18 +84,6 @@ Choose the most appropriate facade based on the specific task characteristics, d
 - Consider when: Traditional ML models (SVM, Random Forest, Gradient Boosting), well-understood parameter spaces
 - Avoid when: Deep learning models, novel algorithms, or when you need multi-fidelity optimization
 - Characteristics: Optimized specifically for conventional hyperparameter optimization patterns
-
-**RandomFacade**: 
-- Strengths: Simple, fast, provides strong baselines, robust across all problem types
-- Consider when: Quick exploration, establishing baselines, debugging, or simple search spaces
-- Avoid when: Complex optimization landscape where model-based approaches would provide significant benefit
-- Characteristics: Random sampling with aggressive racing for early configuration elimination
-
-**AlgorithmConfigurationFacade**: 
-- Strengths: Handles complex conditional and categorical parameter spaces effectively
-- Consider when: Many conditional parameters, algorithm-specific configuration, discrete parameter dominance
-- Avoid when: Primarily continuous parameters, simple parameter spaces, or standard ML hyperparameter tuning
-- Characteristics: Specialized for complex discrete and conditional parameter optimization
 
 **Decision Factors to Consider:**
 - Dataset size and complexity

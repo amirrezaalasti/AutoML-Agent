@@ -18,11 +18,7 @@ from smac.facade.hyperparameter_optimization_facade import (
 from smac import Scenario
 from py_experimenter.experimenter import PyExperimenter
 from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
-from smac.facade.random_facade import RandomFacade as RandomFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
-from smac.facade.algorithm_configuration_facade import (
-    AlgorithmConfigurationFacade as AlgorithmConfigurationFacade,
-)
 from smac.facade.blackbox_facade import BlackBoxFacade
 
 
@@ -92,10 +88,11 @@ class AutoMLAgent:
             api_key=api_key,
         )
         try:
-            self.experimenter = PyExperimenter(
-                experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
-                name="AutoMLAgent",
-            )
+            # self.experimenter = PyExperimenter(
+            #     experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
+            #     name="AutoMLAgent",
+            # )
+            self.experimenter = None
         except Exception as e:
             self.ui_agent.error(f"Error initializing experimenter: {e}")
             self.experimenter = None
@@ -108,9 +105,7 @@ class AutoMLAgent:
 
         self.smac_facades = {
             "HyperbandFacade": HyperbandFacade,
-            "RandomFacade": RandomFacade,
             "MultiFidelityFacade": MultiFidelityFacade,
-            "AlgorithmConfigurationFacade": AlgorithmConfigurationFacade,
             "HyperparameterOptimizationFacade": HPOFacade,
             "BlackBoxFacade": BlackBoxFacade,
         }
@@ -121,7 +116,9 @@ class AutoMLAgent:
         :return: Tuple containing the generated configuration space, scenario, training function code, last loss, and prompts.
         """
         config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
-            dataset_name_in_openml=self.dataset_name,
+            dataset_name=self.dataset_name,
+            X=self.dataset["X"],
+            y=self.dataset["y"],
         )
         instructor_response = self.LLMInstructor.generate_instructions(
             config_space_suggested_parameters,
