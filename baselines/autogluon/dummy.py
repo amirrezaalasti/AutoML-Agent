@@ -5,7 +5,7 @@ from scripts.utils import split_dataset_kfold
 from numpy.random import RandomState
 # 1. Download the "credit-g" dataset from OpenML
 dataset = openml.datasets.get_dataset(31)
-df : pd.DataFrame = dataset.get_data()[0]
+df: pd.DataFrame = pd.DataFrame(dataset.get_data()[0])
 
 # Reanme class to target
 df.rename(columns={"class": "target"}, inplace=True)

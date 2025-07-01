@@ -249,7 +249,7 @@ def split_dataset_kfold(
     n_folds: int,
     fold: int,
     rng: RandomState,
-) -> Tuple[Dict[str, Union[pd.DataFrame, pd.Series]], Dict[str, Union[pd.DataFrame, pd.Series]]]:
+) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
     """
     Split dataset into training and testing sets using stratified K-fold cross-validation.
 
