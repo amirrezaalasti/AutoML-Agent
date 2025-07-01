@@ -178,4 +178,5 @@ conda activate AgentSmac_baseline_autogluon
 conda install -c conda-forge mamba
 mamba install -c conda-forge autogluon
 mamba install -c conda-forge "ray-tune >=2.10.0,<2.32" "ray-default >=2.10.0,<2.32"
+pip install -e .
 ```

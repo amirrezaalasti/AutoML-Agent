@@ -13,3 +13,4 @@ batch_results
 py-experimenter.db
 config/database_credentials.yml
 AutogluonModels/*
+AgentSmac.egg-info
