@@ -1,22 +1,29 @@
 import openml
 import pandas as pd
 from autogluon.tabular import TabularPredictor
-
+from scripts.utils import split_dataset_kfold
+from numpy.random import RandomState
 # 1. Download the "credit-g" dataset from OpenML
 dataset = openml.datasets.get_dataset(31)
-df, *_ = dataset.get_data()
-print(df.head())
+df : pd.DataFrame = dataset.get_data()[0]
 
-# 2. Identify the target column
-target_col = dataset.default_target_attribute  # Should be 'class'
+# Reanme class to target
+df.rename(columns={"class": "target"}, inplace=True)
 
-# 3. Optional: Split into train/test sets
-train_data = df.sample(frac=0.8, random_state=42)
-test_data = df.drop(train_data.index)
+# Split dataset into training and testing sets
+dataset = {
+    "X": df.drop(columns=["target"]),
+    "y": df["target"]
+}
 
-# 4. Train AutoGluon
-predictor = TabularPredictor(label=target_col).fit(train_data)
+train_data, test_data = split_dataset_kfold(dataset, n_folds=5, fold=0, rng=RandomState(42))
 
-# 5. Evaluate on test data
-performance = predictor.evaluate(test_data)
+autogluon_train_data = train_data["X"]
+autogluon_train_data["target"] = train_data["y"].astype(str)
+autogluon_test_data = test_data["X"]
+autogluon_test_data["target"] = test_data["y"].astype(str)
+
+predictor = TabularPredictor(label="target").fit(autogluon_train_data)
+
+performance = predictor.evaluate(autogluon_test_data)
 print(performance)
