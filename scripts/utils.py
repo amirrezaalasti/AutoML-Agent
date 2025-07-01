@@ -12,9 +12,10 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import LabelEncoder
 import math
+from numpy.random import RandomState
 
 
 # Constants
@@ -216,6 +217,7 @@ def split_dataset(
     Raises:
         ValidationError: If dataset is invalid or split parameters are invalid
     """
+    raise NotImplementedError("This function is deprecated. Use split_dataset_kfold instead.")
     try:
         validate_dataset(dataset)
 
@@ -226,6 +228,58 @@ def split_dataset(
 
         # Perform train-test split
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        # Reset indices for DataFrames/Series to ensure clean alignment
+        train_data = {
+            "X": X_train.reset_index(drop=True),
+            "y": y_train.reset_index(drop=True),
+        }
+        test_data = {
+            "X": X_test.reset_index(drop=True),
+            "y": y_test.reset_index(drop=True),
+        }
+
+        return train_data, test_data
+
+    except Exception as e:
+        raise ValidationError(f"Failed to split dataset: {e}")
+
+def split_dataset_kfold(
+    dataset: Dict[str, Any],
+    n_folds: int,
+    fold: int,
+    rng: RandomState,
+) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
+    """
+    Split dataset into training and testing sets using stratified K-fold cross-validation.
+
+    Args:
+        dataset: Dataset dictionary with 'X' and 'y' keys
+        n_folds: Number of folds for cross-validation
+        fold: Current fold to use for train-test split (0-indexed)
+        rng: Random state for reproducibility
+
+    Returns:
+        Tuple containing train and test data
+
+    Raises:
+        ValidationError: If dataset is invalid or split parameters are invalid
+    """
+    try:
+        validate_dataset(dataset)
+
+        X, y = dataset["X"], dataset["y"]
+
+        # Create stratified K-fold splitter
+        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=rng)
+        
+        # Get the fold indices
+        fold_indices = list(skf.split(X, y))
+        train_idx, test_idx = fold_indices[fold]
+        
+        # Split the data using the fold indices
+        X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+        y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
         # Reset indices for DataFrames/Series to ensure clean alignment
         train_data = {
