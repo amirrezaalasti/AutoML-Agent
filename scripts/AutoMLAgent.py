@@ -20,6 +20,7 @@ from py_experimenter.experimenter import PyExperimenter
 from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
+import numpy as np
 
 
 class AutoMLAgent:
@@ -47,7 +48,7 @@ class AutoMLAgent:
         :param task_type: Optional task type for logging and display.
         """
         self.dataset = format_dataset(dataset)
-        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=5, fold=0)
+        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=5, fold=0, rng=np.random.RandomState(42))
         self.dataset_type = dataset_type
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
