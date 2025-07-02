@@ -5,7 +5,7 @@ from scripts.utils import (
     save_code_to_file,
     format_dataset,
     extract_code_block,
-    split_dataset,
+    split_dataset_kfold,
 )
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
@@ -47,7 +47,7 @@ class AutoMLAgent:
         :param task_type: Optional task type for logging and display.
         """
         self.dataset = format_dataset(dataset)
-        self.dataset, self.dataset_test = split_dataset(self.dataset)
+        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=5, fold=0)
         self.dataset_type = dataset_type
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
