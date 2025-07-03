@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import LabelEncoder
 import math
 from numpy.random import RandomState
-
+import openml
 
 # Constants
 DEFAULT_TEST_SIZE = 0.2
@@ -245,11 +245,12 @@ def split_dataset(
         raise ValidationError(f"Failed to split dataset: {e}")
 
 def split_dataset_kfold(
-    dataset: Dict[str, Any],
+    X: pd.DataFrame,
+    y: pd.DataFrame,
     n_folds: int,
     fold: int,
     rng: RandomState,
-) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
+) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
     """
     Split dataset into training and testing sets using stratified K-fold cross-validation.
 
@@ -260,17 +261,12 @@ def split_dataset_kfold(
         rng: Random state for reproducibility
 
     Returns:
-        Tuple containing train and test data
+        Tuple containing train and test data (X_train, y_train, X_test, y_test)
 
     Raises:
         ValidationError: If dataset is invalid or split parameters are invalid
     """
     try:
-        validate_dataset(dataset)
-
-        X, y = dataset["X"], dataset["y"]
-
-        # Create stratified K-fold splitter
         skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=rng)
         
         # Get the fold indices
@@ -282,16 +278,7 @@ def split_dataset_kfold(
         y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
         # Reset indices for DataFrames/Series to ensure clean alignment
-        train_data = {
-            "X": X_train.reset_index(drop=True),
-            "y": y_train.reset_index(drop=True),
-        }
-        test_data = {
-            "X": X_test.reset_index(drop=True),
-            "y": y_test.reset_index(drop=True),
-        }
-
-        return train_data, test_data
+        return X_train, y_train, X_test, y_test
 
     except Exception as e:
         raise ValidationError(f"Failed to split dataset: {e}")
@@ -716,6 +703,31 @@ def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = 
             raise
         raise OSError(f"Failed to convert dataset to CSV: {e}")
 
+
+def load_dataset(dataset_origin:str, dataset_id: str | int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Load dataset from different origins. Returns a tuple of (X, y) where X is a pandas DataFrame and y is a pandas Series.
+
+    Args:
+        dataset_origin: Origin of the dataset (e.g. "openml", "kaggle", "csv")
+        dataset_id: ID of the dataset
+
+    Returns:
+        Tuple of (X, y) where X is a pandas DataFrame and y is a pandas Series.
+    """
+    if dataset_origin == "openml":
+        dataset = openml.datasets.get_dataset(dataset_id)
+        X, y, categorical_indicator, attribute_names = dataset.get_data(target=dataset.default_target_attribute)
+        X = pd.DataFrame(X, columns=pd.Index(attribute_names))
+        y = pd.DataFrame({: y})
+    elif dataset_origin == "kaggle":
+        raise NotImplementedError("Kaggle datasets are not supported yet")
+    elif dataset_origin == "csv":
+        raise NotImplementedError("CSV datasets are not supported yet")
+    else:
+        raise ValueError(f"Unsupported dataset origin: {dataset_origin}")
+
+    return X, y
 
 # Alias for backward compatibility
 save_code = save_code_to_file
