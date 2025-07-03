@@ -11,7 +11,6 @@ logs
 paper
 batch_results
 py-experimenter.db
-baselines
 config/database_credentials.yml
 generated_codes/
 AutogluonModels/*
