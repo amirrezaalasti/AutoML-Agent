@@ -2,12 +2,26 @@
 
 ---
 
-### ** CRITICAL ERROR HANDLING RULE:**
-**ABSOLUTELY NO try/except BLOCKS ALLOWED!**
-* **Why**: Try/except blocks hide real errors and make debugging impossible
-* **Instead**: Use proper validation, type checking, and explicit error handling
-* **If errors occur**: Let them propagate naturally so they can be identified and fixed
-* **This is a HARD REQUIREMENT**: Any code with try/except will be rejected
+### ** CRITICAL CODE GENERATION RULE FOR HYPERPARAMETER OPTIMIZATION:**
+**GENERATE ROBUST CODE THAT DOESN'T NEED ERROR HANDLING!**
+* **Why**: In hyperparameter optimization, the function will be called with diverse configurations
+* **HPO Context**: The training function must handle all configurations without crashing
+* **Generate Robust Code**: Write code that naturally handles all valid configurations
+* **Let Errors Propagate**: Don't hide errors - let them show so they can be fixed
+* **This is a HARD REQUIREMENT**: Generate inherently robust code, don't mask problems
+
+---
+
+### ** CRITICAL HPO ROBUSTNESS RULE:**
+**GENERATE CODE THAT NATURALLY HANDLES MULTI-ALGORITHM CONFIGURATIONS!**
+* **Context**: Configuration space may contain hyperparameters for multiple algorithms (RF, GB, SVM, NN)
+* **Algorithm Selection**: Implement the algorithm(s) that match the configuration space definition
+* **Parameter Extraction**: Extract and use all relevant parameters from the configuration
+* **Safe Type Conversion**: Convert parameters to appropriate types with bounds checking
+* **Default Values**: Use sensible defaults for all hyperparameters when not specified
+* **Validate Ranges**: Ensure all parameters are within valid ranges before use
+* **Multi-Algorithm Support**: If config space supports multiple algorithms, implement appropriate logic
+* **This is a HARD REQUIREMENT**: Generate naturally robust code that handles configurations correctly
 
 ---
 
@@ -22,6 +36,7 @@
 * **This is a HARD REQUIREMENT**: Any code with hardcoded shapes will be rejected.
 
 ---
+* **Selected Facade**: `{suggested_facade}`
 * Recommended steps to write the train function based on the planner:
   * `{train_function_plan}`
 ---
@@ -31,7 +46,34 @@
 ```python
 from ConfigSpace import Configuration
 from typing import Any
-def train(cfg: Configuration, dataset: Any, seed: int, model_dir: str = None) -> float:
+def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> float:
+```
+
+**CRITICAL**: The function signature **MUST** include the `budget` parameter even if not used by all facades:
+- For **BlackBoxFacade** and **HyperparameterOptimizationFacade**: `budget` parameter will be `None` and should be ignored
+- For **HyperbandFacade** and **MultiFidelityFacade**: `budget` parameter will contain the fidelity budget (e.g., number of epochs, training steps)
+- **Always include the budget parameter** in the signature for compatibility with all facades
+- Use conditional logic to handle the budget parameter appropriately based on the facade type
+
+**Budget Parameter Handling Examples:**
+```python
+# For neural networks (epochs)
+if budget is not None:
+    epochs = budget
+else:
+    epochs = 100  # default value
+
+# For iterative algorithms (iterations)
+if budget is not None:
+    max_iter = budget
+else:
+    max_iter = 1000  # default value
+
+# For ensemble methods (estimators)
+if budget is not None:
+    n_estimators = budget
+else:
+    n_estimators = 100  # default value
 ```
 
 ---
@@ -135,40 +177,35 @@ Choose **one** of the following frameworks based on the dataset and requirements
 
 ---
 
-### **Error Prevention (NO try/except):**
+### **Code Generation Best Practices for HPO:**
 
-* **VALIDATE ALL INPUTS EXPLICITLY** - Check types, shapes, ranges
-* **HANDLE MISSING PARAMETERS** - Use default values or raise clear errors
-* **CHECK DATA TYPES AND SHAPES** - Validate before processing
-* **HANDLE EDGE CASES** - Use conditional logic, not exception handling
-* **IMPLEMENT PROPER VALIDATION** - Use assertions or explicit checks
-* **RAISE CLEAR ERRORS** - Let errors propagate naturally for debugging
+* **VALIDATE ALL INPUTS EXPLICITLY** - Check types, shapes, ranges before use
+* **HANDLE MISSING PARAMETERS** - Use sensible defaults for all hyperparameters
+* **CHECK DATA TYPES AND SHAPES** - Validate and convert before processing  
+* **CONVERT TYPES SAFELY** - Convert budget and other parameters to appropriate types
+* **BOUND ALL PARAMETERS** - Ensure parameters are within valid ranges
+* **USE SENSIBLE DEFAULTS** - Provide reasonable defaults for all hyperparameters
+* **IMPLEMENT MATCHING ALGORITHMS** - Implement algorithms that match the configuration space
+* **HANDLE NUMPY TYPES** - Convert numpy.int64, numpy.float64 to native Python types
+* **DYNAMIC DIMENSIONS** - Infer all dimensions from data, never hardcode shapes
 
 ---
 
-### **Example Structure (NO try/except):**
+### **General Structure Principles:**
 
-```python
-def train(cfg: Configuration, dataset: Any, seed: int, model_dir: str = None) -> float:
-    # Set random seed for reproducibility
-    
-    # Extract hyperparameters efficiently
-    sample_config = cfg.get('sample_config')
-    
-    # Prepare data efficiently
-    
-    # Initialize model with optimized parameters
-    
-    # Optimized training loop
+**Your generated function should follow these principles:**
 
-    # Save model if directory is provided
-    if model_dir:
-        os.makedirs(model_dir, exist_ok=True)
-        model_path = os.path.join(model_dir, f"model_{{seed}}.pth")
-        torch.save(model.state_dict(), model_path)
-    
-    return loss
-```
+1. **Set random seed** for reproducibility
+2. **Extract hyperparameters** from cfg with appropriate defaults and type conversion
+3. **Validate and bound** all parameters to ensure they're within valid ranges
+4. **Prepare data** efficiently, inferring dimensions dynamically
+5. **Implement algorithm(s)** that match the configuration space definition
+6. **Handle budget parameter** appropriately for the facade type
+7. **Train the model** with the validated parameters
+8. **Save the model** if model_dir is provided
+9. **Return appropriate metric** (negative accuracy for accuracy metrics, raw error for error metrics)
+
+**Do NOT copy specific implementation patterns** - generate code appropriate for the given configuration space and dataset requirements.
 
 ---
 
@@ -181,6 +218,9 @@ def train(cfg: Configuration, dataset: Any, seed: int, model_dir: str = None) ->
 * For error metrics, return the raw error value (e.g. mse, rmse)
 * Ensure consistent sign convention across all metrics
 * **MUST save the trained model** if `model_dir` parameter is provided
-* ** ABSOLUTELY NO try/except BLOCKS - USE EXPLICIT VALIDATION INSTEAD**
-* ** IF ERRORS OCCUR, LET THEM PROPAGATE NATURALLY FOR DEBUGGING**
-* ** The train function and the choice of model should match the configuration
+* **MUST handle multi-algorithm configuration spaces** by implementing appropriate algorithms
+* **MUST convert budget parameter** to appropriate type and validate range
+* **MUST use sensible defaults** for all hyperparameters with proper type conversion
+* **MUST validate parameter ranges** to ensure they're within acceptable bounds
+* **NO try/except blocks** - let errors propagate so they can be fixed
+* **The train function MUST be naturally robust** for hyperparameter optimization scenarios
