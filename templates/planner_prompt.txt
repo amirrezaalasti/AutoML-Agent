@@ -37,22 +37,36 @@ Guidelines:
 **Scenario Plan Requirements:**
 Provide 6-8 numbered steps that detail how to set up a SMAC scenario for optimization. Include specific values for trial limits, time limits, worker configuration, and facade selection based on the {dataset_description}. Each step should specify exact settings to use.
 
+**CRITICAL**: The scenario MUST be compatible with the selected facade:
+- **For BlackBoxFacade/HyperparameterOptimizationFacade**: Do NOT set `min_budget` or `max_budget` parameters
+- **For HyperbandFacade/MultiFidelityFacade**: MUST set both `min_budget` and `max_budget` parameters
+- **Budget values should represent fidelity levels** (e.g., min_budget=1, max_budget=100 for epochs)
+
 Guidelines:
 - Set appropriate n_trials based on dataset complexity, search space size, and available computational budget
 - Define walltime_limit considering expected runtime per evaluation and total optimization time
 - Configure output directory and logging based on experiment requirements
 - Consider deterministic settings based on reproducibility needs
 - Specify crash_cost and cutoff_time based on evaluation characteristics and failure handling needs
+- **Set budget parameters appropriately for the selected facade**
 - Adapt all parameters to the specific dataset size, complexity, and computational constraints
 
 **Train Function Plan Requirements:**
 Provide 10-12 numbered steps that detail how to implement the training function. Include data handling, model initialization, training process, evaluation, and model saving. Each step should be a concrete implementation action that can be directly executed.
+
+**CRITICAL**: The train function MUST be compatible with the selected facade:
+- **Function signature MUST be**: `def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> float:`
+- **Always include the `budget` parameter** even if the facade doesn't use it
+- **For BlackBoxFacade/HyperparameterOptimizationFacade**: `budget` will be `None` - ignore this parameter
+- **For HyperbandFacade/MultiFidelityFacade**: `budget` contains the fidelity budget (e.g., number of epochs, training steps)
+- **Use conditional logic** to handle the budget parameter appropriately
 
 Guidelines:
 - Handle data loading and preprocessing
 - Implement proper train/validation/test splits
 - Include cross-validation when appropriate
 - Implement early stopping mechanisms
+- **Handle budget parameter for multi-fidelity optimization** (e.g., limit training epochs based on budget)
 - Return appropriate cost/score for optimization
 - Handle different model types if multiple models suggested
 

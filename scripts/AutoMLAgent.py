@@ -6,6 +6,7 @@ from utils import (
     format_dataset,
     extract_code_block,
     split_dataset_kfold,
+    FACADE_PARAMETER_REQUIREMENTS,
 )
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
@@ -154,7 +155,7 @@ class AutoMLAgent:
         self.ui_agent.code(self.config_code, language="python")
 
         # Scenario
-        self.prompts["scenario"] = self._create_scenario_prompt(instructor_response.scenario_plan)
+        self.prompts["scenario"] = self._create_scenario_prompt(instructor_response.scenario_plan, instructor_response.suggested_facade)
         self.scenario_code = self.llm.generate(self.prompts["scenario"])
         self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
         self.logger.log_response(self.scenario_code, {"component": "scenario"})
@@ -164,10 +165,7 @@ class AutoMLAgent:
 
         # Training Function
         train_plan = instructor_response.train_function_plan
-        self.prompts["train_function"] = self._create_train_prompt(
-            train_plan,
-            # self.task_type
-        )
+        self.prompts["train_function"] = self._create_train_prompt(train_plan, instructor_response.suggested_facade)
         self.train_function_code = self.llm.generate(self.prompts["train_function"])
         self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
         self.logger.log_response(self.train_function_code, {"component": "train_function"})
@@ -246,7 +244,15 @@ class AutoMLAgent:
                     self.train_function_code = source
                     train_fn = self.namespace["train"]
                     sampled = cfg.sample_configuration()
-                    loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
+
+                    # Test train function with budget parameter for compatibility
+                    # Try with budget first (for multi-fidelity facades), then without
+                    try:
+                        loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0, budget=None)
+                    except TypeError:
+                        # If budget parameter not accepted, try without it
+                        loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
+
                     self.last_loss = loss
                     self.logger.log_response(
                         f"Training executed successfully, loss: {loss}",
@@ -306,7 +312,7 @@ class AutoMLAgent:
                 recommended_configuration=recommended_configuration,
             )
 
-    def _create_scenario_prompt(self, scenario_plan) -> str:
+    def _create_scenario_prompt(self, scenario_plan, suggested_facade) -> str:
         """
         Create a prompt for generating the scenario code.
         :return: A formatted prompt string for the LLM.
@@ -317,14 +323,16 @@ class AutoMLAgent:
                 dataset_description=self.dataset_description,
                 scenario_plan=scenario_plan,
                 output_directory=self.logger.experiment_dir,
+                suggested_facade=suggested_facade,
             )
 
         return base_prompt
 
-    def _create_train_prompt(self, train_function_instructions) -> str:
+    def _create_train_prompt(self, train_function_instructions, suggested_facade) -> str:
         """
         Create a prompt for generating the training function code.
         :param train_function_instructions: Instructions for the training function.
+        :param suggested_facade: The suggested SMAC facade.
         :return: A formatted prompt string for the LLM.
         """
 
@@ -334,6 +342,7 @@ class AutoMLAgent:
                 config_space=self.config_code or "",
                 scenario=self.scenario_code or "",
                 train_function_plan=train_function_instructions,
+                suggested_facade=suggested_facade,
             )
 
         return prompt
@@ -346,9 +355,24 @@ class AutoMLAgent:
     def run_scenario(self, scenario: Scenario, train_fn: Any, dataset: Any, cfg: Any):
         """Run the scenario code and return the results"""
 
-        def smac_train_function(config, seed: int = 0) -> float:
-            """Wrapper function to call the training function with the correct parameters"""
-            return train_fn(cfg=config, dataset=dataset, seed=seed)
+        # Get the facade name to determine parameter requirements
+        facade_name = self.suggested_facade.__name__
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+
+        # Create dynamic wrapper function based on facade requirements
+        if "budget" in required_params:
+
+            def smac_train_function(config, seed: int = 0, budget: int = None) -> float:
+                """Wrapper function for multi-fidelity facades (Hyperband, MultiFidelity)"""
+                # Convert budget to int if it's provided as a float
+                budget_int = int(budget) if budget is not None else budget
+                return train_fn(cfg=config, dataset=dataset, seed=int(seed), budget=budget_int)
+
+        else:
+
+            def smac_train_function(config, seed: int = 0) -> float:
+                """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
+                return train_fn(cfg=config, dataset=dataset, seed=int(seed))
 
         smac = self.suggested_facade(
             scenario,
@@ -367,12 +391,62 @@ class AutoMLAgent:
         self.ui_agent.write(incubment_cost)
         self.experimenter_row_dict["incumbent_train_accuracy"] = incubment_cost
 
+        self.logger.log_response(
+            f"Incumbent cost: {incubment_cost}",
+            {"component": "scenario", "status": "success", "cost": incubment_cost},
+        )
+        self.logger.log_response(
+            f"Default cost: {default_cost}",
+            {"component": "scenario", "status": "success", "cost": default_cost},
+        )
+        self.logger.log_response(
+            f"Incumbent config: {incumbent}",
+            {"component": "scenario", "status": "success", "config": incumbent},
+        )
+        self.logger.log_response(
+            f"Default config: {default_cost}",
+            {"component": "scenario", "status": "success", "config": default_cost},
+        )
+
         self.test_incumbent(train_fn, incumbent, self.dataset_test, self.config_space_obj)
 
     def test_incumbent(self, train_fn, incumbent: Any, dataset: Any, cfg: Any):
         """Test the incumbent on the test set"""
-        loss = train_fn(cfg=incumbent, dataset=dataset, seed=0, model_dir=self.logger.experiment_dir)
+        # Get the facade name to determine parameter requirements
+        facade_name = self.suggested_facade.__name__
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+
+        # Call train function with appropriate parameters
+        if "budget" in required_params:
+            # For multi-fidelity facades, use maximum budget for final evaluation
+            max_budget = getattr(self.scenario_obj, "max_budget", None)
+            # Convert budget to int if it's provided as a float
+            budget_int = int(max_budget) if max_budget is not None else max_budget
+            loss = train_fn(
+                cfg=incumbent,
+                dataset=dataset,
+                seed=0,
+                budget=budget_int,
+                model_dir=self.logger.experiment_dir,
+            )
+        else:
+            loss = train_fn(
+                cfg=incumbent,
+                dataset=dataset,
+                seed=0,
+                model_dir=self.logger.experiment_dir,
+            )
+
         self.ui_agent.subheader("Test Loss")
         self.ui_agent.write(loss)
         self.experimenter_row_dict["incumbent_config"] = str(incumbent)
         self.experimenter_row_dict["test_train_accuracy"] = loss
+
+        self.logger.log_response(
+            f"Test loss: {loss}",
+            {"component": "scenario", "status": "success", "loss": loss},
+        )
+        self.logger.log_response(
+            f"Incumbent config: {incumbent}",
+            {"component": "scenario", "status": "success", "config": incumbent},
+        )

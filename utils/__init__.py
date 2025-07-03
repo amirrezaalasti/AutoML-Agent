@@ -14,6 +14,7 @@ from .constants import (
     DEFAULT_SMAC_METRIC,
     SUPPORTED_DATASET_TYPES,
     DATASET_TASK_MAPPING,
+    FACADE_PARAMETER_REQUIREMENTS,
 )
 
 from .types import DatasetInfo, DatasetError, ValidationError
@@ -56,6 +57,7 @@ __all__ = [
     "DEFAULT_SMAC_METRIC",
     "SUPPORTED_DATASET_TYPES",
     "DATASET_TASK_MAPPING",
+    "FACADE_PARAMETER_REQUIREMENTS",
     # Types
     "DatasetInfo",
     "DatasetError",

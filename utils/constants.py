@@ -23,3 +23,11 @@ DATASET_TASK_MAPPING = {
     "categorical": ["classification", "clustering"],
     "text": ["clustering", "classification", "regression"],
 }
+
+# SMAC Facade parameter requirements
+FACADE_PARAMETER_REQUIREMENTS = {
+    "BlackBoxFacade": ["config", "seed"],
+    "HyperparameterOptimizationFacade": ["config", "seed"],
+    "HyperbandFacade": ["config", "seed", "budget"],
+    "MultiFidelityFacade": ["config", "seed", "budget"],
+}
