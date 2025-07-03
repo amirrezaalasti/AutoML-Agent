@@ -7,48 +7,50 @@ PY_EXPERIMENTER:
     table:
       name: AutogluonRuns
       keyfields:
+        dataset_origin:
+          type: VARCHAR(255)
+          values: ['openml']
         dataset_name:
           type: VARCHAR(255)
           values: ['credit-g']
         dataset_type:
           type: VARCHAR(255)
           values: ['tabular']
-        task_type:
-          type: VARCHAR(255)
-          values: ['classification']
         time_budget:
           type: int
-          values: [120]
+          values: [7200]
         metric:
           type: VARCHAR(255)
           values: ['accuracy']
         preset:
           type: VARCHAR(255)
-          values: ['best_quality', 'high_quality', 'medium_quality', 'best_quality_hpo', 'high_quality_hpo', 'medium_quality_hpo']
+          values: ['best_quality']
         n_folds:
           type: int
-          values: 10
+          values: [10]
         fold:
           type: int
           values:
             start: 1
             stop: 10 # Only one seed to keep experiment size small
             step: 1
+        n_gpus:
+          type: int
+          values: [1]
+        n_cpus:
+          type: int
+          values: [8]
+        n_gb_ram:
+          type: int
+          values: [16]
       result_timestamps: True
       resultfields:
-        incumbent_config: LONGTEXT
-        final_validation_score: DECIMAL
-        final_test_score: DECIMAL
-    logtables:
-      evaluated_configs:
-        config: LONGTEXT
-        validation_score: DECIMAL
-        error_message: LONGTEXT
-        n_trials: int
-        timestamp: TIMESTAMP
-        incumbent_config: BOOLEAN
-      final_performance:
-        metric: VARCHAR(255)
-        score: DECIMAL
+        test_accuracy: DECIMAL
+        test_balanced_accuracy: DECIMAL
+        test_mcc: DECIMAL
+        test_roc_auc: DECIMAL
+        test_f1: DECIMAL
+        test_precision: DECIMAL
+        test_recall: DECIMAL
   Custom:
     datapath: sample_data

@@ -11,18 +11,16 @@ df: pd.DataFrame = pd.DataFrame(dataset.get_data()[0])
 df.rename(columns={"class": "target"}, inplace=True)
 
 # Split dataset into training and testing sets
-dataset = {
-    "X": df.drop(columns=["target"]),
-    "y": df["target"]
-}
+X = df.drop(columns=["target"])
+y = df[["target"]]
 
-train_data, test_data = split_dataset_kfold(dataset, n_folds=5, fold=0, rng=RandomState(42))
+X_train, y_train, X_test, y_test = split_dataset_kfold(X =X, y =y, n_folds=5, fold=0, rng=RandomState(42))
 
-autogluon_train_data = train_data["X"]
-autogluon_train_data["target"] = train_data["y"].astype(str)
-autogluon_test_data = test_data["X"]
-autogluon_test_data["target"] = test_data["y"].astype(str)
-predictor = TabularPredictor(label="target", log_to_file=True, log_file_path="dummy_log").fit(autogluon_train_data, presets="best_quality_hpo",  ag_args_fit={'num_gpus': 1}, time_limit=9000)
+autogluon_train_data = pd.concat([X_train, y_train], axis=1)
+autogluon_train_data["target"] = y_train.astype(str)
+autogluon_test_data = pd.concat([X_test, y_test], axis=1)
+autogluon_test_data["target"] = y_test.astype(str)
+predictor = TabularPredictor(label="target", log_to_file=True, log_file_path="dummy_log").fit(autogluon_train_data, presets="best_quality",  ag_args_fit={'num_gpus': 1}, time_limit=9000)
 
 performance = predictor.evaluate(autogluon_test_data)
 print(performance)
