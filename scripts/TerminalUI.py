@@ -17,7 +17,7 @@ import seaborn as sns
 from config.api_keys import GROQ_API_KEY, GOOGLE_API_KEY
 from scripts.LLMClient import LLMClient
 from scripts.AutoMLAgent import AutoMLAgent
-from scripts.utils import format_dataset
+from utils import format_dataset
 
 # Available GROQ models
 AVAILABLE_MODELS = [
