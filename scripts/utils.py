@@ -719,7 +719,7 @@ def load_dataset(dataset_origin:str, dataset_id: str | int) -> tuple[pd.DataFram
         dataset = openml.datasets.get_dataset(dataset_id)
         X, y, categorical_indicator, attribute_names = dataset.get_data(target=dataset.default_target_attribute)
         X = pd.DataFrame(X, columns=pd.Index(attribute_names))
-        y = pd.DataFrame({: y})
+        y = pd.DataFrame({"target": y})
     elif dataset_origin == "kaggle":
         raise NotImplementedError("Kaggle datasets are not supported yet")
     elif dataset_origin == "csv":
