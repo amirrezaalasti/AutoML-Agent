@@ -1,20 +1,23 @@
 #!/bin/bash
 #SBATCH --job-name=autogluon_job
-#SBATCH --output=autogluon_output_%j.log
-#SBATCH --error=autogluon_error_%j.log
+#SBATCH --output=logs/%x_%A/%a_output.log
+#SBATCH --error=logs/%x_%A/%a_error.log
 #SBATCH --time=03:00:00
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
+#SBATCH --array=1-9
 
-# Activate virtual environment
-bash
+# Load modules or setup environment if needed
+# module load cuda/11.7
 
-conda activate AgentSmac_baseline_autogluon
+# Activate conda environment
+source ~/.bashrc
+conda activate autogluon_baseline
 
-echo "Starting job on `hostname` at `date`"
+echo "Starting job on $(hostname) at $(date)"
 
 # Run the python script
-python baselines/autogluon/dummy.py
+python baselines/autogluon/run_autogluon.py
 
-echo "Job finished at `date`"
+echo "Job finished at $(date)"

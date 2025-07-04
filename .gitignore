@@ -18,3 +18,5 @@ AgentSmac.egg-info
 collected_docs/
 .cursorignore
 .vscode
+build
+*.log
