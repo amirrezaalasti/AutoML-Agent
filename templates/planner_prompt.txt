@@ -67,7 +67,7 @@ Guidelines:
 - Include cross-validation when appropriate
 - Implement early stopping mechanisms
 - **Handle budget parameter for multi-fidelity optimization** (e.g., limit training epochs based on budget)
-- Return appropriate cost/score for optimization
+- Return appropriate cost/score for optimization, and the trained model
 - Handle different model types if multiple models suggested
 
 **Scenario Facade Selection:**
