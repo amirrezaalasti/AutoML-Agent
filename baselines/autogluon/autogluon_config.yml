@@ -18,7 +18,7 @@ PY_EXPERIMENTER:
           values: ['tabular']
         time_budget:
           type: int
-          values: [7200]
+          values: [3600]
         metric:
           type: VARCHAR(255)
           values: ['accuracy']
@@ -39,18 +39,18 @@ PY_EXPERIMENTER:
           values: [1]
         n_cpus:
           type: int
-          values: [8]
+          values: [16]
         n_gb_ram:
           type: int
           values: [16]
       result_timestamps: True
       resultfields:
-        test_accuracy: DECIMAL
-        test_balanced_accuracy: DECIMAL
-        test_mcc: DECIMAL
-        test_roc_auc: DECIMAL
-        test_f1: DECIMAL
-        test_precision: DECIMAL
-        test_recall: DECIMAL
+        test_accuracy: FLOAT
+        test_balanced_accuracy: FLOAT
+        test_mcc: FLOAT
+        test_roc_auc: FLOAT
+        test_f1: FLOAT
+        test_precision: FLOAT
+        test_recall: FLOAT
   Custom:
     datapath: sample_data
