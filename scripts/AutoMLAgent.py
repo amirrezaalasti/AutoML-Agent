@@ -11,7 +11,11 @@ from utils import (
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
 from config.api_keys import OPENML_API_KEY
-from config.configs_path import OPENML_CSV_PATH, EXPERIMENTER_CONFIG_PATH
+from config.configs_path import (
+    OPENML_CSV_PATH,
+    EXPERIMENTER_CONFIG_PATH,
+    EXPERIMENTER_DATABASE_CREDENTIALS_PATH,
+)
 from scripts.LLMPlanner import LLMPlanner
 from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
@@ -22,6 +26,7 @@ from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
 import numpy as np
+from sklearn.metrics import classification_report, mean_squared_error
 
 
 class AutoMLAgent:
@@ -93,6 +98,10 @@ class AutoMLAgent:
             # self.experimenter = PyExperimenter(
             #     experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
             #     name="AutoMLAgent",
+            #     database_credentials_file_path=EXPERIMENTER_DATABASE_CREDENTIALS_PATH,
+            #     experiment_dir=self.logger.experiment_dir,
+            #     use_ssh_tunnel=False,
+            #     use_codecarbon=False,
             # )
             self.experimenter = None
         except Exception as e:
@@ -248,12 +257,20 @@ class AutoMLAgent:
                     # Test train function with budget parameter for compatibility
                     # Try with budget first (for multi-fidelity facades), then without
                     try:
-                        loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0, budget=None)
+                        result = train_fn(cfg=sampled, dataset=self.dataset, seed=0, budget=None)
                     except TypeError:
                         # If budget parameter not accepted, try without it
-                        loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
+                        result = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
 
-                    self.last_loss = loss
+                    # Handle both tuple and single value returns
+                    if isinstance(result, tuple):
+                        loss, model = result
+                        self.last_loss = loss
+                        self.last_model = model
+                    else:
+                        loss = result
+                        self.last_loss = loss
+                        self.last_model = None
                     self.logger.log_response(
                         f"Training executed successfully, loss: {loss}",
                         {"component": component, "status": "success", "loss": loss},
@@ -366,13 +383,23 @@ class AutoMLAgent:
                 """Wrapper function for multi-fidelity facades (Hyperband, MultiFidelity)"""
                 # Convert budget to int if it's provided as a float
                 budget_int = int(budget) if budget is not None else budget
-                return train_fn(cfg=config, dataset=dataset, seed=int(seed), budget=budget_int)
+                result = train_fn(cfg=config, dataset=dataset, seed=int(seed), budget=budget_int)
+                # Extract loss from tuple if train function returns (loss, model)
+                if isinstance(result, tuple):
+                    return result[0]  # Return only the loss for SMAC
+                else:
+                    return result  # Return the loss directly
 
         else:
 
             def smac_train_function(config, seed: int = 0) -> float:
                 """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
-                return train_fn(cfg=config, dataset=dataset, seed=int(seed))
+                result = train_fn(cfg=config, dataset=dataset, seed=int(seed))
+                # Extract loss from tuple if train function returns (loss, model)
+                if isinstance(result, tuple):
+                    return result[0]  # Return only the loss for SMAC
+                else:
+                    return result  # Return the loss directly
 
         smac = self.suggested_facade(
             scenario,
@@ -408,9 +435,9 @@ class AutoMLAgent:
             {"component": "scenario", "status": "success", "config": default_cost},
         )
 
-        self.test_incumbent(train_fn, incumbent, self.dataset_test, self.config_space_obj)
+        self.test_incumbent(train_fn, incumbent, self.dataset, self.dataset_test, self.config_space_obj)
 
-    def test_incumbent(self, train_fn, incumbent: Any, dataset: Any, cfg: Any):
+    def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
         """Test the incumbent on the test set"""
         # Get the facade name to determine parameter requirements
         facade_name = self.suggested_facade.__name__
@@ -422,30 +449,57 @@ class AutoMLAgent:
             max_budget = getattr(self.scenario_obj, "max_budget", None)
             # Convert budget to int if it's provided as a float
             budget_int = int(max_budget) if max_budget is not None else max_budget
-            loss = train_fn(
+            result = train_fn(
                 cfg=incumbent,
-                dataset=dataset,
+                dataset=dataset_train,
                 seed=0,
                 budget=budget_int,
                 model_dir=self.logger.experiment_dir,
             )
         else:
-            loss = train_fn(
+            result = train_fn(
                 cfg=incumbent,
-                dataset=dataset,
+                dataset=dataset_train,
                 seed=0,
                 model_dir=self.logger.experiment_dir,
             )
 
-        self.ui_agent.subheader("Test Loss")
-        self.ui_agent.write(loss)
-        self.experimenter_row_dict["incumbent_config"] = str(incumbent)
-        self.experimenter_row_dict["test_train_accuracy"] = loss
+        # Handle both tuple and single value returns
+        if isinstance(result, tuple):
+            loss, model = result
+        else:
+            loss = result
+            model = None
 
-        self.logger.log_response(
-            f"Test loss: {loss}",
-            {"component": "scenario", "status": "success", "loss": loss},
-        )
+        # TODO
+        if model is not None:
+            predictions = model.predict(dataset_test["X"])
+            if self.task_type == "classification":
+                metrics = classification_report(dataset_test["y"], predictions)
+            elif self.task_type == "regression":
+                metrics = mean_squared_error(dataset_test["y"], predictions)
+        else:
+            metrics = None  # Cannot compute accuracy without model
+
+        self.ui_agent.subheader("Metrics")
+        self.ui_agent.write(f"Metrics: {metrics}")
+        self.experimenter_row_dict["incumbent_config"] = str(incumbent)
+        self.experimenter_row_dict["test_train_accuracy"] = metrics
+
+        if metrics is not None:
+            self.logger.log_response(
+                f"Metrics: {metrics}",
+                {
+                    "component": "scenario",
+                    "status": "success",
+                    "metrics": f"{metrics}",
+                },
+            )
+        else:
+            self.logger.log_response(
+                "Test accuracy: Unable to compute (no model returned)",
+                {"component": "scenario", "status": "warning", "accuracy": None},
+            )
         self.logger.log_response(
             f"Incumbent config: {incumbent}",
             {"component": "scenario", "status": "success", "config": incumbent},

@@ -21,6 +21,8 @@
 * **Default Values**: Use sensible defaults for all hyperparameters when not specified
 * **Validate Ranges**: Ensure all parameters are within valid ranges before use
 * **Multi-Algorithm Support**: If config space supports multiple algorithms, implement appropriate logic
+* **Parameter Name Matching**: Use EXACT parameter names from ConfigSpace definition - never use generic names
+* **Algorithm Detection**: Look at ConfigSpace parameter
 * **This is a HARD REQUIREMENT**: Generate naturally robust code that handles configurations correctly
 
 ---
@@ -45,8 +47,8 @@
 
 ```python
 from ConfigSpace import Configuration
-from typing import Any
-def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> float:
+from typing import Any, Tuple
+def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Tuple[float, Any]:
 ```
 
 **CRITICAL**: The function signature **MUST** include the `budget` parameter even if not used by all facades:
@@ -82,8 +84,11 @@ else:
 
 * The function **must** handle the dataset properly:
   * Dataset Description: `{dataset_description}`
-  * ConfigSpace Definition: `{config_space}`
+  * ConfigSpace Definition (**very important for choosing the model**): `{config_space}`
   * SMAC Scenario: `{scenario}`
+
+* **CRITICAL**: The function **must** use the EXACT parameter names from the ConfigSpace definition above
+  * **INSPECT** the ConfigSpace definition carefully and extract only those parameters that exist
 
 * The function **must** accept a `dataset` dictionary with:
   * `dataset['X']`: feature matrix or input tensor
@@ -111,7 +116,9 @@ else:
   * Apply proper optimization
   * Implement early stopping if needed
   * Handle validation if required
-  * Return appropriate loss value
+      * **PREVENT OVERFITTING**: Use proper validation split, regularization, early stopping
+    * **ENSURE GENERALIZATION**: Avoid fitting too closely to training data
+    * Return both loss value and trained model as a tuple (loss, model)
 
 * **Model Saving Requirements:**
   * **MUST save the trained model** if `model_dir` is provided
@@ -123,6 +130,9 @@ else:
   * Generate unique model filename using timestamp or configuration hash
   * Save model metadata (configuration, performance metrics) if possible
   * Ensure the saved model can be loaded later for inference
+  * **CRITICAL**: The function must return BOTH the loss value and the trained model as a tuple (loss, model)
+  * **REASON**: Both values are needed for analysis and further use
+  * **ACCESS MODEL**: The returned model can be used directly without loading from file
 
 * **Performance Optimization Requirements:**
   * Minimize memory usage and allocations
@@ -135,7 +145,7 @@ else:
   * Use appropriate device placement (CPU/GPU)
   * Optimize model forward/backward passes
   * Minimize Python overhead
-  * For Neural Networks use GPU if available
+  * For Neural Networks **Always use GPU** if available
 
 * **Code Optimization Requirements:**
   * Keep code minimal and focused
@@ -186,6 +196,8 @@ Choose **one** of the following frameworks based on the dataset and requirements
 * **BOUND ALL PARAMETERS** - Ensure parameters are within valid ranges
 * **USE SENSIBLE DEFAULTS** - Provide reasonable defaults for all hyperparameters
 * **IMPLEMENT MATCHING ALGORITHMS** - Implement algorithms that match the configuration space
+* **USE EXACT PARAMETER NAMES** - Extract parameters using exact names from ConfigSpace definition
+* **PREVENT OVERFITTING** - Use appropriate validation, regularization, and early stopping
 * **HANDLE NUMPY TYPES** - Convert numpy.int64, numpy.float64 to native Python types
 * **DYNAMIC DIMENSIONS** - Infer all dimensions from data, never hardcode shapes
 
@@ -203,24 +215,54 @@ Choose **one** of the following frameworks based on the dataset and requirements
 6. **Handle budget parameter** appropriately for the facade type
 7. **Train the model** with the validated parameters
 8. **Save the model** if model_dir is provided
-9. **Return appropriate metric** (negative accuracy for accuracy metrics, raw error for error metrics)
+9. **Return both the loss and trained model** as a tuple (loss, model)
 
 **Do NOT copy specific implementation patterns** - generate code appropriate for the given configuration space and dataset requirements.
 
 ---
 
+### **Example Structure (NO try/except):**
+
+```python
+def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Tuple[float, Any]:
+    # Set random seed for reproducibility
+    
+    # Extract hyperparameters efficiently
+    sample_config = cfg.get('sample_config')
+    
+    # Prepare data efficiently
+    
+    # Initialize model with optimized parameters
+    
+    # Optimized training loop
+
+    # Save model if directory is provided
+    if model_dir:
+        os.makedirs(model_dir, exist_ok=True)
+        model_path = os.path.join(model_dir, f"model_{{seed}}.pth")
+        torch.save(model.state_dict(), model_path)
+    
+    return loss, model
+```
+
+---
+
 ** FINAL REMINDER - CRITICAL REQUIREMENTS:**
 * Valid `import` statements
-* A single `train()` function that returns a float loss value
+* A single `train()` function that returns a **TUPLE** (loss, model)
 * No additional code or explanations
 * Code must be optimized for performance and minimal in size
-* For accuracy metrics, return negative accuracy (e.g. -accuracy)
-* For error metrics, return the raw error value (e.g. mse, rmse)
+* For accuracy metrics, return (negative accuracy, model) as a tuple (e.g. (-accuracy, model))
+* For error metrics, return (raw error value, model) as a tuple (e.g. (mse, model))
 * Ensure consistent sign convention across all metrics
 * **MUST save the trained model** if `model_dir` parameter is provided
+* **CRITICAL**: ALWAYS return tuple (loss, model) - both values are needed
 * **MUST handle multi-algorithm configuration spaces** by implementing appropriate algorithms
+* **MUST use EXACT parameter names** from ConfigSpace definition - never use generic names
+* **MUST implement algorithms** based on parameter prefixes in ConfigSpace
 * **MUST convert budget parameter** to appropriate type and validate range
 * **MUST use sensible defaults** for all hyperparameters with proper type conversion
 * **MUST validate parameter ranges** to ensure they're within acceptable bounds
+* **MUST prevent overfitting** with proper validation and regularization
 * **NO try/except blocks** - let errors propagate so they can be fixed
 * **The train function MUST be naturally robust** for hyperparameter optimization scenarios
