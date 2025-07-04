@@ -7,39 +7,56 @@ PY_EXPERIMENTER:
     table:
       name: AutoMLAgentRuns
       keyfields:
+        dataset_origin:
+          type: VARCHAR(255)
+          values: ['openml']
         dataset_name:
           type: VARCHAR(255)
-          values: ['Iris', 'Wine', 'Breast Cancer', 'Fashion-MNIST', 'Sunspot']
+          values: ['credit-g']
         dataset_type:
           type: VARCHAR(255)
-          values: ['tabular', 'image', 'time_series']
+          values: ['tabular']
         task_type:
           type: VARCHAR(255)
-          values: ['classification', 'regression']
-        model_name:
+          values: ['classification']
+        llm_model:
           type: VARCHAR(255)
-          values: ['gemini-2.0-flash', 'llama-3.3-70b-instruct']
-        seed:
+          values: ['llama-3.3-70b-instruct']
+        dataset_openml_id:
+          type: int
+          values: [31]  # Default to credit-g dataset ID
+        time_budget:
+          type: int
+          values: [3600]
+        metric:
+          type: VARCHAR(255)
+          values: ['accuracy']
+        n_folds:
+          type: int
+          values: [10]
+        fold:
           type: int
           values:
             start: 1
-            stop: 2 # Only one seed to keep experiment size small
+            stop: 10 # Only one seed to keep experiment size small
             step: 1
+        n_gpus:
+          type: int
+          values: [1]
+        n_cpus:
+          type: int
+          values: [16]
+        n_gb_ram:
+          type: int
+          values: [16]
       result_timestamps: True
       resultfields:
-        incumbent_config: LONGTEXT
-        default_train_accuracy: DECIMAL
-        incumbent_train_accuracy: DECIMAL
-        test_train_accuracy: DECIMAL
-        error_message: LONGTEXT
-
+        test_accuracy: FLOAT
+        test_balanced_accuracy: FLOAT
+        test_mcc: FLOAT
+        test_roc_auc: FLOAT
+        test_f1: FLOAT
+        test_precision: FLOAT
+        test_recall: FLOAT
   Custom:
     datapath: sample_data
-
-  CodeCarbon:
-    offline_mode: True # Set to true to avoid connection issues if not configured
-    measure_power_secs: 10
-    tracking_mode: process
-    log_level: warning
-    save_to_file: True
-    output_dir: output/experimenter

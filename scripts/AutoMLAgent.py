@@ -21,7 +21,6 @@ from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
 )
 from smac import Scenario
-from py_experimenter.experimenter import PyExperimenter
 from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
@@ -94,25 +93,6 @@ class AutoMLAgent:
             base_url=base_url,
             api_key=api_key,
         )
-        try:
-            # self.experimenter = PyExperimenter(
-            #     experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
-            #     name="AutoMLAgent",
-            #     database_credentials_file_path=EXPERIMENTER_DATABASE_CREDENTIALS_PATH,
-            #     experiment_dir=self.logger.experiment_dir,
-            #     use_ssh_tunnel=False,
-            #     use_codecarbon=False,
-            # )
-            self.experimenter = None
-        except Exception as e:
-            self.ui_agent.error(f"Error initializing experimenter: {e}")
-            self.experimenter = None
-
-        self.experimenter_row_dict = {
-            "dataset_name": self.dataset_name,
-            "dataset_type": self.dataset_type,
-            "task_type": self.task_type,
-        }
 
         self.smac_facades = {
             "HyperbandFacade": HyperbandFacade,
@@ -192,7 +172,7 @@ class AutoMLAgent:
 
         # Use the train function that was just generated and tested, not the imported one
         # This ensures consistency between the tested function and the one used in SMAC
-        train_fn = self.namespace["train"]
+        self.train_fn = self.namespace["train"]
 
         self.ui_agent.success("AutoML Agent setup complete!")
         self.ui_agent.subheader("Loss Value")
@@ -201,9 +181,7 @@ class AutoMLAgent:
         self.ui_agent.subheader("Starting Optimization Process")
         self.ui_agent.write("Starting Optimization Process")
 
-        self.run_scenario(self.scenario_obj, train_fn, self.dataset, self.config_space_obj)
-        if self.experimenter:
-            self.experimenter.fill_table_with_rows(rows=[self.experimenter_row_dict])
+        self.run_scenario(self.scenario_obj, self.train_fn, self.dataset, self.config_space_obj)
 
         # Return results and last training loss
         return (
@@ -411,12 +389,10 @@ class AutoMLAgent:
         default_cost = smac.validate(self.config_space_obj.get_default_configuration())
         self.ui_agent.subheader("Default Cost")
         self.ui_agent.write(default_cost)
-        self.experimenter_row_dict["default_train_accuracy"] = default_cost
 
         incubment_cost = smac.validate(incumbent)
         self.ui_agent.subheader("Incumbent Cost")
         self.ui_agent.write(incubment_cost)
-        self.experimenter_row_dict["incumbent_train_accuracy"] = incubment_cost
 
         self.logger.log_response(
             f"Incumbent cost: {incubment_cost}",
@@ -434,8 +410,14 @@ class AutoMLAgent:
             f"Default config: {default_cost}",
             {"component": "scenario", "status": "success", "config": default_cost},
         )
-
-        self.test_incumbent(train_fn, incumbent, self.dataset, self.dataset_test, self.config_space_obj)
+        self.incumbent = incumbent
+        self.test_incumbent(
+            self.train_fn,
+            incumbent,
+            self.dataset,
+            self.dataset_test,
+            self.config_space_obj,
+        )
 
     def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
         """Test the incumbent on the test set"""
@@ -483,8 +465,6 @@ class AutoMLAgent:
 
         self.ui_agent.subheader("Metrics")
         self.ui_agent.write(f"Metrics: {metrics}")
-        self.experimenter_row_dict["incumbent_config"] = str(incumbent)
-        self.experimenter_row_dict["test_train_accuracy"] = metrics
 
         if metrics is not None:
             self.logger.log_response(
@@ -504,3 +484,5 @@ class AutoMLAgent:
             f"Incumbent config: {incumbent}",
             {"component": "scenario", "status": "success", "config": incumbent},
         )
+        self.last_loss = loss
+        return loss, metrics
