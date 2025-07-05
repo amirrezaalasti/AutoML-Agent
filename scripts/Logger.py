@@ -2,6 +2,7 @@ import os
 import re
 from datetime import datetime
 from typing import Optional
+import numpy as np
 
 
 class Logger:
@@ -27,7 +28,7 @@ class Logger:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.experiment_dir = os.path.join(
             self.base_log_dir,
-            f"{self.model_name}_{self.dataset_name}_{timestamp}",
+            f"{self.model_name}_{self.dataset_name}_{timestamp}_{np.random.randint(1000000)}",
         )
         self.prompts_file = os.path.join(self.experiment_dir, "prompts.log")
         self.responses_file = os.path.join(self.experiment_dir, "responses.log")

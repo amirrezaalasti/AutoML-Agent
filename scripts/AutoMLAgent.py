@@ -7,6 +7,10 @@ from utils import (
     extract_code_block,
     split_dataset_kfold,
     FACADE_PARAMETER_REQUIREMENTS,
+    evaluate_model_predictions,
+    get_default_metrics,
+    execute_training_function,
+    prepare_training_parameters,
 )
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
@@ -25,7 +29,6 @@ from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
 import numpy as np
-from sklearn.metrics import classification_report, mean_squared_error
 
 
 class AutoMLAgent:
@@ -42,6 +45,8 @@ class AutoMLAgent:
         model_name: str = None,
         api_key: str = None,
         base_url: str = None,
+        n_folds: int = 5,
+        fold: int = 0,
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -53,7 +58,7 @@ class AutoMLAgent:
         :param task_type: Optional task type for logging and display.
         """
         self.dataset = format_dataset(dataset)
-        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=5, fold=0, rng=np.random.RandomState(42))
+        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42))
         self.dataset_type = dataset_type
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
@@ -181,14 +186,15 @@ class AutoMLAgent:
         self.ui_agent.subheader("Starting Optimization Process")
         self.ui_agent.write("Starting Optimization Process")
 
-        self.run_scenario(self.scenario_obj, self.train_fn, self.dataset, self.config_space_obj)
+        loss, metrics = self.run_scenario(self.scenario_obj, self.train_fn, self.dataset, self.config_space_obj)
 
         # Return results and last training loss
         return (
             self.config_code,
             self.scenario_code,
             self.train_function_code,
-            self.last_loss,
+            loss,
+            metrics,
             self.prompts,
             self.logger.experiment_dir,
         )
@@ -411,7 +417,7 @@ class AutoMLAgent:
             {"component": "scenario", "status": "success", "config": default_cost},
         )
         self.incumbent = incumbent
-        self.test_incumbent(
+        return self.test_incumbent(
             self.train_fn,
             incumbent,
             self.dataset,
@@ -420,69 +426,85 @@ class AutoMLAgent:
         )
 
     def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
-        """Test the incumbent on the test set"""
-        # Get the facade name to determine parameter requirements
+        """Test the incumbent configuration on the test set"""
+
+        # Get facade parameters
         facade_name = self.suggested_facade.__name__
         required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
 
-        # Call train function with appropriate parameters
-        if "budget" in required_params:
-            # For multi-fidelity facades, use maximum budget for final evaluation
-            max_budget = getattr(self.scenario_obj, "max_budget", None)
-            # Convert budget to int if it's provided as a float
-            budget_int = int(max_budget) if max_budget is not None else max_budget
-            result = train_fn(
-                cfg=incumbent,
-                dataset=dataset_train,
-                seed=0,
-                budget=budget_int,
-                model_dir=self.logger.experiment_dir,
+        # Prepare training parameters using utility function
+        training_params = prepare_training_parameters(
+            facade_name=facade_name,
+            required_params=required_params,
+            scenario_obj=self.scenario_obj,
+            incumbent=incumbent,
+            dataset=dataset_train,
+            seed=0,
+            model_dir=self.logger.experiment_dir,
+        )
+
+        try:
+            # Execute training function using utility
+            loss, model = execute_training_function(train_fn, **training_params)
+
+            # Evaluate model on test set using utility function
+            evaluation_result = evaluate_model_predictions(
+                model=model,
+                X_test=dataset_test["X"],
+                y_test=dataset_test["y"],
+                task_type=self.task_type,
             )
-        else:
-            result = train_fn(
-                cfg=incumbent,
-                dataset=dataset_train,
-                seed=0,
-                model_dir=self.logger.experiment_dir,
+
+            # Handle evaluation results
+            if evaluation_result["success"]:
+                metrics = evaluation_result["metrics"]
+                self._log_evaluation_success(metrics, incumbent)
+            else:
+                metrics = get_default_metrics(self.task_type)
+                metrics["error"] = evaluation_result["error"]
+                self._log_evaluation_error(evaluation_result["error"], model)
+
+        except Exception as e:
+            # Handle training function execution errors
+            loss = float("inf")
+            metrics = get_default_metrics(self.task_type)
+            metrics["error"] = f"Training function execution failed: {str(e)}"
+            self.logger.log_error(
+                f"Training function execution failed: {str(e)}",
+                error_type="TRAINING_ERROR",
             )
 
-        # Handle both tuple and single value returns
-        if isinstance(result, tuple):
-            loss, model = result
-        else:
-            loss = result
-            model = None
-
-        # TODO
-        if model is not None:
-            predictions = model.predict(dataset_test["X"])
-            if self.task_type == "classification":
-                metrics = classification_report(dataset_test["y"], predictions)
-            elif self.task_type == "regression":
-                metrics = mean_squared_error(dataset_test["y"], predictions)
-        else:
-            metrics = None  # Cannot compute accuracy without model
-
-        self.ui_agent.subheader("Metrics")
+        # Display results
+        self.ui_agent.subheader("Test Metrics")
         self.ui_agent.write(f"Metrics: {metrics}")
 
-        if metrics is not None:
-            self.logger.log_response(
-                f"Metrics: {metrics}",
-                {
-                    "component": "scenario",
-                    "status": "success",
-                    "metrics": f"{metrics}",
-                },
-            )
-        else:
-            self.logger.log_response(
-                "Test accuracy: Unable to compute (no model returned)",
-                {"component": "scenario", "status": "warning", "accuracy": None},
-            )
-        self.logger.log_response(
-            f"Incumbent config: {incumbent}",
-            {"component": "scenario", "status": "success", "config": incumbent},
-        )
+        # Store results
         self.last_loss = loss
+        self.last_metrics = metrics
+
         return loss, metrics
+
+    def _log_evaluation_success(self, metrics: dict, incumbent: Any):
+        """Log successful model evaluation"""
+        self.logger.log_response(
+            f"Model evaluation successful. Metrics: {metrics}",
+            {
+                "component": "evaluation",
+                "status": "success",
+                "metrics": metrics,
+                "config": str(incumbent),
+            },
+        )
+
+    def _log_evaluation_error(self, error_msg: str, model: Any):
+        """Log model evaluation errors"""
+        model_type = type(model).__name__ if model is not None else "None"
+        self.logger.log_response(
+            f"Model evaluation failed: {error_msg}",
+            {
+                "component": "evaluation",
+                "status": "error",
+                "error": error_msg,
+                "model_type": model_type,
+            },
+        )
