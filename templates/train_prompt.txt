@@ -109,6 +109,13 @@ else:
   * Use appropriate loss functions
   * Apply proper regularization
   * Handle model-specific requirements
+  * **CRITICAL**: The returned model MUST have a `predict(X)` method for evaluation
+  * **Model Wrapping**: If using PyTorch, TensorFlow, or other frameworks without built-in predict methods, 
+    create a wrapper class that provides a standard `predict(X)` method
+  * **Interface Consistency**: Regardless of the underlying framework, ensure the returned model 
+    has a predict method that accepts feature matrix X and returns predictions
+  * **Framework Flexibility**: You can use any ML framework (PyTorch, TensorFlow, scikit-learn, etc.) 
+    but must provide a consistent interface
 
 * **Training Requirements:**
   * Implement proper training loop
@@ -247,6 +254,42 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 
 ---
 
+### **Model Wrapping Example for PyTorch:**
+
+```python
+class ModelWrapper:
+    def __init__(self, model, device='cpu'):
+        self.model = model
+        self.device = device
+        
+    def predict(self, X):
+        self.model.eval()
+        with torch.no_grad():
+            # Handle different input types (DataFrame, numpy array, tensor)
+            if hasattr(X, 'values'):  # pandas DataFrame/Series
+                X = torch.tensor(X.values, dtype=torch.float32).to(self.device)
+            elif isinstance(X, np.ndarray):
+                X = torch.tensor(X, dtype=torch.float32).to(self.device)
+            elif not isinstance(X, torch.Tensor):
+                X = torch.tensor(X, dtype=torch.float32).to(self.device)
+            else:
+                X = X.to(self.device)
+                
+            outputs = self.model(X)
+            # Handle different output formats (classification vs regression)
+            if outputs.dim() > 1 and outputs.shape[1] > 1:
+                predictions = torch.argmax(outputs, dim=1)  # Classification
+            else:
+                predictions = outputs.squeeze()  # Regression
+            return predictions.cpu().numpy()
+
+# Usage in train function:
+# wrapped_model = ModelWrapper(pytorch_model, device)
+# return loss, wrapped_model
+```
+
+---
+
 ** FINAL REMINDER - CRITICAL REQUIREMENTS:**
 * Valid `import` statements
 * A single `train()` function that returns a **TUPLE** (loss, model)
@@ -266,3 +309,7 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 * **MUST prevent overfitting** with proper validation and regularization
 * **NO try/except blocks** - let errors propagate so they can be fixed
 * **The train function MUST be naturally robust** for hyperparameter optimization scenarios
+* **CRITICAL**: **The returned model MUST have a working `predict(X)` method** for test evaluation
+* **Model Wrapping**: If using PyTorch/TensorFlow models, wrap them in a class with a predict method
+* **Framework Freedom**: You can use any ML framework but must provide consistent predict interface
+* **Wrapper Examples**: For PyTorch models, create a wrapper class that handles forward pass and returns predictions

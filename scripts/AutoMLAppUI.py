@@ -264,6 +264,7 @@ class AutoMLAppUI:
                     scenario_code,
                     train_code,
                     loss,
+                    metrics,
                     prompts,
                     logger_dir,
                 ) = agent.generate_components()

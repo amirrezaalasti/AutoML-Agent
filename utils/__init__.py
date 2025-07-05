@@ -44,6 +44,20 @@ from .file_operations import (
     convert_dataset_to_csv,
 )
 
+from .model_evaluation import (
+    evaluate_model_predictions,
+    calculate_classification_metrics,
+    calculate_regression_metrics,
+    safe_metric_calculation,
+    get_default_metrics,
+)
+
+from .training_utils import (
+    execute_training_function,
+    validate_budget_parameter,
+    prepare_training_parameters,
+)
+
 # Version
 __version__ = "1.0.0"
 
@@ -81,4 +95,14 @@ __all__ = [
     "extract_code_block",
     "save_code_to_file",
     "convert_dataset_to_csv",
+    # Model Evaluation
+    "evaluate_model_predictions",
+    "calculate_classification_metrics",
+    "calculate_regression_metrics",
+    "safe_metric_calculation",
+    "get_default_metrics",
+    # Training Utilities
+    "execute_training_function",
+    "validate_budget_parameter",
+    "prepare_training_parameters",
 ]

@@ -1,14 +1,15 @@
 import sys
 import os
 
+# Add the parent directory to the path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from py_experimenter.result_processor import ResultProcessor
 from py_experimenter.experimenter import PyExperimenter
 from scripts.AutoMLAgent import AutoMLAgent
 from sklearn.datasets import fetch_openml
 from config.api_keys import LOCAL_LLAMA_API_KEY
 from config.urls import BASE_URL
+from py_experimenter.result_processor import ResultProcessor
 from typing import Any
 
 
@@ -73,6 +74,8 @@ class AutoMLAgentExperimenter:
         llm_model = parameters["llm_model"]
         dataset_openml_id = parameters["dataset_openml_id"]
         ui_agent = CLIUI()
+        n_folds = parameters["n_folds"]
+        fold = parameters["fold"]
         X, y = fetch_openml(data_id=dataset_openml_id, return_X_y=True)
         dataset = {"X": X, "y": y}
         agent = AutoMLAgent(
@@ -84,20 +87,21 @@ class AutoMLAgentExperimenter:
             dataset_name=dataset_name,
             api_key=LOCAL_LLAMA_API_KEY,
             base_url=BASE_URL,
+            n_folds=n_folds,
+            fold=fold,
         )
 
-        (
-            config_code,
-            scenario_code,
-            train_function_code,
-            last_loss,
-            prompts,
-            experiment_dir,
-        ) = agent.generate_components()
+        config_code, scenario_code, train_function_code, last_loss, metrics, prompts, experiment_dir = agent.generate_components()
 
         result_processor.process_results(
             {
-                "test_accuracy": last_loss,
+                "test_accuracy": metrics["accuracy"],
+                "test_f1": metrics["f1"],
+                "test_precision": metrics["precision"],
+                "test_recall": metrics["recall"],
+                "test_roc_auc": metrics["roc_auc"],
+                "test_balanced_accuracy": metrics["balanced_accuracy"],
+                "log_dir": experiment_dir,
             }
         )
 

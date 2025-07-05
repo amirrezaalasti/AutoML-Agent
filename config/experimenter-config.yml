@@ -5,7 +5,7 @@ PY_EXPERIMENTER:
     provider: mysql
     database: AgentSmac
     table:
-      name: AutoMLAgentRuns
+      name: AgentSmacEvaluation
       keyfields:
         dataset_origin:
           type: VARCHAR(255)
@@ -58,5 +58,6 @@ PY_EXPERIMENTER:
         test_f1: FLOAT
         test_precision: FLOAT
         test_recall: FLOAT
+        log_dir: VARCHAR(255)
   Custom:
     datapath: sample_data

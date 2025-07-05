@@ -1,14 +1,24 @@
+# Machine Learning Planner Prompt
+
 You are an expert machine learning planner. Your task is to analyze the given dataset and task, then generate three precise step-by-step implementation guides.
 
-Dataset Information:
-- Name: {dataset_name}
-- Type: {dataset_type}
-- Description: {dataset_description}
-- Task: {task_type}
-- SMAC Documentation: {smac_documentation}
+---
 
-OpenML Meta-Learning Insights:
-{config_space_suggested_parameters}
+## Dataset Information
+
+- **Name:** `{dataset_name}`
+- **Type:** `{dataset_type}`
+- **Description:** `{dataset_description}`
+- **Task:** `{task_type}`
+- **SMAC Documentation:** `{smac_documentation}`
+- **OpenML Meta-Learning Insights:**
+  ```
+  {config_space_suggested_parameters}
+  ```
+
+---
+
+## Output Format
 
 Generate exactly three implementation guides and return them in the following JSON format:
 
@@ -21,109 +31,156 @@ Generate exactly three implementation guides and return them in the following JS
 }}
 ```
 
-**Configuration Plan Requirements:**
-Provide 6-8 numbered steps that detail how to create a configuration space for hyperparameter optimization. Include specific parameter names, types, and ranges appropriate for the {task_type} and {dataset_type}. Each step should be a direct implementation action.
+---
 
-Guidelines:
-- **IMPORTANT**: When OpenML meta-learning insights are available, use them to inform hyperparameter ranges and model selection based on similar datasets
-- Use appropriate parameter types (Categorical, Integer, Float) based on the nature of each hyperparameter
-- Specify realistic ranges considering dataset characteristics, computational constraints, and optimization objectives
-- Include algorithm-specific hyperparameters relevant to the chosen models
-- Consider conditional parameters when they enhance the search space meaningfully
-- Adapt parameter ranges to dataset size (smaller ranges for large datasets, broader exploration for smaller datasets)
-- Balance exploration breadth with computational feasibility
-- You can suggest multiple complementary models with their respective hyperparameters when beneficial
+## Configuration Plan Requirements
 
-**Scenario Plan Requirements:**
-Provide 6-8 numbered steps that detail how to set up a SMAC scenario for optimization. Include specific values for trial limits, time limits, worker configuration, and facade selection based on the {dataset_description}. Each step should specify exact settings to use.
+- Provide **6-8 numbered steps** that detail how to create a configuration space for hyperparameter optimization.
+- Include **specific parameter names, types, and ranges** appropriate for `{task_type}` and `{dataset_type}`.
+- Each step should be a **direct implementation action**.
 
-**CRITICAL**: The scenario MUST be compatible with the selected facade:
-- **For BlackBoxFacade/HyperparameterOptimizationFacade**: Do NOT set `min_budget` or `max_budget` parameters
-- **For HyperbandFacade/MultiFidelityFacade**: MUST set both `min_budget` and `max_budget` parameters
-- **Budget values should represent fidelity levels** (e.g., min_budget=1, max_budget=100 for epochs)
+### Guidelines
 
-Guidelines:
-- Set appropriate n_trials based on dataset complexity, search space size, and available computational budget
-- Define walltime_limit considering expected runtime per evaluation and total optimization time
-- Configure output directory and logging based on experiment requirements
-- Consider deterministic settings based on reproducibility needs
-- Specify crash_cost and cutoff_time based on evaluation characteristics and failure handling needs
-- **Set budget parameters appropriately for the selected facade**
-- Adapt all parameters to the specific dataset size, complexity, and computational constraints
+- **IMPORTANT:** When OpenML meta-learning insights are available, use them to inform hyperparameter ranges and model selection based on similar datasets.
+- **CRITICAL:** For complex datasets where multiple model types could be effective, propose a configuration space that supports the most appropriate model architectures based on dataset characteristics. Consider factors like dataset size, feature types, target distribution, and computational constraints. Use a top-level categorical hyperparameter to select the model, with conditional hyperparameters for each one.
+- **Model Selection Guidance:**
+  - **Small datasets (< 1000 samples):** Consider SVM, k-NN, Naive Bayes, or simple ensemble methods
+  - **Medium datasets (1000-100k samples):** Consider XGBoost, LightGBM, Random Forest, or Neural Networks
+  - **Large datasets (> 100k samples):** Consider LightGBM, XGBoost, Neural Networks, or Linear models
+  - **High-dimensional data:** Consider Linear models, SVM, or feature selection with ensemble methods
+  - **Mixed/categorical features:** Consider tree-based models (XGBoost, LightGBM, Random Forest)
+  - **Continuous features:** Consider Neural Networks, SVM, or ensemble methods
+  - **Imbalanced datasets:** Consider models with good class weight handling (XGBoost, LightGBM, SVM)
+- Use appropriate parameter types (`Categorical`, `Integer`, `Float`) based on the nature of each hyperparameter.
+- Specify realistic ranges considering dataset characteristics, computational constraints, and optimization objectives.
+- Include algorithm-specific hyperparameters relevant to the chosen models.
+- Adapt parameter ranges to dataset size (smaller ranges for large datasets, broader exploration for smaller datasets).
+- Balance exploration breadth with computational feasibility.
 
-**Train Function Plan Requirements:**
-Provide 10-12 numbered steps that detail how to implement the training function. Include data handling, model initialization, training process, evaluation, and model saving. Each step should be a concrete implementation action that can be directly executed.
+---
 
-**CRITICAL**: The train function MUST be compatible with the selected facade:
-- **Function signature MUST be**: `def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> float:`
-- **Always include the `budget` parameter** even if the facade doesn't use it
-- **For BlackBoxFacade/HyperparameterOptimizationFacade**: `budget` will be `None` - ignore this parameter
-- **For HyperbandFacade/MultiFidelityFacade**: `budget` contains the fidelity budget (e.g., number of epochs, training steps)
-- **Use conditional logic** to handle the budget parameter appropriately
+## Scenario Plan Requirements
 
-Guidelines:
-- Handle data loading and preprocessing
-- Implement proper train/validation/test splits
-- Include cross-validation when appropriate
-- Implement early stopping mechanisms
-- **Handle budget parameter for multi-fidelity optimization** (e.g., limit training epochs based on budget)
-- Return appropriate cost/score for optimization, and the trained model
-- Handle different model types if multiple models suggested
+- Provide **6-8 numbered steps** that detail how to set up a SMAC scenario for optimization.
+- Include **specific values** for trial limits, time limits, worker configuration, and facade selection based on the `{dataset_description}`.
+- Each step should specify **exact settings to use**.
 
-**Scenario Facade Selection:**
-Choose the most appropriate facade based on the specific task characteristics, dataset properties, and computational constraints. Consider the following factors:
+### Guidelines
 
-**Available Facades and Their Strengths:**
+- **CRITICAL:** The scenario MUST be compatible with the selected facade:
+  - For `BlackBoxFacade`/`HyperparameterOptimizationFacade`: **Do NOT** set `min_budget` or `max_budget` parameters.
+  - For `HyperbandFacade`/`MultiFidelityFacade`: **MUST** set both `min_budget` and `max_budget` parameters.
+- Budget values should represent fidelity levels. For example:
+  - Neural Network: `min_budget=10`, `max_budget=100` (training epochs)
+  - Tree Ensemble: `min_budget=20`, `max_budget=200` (n_estimators)
+  - Data Subsets: `min_budget=0.1`, `max_budget=1.0` (fraction of training data)
+- Set appropriate `n_trials` based on dataset complexity, search space size, and available computational budget.
+- Define `walltime_limit` considering expected runtime per evaluation and total optimization time.
+- Configure output directory and logging based on experiment requirements.
+- Consider deterministic settings based on reproducibility needs.
+- Specify `crash_cost` and `cutoff_time` based on evaluation characteristics and failure handling needs.
+- Set budget parameters appropriately for the selected facade, using a relevant fidelity dimension.
+- Adapt all parameters to the specific dataset size, complexity, and computational constraints.
 
-**BlackBoxFacade**: 
-- Strengths: Robust general-purpose optimization using Gaussian Processes, handles unknown function properties well
-- Consider when: General hyperparameter tuning, moderate search spaces, no specific fidelity dimensions available
-- Avoid when: Very large search spaces (use Hyperband), natural fidelity exists (use MultiFidelity), or simple baseline needed (use Random)
-- Characteristics: Model-based optimization with acquisition functions
+---
 
-**HyperbandFacade**: 
-- Strengths: Extremely efficient for large search spaces and expensive evaluations through early stopping
-- Consider when: Large hyperparameter spaces, expensive model training, iterative algorithms with natural stopping points
-- Avoid when: Small search spaces, very fast evaluations, or no natural early stopping mechanism
-- Characteristics: Multi-fidelity optimization using successive halving and bandit-based resource allocation
+## Train Function Plan Requirements
 
-**MultiFidelityFacade**: 
-- Strengths: Leverages multiple fidelity levels (epochs, data subsets) for intelligent budget allocation
-- Consider when: Clear fidelity dimensions exist (training epochs, dataset size, resolution levels)
-- Avoid when: No natural fidelity dimensions, single-shot algorithms, or unclear fidelity-performance relationship
-- Characteristics: Multi-fidelity optimization with sophisticated budget management
+- Provide **10-12 numbered steps** that detail how to implement the training function.
+- Include data handling, model initialization, training process, evaluation, and model saving.
+- Each step should be a **concrete implementation action** that can be directly executed.
 
-**HyperparameterOptimizationFacade**: 
-- Strengths: Specialized for classical ML algorithms with well-studied hyperparameter behaviors
-- Consider when: Traditional ML models (SVM, Random Forest, Gradient Boosting), well-understood parameter spaces
-- Avoid when: Deep learning models, novel algorithms, or when you need multi-fidelity optimization
-- Characteristics: Optimized specifically for conventional hyperparameter optimization patterns
+### Guidelines
 
-**Decision Factors to Consider:**
-- Dataset size and complexity
-- Available computational budget
-- Nature of the algorithm (iterative vs. non-iterative)
-- Search space characteristics (continuous vs. discrete)
-- Evaluation cost and time constraints
-- Presence of natural fidelity dimensions
-- Prior knowledge about the optimization landscape
+- **CRITICAL:** The train function MUST be compatible with the selected facade:
+  - Function signature MUST be:
+    ```python
+    def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> float:
+    ```
+  - Always include the `budget` parameter even if the facade doesn't use it.
+  - For `BlackBoxFacade`/`HyperparameterOptimizationFacade`: `budget` will be `None` - ignore this parameter.
+  - For `HyperbandFacade`/`MultiFidelityFacade`: `budget` contains the fidelity budget.
+  - Use conditional logic to handle the budget parameter appropriately. For example:
+    ```python
+    if model_type == 'neural_network': epochs = int(budget)
+    if model_type == 'random_forest': n_estimators = int(budget)
+    ```
+- Handle data loading and preprocessing.
+- Implement proper train/validation/test splits.
+- Include cross-validation when appropriate.
+- Implement early stopping mechanisms where applicable (e.g., for NNs or Gradient Boosting).
+- Handle the budget parameter for multi-fidelity optimization by mapping it to the correct model parameter (e.g., epochs, n_estimators, etc.).
+- Return appropriate cost/score for optimization, and the trained model.
+- If multiple models are suggested in the config space, implement the logic to select and train the chosen model based on the configuration.
 
-**Example Considerations:**
-- Large datasets with expensive evaluations might benefit from multi-fidelity approaches
-- Small datasets with quick evaluations might work well with thorough exploration
-- Neural networks often have natural fidelity (epochs) for multi-fidelity optimization
-- Tree-based models might benefit from standard hyperparameter optimization
-- Complex conditional parameters might require specialized algorithm configuration
+---
 
-Choose the facade that best matches the specific characteristics of your dataset and task, not just the algorithm type.
+## Scenario Facade Selection
 
-**General Requirements:**
-- Each step must be specific and actionable
-- Include concrete values and parameters where appropriate
-- Steps should build sequentially toward a complete implementation
-- Focus on implementation details, not theoretical explanations
-- Adapt all recommendations to the specific {task_type} and {dataset_type}
-- Return ONLY the JSON object, no other text or explanations
-- Do not include error handling or exception suggestions in the steps
-- Consider suggesting multiple complementary models when beneficial
-- Ensure all code suggestions are directly executable
+Choose the most appropriate facade using this **decision tree approach**:
+
+### Step 1: Identify Available Fidelity Dimensions
+
+**Does your model have a natural fidelity dimension?**
+- **Neural Networks:** Training epochs, batch size, network depth
+- **Tree Ensembles:** Number of estimators, tree depth
+- **Iterative Algorithms:** Number of iterations, convergence tolerance
+- **Any Model:** Fraction of training data used
+
+### Step 2: Evaluate Training Cost and Search Space
+
+**Training Cost Assessment:**
+- **Fast (< 10 seconds per evaluation):** Any facade works
+- **Medium (10 seconds - 5 minutes):** Prefer multi-fidelity approaches
+- **Slow (> 5 minutes per evaluation):** Strongly prefer multi-fidelity approaches
+
+**Search Space Size:**
+- **Small (< 20 hyperparameters):** Any facade works
+- **Medium (20-50 hyperparameters):** Prefer Hyperband or MultiFidelity
+- **Large (> 50 hyperparameters):** Strongly prefer Hyperband
+
+### Step 3: Facade Selection Decision Tree
+
+**IF** clear fidelity dimension exists **AND** training is expensive:
+→ **MultiFidelityFacade**
+
+**ELSE IF** large search space **AND** iterative algorithm:
+→ **HyperbandFacade**
+
+**ELSE IF** traditional ML models (SVM, Random Forest, etc.) **AND** well-understood hyperparameters:
+→ **HyperparameterOptimizationFacade**
+
+**ELSE:**
+→ **BlackBoxFacade**
+
+### Step 4: Facade-Specific Requirements
+
+- **MultiFidelityFacade/HyperbandFacade:** MUST set `min_budget` and `max_budget`
+- **BlackBoxFacade/HyperparameterOptimizationFacade:** MUST NOT set budget parameters
+
+### Common Fidelity Mappings
+
+- **Neural Networks:** `budget` = training epochs (min: 5-10, max: 100-200)
+- **XGBoost/LightGBM:** `budget` = n_estimators (min: 10-20, max: 200-500)
+- **Random Forest:** `budget` = n_estimators (min: 10-20, max: 200-500)
+- **SVM:** `budget` = data fraction (min: 0.1, max: 1.0)
+- **Any Model:** `budget` = data fraction (min: 0.1, max: 1.0)
+
+### Computational Budget Guidelines
+
+- **Small datasets (< 10k samples):** 50-100 trials, 1-2 hours
+- **Medium datasets (10k-100k samples):** 100-200 trials, 2-4 hours
+- **Large datasets (> 100k samples):** 200-500 trials, 4-8 hours
+
+---
+
+## General Requirements
+
+- Each step must be specific and actionable.
+- Include concrete values and parameters where appropriate.
+- Steps should build sequentially toward a complete implementation.
+- Focus on implementation details, not theoretical explanations.
+- Adapt all recommendations to the specific `{task_type}` and `{dataset_type}`.
+- Return **ONLY** the JSON object, no other text or explanations.
+- Do **not** include error handling or exception suggestions in the steps.
+- Ensure all code suggestions are directly executable.

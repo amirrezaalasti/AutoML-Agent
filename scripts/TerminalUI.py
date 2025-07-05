@@ -288,6 +288,7 @@ class TerminalUI:
             scenario_code,
             train_function_code,
             last_loss,
+            metrics,
             prompts,
             experiment_dir,
         ) = agent.generate_components()
@@ -295,14 +296,3 @@ class TerminalUI:
         print("\n--- AutoML Agent finished ---")
         print(f"Final loss: {last_loss}")
         print(f"Results saved to: {experiment_dir}")
-
-        # Ask user if they want to run experiments with PyExperimenter
-        run_experimenter = self._get_choice("Do you want to run experiments with PyExperimenter?", ["Yes", "No"])
-
-        if run_experimenter == "Yes":
-            print("\n--- Running PyExperimenter ---")
-            try:
-                agent.run_experimenter()
-                print("PyExperimenter completed successfully!")
-            except Exception as e:
-                print(f"Error running PyExperimenter: {e}")
