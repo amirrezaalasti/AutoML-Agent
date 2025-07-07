@@ -19,3 +19,5 @@ collected_docs/
 .cursorignore
 .vscode
 data
+build
+*.log
