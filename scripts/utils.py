@@ -17,6 +17,7 @@ from sklearn.preprocessing import LabelEncoder
 import math
 from numpy.random import RandomState
 import openml
+import os
 
 # Constants
 DEFAULT_TEST_SIZE = 0.2
@@ -728,6 +729,47 @@ def load_dataset(dataset_origin:str, dataset_id: str | int) -> tuple[pd.DataFram
         raise ValueError(f"Unsupported dataset origin: {dataset_origin}")
 
     return X, y
+
+def load_image_dataset(dataset_origin:str, dataset_id: str | int, overwrite:bool) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Load image dataset from different origins. Returns a tuple of (X, y) where X is a pandas DataFrame and y is a pandas Series.
+    """
+    if dataset_origin == "openml":
+        path = get_imagedata_path(dataset_origin, dataset_id)
+        if os.path.exists(path) and overwrite:
+            dataset = openml.datasets.get_dataset(dataset_id)
+            X_openml, y, categorical_indicator, attribute_names = dataset.get_data(target=dataset.default_target_attribute)
+            X_openml = pd.DataFrame(X_openml, columns=pd.Index(attribute_names))
+            X_openml = X_openml.values.reshape(-1, 3, 32, 32)
+            X_openml = np.transpose(X_openml, (0, 2, 3, 1))
+
+            X = []
+            # Convert to a list of jgps
+            from PIL import Image
+            images = [Image.fromarray(image) for image in X_openml]
+            # Save jgps to folder
+            for i, image in enumerate(images):
+                image.save(f"{path}/{str(i)}.jpg")
+                X.append(f"{path}/{str(i)}.jpg")
+            X = pd.DataFrame(X, columns=pd.Index(["image_path"]))
+            y = pd.DataFrame({"target": y})
+            y = y.astype({"target": "int64"})   
+            X.to_csv(f"{path}/X.csv", index=False)
+            y.to_csv(f"{path}/y.csv", index=False)
+        else:
+            X = pd.read_csv(f"{path}/X.csv")
+            y = pd.read_csv(f"{path}/y.csv")
+    else:
+        raise ValueError(f"Unsupported dataset origin: {dataset_origin}")
+
+    return X, y
+
+def get_imagedata_path(dataset_origin:str, dataset_id: str | int) -> str:
+    """
+    Get the path to the dataset.
+    """
+    return f"data/images/{dataset_origin}/{dataset_id}"
+    
 
 # Alias for backward compatibility
 save_code = save_code_to_file
