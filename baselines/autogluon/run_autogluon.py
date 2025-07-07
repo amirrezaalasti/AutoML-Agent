@@ -2,8 +2,11 @@ from py_experimenter.result_processor import ResultProcessor
 from numpy.random import RandomState
 from abc import ABC, abstractmethod
 from autogluon.tabular import TabularPredictor
+from autogluon.multimodal import MultiModalPredictor
 from pathlib import Path
-from scripts.utils import load_dataset, split_dataset_kfold
+
+from transformers.image_utils import load_image
+from scripts.utils import load_dataset, split_dataset_kfold, load_image_dataset
 from py_experimenter.experimenter import PyExperimenter
 import pandas as pd
 
@@ -53,13 +56,13 @@ class AutoGluonWrapper:
         train_data = pd.concat([X_train, y_train], axis=1)
         test_data = pd.concat([X_test, y_test], axis=1)
 
-        predictor.fit(
-            train_data=train_data,
-            presets="best_quality",
-            num_gpus=self.n_gpus,
-            num_cpus=self.n_cpus,
-            time_limit=self.time_budget,
-        )
+        if isinstance(predictor, TabularPredictor):
+            predictor = predictor.fit(train_data=train_data, presets="best_quality", num_gpus=self.n_gpus, num_cpus=self.n_cpus, time_limit=self.time_budget)
+        elif isinstance(predictor, MultiModalPredictor):    
+            predictor.set_num_gpus(self.n_gpus)
+            predictor = predictor.fit(train_data=train_data, presets="best_quality", time_limit=self.time_budget)
+        else:
+            raise ValueError(f"Unsupported predictor type: {type(predictor)}")
 
         results = predictor.evaluate(test_data)
         return results
@@ -68,18 +71,38 @@ class AutoGluonWrapper:
         results = {f"test_{key}": float(value) for key, value in results.items()}
         self.result_processor.process_results(results)
 
-    def get_predictor(self):
+    def get_predictor(self) -> TabularPredictor | MultiModalPredictor:
         if self.dataset_type == "tabular":
             return TabularPredictor(
                 label="target", log_file_path=str(self.log_path / "autogluon.log")
+            )
+
+        elif self.dataset_type == "image":
+            return MultiModalPredictor(
+                label="target",
+                path=str(
+                    self.log_path
+                    / "autogluon"
+                    / "multimodal"
+                    / "image"
+                    / self.dataset_origin
+                    / self.dataset_name
+                    / str(self.fold)
+                )
             )
         else:
             raise ValueError(f"Dataset type {self.dataset_type} not supported")
 
     def create_dataset(self):
-        X, y = load_dataset(
-            dataset_origin=self.dataset_origin, dataset_id=self.dataset_name
-        )
+        if self.dataset_type == "tabular":
+            X, y = load_dataset(
+                dataset_origin=self.dataset_origin, dataset_id=self.dataset_name, 
+            )
+        elif self.dataset_type == "image":
+            X, y = load_image_dataset(
+                dataset_origin=self.dataset_origin, dataset_id=self.dataset_name, overwrite=True
+            )
+
         X_train, y_train, X_test, y_test = split_dataset_kfold(
             X=X, y=y, n_folds=self.n_folds, fold=self.fold, rng=self.rng
         )
@@ -122,6 +145,6 @@ if __name__ == "__main__":
         use_codecarbon=False,
     )
     fill_table(experimenter)
-    # experimenter.execute(
-    #     experiment_function=run_ml, random_order=True, max_experiments=1
-    # )
+    #experimenter.execute(
+    #    experiment_function=run_ml, random_order=True, max_experiments=1
+    #)
