@@ -20,3 +20,5 @@ jsonref
 py-experimenter
 imblearn
 xgboost
+catboost
+lightgbm

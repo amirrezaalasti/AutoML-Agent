@@ -16,8 +16,9 @@ generated_codes/
 AutogluonModels/*
 AgentSmac.egg-info
 collected_docs/
-.cursorignore
-.vscode
 data
+workspaces
+.vscode
+.cursorignore
 build
 *.log
