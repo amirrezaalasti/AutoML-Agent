@@ -8,6 +8,8 @@ operations used throughout the AutoML Agent system.
 from typing import Any, Dict, Tuple, Union
 import numpy as np
 import pandas as pd
+import openml
+import os
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import LabelEncoder
 from numpy.random import RandomState
@@ -62,7 +64,10 @@ def validate_dataset_type(dataset_type: str) -> None:
     from .constants import SUPPORTED_DATASET_TYPES
 
     if dataset_type not in SUPPORTED_DATASET_TYPES:
-        raise ValidationError(f"Unsupported dataset type: {dataset_type}. " f"Supported types: {SUPPORTED_DATASET_TYPES}")
+        raise ValidationError(
+            f"Unsupported dataset type: {dataset_type}. "
+            f"Supported types: {SUPPORTED_DATASET_TYPES}"
+        )
 
 
 def get_dataset_info(dataset: Dict[str, Any]) -> DatasetInfo:
@@ -86,7 +91,9 @@ def get_dataset_info(dataset: Dict[str, Any]) -> DatasetInfo:
         feature_names = list(X.columns)
         target_name = y.name if hasattr(y, "name") else "target"
     else:
-        feature_names = [f"feature_{i}" for i in range(X.shape[1])] if X.ndim > 1 else ["feature_0"]
+        feature_names = (
+            [f"feature_{i}" for i in range(X.shape[1])] if X.ndim > 1 else ["feature_0"]
+        )
         target_name = "target"
 
     return DatasetInfo(
@@ -137,7 +144,9 @@ def format_dataset(dataset: Any) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
         # 1. One-hot encode categorical features in X
         categorical_cols = X.select_dtypes(include=["object", "category"]).columns
         if not categorical_cols.empty:
-            X = pd.get_dummies(X, columns=categorical_cols, drop_first=True, dtype=float)
+            X = pd.get_dummies(
+                X, columns=categorical_cols, drop_first=True, dtype=float
+            )
 
         # 2. Label encode the target variable y if it's a non-numeric type (for classification)
         if pd.api.types.is_object_dtype(y) or pd.api.types.is_categorical_dtype(y):

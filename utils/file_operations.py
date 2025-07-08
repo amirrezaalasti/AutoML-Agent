@@ -5,6 +5,9 @@ This module provides functions for file operations including code extraction,
 file saving, and dataset conversion to CSV format.
 """
 
+import openml
+import os
+import numpy as np
 import re
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
@@ -30,7 +33,9 @@ def extract_code_block(code: str) -> str:
     return match.group(1).strip() if match else code
 
 
-def save_code_to_file(code: str, filename: str, directory: Optional[str] = None) -> Path:
+def save_code_to_file(
+    code: str, filename: str, directory: Optional[str] = None
+) -> Path:
     """
     Save generated code to file.
 
@@ -63,7 +68,9 @@ def save_code_to_file(code: str, filename: str, directory: Optional[str] = None)
         raise OSError(f"Failed to save code to {file_path}: {e}")
 
 
-def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = None) -> Tuple[Path, Path]:
+def convert_dataset_to_csv(
+    dataset: Dict[str, Any], output_dir: Optional[str] = None
+) -> Tuple[Path, Path]:
     """
     Convert dataset to CSV files.
 
@@ -89,7 +96,9 @@ def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = 
         target_path = output_path / "target.csv"
 
         pd.DataFrame(X).to_csv(features_path, index=False)
-        pd.Series(y).to_csv(target_path, index=False, header=True)  # Ensure header for series
+        pd.Series(y).to_csv(
+            target_path, index=False, header=True
+        )  # Ensure header for series
 
         return features_path, target_path
 
@@ -97,3 +106,80 @@ def convert_dataset_to_csv(dataset: Dict[str, Any], output_dir: Optional[str] = 
         if isinstance(e, ValidationError):
             raise
         raise OSError(f"Failed to convert dataset to CSV: {e}")
+
+
+def load_dataset(
+    dataset_origin: str, dataset_id: str | int
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Load dataset from different origins. Returns a tuple of (X, y) where X is a pandas DataFrame and y is a pandas Series.
+
+    Args:
+        dataset_origin: Origin of the dataset (e.g. "openml", "kaggle", "csv")
+        dataset_id: ID of the dataset
+
+    Returns:
+        Tuple of (X, y) where X is a pandas DataFrame and y is a pandas Series.
+    """
+    if dataset_origin == "openml":
+        dataset = openml.datasets.get_dataset(dataset_id)
+        X, y, categorical_indicator, attribute_names = dataset.get_data(
+            target=dataset.default_target_attribute
+        )
+        X = pd.DataFrame(X, columns=pd.Index(attribute_names))
+        y = pd.DataFrame({"target": y})
+    elif dataset_origin == "kaggle":
+        raise NotImplementedError("Kaggle datasets are not supported yet")
+    elif dataset_origin == "csv":
+        raise NotImplementedError("CSV datasets are not supported yet")
+    else:
+        raise ValueError(f"Unsupported dataset origin: {dataset_origin}")
+
+    return X, y
+
+
+def load_image_dataset(
+    dataset_origin: str, dataset_id: str | int, overwrite: bool
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Load image dataset from different origins. Returns a tuple of (X, y) where X is a pandas DataFrame and y is a pandas Series.
+    """
+    if dataset_origin == "openml":
+        path = get_imagedata_path(dataset_origin, dataset_id)
+        if os.path.exists(path) and overwrite:
+            dataset = openml.datasets.get_dataset(dataset_id)
+            X_openml, y, categorical_indicator, attribute_names = dataset.get_data(
+                target=dataset.default_target_attribute
+            )
+            X_openml = pd.DataFrame(X_openml, columns=pd.Index(attribute_names))
+            X_openml = X_openml.values.reshape(-1, 3, 32, 32)
+            X_openml = np.transpose(X_openml, (0, 2, 3, 1))
+
+            X = []
+            # Convert to a list of jgps
+            from PIL import Image
+
+            images = [Image.fromarray(image) for image in X_openml]
+            # Save jgps to folder
+            for i, image in enumerate(images):
+                image.save(f"{path}/{str(i)}.jpg")
+                X.append(f"{path}/{str(i)}.jpg")
+            X = pd.DataFrame(X, columns=pd.Index(["image_path"]))
+            y = pd.DataFrame({"target": y})
+            y = y.astype({"target": "int64"})
+            X.to_csv(f"{path}/X.csv", index=False)
+            y.to_csv(f"{path}/y.csv", index=False)
+        else:
+            X = pd.read_csv(f"{path}/X.csv")
+            y = pd.read_csv(f"{path}/y.csv")
+    else:
+        raise ValueError(f"Unsupported dataset origin: {dataset_origin}")
+
+    return X, y
+
+
+def get_imagedata_path(dataset_origin: str, dataset_id: str | int) -> str:
+    """
+    Get the path to the dataset.
+    """
+    return f"data/images/{dataset_origin}/{dataset_id}"
