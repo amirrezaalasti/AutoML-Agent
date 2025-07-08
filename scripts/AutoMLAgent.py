@@ -56,6 +56,9 @@ class AutoMLAgent:
         :param ui_agent: The UI agent for displaying results and prompts.
         :param dataset_name: Optional name of the dataset for logging and display.
         :param task_type: Optional task type for logging and display.
+        :param include_test_data: Whether to include test data in dataset dict passed to train function.
+                                When True, train function will receive both X_test and y_test and should NOT do internal splits.
+                                When False, train function will only receive X and y and should do internal train/test splits.
         """
         self.dataset = format_dataset(dataset)
         self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42))
@@ -105,6 +108,33 @@ class AutoMLAgent:
             "HyperparameterOptimizationFacade": HPOFacade,
             "BlackBoxFacade": BlackBoxFacade,
         }
+
+    def _get_dataset_for_train_function(
+        self,
+        dataset_train: Any,
+        dataset_test: Any = None,
+        include_test_data: bool = False,
+    ) -> Any:
+        """
+        Construct the dataset dictionary for the train function based on include_test_data setting.
+        :param dataset_train: The training dataset dictionary
+        :param dataset_test: The test dataset dictionary (optional)
+        :return: Dataset dictionary configured for the train function
+        """
+        if include_test_data and dataset_test is not None:
+            # Include test data - train function should NOT do internal splits
+            return {
+                "X": dataset_train["X"],
+                "y": dataset_train["y"],
+                "X_test": dataset_test["X"],
+                "y_test": dataset_test["y"],
+            }
+        else:
+            # Don't include test data - train function should do internal splits
+            return {
+                "X": dataset_train["X"],
+                "y": dataset_train["y"],
+            }
 
     def generate_components(self):
         """
@@ -239,25 +269,34 @@ class AutoMLAgent:
                     sampled = cfg.sample_configuration()
 
                     # Test train function with budget parameter for compatibility
+                    # Get dataset dictionary for train function
+                    dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
+
                     # Try with budget first (for multi-fidelity facades), then without
                     try:
-                        result = train_fn(cfg=sampled, dataset=self.dataset, seed=0, budget=None)
+                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=None)
                     except TypeError:
                         # If budget parameter not accepted, try without it
-                        result = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
+                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0)
 
-                    # Handle both tuple and single value returns
-                    if isinstance(result, tuple):
-                        loss, model = result
-                        self.last_loss = loss
-                        self.last_model = model
+                    # Handle different return formats
+                    if isinstance(result, dict) and "loss" in result:
+                        # New format: dictionary with loss and metrics
+                        self.last_loss = result["loss"]
+                        metrics_info = f", metrics: {list(result.keys())}"
                     else:
-                        loss = result
-                        self.last_loss = loss
-                        self.last_model = None
+                        # Old format: just loss value (backward compatibility)
+                        self.last_loss = float(result)
+                        metrics_info = ""
+
+                    self.last_model = None
                     self.logger.log_response(
-                        f"Training executed successfully, loss: {loss}",
-                        {"component": component, "status": "success", "loss": loss},
+                        f"Training executed successfully, loss: {self.last_loss}{metrics_info}",
+                        {
+                            "component": component,
+                            "status": "success",
+                            "loss": self.last_loss,
+                        },
                     )
 
                 return  # success
@@ -360,6 +399,9 @@ class AutoMLAgent:
         facade_name = self.suggested_facade.__name__
         required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
 
+        # Get dataset dictionary for train function
+        dataset_for_train = self._get_dataset_for_train_function(dataset, self.dataset_test)
+
         # Create dynamic wrapper function based on facade requirements
         if "budget" in required_params:
 
@@ -367,23 +409,28 @@ class AutoMLAgent:
                 """Wrapper function for multi-fidelity facades (Hyperband, MultiFidelity)"""
                 # Convert budget to int if it's provided as a float
                 budget_int = int(budget) if budget is not None else budget
-                result = train_fn(cfg=config, dataset=dataset, seed=int(seed), budget=budget_int)
-                # Extract loss from tuple if train function returns (loss, model)
-                if isinstance(result, tuple):
-                    return result[0]  # Return only the loss for SMAC
+                result = train_fn(
+                    cfg=config,
+                    dataset=dataset_for_train,
+                    seed=int(seed),
+                    budget=budget_int,
+                )
+                # Train function now returns dictionary with loss and metrics
+                if isinstance(result, dict) and "loss" in result:
+                    return result["loss"]
                 else:
-                    return result  # Return the loss directly
+                    return float(result)  # Fallback for backward compatibility
 
         else:
 
             def smac_train_function(config, seed: int = 0) -> float:
                 """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
-                result = train_fn(cfg=config, dataset=dataset, seed=int(seed))
-                # Extract loss from tuple if train function returns (loss, model)
-                if isinstance(result, tuple):
-                    return result[0]  # Return only the loss for SMAC
+                result = train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
+                # Train function now returns dictionary with loss and metrics
+                if isinstance(result, dict) and "loss" in result:
+                    return result["loss"]
                 else:
-                    return result  # Return the loss directly
+                    return float(result)  # Fallback for backward compatibility
 
         smac = self.suggested_facade(
             scenario,
@@ -426,11 +473,14 @@ class AutoMLAgent:
         )
 
     def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
-        """Test the incumbent configuration on the test set"""
+        """Test the incumbent configuration and evaluate model on test set if possible"""
 
         # Get facade parameters
         facade_name = self.suggested_facade.__name__
         required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+
+        # Get dataset dictionary for train function
+        dataset_for_train = self._get_dataset_for_train_function(dataset_train, dataset_test, include_test_data=True)
 
         # Prepare training parameters using utility function
         training_params = prepare_training_parameters(
@@ -438,31 +488,27 @@ class AutoMLAgent:
             required_params=required_params,
             scenario_obj=self.scenario_obj,
             incumbent=incumbent,
-            dataset=dataset_train,
+            dataset=dataset_for_train,
             seed=0,
             model_dir=self.logger.experiment_dir,
         )
 
         try:
-            # Execute training function using utility
-            loss, model = execute_training_function(train_fn, **training_params)
+            # Execute training function - now returns dictionary with loss and metrics
+            result = train_fn(**training_params)
 
-            # Evaluate model on test set using utility function
-            evaluation_result = evaluate_model_predictions(
-                model=model,
-                X_test=dataset_test["X"],
-                y_test=dataset_test["y"],
-                task_type=self.task_type,
-            )
-
-            # Handle evaluation results
-            if evaluation_result["success"]:
-                metrics = evaluation_result["metrics"]
+            # Handle different return formats
+            if isinstance(result, dict):
+                # New format: dictionary with loss and metrics
+                metrics = result.copy()
+                loss = metrics.get("loss", float("inf"))
                 self._log_evaluation_success(metrics, incumbent)
             else:
+                # Old format: just loss value (backward compatibility)
+                loss = float(result)
                 metrics = get_default_metrics(self.task_type)
-                metrics["error"] = evaluation_result["error"]
-                self._log_evaluation_error(evaluation_result["error"], model)
+                metrics["loss"] = loss
+                self._log_evaluation_success(metrics, incumbent)
 
         except Exception as e:
             # Handle training function execution errors
@@ -496,15 +542,13 @@ class AutoMLAgent:
             },
         )
 
-    def _log_evaluation_error(self, error_msg: str, model: Any):
+    def _log_evaluation_error(self, error_msg: str):
         """Log model evaluation errors"""
-        model_type = type(model).__name__ if model is not None else "None"
         self.logger.log_response(
             f"Model evaluation failed: {error_msg}",
             {
                 "component": "evaluation",
                 "status": "error",
                 "error": error_msg,
-                "model_type": model_type,
             },
         )

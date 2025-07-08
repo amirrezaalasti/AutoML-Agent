@@ -91,7 +91,15 @@ class AutoMLAgentExperimenter:
             fold=fold,
         )
 
-        config_code, scenario_code, train_function_code, last_loss, metrics, prompts, experiment_dir = agent.generate_components()
+        (
+            config_code,
+            scenario_code,
+            train_function_code,
+            last_loss,
+            metrics,
+            prompts,
+            experiment_dir,
+        ) = agent.generate_components()
 
         result_processor.process_results(
             {

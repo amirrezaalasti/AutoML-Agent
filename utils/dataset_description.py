@@ -184,9 +184,33 @@ def describe_image_dataset(dataset: Dict[str, Any], task_type: str) -> str:
         description_parts.append(f"* **Task**: Image Classification.")
         description_parts.append(f"* **Number of Classes**: {num_classes}")
         description_parts.append(f"* **Class Distribution**: {class_dist}")
+        description_parts.append(
+            f"""* **For classification tasks**
+            from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
+            metrics = {{
+                'loss': loss,
+                'accuracy': accuracy_score(y_test, predictions),
+                'precision': precision_score(y_test, predictions, average='weighted', zero_division=0),
+                'recall': recall_score(y_test, predictions, average='weighted', zero_division=0),
+                'f1': f1_score(y_test, predictions, average='weighted', zero_division=0),
+                'balanced_accuracy': balanced_accuracy_score(y_test, predictions)
+            }}
+            """
+        )
     elif task_type == "regression":
         description_parts.append(f"* **Task**: Image Regression (e.g., predicting age, angle).")
         description_parts.append(f"* **Target Summary**: \n{y.describe().to_string()}")
+        description_parts.append(
+            f"""* **For regression tasks**
+            from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+            metrics = {{
+                'loss': loss,
+                'mse': mean_squared_error(y_test, predictions),
+                'mae': mean_absolute_error(y_test, predictions),
+                'r2': r2_score(y_test, predictions)
+            }}
+            """
+        )
 
     return "\n".join(description_parts)
 
