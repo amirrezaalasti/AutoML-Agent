@@ -47,8 +47,8 @@
 
 ```python
 from ConfigSpace import Configuration
-from typing import Any, Tuple
-def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Tuple[float, Any]:
+from typing import Any, Dict, Union
+def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Dict[str, Union[float, int]]:
 ```
 
 **CRITICAL**: The function signature **MUST** include the `budget` parameter even if not used by all facades:
@@ -93,6 +93,18 @@ else:
 * The function **must** accept a `dataset` dictionary with:
   * `dataset['X']`: feature matrix or input tensor
   * `dataset['y']`: label vector or label tensor
+  * `dataset['X_test']`: (optional) test feature matrix - only present when separate test set is provided
+  * `dataset['y_test']`: (optional) test label vector - only present when separate test set is provided
+
+* **CRITICAL**: Conditional train/test split behavior
+  * **When separate test set is provided** (`dataset['X_test']` and `dataset['y_test']` exist):
+    * Use the entire `dataset['X']` and `dataset['y']` for training
+    * Do NOT perform internal train/test splits
+    * The test set is already provided separately
+  * **When no separate test set is provided** (`dataset['X_test']` and `dataset['y_test']` are missing):
+    * Perform internal train/test split on the provided dataset for validation
+    * Use appropriate split ratio (e.g., 80/20 or 70/30)
+    * Use the split for validation during training
 
 * The function **must** handle the configuration properly:
   * Access primitive values using `cfg.get('key')`
@@ -109,15 +121,9 @@ else:
   * Use appropriate loss functions
   * Apply proper regularization
   * Handle model-specific requirements
-  * **CRITICAL**: The returned model MUST have a `predict(X)` method for evaluation
-  * **Model Wrapping**: If using PyTorch, TensorFlow, or other frameworks without built-in predict methods, 
-    create a wrapper class that provides a standard `predict(X)` method
-  * **Interface Consistency**: Regardless of the underlying framework, ensure the returned model 
-    has a predict method that accepts feature matrix X and returns predictions
-  * **Framework Flexibility**: You can use any ML framework (PyTorch, TensorFlow, scikit-learn, etc.) 
-    but must provide a consistent interface
+  * **Framework Flexibility**: You can use any ML framework (PyTorch, TensorFlow, scikit-learn, etc.)
 
-* **Training Requirements:**
+  * **Training Requirements:**
   * Implement proper training loop
   * Handle batch processing
   * Apply proper optimization
@@ -125,23 +131,41 @@ else:
   * Handle validation if required
       * **PREVENT OVERFITTING**: Use proper validation split, regularization, early stopping
     * **ENSURE GENERALIZATION**: Avoid fitting too closely to training data
-    * Return both loss value and trained model as a tuple (loss, model)
+    * Return a dictionary with loss and evaluation metrics
 
 * **Model Saving Requirements:**
-  * **MUST save the trained model** if `model_dir` is provided
+  * **STRONGLY RECOMMENDED**: Save the trained model if `model_dir` is provided
+  * This enables proper model evaluation with metrics like accuracy, precision, recall
   * Create the directory if it doesn't exist
   * Save model in appropriate format for the framework:
     * **PyTorch**: Use `torch.save(model.state_dict(), model_path)` or `torch.save(model, model_path)`
     * **TensorFlow**: Use `model.save(model_path)` or `tf.saved_model.save(model, model_path)`
     * **scikit-learn**: Use `joblib.dump(model, model_path)` or `pickle.dump(model, open(model_path, 'wb'))`
   * Generate unique model filename using timestamp or configuration hash
-  * Save model metadata (configuration, performance metrics) if possible
-  * Ensure the saved model can be loaded later for inference
-  * **CRITICAL**: The function must return BOTH the loss value and the trained model as a tuple (loss, model)
-  * **REASON**: Both values are needed for analysis and further use
-  * **ACCESS MODEL**: The returned model can be used directly without loading from file
+  * **CRITICAL**: The function must return a dictionary with loss and metrics
+    * **REASON**: Loss is used for hyperparameter optimization, metrics provide comprehensive evaluation
 
-* **Performance Optimization Requirements:**
+  * **Return Format Requirements:**
+  * **CRITICAL**: Return a dictionary with 'loss' key and evaluation metrics
+  * **For Classification Tasks**, include these metrics:
+    * `loss`: Primary loss value for optimization (float)
+    * `accuracy`: Overall accuracy (float)
+    * `precision`: Weighted precision score (float)
+    * `recall`: Weighted recall score (float)
+    * `f1`: Weighted F1-score (float)
+    * `balanced_accuracy`: Balanced accuracy (float)
+    * Optional: `roc_auc`: ROC AUC score (float, if applicable)
+  * **For Regression Tasks**, include these metrics:
+    * `loss`: Primary loss value for optimization (float)
+    * `mse`: Mean Squared Error (float)
+    * `rmse`: Root Mean Squared Error (float)
+    * `mae`: Mean Absolute Error (float)
+    * `r2`: R² coefficient of determination (float)
+  * **Metric Calculation**: Use validation data if available, otherwise use training data
+  * **Handle Errors**: If any metric calculation fails, set its value to 0.0 or appropriate default
+  * **Consistent Format**: Always return the same dictionary keys for the task type
+
+  * **Performance Optimization Requirements:**
   * Minimize memory usage and allocations
   * Use vectorized operations where possible
   * Avoid unnecessary data copying
@@ -231,75 +255,59 @@ Choose **one** of the following frameworks based on the dataset and requirements
 ### **Example Structure (NO try/except):**
 
 ```python
-def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Tuple[float, Any]:
+def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Dict[str, Union[float, int]]:
     # Set random seed for reproducibility
     
     # Extract hyperparameters efficiently
     sample_config = cfg.get('sample_config')
     
-    # Prepare data efficiently
+    # Prepare data efficiently - conditional train/test split behavior
+    X, y = dataset['X'], dataset['y']
+    
+    # Check if separate test set is provided
+    if 'X_test' in dataset and 'y_test' in dataset:
+        # Use entire training set - test set provided separately
+        X_train, y_train = X, y
+        X_test, y_test = dataset['X_test'], dataset['y_test']  # Available for evaluation
+    else:
+        # Perform internal train/test split for validation
+        from sklearn.model_selection import train_test_split
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed)
+        X_test, y_test = X_val, y_val  # Use validation as test for metrics
     
     # Initialize model with optimized parameters
     
     # Optimized training loop
-
-    # Save model if directory is provided
+    
+    # Save model if directory is provided (recommended for evaluation)
     if model_dir:
         os.makedirs(model_dir, exist_ok=True)
         model_path = os.path.join(model_dir, f"model_{{seed}}.pth")
-        torch.save(model.state_dict(), model_path)
+        torch.save(model.state_dict(), model_path)  # or torch.save(model, model_path)
     
-    return loss, model
+    # Calculate evaluation metrics
+    predictions = model.predict(X_test)  # or model(X_test) for PyTorch
+
+    # metrics should always have lost in it
+    return metrics
 ```
 
 ---
 
-### **Model Wrapping Example for PyTorch:**
 
-```python
-class ModelWrapper:
-    def __init__(self, model, device='cpu'):
-        self.model = model
-        self.device = device
-        
-    def predict(self, X):
-        self.model.eval()
-        with torch.no_grad():
-            # Handle different input types (DataFrame, numpy array, tensor)
-            if hasattr(X, 'values'):  # pandas DataFrame/Series
-                X = torch.tensor(X.values, dtype=torch.float32).to(self.device)
-            elif isinstance(X, np.ndarray):
-                X = torch.tensor(X, dtype=torch.float32).to(self.device)
-            elif not isinstance(X, torch.Tensor):
-                X = torch.tensor(X, dtype=torch.float32).to(self.device)
-            else:
-                X = X.to(self.device)
-                
-            outputs = self.model(X)
-            # Handle different output formats (classification vs regression)
-            if outputs.dim() > 1 and outputs.shape[1] > 1:
-                predictions = torch.argmax(outputs, dim=1)  # Classification
-            else:
-                predictions = outputs.squeeze()  # Regression
-            return predictions.cpu().numpy()
-
-# Usage in train function:
-# wrapped_model = ModelWrapper(pytorch_model, device)
-# return loss, wrapped_model
-```
 
 ---
 
 ** FINAL REMINDER - CRITICAL REQUIREMENTS:**
 * Valid `import` statements
-* A single `train()` function that returns a **TUPLE** (loss, model)
+* A single `train()` function that returns **a dictionary with loss and metrics**
 * No additional code or explanations
 * Code must be optimized for performance and minimal in size
-* For accuracy metrics, return (negative accuracy, model) as a tuple (e.g. (-accuracy, model))
-* For error metrics, return (raw error value, model) as a tuple (e.g. (mse, model))
+* For accuracy metrics, use positive values (e.g. accuracy: 0.85)
+* For error metrics, use raw error values (e.g. mse: 0.15)
 * Ensure consistent sign convention across all metrics
-* **MUST save the trained model** if `model_dir` parameter is provided
-* **CRITICAL**: ALWAYS return tuple (loss, model) - both values are needed
+* **STRONGLY RECOMMENDED**: Save the trained model if `model_dir` parameter is provided
+* **CRITICAL**: ALWAYS return a dictionary with 'loss' key and evaluation metrics
 * **MUST handle multi-algorithm configuration spaces** by implementing appropriate algorithms
 * **MUST use EXACT parameter names** from ConfigSpace definition - never use generic names
 * **MUST implement algorithms** based on parameter prefixes in ConfigSpace
@@ -309,7 +317,10 @@ class ModelWrapper:
 * **MUST prevent overfitting** with proper validation and regularization
 * **NO try/except blocks** - let errors propagate so they can be fixed
 * **The train function MUST be naturally robust** for hyperparameter optimization scenarios
-* **CRITICAL**: **The returned model MUST have a working `predict(X)` method** for test evaluation
-* **Model Wrapping**: If using PyTorch/TensorFlow models, wrap them in a class with a predict method
-* **Framework Freedom**: You can use any ML framework but must provide consistent predict interface
-* **Wrapper Examples**: For PyTorch models, create a wrapper class that handles forward pass and returns predictions
+* **CRITICAL**: **Handle train/test split conditionally**
+  * **When `X_test` and `y_test` are in dataset**: Use entire training set, do NOT split
+  * **When `X_test` and `y_test` are NOT in dataset**: Perform internal train/test split for validation
+* **Dataset Usage**: Check for separate test set availability and adapt accordingly
+* **Metric Calculation**: Always calculate metrics on validation/test data, not training data
+* **Return Format**: Dictionary with consistent keys based on task type (classification/regression)
+* **CRITICAL**: metrics should always have `loss` in it 
