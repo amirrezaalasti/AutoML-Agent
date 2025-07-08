@@ -1,7 +1,7 @@
 import openml
 import pandas as pd
 from autogluon.tabular import TabularPredictor
-from scripts.utils import split_dataset_kfold
+from utils.data_processing import split_dataset_kfold
 from numpy.random import RandomState
 # 1. Download the "credit-g" dataset from OpenML
 dataset = openml.datasets.get_dataset(31)
