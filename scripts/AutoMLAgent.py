@@ -1,25 +1,34 @@
 from scripts.LLMClient import LLMClient
 from typing import Any
-from scripts.utils import (
+from utils import (
     describe_dataset,
     save_code_to_file,
     format_dataset,
     extract_code_block,
-    split_dataset,
+    split_dataset_kfold,
+    FACADE_PARAMETER_REQUIREMENTS,
+    evaluate_model_predictions,
+    get_default_metrics,
+    execute_training_function,
+    prepare_training_parameters,
 )
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
 from config.api_keys import OPENML_API_KEY
-from config.configs_path import OPENML_CSV_PATH, EXPERIMENTER_CONFIG_PATH
+from config.configs_path import (
+    OPENML_CSV_PATH,
+    EXPERIMENTER_CONFIG_PATH,
+    EXPERIMENTER_DATABASE_CREDENTIALS_PATH,
+)
 from scripts.LLMPlanner import LLMPlanner
 from smac.facade.hyperparameter_optimization_facade import (
     HyperparameterOptimizationFacade as HPOFacade,
 )
 from smac import Scenario
-from py_experimenter.experimenter import PyExperimenter
 from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
+import numpy as np
 
 
 class AutoMLAgent:
@@ -36,6 +45,8 @@ class AutoMLAgent:
         model_name: str = None,
         api_key: str = None,
         base_url: str = None,
+        n_folds: int = 5,
+        fold: int = 0,
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -45,9 +56,12 @@ class AutoMLAgent:
         :param ui_agent: The UI agent for displaying results and prompts.
         :param dataset_name: Optional name of the dataset for logging and display.
         :param task_type: Optional task type for logging and display.
+        :param include_test_data: Whether to include test data in dataset dict passed to train function.
+                                When True, train function will receive both X_test and y_test and should NOT do internal splits.
+                                When False, train function will only receive X and y and should do internal train/test splits.
         """
         self.dataset = format_dataset(dataset)
-        self.dataset, self.dataset_test = split_dataset(self.dataset)
+        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42))
         self.dataset_type = dataset_type
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
@@ -87,21 +101,6 @@ class AutoMLAgent:
             base_url=base_url,
             api_key=api_key,
         )
-        try:
-            # self.experimenter = PyExperimenter(
-            #     experiment_configuration_file_path=EXPERIMENTER_CONFIG_PATH,
-            #     name="AutoMLAgent",
-            # )
-            self.experimenter = None
-        except Exception as e:
-            self.ui_agent.error(f"Error initializing experimenter: {e}")
-            self.experimenter = None
-
-        self.experimenter_row_dict = {
-            "dataset_name": self.dataset_name,
-            "dataset_type": self.dataset_type,
-            "task_type": self.task_type,
-        }
 
         self.smac_facades = {
             "HyperbandFacade": HyperbandFacade,
@@ -109,6 +108,33 @@ class AutoMLAgent:
             "HyperparameterOptimizationFacade": HPOFacade,
             "BlackBoxFacade": BlackBoxFacade,
         }
+
+    def _get_dataset_for_train_function(
+        self,
+        dataset_train: Any,
+        dataset_test: Any = None,
+        include_test_data: bool = False,
+    ) -> Any:
+        """
+        Construct the dataset dictionary for the train function based on include_test_data setting.
+        :param dataset_train: The training dataset dictionary
+        :param dataset_test: The test dataset dictionary (optional)
+        :return: Dataset dictionary configured for the train function
+        """
+        if include_test_data and dataset_test is not None:
+            # Include test data - train function should NOT do internal splits
+            return {
+                "X": dataset_train["X"],
+                "y": dataset_train["y"],
+                "X_test": dataset_test["X"],
+                "y_test": dataset_test["y"],
+            }
+        else:
+            # Don't include test data - train function should do internal splits
+            return {
+                "X": dataset_train["X"],
+                "y": dataset_train["y"],
+            }
 
     def generate_components(self):
         """
@@ -153,7 +179,7 @@ class AutoMLAgent:
         self.ui_agent.code(self.config_code, language="python")
 
         # Scenario
-        self.prompts["scenario"] = self._create_scenario_prompt(instructor_response.scenario_plan)
+        self.prompts["scenario"] = self._create_scenario_prompt(instructor_response.scenario_plan, instructor_response.suggested_facade)
         self.scenario_code = self.llm.generate(self.prompts["scenario"])
         self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
         self.logger.log_response(self.scenario_code, {"component": "scenario"})
@@ -163,10 +189,7 @@ class AutoMLAgent:
 
         # Training Function
         train_plan = instructor_response.train_function_plan
-        self.prompts["train_function"] = self._create_train_prompt(
-            train_plan,
-            # self.task_type
-        )
+        self.prompts["train_function"] = self._create_train_prompt(train_plan, instructor_response.suggested_facade)
         self.train_function_code = self.llm.generate(self.prompts["train_function"])
         self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
         self.logger.log_response(self.train_function_code, {"component": "train_function"})
@@ -175,7 +198,6 @@ class AutoMLAgent:
         self.ui_agent.code(self.train_function_code, language="python")
 
         # Save outputs
-
         save_code_to_file(self.config_code, "scripts/generated_codes/generated_config_space.py")
         save_code_to_file(self.scenario_code, "scripts/generated_codes/generated_scenario.py")
         save_code_to_file(
@@ -185,7 +207,7 @@ class AutoMLAgent:
 
         # Use the train function that was just generated and tested, not the imported one
         # This ensures consistency between the tested function and the one used in SMAC
-        train_fn = self.namespace["train"]
+        self.train_fn = self.namespace["train"]
 
         self.ui_agent.success("AutoML Agent setup complete!")
         self.ui_agent.subheader("Loss Value")
@@ -194,16 +216,15 @@ class AutoMLAgent:
         self.ui_agent.subheader("Starting Optimization Process")
         self.ui_agent.write("Starting Optimization Process")
 
-        self.run_scenario(self.scenario_obj, train_fn, self.dataset, self.config_space_obj)
-        if self.experimenter:
-            self.experimenter.fill_table_with_rows(rows=[self.experimenter_row_dict])
+        loss, metrics = self.run_scenario(self.scenario_obj, self.train_fn, self.dataset, self.config_space_obj)
 
         # Return results and last training loss
         return (
             self.config_code,
             self.scenario_code,
             self.train_function_code,
-            self.last_loss,
+            loss,
+            metrics,
             self.prompts,
             self.logger.experiment_dir,
         )
@@ -246,11 +267,36 @@ class AutoMLAgent:
                     self.train_function_code = source
                     train_fn = self.namespace["train"]
                     sampled = cfg.sample_configuration()
-                    loss = train_fn(cfg=sampled, dataset=self.dataset, seed=0)
-                    self.last_loss = loss
+
+                    # Test train function with budget parameter for compatibility
+                    # Get dataset dictionary for train function
+                    dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
+
+                    # Try with budget first (for multi-fidelity facades), then without
+                    try:
+                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=None)
+                    except TypeError:
+                        # If budget parameter not accepted, try without it
+                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0)
+
+                    # Handle different return formats
+                    if isinstance(result, dict) and "loss" in result:
+                        # New format: dictionary with loss and metrics
+                        self.last_loss = result["loss"]
+                        metrics_info = f", metrics: {list(result.keys())}"
+                    else:
+                        # Old format: just loss value (backward compatibility)
+                        self.last_loss = float(result)
+                        metrics_info = ""
+
+                    self.last_model = None
                     self.logger.log_response(
-                        f"Training executed successfully, loss: {loss}",
-                        {"component": component, "status": "success", "loss": loss},
+                        f"Training executed successfully, loss: {self.last_loss}{metrics_info}",
+                        {
+                            "component": component,
+                            "status": "success",
+                            "loss": self.last_loss,
+                        },
                     )
 
                 return  # success
@@ -306,7 +352,7 @@ class AutoMLAgent:
                 recommended_configuration=recommended_configuration,
             )
 
-    def _create_scenario_prompt(self, scenario_plan) -> str:
+    def _create_scenario_prompt(self, scenario_plan, suggested_facade) -> str:
         """
         Create a prompt for generating the scenario code.
         :return: A formatted prompt string for the LLM.
@@ -317,14 +363,16 @@ class AutoMLAgent:
                 dataset_description=self.dataset_description,
                 scenario_plan=scenario_plan,
                 output_directory=self.logger.experiment_dir,
+                suggested_facade=suggested_facade,
             )
 
         return base_prompt
 
-    def _create_train_prompt(self, train_function_instructions) -> str:
+    def _create_train_prompt(self, train_function_instructions, suggested_facade) -> str:
         """
         Create a prompt for generating the training function code.
         :param train_function_instructions: Instructions for the training function.
+        :param suggested_facade: The suggested SMAC facade.
         :return: A formatted prompt string for the LLM.
         """
 
@@ -334,6 +382,7 @@ class AutoMLAgent:
                 config_space=self.config_code or "",
                 scenario=self.scenario_code or "",
                 train_function_plan=train_function_instructions,
+                suggested_facade=suggested_facade,
             )
 
         return prompt
@@ -346,9 +395,42 @@ class AutoMLAgent:
     def run_scenario(self, scenario: Scenario, train_fn: Any, dataset: Any, cfg: Any):
         """Run the scenario code and return the results"""
 
-        def smac_train_function(config, seed: int = 0) -> float:
-            """Wrapper function to call the training function with the correct parameters"""
-            return train_fn(cfg=config, dataset=dataset, seed=seed)
+        # Get the facade name to determine parameter requirements
+        facade_name = self.suggested_facade.__name__
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+
+        # Get dataset dictionary for train function
+        dataset_for_train = self._get_dataset_for_train_function(dataset, self.dataset_test)
+
+        # Create dynamic wrapper function based on facade requirements
+        if "budget" in required_params:
+
+            def smac_train_function(config, seed: int = 0, budget: int = None) -> float:
+                """Wrapper function for multi-fidelity facades (Hyperband, MultiFidelity)"""
+                # Convert budget to int if it's provided as a float
+                budget_int = int(budget) if budget is not None else budget
+                result = train_fn(
+                    cfg=config,
+                    dataset=dataset_for_train,
+                    seed=int(seed),
+                    budget=budget_int,
+                )
+                # Train function now returns dictionary with loss and metrics
+                if isinstance(result, dict) and "loss" in result:
+                    return result["loss"]
+                else:
+                    return float(result)  # Fallback for backward compatibility
+
+        else:
+
+            def smac_train_function(config, seed: int = 0) -> float:
+                """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
+                result = train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
+                # Train function now returns dictionary with loss and metrics
+                if isinstance(result, dict) and "loss" in result:
+                    return result["loss"]
+                else:
+                    return float(result)  # Fallback for backward compatibility
 
         smac = self.suggested_facade(
             scenario,
@@ -360,19 +442,113 @@ class AutoMLAgent:
         default_cost = smac.validate(self.config_space_obj.get_default_configuration())
         self.ui_agent.subheader("Default Cost")
         self.ui_agent.write(default_cost)
-        self.experimenter_row_dict["default_train_accuracy"] = default_cost
 
         incubment_cost = smac.validate(incumbent)
         self.ui_agent.subheader("Incumbent Cost")
         self.ui_agent.write(incubment_cost)
-        self.experimenter_row_dict["incumbent_train_accuracy"] = incubment_cost
 
-        self.test_incumbent(train_fn, incumbent, self.dataset_test, self.config_space_obj)
+        self.logger.log_response(
+            f"Incumbent cost: {incubment_cost}",
+            {"component": "scenario", "status": "success", "cost": incubment_cost},
+        )
+        self.logger.log_response(
+            f"Default cost: {default_cost}",
+            {"component": "scenario", "status": "success", "cost": default_cost},
+        )
+        self.logger.log_response(
+            f"Incumbent config: {incumbent}",
+            {"component": "scenario", "status": "success", "config": incumbent},
+        )
+        self.logger.log_response(
+            f"Default config: {default_cost}",
+            {"component": "scenario", "status": "success", "config": default_cost},
+        )
+        self.incumbent = incumbent
+        return self.test_incumbent(
+            self.train_fn,
+            incumbent,
+            self.dataset,
+            self.dataset_test,
+            self.config_space_obj,
+        )
 
-    def test_incumbent(self, train_fn, incumbent: Any, dataset: Any, cfg: Any):
-        """Test the incumbent on the test set"""
-        loss = train_fn(cfg=incumbent, dataset=dataset, seed=0, model_dir=self.logger.experiment_dir)
-        self.ui_agent.subheader("Test Loss")
-        self.ui_agent.write(loss)
-        self.experimenter_row_dict["incumbent_config"] = str(incumbent)
-        self.experimenter_row_dict["test_train_accuracy"] = loss
+    def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
+        """Test the incumbent configuration and evaluate model on test set if possible"""
+
+        # Get facade parameters
+        facade_name = self.suggested_facade.__name__
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+
+        # Get dataset dictionary for train function
+        dataset_for_train = self._get_dataset_for_train_function(dataset_train, dataset_test, include_test_data=True)
+
+        # Prepare training parameters using utility function
+        training_params = prepare_training_parameters(
+            facade_name=facade_name,
+            required_params=required_params,
+            scenario_obj=self.scenario_obj,
+            incumbent=incumbent,
+            dataset=dataset_for_train,
+            seed=0,
+            model_dir=self.logger.experiment_dir,
+        )
+
+        try:
+            # Execute training function - now returns dictionary with loss and metrics
+            result = train_fn(**training_params)
+
+            # Handle different return formats
+            if isinstance(result, dict):
+                # New format: dictionary with loss and metrics
+                metrics = result.copy()
+                loss = metrics.get("loss", float("inf"))
+                self._log_evaluation_success(metrics, incumbent)
+            else:
+                # Old format: just loss value (backward compatibility)
+                loss = float(result)
+                metrics = get_default_metrics(self.task_type)
+                metrics["loss"] = loss
+                self._log_evaluation_success(metrics, incumbent)
+
+        except Exception as e:
+            # Handle training function execution errors
+            loss = float("inf")
+            metrics = get_default_metrics(self.task_type)
+            metrics["error"] = f"Training function execution failed: {str(e)}"
+            self.logger.log_error(
+                f"Training function execution failed: {str(e)}",
+                error_type="TRAINING_ERROR",
+            )
+
+        # Display results
+        self.ui_agent.subheader("Test Metrics")
+        self.ui_agent.write(f"Metrics: {metrics}")
+
+        # Store results
+        self.last_loss = loss
+        self.last_metrics = metrics
+
+        return loss, metrics
+
+    def _log_evaluation_success(self, metrics: dict, incumbent: Any):
+        """Log successful model evaluation"""
+        self.logger.log_response(
+            f"Model evaluation successful. Metrics: {metrics}",
+            {
+                "component": "evaluation",
+                "status": "success",
+                "metrics": metrics,
+                "config": str(incumbent),
+            },
+        )
+
+    def _log_evaluation_error(self, error_msg: str):
+        """Log model evaluation errors"""
+        self.logger.log_response(
+            f"Model evaluation failed: {error_msg}",
+            {
+                "component": "evaluation",
+                "status": "error",
+                "error": error_msg,
+            },
+        )

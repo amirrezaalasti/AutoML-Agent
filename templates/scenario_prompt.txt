@@ -56,9 +56,6 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
     crash_cost : float | list[float], defaults to np.inf
         Defines the cost for a failed trial. In case of multi-objective, each objective can be associated with
         a different cost.
-    termination_cost_threshold : float | list[float], defaults to np.inf
-        Defines a cost threshold when the optimization should stop. In case of multi-objective, each objective *must* be
-        associated with a cost. The optimization stops when all objectives crossed the threshold.
     walltime_limit : float, defaults to np.inf
         The maximum time in seconds that SMAC is allowed to run.
     cputime_limit : float, defaults to np.inf
@@ -136,6 +133,23 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
 
 {scenario_plan}
 
+### **Facade-Specific Requirements:**
+
+The scenario configuration MUST be compatible with the selected facade. Based on the suggested facade, include the appropriate parameters:
+
+**Selected Facade: {suggested_facade}**
+
+**For Multi-Fidelity Facades (HyperbandFacade, MultiFidelityFacade):**
+- **MUST include** `min_budget` and `max_budget` parameters
+- Budget represents fidelity levels (e.g., epochs, training steps, iterations)
+- Example: `min_budget=1, max_budget=100` for neural network epochs
+
+**For Standard Facades (BlackBoxFacade, HyperparameterOptimizationFacade):**
+- **DO NOT include** `min_budget` or `max_budget` parameters
+- These facades do not support multi-fidelity optimization
+
+**IMPORTANT**: Configure the scenario parameters according to the selected facade type above.
+
 ---
 
 **Reminder:** The output must be limited to:
@@ -143,6 +157,5 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
 * A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
 * No additional code or explanations
 * The output_directory should be "{output_directory}"
-* Set the number of trials to 10 for sufficient exploration
 * set the number of workers to 1
 * do not set these parameters: walltime_limit, cputime_limit, trial_walltime_limit ,trial_memory_limit=

@@ -23,7 +23,7 @@ import seaborn as sns
 from config.api_keys import GROQ_API_KEY, GOOGLE_API_KEY, LOCAL_LLAMA_API_KEY
 from scripts.LLMClient import LLMClient
 from scripts.AutoMLAgent import AutoMLAgent
-from scripts.utils import convert_to_csv, format_dataset
+from utils import convert_dataset_to_csv, format_dataset
 from config.urls import BASE_URL
 
 # Available GROQ models
@@ -264,6 +264,7 @@ class AutoMLAppUI:
                     scenario_code,
                     train_code,
                     loss,
+                    metrics,
                     prompts,
                     logger_dir,
                 ) = agent.generate_components()
@@ -298,7 +299,7 @@ class AutoMLAppUI:
 
             # add the dataset
             # Convert DataFrame to CSV string before writing
-            convert_to_csv(self.dataset)
+            convert_dataset_to_csv(self.dataset)
             zip_file.write("dataset.csv", "dataset.csv")
             zip_file.write("target.csv", "target.csv")
 
