@@ -41,6 +41,20 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
         description.append("The target variable has been label-encoded to be numeric for classification.")
         description.append("\nEncoded label distribution:")
         description.append(str(y.value_counts()))
+        description.append(
+            f"""* **For classification tasks**
+            from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
+            metrics = {{
+                'loss': loss,
+                'accuracy': accuracy_score(y_test, predictions),
+                'precision': precision_score(y_test, predictions, average='weighted', zero_division=0),
+                'recall': recall_score(y_test, predictions, average='weighted', zero_division=0),
+                'f1': f1_score(y_test, predictions, average='weighted', zero_division=0),
+                'balanced_accuracy': balanced_accuracy_score(y_test, predictions)
+                'roc_auc': roc_auc_score(y_test, predictions)
+            }}
+            """
+        )
     elif task_type == "regression":
         description.append("The target variable is continuous for this regression task.")
         # for regression sometimes the target value is not normalized properly, so we need to normalize it
@@ -48,6 +62,17 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
             description.append("The target variable is not normalized properly. Please normalize it.")
         description.append("\nTarget variable statistical summary:")
         description.append(str(y.describe()))
+        description.append(
+            f"""* **For regression tasks**
+            from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+            metrics = {{
+                'loss': loss,
+                'mse': mean_squared_error(y_test, predictions),
+                'mae': mean_absolute_error(y_test, predictions),
+                'r2': r2_score(y_test, predictions)
+            }}
+            """
+        )
     else:  # Clustering or other tasks
         description.append("The target variable is present for evaluation purposes.")
 
@@ -194,6 +219,7 @@ def describe_image_dataset(dataset: Dict[str, Any], task_type: str) -> str:
                 'recall': recall_score(y_test, predictions, average='weighted', zero_division=0),
                 'f1': f1_score(y_test, predictions, average='weighted', zero_division=0),
                 'balanced_accuracy': balanced_accuracy_score(y_test, predictions)
+                'roc_auc': roc_auc_score(y_test, predictions)
             }}
             """
         )

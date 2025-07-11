@@ -54,8 +54,8 @@ class CLIUI:
 class AutoMLAgentExperimenter:
     def __init__(self):
         self.experimenter = PyExperimenter(
-            experiment_configuration_file_path="config/experimenter-config.yml",
-            database_credential_file_path="config/database_credentials.yml",
+            experiment_configuration_file_path="/mnt/home/aalasti/agent-smac-project/autoML-Agent/config/experimenter-config.yml",
+            database_credential_file_path="/mnt/home/aalasti/agent-smac-project/autoML-Agent/config/database_credentials.yml",
             use_ssh_tunnel=False,
             use_codecarbon=False,
             name="AutoMLAgentRuns",
@@ -68,14 +68,18 @@ class AutoMLAgentExperimenter:
         :param result_processor: ResultProcessor object for processing results.
         :param custom_config: Custom configuration for the experiment.
         """
-        dataset_name = parameters["dataset_name"]
         dataset_type = parameters["dataset_type"]
         task_type = parameters["task_type"]
         llm_model = parameters["llm_model"]
         dataset_openml_id = parameters["dataset_openml_id"]
+        dataset_name = parameters["dataset_name"] + "_" + str(dataset_openml_id)
         ui_agent = CLIUI()
         n_folds = parameters["n_folds"]
         fold = parameters["fold"]
+        time_budget = parameters.get("time_budget", 3600)  # Default to 1 hour if not specified
+
+        print(f"Experiment configuration: Dataset={dataset_name}, Time Budget={time_budget}s")
+
         X, y = fetch_openml(data_id=dataset_openml_id, return_X_y=True)
         dataset = {"X": X, "y": y}
         agent = AutoMLAgent(
@@ -89,29 +93,48 @@ class AutoMLAgentExperimenter:
             base_url=BASE_URL,
             n_folds=n_folds,
             fold=fold,
+            time_budget=time_budget,
         )
 
-        (
-            config_code,
-            scenario_code,
-            train_function_code,
-            last_loss,
-            metrics,
-            prompts,
-            experiment_dir,
-        ) = agent.generate_components()
+        try:
+            (
+                config_code,
+                scenario_code,
+                train_function_code,
+                last_loss,
+                metrics,
+                prompts,
+                experiment_dir,
+            ) = agent.generate_components()
 
-        result_processor.process_results(
-            {
-                "test_accuracy": metrics["accuracy"],
-                "test_f1": metrics["f1"],
-                "test_precision": metrics["precision"],
-                "test_recall": metrics["recall"],
-                "test_roc_auc": metrics["roc_auc"],
-                "test_balanced_accuracy": metrics["balanced_accuracy"],
-                "log_dir": experiment_dir,
-            }
-        )
+            result_processor.process_results(
+                {
+                    "test_accuracy": metrics.get("accuracy"),
+                    "test_f1": metrics.get("f1"),
+                    "test_precision": metrics.get("precision"),
+                    "test_recall": metrics.get("recall"),
+                    "test_roc_auc": metrics.get("roc_auc"),
+                    "test_balanced_accuracy": metrics.get("balanced_accuracy"),
+                    "test_mcc": metrics.get("mcc"),
+                    "log_dir": experiment_dir,
+                }
+            )
+
+        except Exception as e:
+            print(f"Experiment failed: {str(e)}")
+            # Process results with error information
+            result_processor.process_results(
+                {
+                    "test_accuracy": None,
+                    "test_f1": None,
+                    "test_precision": None,
+                    "test_recall": None,
+                    "test_roc_auc": None,
+                    "test_balanced_accuracy": None,
+                    "test_mcc": None,
+                    "log_dir": f"ERROR: {str(e)}",
+                }
+            )
 
     def run_experiment(self):
         self.experimenter.execute(

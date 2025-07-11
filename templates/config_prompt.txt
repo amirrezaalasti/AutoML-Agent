@@ -20,24 +20,33 @@ def get_configspace() -> ConfigurationSpace:
   * `{recommended_configuration}`
 
 * The configuration space **must** include:
-  * Appropriate hyperparameter ranges based on the dataset characteristics
-  * Reasonable default values
-  * Proper hyperparameter types (continuous, discrete, categorical)
-  * Conditional hyperparameters if needed
-  * Proper bounds and constraints
+  * Hyperparameter ranges that match the dataset characteristics and computational constraints
+  * Reasonable default values based on dataset properties
+  * Appropriate hyperparameter types (continuous, discrete, categorical)
+  * Conditional hyperparameters when algorithm dependencies exist
+  * Proper bounds and constraints that ensure valid configurations
 
-* **Best Practices:**
-  * Use meaningful hyperparameter names
-  * Include proper documentation for each hyperparameter
-  * Consider dataset size and complexity when setting ranges
-  * Ensure ranges are not too narrow or too wide
-  * Add proper conditions between dependent hyperparameters
+* **Data-Driven Design Principles:**
+  * Analyze dataset size, dimensionality, and complexity to determine appropriate algorithms
+  * Consider feature types (numerical, categorical, text) when selecting preprocessing and algorithms
+  * Factor in computational constraints and time requirements
+  * Use dataset characteristics to inform parameter ranges and defaults
+  * Ensure the configuration space enables exploration of promising algorithm families
 
-* **Common Hyperparameters to Consider:**
-  * Model-specific hyperparameters
-  * Regularization parameters
-  * Architecture parameters
-  * Optimization parameters
+* **Configuration Space Best Practices:**
+  * Use meaningful and descriptive hyperparameter names
+  * Include comprehensive documentation for each hyperparameter
+  * Set parameter ranges that balance exploration with computational feasibility
+  * Ensure ranges are neither too narrow (limiting exploration) nor too wide (inefficient search)
+  * Add proper conditional dependencies between related hyperparameters
+  * Consider parameter interactions and their impact on model performance
+
+* **Algorithmic Considerations:**
+  * Select algorithms based on dataset characteristics rather than predefined preferences
+  * Include preprocessing options relevant to the data types present
+  * Consider ensemble methods when dataset complexity warrants them
+  * Include regularization options appropriate for the dataset size and dimensionality
+  * Ensure scalability considerations match dataset size and computational resources
 
 ---
 
@@ -53,9 +62,10 @@ def get_configspace() -> ConfigurationSpace:
 ### **Error Prevention:**
 
 * Ensure all hyperparameter names are valid Python identifiers
-* Verify that all ranges and bounds are valid
-* Check that conditional hyperparameters are properly defined
-* Validate that default values are within the specified ranges
+* Verify that all ranges and bounds are mathematically valid
+* Check that conditional hyperparameters are properly defined with correct parent-child relationships
+* Validate that default values fall within the specified ranges
+* Ensure parameter combinations will not result in invalid configurations
 
 ---
 
@@ -65,11 +75,13 @@ def get_configspace() -> ConfigurationSpace:
 def get_configspace() -> ConfigurationSpace:
     cs = ConfigurationSpace()
     
-    # Add hyperparameters
+    # Add algorithm selection hyperparameters based on dataset characteristics
     
-    cs.add_hyperparameter("custom hyperparameter")
+    # Add algorithm-specific hyperparameters with conditional dependencies
     
-    # Add more hyperparameters...
+    # Add preprocessing hyperparameters relevant to data types
+    
+    # Add regularization and optimization hyperparameters
     
     return cs
 ```
@@ -80,3 +92,5 @@ def get_configspace() -> ConfigurationSpace:
 * Valid `import` statements
 * A single `get_configspace()` function that returns a properly configured `ConfigurationSpace` object
 * No additional code or explanations
+* **Base algorithm selection on dataset characteristics, not predefined model preferences**
+* **Design parameter ranges that are appropriate for the specific dataset properties**

@@ -29,6 +29,28 @@ from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
 import numpy as np
+import multiprocessing
+import concurrent.futures
+import threading
+
+
+def run_with_timeout(func, timeout_seconds, *args, **kwargs):
+    """
+    Run a function with a timeout using concurrent.futures
+
+    :param func: Function to run
+    :param timeout_seconds: Timeout in seconds
+    :param args: Function arguments
+    :param kwargs: Function keyword arguments
+    :return: Function result
+    :raises TimeoutError: If function exceeds timeout
+    """
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(func, *args, **kwargs)
+        try:
+            return future.result(timeout=timeout_seconds)
+        except concurrent.futures.TimeoutError:
+            raise TimeoutError(f"Operation timed out after {timeout_seconds} seconds")
 
 
 class AutoMLAgent:
@@ -47,6 +69,7 @@ class AutoMLAgent:
         base_url: str = None,
         n_folds: int = 5,
         fold: int = 0,
+        time_budget: int = 3600,  # Default 1 hour timeout
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -56,6 +79,7 @@ class AutoMLAgent:
         :param ui_agent: The UI agent for displaying results and prompts.
         :param dataset_name: Optional name of the dataset for logging and display.
         :param task_type: Optional task type for logging and display.
+        :param time_budget: Maximum time budget in seconds for the optimization process.
         :param include_test_data: Whether to include test data in dataset dict passed to train function.
                                 When True, train function will receive both X_test and y_test and should NOT do internal splits.
                                 When False, train function will only receive X and y and should do internal train/test splits.
@@ -66,6 +90,7 @@ class AutoMLAgent:
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
         self.dataset_description = describe_dataset(self.dataset, dataset_type, task_type)
+        self.time_budget = time_budget
 
         self.config_code = None
         self.scenario_code = None
@@ -135,6 +160,161 @@ class AutoMLAgent:
                 "X": dataset_train["X"],
                 "y": dataset_train["y"],
             }
+
+    def _test_train_function_comprehensive(self, cfg: Any, train_fn: Any) -> dict:
+        """
+        Comprehensively test the train function with multiple configurations to ensure robustness.
+
+        :param cfg: Configuration space object
+        :param train_fn: Train function to test
+        :return: Dictionary with testing results
+        """
+        test_results = {
+            "success": False,
+            "tests_run": 0,
+            "successful_tests": 0,
+            "failed_tests": 0,
+            "best_loss": float("inf"),
+            "error": None,
+            "test_details": [],
+        }
+
+        # Get dataset for train function
+        dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
+
+        # Determine if function expects budget parameter
+        facade_name = getattr(self, "suggested_facade", None)
+        if facade_name:
+            facade_name = facade_name.__name__
+            required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+            expects_budget = "budget" in required_params
+        else:
+            expects_budget = True  # Test both cases if unsure
+
+        # Test configurations to try
+        test_configs = []
+
+        # 1. Default configuration
+        try:
+            default_config = cfg.get_default_configuration()
+            test_configs.append(("default", default_config))
+        except Exception as e:
+            self.logger.log_error(
+                f"Error getting default configuration: {e}",
+                error_type="TRAIN_FUNCTION_TESTING_ERROR",
+            )
+            pass
+
+        # 2. Multiple random configurations
+        for i in range(5):
+            try:
+                random_config = cfg.sample_configuration()
+                test_configs.append((f"random_{i+1}", random_config))
+            except Exception as e:
+                self.logger.log_error(
+                    f"Error getting random configuration: {e}",
+                    error_type="TRAIN_FUNCTION_TESTING_ERROR",
+                )
+                pass
+
+        # Budget values to test (if applicable)
+        budget_values = [None, 1, 10, 50] if expects_budget else [None]
+
+        last_error = None
+
+        for config_name, config in test_configs:
+            test_results["tests_run"] += 1
+
+            for budget in budget_values:
+                try:
+                    # Add timeout protection for individual tests
+                    def test_train_call():
+                        if budget is not None:
+                            # Test with budget parameter
+                            try:
+                                return train_fn(
+                                    cfg=config,
+                                    dataset=dataset_for_train,
+                                    seed=0,
+                                    budget=budget,
+                                )
+                            except TypeError:
+                                # Function doesn't accept budget, try without
+                                return train_fn(cfg=config, dataset=dataset_for_train, seed=0)
+                        else:
+                            # Test without budget parameter
+                            try:
+                                return train_fn(cfg=config, dataset=dataset_for_train, seed=0)
+                            except TypeError:
+                                # Maybe it requires budget, try with None
+                                return train_fn(
+                                    cfg=config,
+                                    dataset=dataset_for_train,
+                                    seed=0,
+                                    budget=None,
+                                )
+
+                    result = run_with_timeout(test_train_call, 30)  # 30 second timeout per test
+
+                    # Handle different return formats
+                    if isinstance(result, dict) and "loss" in result:
+                        loss = float(result["loss"])
+                    elif isinstance(result, (int, float)):
+                        loss = float(result)  # type: ignore
+                    elif hasattr(result, "__float__"):
+                        loss = float(result)  # type: ignore
+                    else:
+                        # Fallback for unexpected return types
+                        loss = float("inf")
+
+                    # Track best loss
+                    if loss < test_results["best_loss"]:
+                        test_results["best_loss"] = loss
+
+                    test_results["successful_tests"] += 1
+                    test_results["test_details"].append(
+                        {
+                            "config_name": config_name,
+                            "budget": budget,
+                            "loss": loss,
+                            "status": "success",
+                        }
+                    )
+
+                    # If we have at least one successful test, we can proceed
+                    if test_results["successful_tests"] >= 1:
+                        test_results["success"] = True
+
+                    # Don't test all budget values if one works
+                    break
+
+                except Exception as e:
+                    last_error = str(e)
+                    test_results["failed_tests"] += 1
+                    test_results["test_details"].append(
+                        {
+                            "config_name": config_name,
+                            "budget": budget,
+                            "error": str(e),
+                            "status": "failed",
+                        }
+                    )
+
+                    # Continue to next budget value
+                    continue
+
+        # Final success check
+        if test_results["successful_tests"] == 0:
+            test_results["success"] = False
+            test_results["error"] = last_error or "All train function tests failed"
+
+        # Log detailed test results
+        self.logger.log_response(
+            f"Train function testing completed: {test_results['successful_tests']}/{test_results['tests_run']} tests passed",
+            {"component": "train_function_testing", "test_results": test_results},
+        )
+
+        return test_results
 
     def generate_components(self):
         """
@@ -266,36 +446,30 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     self.train_function_code = source
                     train_fn = self.namespace["train"]
-                    sampled = cfg.sample_configuration()
 
-                    # Test train function with budget parameter for compatibility
-                    # Get dataset dictionary for train function
-                    dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
+                    # Comprehensive testing with multiple configurations
+                    self.ui_agent.info("Running comprehensive train function tests with multiple configurations...")
+                    test_results = self._test_train_function_comprehensive(cfg, train_fn)
 
-                    # Try with budget first (for multi-fidelity facades), then without
-                    try:
-                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=None)
-                    except TypeError:
-                        # If budget parameter not accepted, try without it
-                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0)
+                    if not test_results["success"]:
+                        # If comprehensive testing failed, raise the last error encountered
+                        raise Exception(f"Train function testing failed: {test_results['error']}")
 
-                    # Handle different return formats
-                    if isinstance(result, dict) and "loss" in result:
-                        # New format: dictionary with loss and metrics
-                        self.last_loss = result["loss"]
-                        metrics_info = f", metrics: {list(result.keys())}"
-                    else:
-                        # Old format: just loss value (backward compatibility)
-                        self.last_loss = float(result)
-                        metrics_info = ""
+                    # Store the best result from testing
+                    self.last_loss = test_results["best_loss"]
+                    self.ui_agent.success(
+                        f"✅ Train function testing successful! {test_results['successful_tests']}/{test_results['tests_run']} configurations passed"
+                    )
 
                     self.last_model = None
                     self.logger.log_response(
-                        f"Training executed successfully, loss: {self.last_loss}{metrics_info}",
+                        f"Training function tested successfully with {test_results['successful_tests']} configurations. Best loss: {self.last_loss}",
                         {
                             "component": component,
                             "status": "success",
                             "loss": self.last_loss,
+                            "tests_run": test_results["tests_run"],
+                            "successful_tests": test_results["successful_tests"],
                         },
                     )
 
@@ -407,37 +581,123 @@ class AutoMLAgent:
 
             def smac_train_function(config, seed: int = 0, budget: int = None) -> float:
                 """Wrapper function for multi-fidelity facades (Hyperband, MultiFidelity)"""
-                # Convert budget to int if it's provided as a float
-                budget_int = int(budget) if budget is not None else budget
-                result = train_fn(
-                    cfg=config,
-                    dataset=dataset_for_train,
-                    seed=int(seed),
-                    budget=budget_int,
-                )
-                # Train function now returns dictionary with loss and metrics
-                if isinstance(result, dict) and "loss" in result:
-                    return result["loss"]
-                else:
-                    return float(result)  # Fallback for backward compatibility
+                try:
+                    # Convert budget to int if it's provided as a float
+                    budget_int = int(budget) if budget is not None else budget
+
+                    # Add timeout protection for individual training runs
+                    def train_call():
+                        return train_fn(
+                            cfg=config,
+                            dataset=dataset_for_train,
+                            seed=int(seed),
+                            budget=budget_int,
+                        )
+
+                    timeout_seconds = min(300, self.time_budget // 10)  # Max 5 minutes per trial or 1/10 of total budget
+                    result = run_with_timeout(train_call, timeout_seconds)
+
+                    # Train function now returns dictionary with loss and metrics
+                    if isinstance(result, dict) and "loss" in result:
+                        return result["loss"]
+                    else:
+                        return float(result)  # Fallback for backward compatibility
+
+                except (TimeoutError, Exception) as e:
+                    self.logger.log_error(
+                        f"Training function failed: {str(e)}",
+                        error_type="TRAINING_TIMEOUT",
+                    )
+                    return float("inf")  # Return worst possible score
 
         else:
 
             def smac_train_function(config, seed: int = 0) -> float:
                 """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
-                result = train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
-                # Train function now returns dictionary with loss and metrics
-                if isinstance(result, dict) and "loss" in result:
-                    return result["loss"]
-                else:
-                    return float(result)  # Fallback for backward compatibility
+                try:
+                    # Add timeout protection for individual training runs
+                    def train_call():
+                        return train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
+
+                    timeout_seconds = min(300, self.time_budget // 10)  # Max 5 minutes per trial or 1/10 of total budget
+                    result = run_with_timeout(train_call, timeout_seconds)
+
+                    # Train function now returns dictionary with loss and metrics
+                    if isinstance(result, dict) and "loss" in result:
+                        return result["loss"]
+                    else:
+                        return float(result)  # Fallback for backward compatibility
+
+                except (TimeoutError, Exception) as e:
+                    self.logger.log_error(
+                        f"Training function failed: {str(e)}",
+                        error_type="TRAINING_TIMEOUT",
+                    )
+                    return float("inf")  # Return worst possible score
 
         smac = self.suggested_facade(
             scenario,
             smac_train_function,  # We pass the target function here
             overwrite=True,  # Overrides any previous results that are found that are inconsistent with the meta-data
         )
-        incumbent = smac.optimize()
+
+        # Add timeout protection around SMAC optimization
+        incumbent = None
+        try:
+            self.ui_agent.info(f"Starting SMAC optimization with {self.time_budget} seconds timeout...")
+
+            # Use 90% of time budget for optimization, reserve 10% for final evaluation
+            optimization_timeout = int(self.time_budget * 0.9)
+
+            # Log optimization start
+            self.logger.log_response(
+                f"Starting SMAC optimization with {optimization_timeout}s timeout",
+                {
+                    "component": "optimization",
+                    "status": "start",
+                    "timeout": optimization_timeout,
+                },
+            )
+
+            def optimization_call():
+                return smac.optimize()
+
+            incumbent = run_with_timeout(optimization_call, optimization_timeout)
+
+            self.ui_agent.success(f"SMAC optimization completed successfully!")
+            self.logger.log_response(
+                "SMAC optimization completed successfully",
+                {"component": "optimization", "status": "success"},
+            )
+
+        except TimeoutError:
+            self.logger.log_error(
+                f"SMAC optimization timed out after {optimization_timeout} seconds. Using best configuration found so far.",
+                error_type="SMAC_TIMEOUT",
+            )
+            self.ui_agent.warning(f"Optimization timed out after {optimization_timeout}s, using best config found so far")
+
+            # Get the best configuration found so far
+            try:
+                incumbent = smac.optimizer.intensifier.get_incumbent()
+            except Exception as e:
+                self.logger.log_error(f"Error getting incumbent: {e}", error_type="SMAC_ERROR")
+                # Fallback to default configuration if no incumbent found
+                incumbent = cfg.get_default_configuration()
+                self.logger.log_error(
+                    "No incumbent found, using default configuration",
+                    error_type="FALLBACK_CONFIG",
+                )
+
+        except Exception as e:
+            self.logger.log_error(f"SMAC optimization failed: {str(e)}", error_type="SMAC_ERROR")
+            self.ui_agent.error(f"Optimization failed: {str(e)}")
+            # Fallback to default configuration
+            incumbent = cfg.get_default_configuration()
+            self.logger.log_error(
+                "Using default configuration due to optimization failure",
+                error_type="FALLBACK_CONFIG",
+            )
 
         default_cost = smac.validate(self.config_space_obj.get_default_configuration())
         self.ui_agent.subheader("Default Cost")

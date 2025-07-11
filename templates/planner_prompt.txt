@@ -41,20 +41,17 @@ Generate exactly three implementation guides and return them in the following JS
 
 ### Guidelines
 
-- **IMPORTANT:** When OpenML meta-learning insights are available, use them to inform hyperparameter ranges and model selection based on similar datasets.
-- **CRITICAL:** For complex datasets where multiple model types could be effective, propose a configuration space that supports the most appropriate model architectures based on dataset characteristics. Consider factors like dataset size, feature types, target distribution, and computational constraints. Use a top-level categorical hyperparameter to select the model, with conditional hyperparameters for each one.
-- **Model Selection Guidance:**
-  - **Small datasets (< 1000 samples):** Consider SVM, k-NN, Naive Bayes, or simple ensemble methods
-  - **Medium datasets (1000-100k samples):** Consider XGBoost, LightGBM, Random Forest, or Neural Networks
-  - **Large datasets (> 100k samples):** Consider LightGBM, XGBoost, Neural Networks, or Linear models
-  - **High-dimensional data:** Consider Linear models, SVM, or feature selection with ensemble methods
-  - **Mixed/categorical features:** Consider tree-based models (XGBoost, LightGBM, Random Forest)
-  - **Continuous features:** Consider Neural Networks, SVM, or ensemble methods
-  - **Imbalanced datasets:** Consider models with good class weight handling (XGBoost, LightGBM, SVM)
+- **IMPORTANT:** When OpenML meta-learning insights are available, use them to inform hyperparameter ranges and algorithm selection based on similar datasets.
+- **CRITICAL:** Let the dataset characteristics drive model selection. Consider factors like:
+  - Dataset size and dimensionality
+  - Feature types (numerical, categorical, mixed)
+  - Target distribution and class balance
+  - Computational constraints and time requirements
+  - Signal-to-noise ratio and data quality
 - Use appropriate parameter types (`Categorical`, `Integer`, `Float`) based on the nature of each hyperparameter.
 - Specify realistic ranges considering dataset characteristics, computational constraints, and optimization objectives.
-- Include algorithm-specific hyperparameters relevant to the chosen models.
-- Adapt parameter ranges to dataset size (smaller ranges for large datasets, broader exploration for smaller datasets).
+- Include algorithm-specific hyperparameters relevant to the chosen approach.
+- Adapt parameter ranges to dataset characteristics (smaller ranges for large datasets, broader exploration for smaller datasets).
 - Balance exploration breadth with computational feasibility.
 
 ---
@@ -68,17 +65,14 @@ Generate exactly three implementation guides and return them in the following JS
 ### Guidelines
 
 - **CRITICAL:** The scenario MUST be compatible with the selected facade:
-  - For `BlackBoxFacade`/`HyperparameterOptimizationFacade`: **Do NOT** set `min_budget` or `max_budget` parameters.
-  - For `HyperbandFacade`/`MultiFidelityFacade`: **MUST** set both `min_budget` and `max_budget` parameters.
-- Budget values should represent fidelity levels. For example:
-  - Neural Network: `min_budget=10`, `max_budget=100` (training epochs)
-  - Tree Ensemble: `min_budget=20`, `max_budget=200` (n_estimators)
-  - Data Subsets: `min_budget=0.1`, `max_budget=1.0` (fraction of training data)
+  - For standard optimization facades: **Do NOT** set budget parameters.
+  - For multi-fidelity facades: **MUST** set both `min_budget` and `max_budget` parameters.
+- Budget values should represent meaningful fidelity levels appropriate for the chosen approach.
 - Set appropriate `n_trials` based on dataset complexity, search space size, and available computational budget.
-- Define `walltime_limit` considering expected runtime per evaluation and total optimization time.
+- Define time limits considering expected runtime per evaluation and total optimization time.
 - Configure output directory and logging based on experiment requirements.
 - Consider deterministic settings based on reproducibility needs.
-- Specify `crash_cost` and `cutoff_time` based on evaluation characteristics and failure handling needs.
+- Specify crash handling and timeout parameters based on evaluation characteristics.
 - Set budget parameters appropriately for the selected facade, using a relevant fidelity dimension.
 - Adapt all parameters to the specific dataset size, complexity, and computational constraints.
 
@@ -98,79 +92,100 @@ Generate exactly three implementation guides and return them in the following JS
     def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> float:
     ```
   - Always include the `budget` parameter even if the facade doesn't use it.
-  - For `BlackBoxFacade`/`HyperparameterOptimizationFacade`: `budget` will be `None` - ignore this parameter.
-  - For `HyperbandFacade`/`MultiFidelityFacade`: `budget` contains the fidelity budget.
-  - Use conditional logic to handle the budget parameter appropriately. For example:
-    ```python
-    if model_type == 'neural_network': epochs = int(budget)
-    if model_type == 'random_forest': n_estimators = int(budget)
-    ```
+  - For standard facades: `budget` will be `None` - ignore this parameter.
+  - For multi-fidelity facades: `budget` contains the fidelity budget.
+  - Use conditional logic to handle the budget parameter appropriately based on the chosen algorithm.
 - Handle data loading and preprocessing.
 - Implement proper train/validation/test splits.
 - Include cross-validation when appropriate.
-- Implement early stopping mechanisms where applicable (e.g., for NNs or Gradient Boosting).
-- Handle the budget parameter for multi-fidelity optimization by mapping it to the correct model parameter (e.g., epochs, n_estimators, etc.).
-- Return appropriate cost/score for optimization, and the trained model.
-- If multiple models are suggested in the config space, implement the logic to select and train the chosen model based on the configuration.
+- Implement early stopping mechanisms where applicable.
+- Handle the budget parameter for multi-fidelity optimization by mapping it to the appropriate control parameter.
+- Return appropriate cost/score for optimization.
+- Implement algorithm selection logic based on dataset characteristics rather than predefined preferences.
 
 ---
 
 ## Scenario Facade Selection
 
-Choose the most appropriate facade using this **decision tree approach**:
+Choose the most appropriate facade using this **concrete data-driven decision process**:
 
-### Step 1: Identify Available Fidelity Dimensions
+### Facade Selection Logic
 
-**Does your model have a natural fidelity dimension?**
-- **Neural Networks:** Training epochs, batch size, network depth
-- **Tree Ensembles:** Number of estimators, tree depth
-- **Iterative Algorithms:** Number of iterations, convergence tolerance
-- **Any Model:** Fraction of training data used
+**CRITICAL: Follow this EXACT decision tree. Do NOT deviate:**
 
-### Step 2: Evaluate Training Cost and Search Space
+#### Step 1: Count the dataset samples and features from the dataset description
 
-**Training Cost Assessment:**
-- **Fast (< 10 seconds per evaluation):** Any facade works
-- **Medium (10 seconds - 5 minutes):** Prefer multi-fidelity approaches
-- **Slow (> 5 minutes per evaluation):** Strongly prefer multi-fidelity approaches
+#### Step 2: Apply this EXACT logic:
 
-**Search Space Size:**
-- **Small (< 20 hyperparameters):** Any facade works
-- **Medium (20-50 hyperparameters):** Prefer Hyperband or MultiFidelity
-- **Large (> 50 hyperparameters):** Strongly prefer Hyperband
+**IF dataset has < 1,000 samples:**
+→ **ALWAYS use `BlackBoxFacade`**
 
-### Step 3: Facade Selection Decision Tree
+**ELSE IF dataset has 1,000-50,000 samples:**
+→ **ALWAYS use `HyperparameterOptimizationFacade`**
 
-**IF** clear fidelity dimension exists **AND** training is expensive:
-→ **MultiFidelityFacade**
+**ELSE IF dataset has > 50,000 samples:**
+→ **ALWAYS use `HyperbandFacade`**
 
-**ELSE IF** large search space **AND** iterative algorithm:
-→ **HyperbandFacade**
+#### Examples:
+- **Iris (150 samples):** `BlackBoxFacade`
+- **Wine (178 samples):** `BlackBoxFacade`  
+- **Breast Cancer (569 samples):** `BlackBoxFacade`
+- **Digits (1797 samples):** `HyperparameterOptimizationFacade`
+- **Adult (32,561 samples):** `HyperparameterOptimizationFacade`
+- **MNIST (60,000 samples):** `HyperbandFacade`
 
-**ELSE IF** traditional ML models (SVM, Random Forest, etc.) **AND** well-understood hyperparameters:
-→ **HyperparameterOptimizationFacade**
+#### NEVER use MultiFidelityFacade unless explicitly dealing with neural networks or ensemble methods with > 100,000 samples
 
-**ELSE:**
-→ **BlackBoxFacade**
+### Specific Dataset Type Guidelines
 
-### Step 4: Facade-Specific Requirements
+#### Tabular Data:
+- **< 1,000 samples:** `BlackBoxFacade`
+- **1,000-10,000 samples:** `HyperparameterOptimizationFacade`
+- **> 10,000 samples:** `HyperbandFacade`
 
-- **MultiFidelityFacade/HyperbandFacade:** MUST set `min_budget` and `max_budget`
-- **BlackBoxFacade/HyperparameterOptimizationFacade:** MUST NOT set budget parameters
+#### Image Data:
+- **< 10,000 images:** `HyperparameterOptimizationFacade`
+- **> 10,000 images:** `HyperbandFacade` or `MultiFidelityFacade`
 
-### Common Fidelity Mappings
+#### Text Data:
+- **< 5,000 documents:** `HyperparameterOptimizationFacade`
+- **> 5,000 documents:** `HyperbandFacade`
 
-- **Neural Networks:** `budget` = training epochs (min: 5-10, max: 100-200)
-- **XGBoost/LightGBM:** `budget` = n_estimators (min: 10-20, max: 200-500)
-- **Random Forest:** `budget` = n_estimators (min: 10-20, max: 200-500)
-- **SVM:** `budget` = data fraction (min: 0.1, max: 1.0)
-- **Any Model:** `budget` = data fraction (min: 0.1, max: 1.0)
+### Algorithm-Specific Facade Selection
 
-### Computational Budget Guidelines
+#### Tree-based Models (Random Forest, XGBoost, LightGBM):
+- **< 5,000 samples:** `BlackBoxFacade`
+- **5,000-50,000 samples:** `HyperparameterOptimizationFacade`
+- **> 50,000 samples:** `MultiFidelityFacade` (using n_estimators as fidelity)
 
-- **Small datasets (< 10k samples):** 50-100 trials, 1-2 hours
-- **Medium datasets (10k-100k samples):** 100-200 trials, 2-4 hours
-- **Large datasets (> 100k samples):** 200-500 trials, 4-8 hours
+#### Neural Networks:
+- **Always:** `MultiFidelityFacade` or `HyperbandFacade` (using epochs as fidelity)
+
+#### Linear Models (Logistic Regression, SVM):
+- **< 10,000 samples:** `BlackBoxFacade`
+- **> 10,000 samples:** `HyperparameterOptimizationFacade`
+
+### Facade-Specific Requirements
+
+#### For MultiFidelityFacade and HyperbandFacade:
+- **MUST** set `min_budget` and `max_budget` in scenario
+- **MUST** handle `budget` parameter in train function
+- **Common fidelity dimensions:**
+  - **Tree models:** n_estimators (min=10, max=500)
+  - **Neural networks:** epochs (min=5, max=100)
+  - **Iterative algorithms:** max_iter (min=50, max=1000)
+
+#### For BlackBoxFacade and HyperparameterOptimizationFacade:
+- **MUST NOT** set budget parameters in scenario
+- **MUST** ignore `budget` parameter in train function (always None)
+
+### Trial Budget Guidelines
+
+#### Based on dataset size and facade:
+- **BlackBoxFacade:** 20-50 trials (simple datasets, quick convergence)
+- **HyperparameterOptimizationFacade:** 50-150 trials (standard optimization)
+- **HyperbandFacade:** 100-300 trials (successive halving needs more trials)
+- **MultiFidelityFacade:** 80-200 trials (fidelity-based optimization)
 
 ---
 
@@ -181,6 +196,8 @@ Choose the most appropriate facade using this **decision tree approach**:
 - Steps should build sequentially toward a complete implementation.
 - Focus on implementation details, not theoretical explanations.
 - Adapt all recommendations to the specific `{task_type}` and `{dataset_type}`.
+- **Let dataset characteristics drive algorithm selection**, not predefined preferences.
 - Return **ONLY** the JSON object, no other text or explanations.
 - Do **not** include error handling or exception suggestions in the steps.
 - Ensure all code suggestions are directly executable.
+- **Base all decisions on data characteristics and computational constraints**, not algorithm bias.
