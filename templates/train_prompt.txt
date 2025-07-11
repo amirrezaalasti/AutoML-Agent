@@ -14,22 +14,22 @@
 
 ### ** CRITICAL HPO ROBUSTNESS RULE:**
 **GENERATE CODE THAT NATURALLY HANDLES MULTI-ALGORITHM CONFIGURATIONS!**
-* **Context**: Configuration space may contain hyperparameters for multiple algorithms (RF, GB, SVM, NN)
-* **Algorithm Selection**: Implement the algorithm(s) that match the configuration space definition
+* **Context**: Configuration space may contain hyperparameters for multiple algorithm families
+* **Algorithm Selection**: Implement algorithms that match the configuration space definition
 * **Parameter Extraction**: Extract and use all relevant parameters from the configuration
 * **Safe Type Conversion**: Convert parameters to appropriate types with bounds checking
 * **Default Values**: Use sensible defaults for all hyperparameters when not specified
 * **Validate Ranges**: Ensure all parameters are within valid ranges before use
 * **Multi-Algorithm Support**: If config space supports multiple algorithms, implement appropriate logic
-* **Parameter Name Matching**: Use EXACT parameter names from ConfigSpace definition - never use generic names
-* **Algorithm Detection**: Look at ConfigSpace parameter
+* **Parameter Name Matching**: Use EXACT parameter names from ConfigSpace definition
+* **Algorithm Detection**: Determine algorithm choice based on configuration parameters
 * **This is a HARD REQUIREMENT**: Generate naturally robust code that handles configurations correctly
 
 ---
 
 ### ** CRITICAL GENERALIZATION RULE:**
 **ABSOLUTELY NO HARDCODED DIMENSIONS OR SHAPES!**
-* **Why**: The function must be reusable for different datasets. Hardcoding values like `(48000, 3072)` or `10` classes makes the function brittle and useless.
+* **Why**: The function must be reusable for different datasets. Hardcoding values makes the function brittle and useless.
 * **Instead**: All dimensions **must** be inferred dynamically from the input `dataset` object.
 * **Examples**:
     * **Get number of features from `X.shape[1]`**.
@@ -52,30 +52,30 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 ```
 
 **CRITICAL**: The function signature **MUST** include the `budget` parameter even if not used by all facades:
-- For **BlackBoxFacade** and **HyperparameterOptimizationFacade**: `budget` parameter will be `None` and should be ignored
-- For **HyperbandFacade** and **MultiFidelityFacade**: `budget` parameter will contain the fidelity budget (e.g., number of epochs, training steps)
+- For standard optimization facades: `budget` parameter will be `None` and should be ignored
+- For multi-fidelity facades: `budget` parameter will contain the fidelity budget (e.g., iterations, components)
 - **Always include the budget parameter** in the signature for compatibility with all facades
 - Use conditional logic to handle the budget parameter appropriately based on the facade type
 
 **Budget Parameter Handling Examples:**
 ```python
-# For neural networks (epochs)
+# For iterative algorithms
 if budget is not None:
-    epochs = budget
+    max_iterations = budget
 else:
-    epochs = 100  # default value
+    max_iterations = default_iterations
 
-# For iterative algorithms (iterations)
+# For ensemble methods
 if budget is not None:
-    max_iter = budget
+    n_components = budget
 else:
-    max_iter = 1000  # default value
+    n_components = default_components
 
-# For ensemble methods (estimators)
+# For data-based fidelity
 if budget is not None:
-    n_estimators = budget
+    data_fraction = min(budget, 1.0)  # Ensure valid fraction
 else:
-    n_estimators = 100  # default value
+    data_fraction = 1.0  # Use full dataset
 ```
 
 ---
@@ -84,7 +84,7 @@ else:
 
 * The function **must** handle the dataset properly:
   * Dataset Description: `{dataset_description}`
-  * ConfigSpace Definition (**very important for choosing the model**): `{config_space}`
+  * ConfigSpace Definition (**very important for choosing the algorithm**): `{config_space}`
   * SMAC Scenario: `{scenario}`
 
 * **CRITICAL**: The function **must** use the EXACT parameter names from the ConfigSpace definition above
@@ -111,72 +111,50 @@ else:
   * Handle all hyperparameters defined in the configuration space
   * Apply proper type conversion and validation
   * Handle conditional hyperparameters correctly
-  * type of some keys like batch_size or some numeric keys can be **numpy.int64**, int, float, ...
+  * Parameter types may include numpy types (numpy.int64, numpy.float64, etc.)
 
-* **Model Requirements:**
-  * Infer input and output dimensions dynamically
-  * Follow data format requirements
-  * Handle necessary data transformations
-  * Implement proper model initialization
-  * Use appropriate loss functions
-  * Apply proper regularization
-  * Handle model-specific requirements
-  * **Framework Flexibility**: You can use any ML framework (PyTorch, TensorFlow, scikit-learn, etc.)
+* **Algorithm Selection Requirements:**
+  * Choose algorithms based on dataset characteristics and configuration space parameters
+  * Implement algorithms that are appropriate for the given task type and data properties
+  * Consider computational constraints and evaluation time requirements
+  * Select frameworks and methods that match the dataset size and complexity
+  * **Framework Selection**: Choose the most appropriate framework based on:
+    * Dataset size and computational requirements
+    * Algorithm type and implementation availability
+    * Memory constraints and processing efficiency
 
-  * **Training Requirements:**
-  * Implement proper training loop
-  * Handle batch processing
-  * Apply proper optimization
-  * Implement early stopping if needed
-  * Handle validation if required
-      * **PREVENT OVERFITTING**: Use proper validation split, regularization, early stopping
-    * **ENSURE GENERALIZATION**: Avoid fitting too closely to training data
-    * Return a dictionary with loss and evaluation metrics
+* **Training Requirements:**
+  * Implement proper training procedures for the selected algorithm
+  * Handle batch processing efficiently when needed
+  * Apply appropriate optimization strategies
+  * Implement early stopping if beneficial for the algorithm
+  * Handle validation appropriately
+  * **Prevent Overfitting**: Use proper validation, regularization, early stopping
+  * **Ensure Generalization**: Avoid fitting too closely to training data
+  * Return a dictionary with loss and evaluation metrics
 
 * **Model Saving Requirements:**
   * **STRONGLY RECOMMENDED**: Save the trained model if `model_dir` is provided
-  * This enables proper model evaluation with metrics like accuracy, precision, recall
+  * This enables proper model evaluation with comprehensive metrics
   * Create the directory if it doesn't exist
-  * Save model in appropriate format for the framework:
-    * **PyTorch**: Use `torch.save(model.state_dict(), model_path)` or `torch.save(model, model_path)`
-    * **TensorFlow**: Use `model.save(model_path)` or `tf.saved_model.save(model, model_path)`
-    * **scikit-learn**: Use `joblib.dump(model, model_path)` or `pickle.dump(model, open(model_path, 'wb'))`
+  * Save model in appropriate format for the chosen framework
   * Generate unique model filename using timestamp or configuration hash
   * **CRITICAL**: The function must return a dictionary with loss and metrics
     * **REASON**: Loss is used for hyperparameter optimization, metrics provide comprehensive evaluation
 
-  * **Return Format Requirements:**
+* **Return Format Requirements:**
   * **CRITICAL**: Return a dictionary with 'loss' key and evaluation metrics
-  * **For Classification Tasks**, include these metrics:
-    * `loss`: Primary loss value for optimization (float)
-    * `accuracy`: Overall accuracy (float)
-    * `precision`: Weighted precision score (float)
-    * `recall`: Weighted recall score (float)
-    * `f1`: Weighted F1-score (float)
-    * `balanced_accuracy`: Balanced accuracy (float)
-    * Optional: `roc_auc`: ROC AUC score (float, if applicable)
-  * **For Regression Tasks**, include these metrics:
-    * `loss`: Primary loss value for optimization (float)
-    * `mse`: Mean Squared Error (float)
-    * `rmse`: Root Mean Squared Error (float)
-    * `mae`: Mean Absolute Error (float)
-    * `r2`: R² coefficient of determination (float)
   * **Metric Calculation**: Use validation data if available, otherwise use training data
-  * **Handle Errors**: If any metric calculation fails, set its value to 0.0 or appropriate default
   * **Consistent Format**: Always return the same dictionary keys for the task type
 
-  * **Performance Optimization Requirements:**
+* **Performance Optimization Requirements:**
   * Minimize memory usage and allocations
   * Use vectorized operations where possible
   * Avoid unnecessary data copying
   * Optimize data loading and preprocessing
   * Use efficient data structures
-  * Minimize CPU/GPU synchronization
-  * Implement efficient batch processing if necessary
-  * Use appropriate device placement (CPU/GPU)
-  * Optimize model forward/backward passes
-  * Minimize Python overhead
-  * For Neural Networks **Always use GPU** if available
+  * Implement efficient processing for the chosen algorithm
+  * **Resource Management**: Use computational resources efficiently based on dataset size
 
 * **Code Optimization Requirements:**
   * Keep code minimal and focused
@@ -186,25 +164,24 @@ else:
   * Optimize loops and iterations
   * Use appropriate data types
   * Avoid unnecessary object creation
-  * Use appropriate caching strategies
-  * The train function should be computational efficient
+  * The train function should be computationally efficient
 
 * **Best Practices:**
-  * Implement proper logging
-  * Handle edge cases
-  * Ensure reproducibility
-  * Optimize performance
-  * Follow framework best practices
-  * For tracking the progress add prints
+  * Implement proper logging for progress tracking
+  * Handle edge cases gracefully
+  * Ensure reproducibility with proper random seed usage
+  * Optimize performance for the dataset characteristics
+  * Follow framework-specific best practices for the chosen implementation
 
 ---
 
-### **Frameworks:**
+### **Framework Selection Guidelines:**
 
-Choose **one** of the following frameworks based on the dataset and requirements:
-* **PyTorch**: For deep learning tasks
-* **TensorFlow**: For deep learning tasks
-* **scikit-learn**: For traditional ML tasks
+Choose the most appropriate framework based on dataset characteristics and algorithm requirements:
+* **Traditional ML algorithms**: Use efficient implementations for the dataset size
+* **Deep learning approaches**: Select frameworks suitable for the architecture and data type
+* **Ensemble methods**: Choose implementations that scale well with the dataset
+* **Consider computational constraints and available resources**
 
 ---
 
@@ -242,11 +219,11 @@ Choose **one** of the following frameworks based on the dataset and requirements
 2. **Extract hyperparameters** from cfg with appropriate defaults and type conversion
 3. **Validate and bound** all parameters to ensure they're within valid ranges
 4. **Prepare data** efficiently, inferring dimensions dynamically
-5. **Implement algorithm(s)** that match the configuration space definition
+5. **Select and implement algorithm** based on configuration space and dataset characteristics
 6. **Handle budget parameter** appropriately for the facade type
 7. **Train the model** with the validated parameters
 8. **Save the model** if model_dir is provided
-9. **Return both the loss and trained model** as a tuple (loss, model)
+9. **Return dictionary with loss and metrics**
 
 **Do NOT copy specific implementation patterns** - generate code appropriate for the given configuration space and dataset requirements.
 
@@ -258,8 +235,7 @@ Choose **one** of the following frameworks based on the dataset and requirements
 def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Dict[str, Union[float, int]]:
     # Set random seed for reproducibility
     
-    # Extract hyperparameters efficiently
-    sample_config = cfg.get('sample_config')
+    # Extract hyperparameters efficiently based on ConfigSpace definition
     
     # Prepare data efficiently - conditional train/test split behavior
     X, y = dataset['X'], dataset['y']
@@ -268,33 +244,31 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
     if 'X_test' in dataset and 'y_test' in dataset:
         # Use entire training set - test set provided separately
         X_train, y_train = X, y
-        X_test, y_test = dataset['X_test'], dataset['y_test']  # Available for evaluation
+        X_test, y_test = dataset['X_test'], dataset['y_test']
     else:
         # Perform internal train/test split for validation
         from sklearn.model_selection import train_test_split
         X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed)
-        X_test, y_test = X_val, y_val  # Use validation as test for metrics
+        X_test, y_test = X_val, y_val
     
-    # Initialize model with optimized parameters
+    # Select and initialize algorithm based on configuration and dataset characteristics
     
-    # Optimized training loop
+    # Handle budget parameter for fidelity control
+    
+    # Implement optimized training procedure
     
     # Save model if directory is provided (recommended for evaluation)
     if model_dir:
         os.makedirs(model_dir, exist_ok=True)
-        model_path = os.path.join(model_dir, f"model_{{seed}}.pth")
-        torch.save(model.state_dict(), model_path)  # or torch.save(model, model_path)
+        model_path = os.path.join(model_dir, f"model_{{seed}}.pkl")
+        # Save using appropriate method for chosen framework
     
-    # Calculate evaluation metrics
-    predictions = model.predict(X_test)  # or model(X_test) for PyTorch
-
-    # metrics should always have lost in it
+    # Calculate evaluation metrics on validation/test data
+    predictions = model.predict(X_test)  # Adapt for chosen framework
+    
+    # Return dictionary with loss and metrics
     return metrics
 ```
-
----
-
-
 
 ---
 
@@ -307,10 +281,9 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 * For error metrics, use raw error values (e.g. mse: 0.15)
 * Ensure consistent sign convention across all metrics
 * **STRONGLY RECOMMENDED**: Save the trained model if `model_dir` parameter is provided
-* **CRITICAL**: ALWAYS return a dictionary with 'loss' key and evaluation metrics
 * **MUST handle multi-algorithm configuration spaces** by implementing appropriate algorithms
-* **MUST use EXACT parameter names** from ConfigSpace definition - never use generic names
-* **MUST implement algorithms** based on parameter prefixes in ConfigSpace
+* **MUST use EXACT parameter names** from ConfigSpace definition
+* **MUST select algorithms** based on dataset characteristics and configuration parameters
 * **MUST convert budget parameter** to appropriate type and validate range
 * **MUST use sensible defaults** for all hyperparameters with proper type conversion
 * **MUST validate parameter ranges** to ensure they're within acceptable bounds
@@ -323,4 +296,5 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 * **Dataset Usage**: Check for separate test set availability and adapt accordingly
 * **Metric Calculation**: Always calculate metrics on validation/test data, not training data
 * **Return Format**: Dictionary with consistent keys based on task type (classification/regression)
-* **CRITICAL**: metrics should always have `loss` in it 
+* **CRITICAL**: Dictionary must always include `loss` key for hyperparameter optimization
+* **Algorithm Selection**: Base algorithm choice on dataset characteristics, not predefined preferences
