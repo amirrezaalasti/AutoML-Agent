@@ -5,7 +5,7 @@ PY_EXPERIMENTER:
     provider: mysql
     database: AgentSmac
     table:
-      name: AgentSmacRuns_tabular
+      name: AgentSmacRuns_tabular_1489
       keyfields:
         dataset_origin:
           type: VARCHAR(255)
@@ -25,7 +25,7 @@ PY_EXPERIMENTER:
         dataset_openml_id:
           type: int
           values: [1489]
-          # values: [1489, 23517, 28, 715, 752, 772, 807, 354]  # Default to credit-g dataset ID
+          # values: [1489, 23517, 28, 715, 752, 772, 807, 354, 31]  # Default to credit-g dataset ID
         time_budget:
           type: int
           values: [21600]
