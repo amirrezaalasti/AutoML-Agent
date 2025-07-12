@@ -23,3 +23,5 @@ workspaces
 build
 *.log
 .DS_Store
+agent_smac_logs/
+certificates/
