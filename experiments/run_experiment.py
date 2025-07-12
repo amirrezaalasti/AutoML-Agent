@@ -76,7 +76,8 @@ class AutoMLAgentExperimenter:
         ui_agent = CLIUI()
         n_folds = parameters["n_folds"]
         fold = parameters["fold"]
-        time_budget = parameters.get("time_budget", 3600)  # Default to 1 hour if not specified
+        time_budget = parameters.get("time_budget", 28800)  # Default to 1 hour if not specified
+        dataset_folder = "./agent_smac_logs/logs" + "_" + dataset_name
 
         print(f"Experiment configuration: Dataset={dataset_name}, Time Budget={time_budget}s")
 
@@ -94,6 +95,7 @@ class AutoMLAgentExperimenter:
             n_folds=n_folds,
             fold=fold,
             time_budget=time_budget,
+            folder_name=dataset_folder,
         )
 
         try:

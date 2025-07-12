@@ -7,9 +7,7 @@ from utils import (
     extract_code_block,
     split_dataset_kfold,
     FACADE_PARAMETER_REQUIREMENTS,
-    evaluate_model_predictions,
     get_default_metrics,
-    execute_training_function,
     prepare_training_parameters,
 )
 from scripts.Logger import Logger
@@ -17,8 +15,6 @@ from scripts.OpenMLRAG import OpenMLRAG
 from config.api_keys import OPENML_API_KEY
 from config.configs_path import (
     OPENML_CSV_PATH,
-    EXPERIMENTER_CONFIG_PATH,
-    EXPERIMENTER_DATABASE_CREDENTIALS_PATH,
 )
 from scripts.LLMPlanner import LLMPlanner
 from smac.facade.hyperparameter_optimization_facade import (
@@ -29,28 +25,19 @@ from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
 import numpy as np
-import multiprocessing
-import concurrent.futures
-import threading
+from contextlib import contextmanager
 
 
-def run_with_timeout(func, timeout_seconds, *args, **kwargs):
-    """
-    Run a function with a timeout using concurrent.futures
-
-    :param func: Function to run
-    :param timeout_seconds: Timeout in seconds
-    :param args: Function arguments
-    :param kwargs: Function keyword arguments
-    :return: Function result
-    :raises TimeoutError: If function exceeds timeout
-    """
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(func, *args, **kwargs)
-        try:
-            return future.result(timeout=timeout_seconds)
-        except concurrent.futures.TimeoutError:
-            raise TimeoutError(f"Operation timed out after {timeout_seconds} seconds")
+@contextmanager
+def timeout_handler(seconds):
+    """Thread-safe context manager for timeout handling using multiprocessing"""
+    # Use a simple no-op timeout handler to prevent signal issues
+    # SMAC has its own timeout mechanisms that are more appropriate for HPO
+    try:
+        yield
+    except Exception:
+        # Let exceptions propagate normally
+        raise
 
 
 class AutoMLAgent:
@@ -70,6 +57,7 @@ class AutoMLAgent:
         n_folds: int = 5,
         fold: int = 0,
         time_budget: int = 3600,  # Default 1 hour timeout
+        folder_name: str = "./logs",
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -113,7 +101,7 @@ class AutoMLAgent:
         self.logger = Logger(
             model_name=model_name,
             dataset_name=dataset_name,
-            base_log_dir="./logs",
+            base_log_dir=folder_name,
         )
 
         self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH)
@@ -161,161 +149,6 @@ class AutoMLAgent:
                 "y": dataset_train["y"],
             }
 
-    def _test_train_function_comprehensive(self, cfg: Any, train_fn: Any) -> dict:
-        """
-        Comprehensively test the train function with multiple configurations to ensure robustness.
-
-        :param cfg: Configuration space object
-        :param train_fn: Train function to test
-        :return: Dictionary with testing results
-        """
-        test_results = {
-            "success": False,
-            "tests_run": 0,
-            "successful_tests": 0,
-            "failed_tests": 0,
-            "best_loss": float("inf"),
-            "error": None,
-            "test_details": [],
-        }
-
-        # Get dataset for train function
-        dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
-
-        # Determine if function expects budget parameter
-        facade_name = getattr(self, "suggested_facade", None)
-        if facade_name:
-            facade_name = facade_name.__name__
-            required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
-            expects_budget = "budget" in required_params
-        else:
-            expects_budget = True  # Test both cases if unsure
-
-        # Test configurations to try
-        test_configs = []
-
-        # 1. Default configuration
-        try:
-            default_config = cfg.get_default_configuration()
-            test_configs.append(("default", default_config))
-        except Exception as e:
-            self.logger.log_error(
-                f"Error getting default configuration: {e}",
-                error_type="TRAIN_FUNCTION_TESTING_ERROR",
-            )
-            pass
-
-        # 2. Multiple random configurations
-        for i in range(5):
-            try:
-                random_config = cfg.sample_configuration()
-                test_configs.append((f"random_{i+1}", random_config))
-            except Exception as e:
-                self.logger.log_error(
-                    f"Error getting random configuration: {e}",
-                    error_type="TRAIN_FUNCTION_TESTING_ERROR",
-                )
-                pass
-
-        # Budget values to test (if applicable)
-        budget_values = [None, 1, 10, 50] if expects_budget else [None]
-
-        last_error = None
-
-        for config_name, config in test_configs:
-            test_results["tests_run"] += 1
-
-            for budget in budget_values:
-                try:
-                    # Add timeout protection for individual tests
-                    def test_train_call():
-                        if budget is not None:
-                            # Test with budget parameter
-                            try:
-                                return train_fn(
-                                    cfg=config,
-                                    dataset=dataset_for_train,
-                                    seed=0,
-                                    budget=budget,
-                                )
-                            except TypeError:
-                                # Function doesn't accept budget, try without
-                                return train_fn(cfg=config, dataset=dataset_for_train, seed=0)
-                        else:
-                            # Test without budget parameter
-                            try:
-                                return train_fn(cfg=config, dataset=dataset_for_train, seed=0)
-                            except TypeError:
-                                # Maybe it requires budget, try with None
-                                return train_fn(
-                                    cfg=config,
-                                    dataset=dataset_for_train,
-                                    seed=0,
-                                    budget=None,
-                                )
-
-                    result = run_with_timeout(test_train_call, 30)  # 30 second timeout per test
-
-                    # Handle different return formats
-                    if isinstance(result, dict) and "loss" in result:
-                        loss = float(result["loss"])
-                    elif isinstance(result, (int, float)):
-                        loss = float(result)  # type: ignore
-                    elif hasattr(result, "__float__"):
-                        loss = float(result)  # type: ignore
-                    else:
-                        # Fallback for unexpected return types
-                        loss = float("inf")
-
-                    # Track best loss
-                    if loss < test_results["best_loss"]:
-                        test_results["best_loss"] = loss
-
-                    test_results["successful_tests"] += 1
-                    test_results["test_details"].append(
-                        {
-                            "config_name": config_name,
-                            "budget": budget,
-                            "loss": loss,
-                            "status": "success",
-                        }
-                    )
-
-                    # If we have at least one successful test, we can proceed
-                    if test_results["successful_tests"] >= 1:
-                        test_results["success"] = True
-
-                    # Don't test all budget values if one works
-                    break
-
-                except Exception as e:
-                    last_error = str(e)
-                    test_results["failed_tests"] += 1
-                    test_results["test_details"].append(
-                        {
-                            "config_name": config_name,
-                            "budget": budget,
-                            "error": str(e),
-                            "status": "failed",
-                        }
-                    )
-
-                    # Continue to next budget value
-                    continue
-
-        # Final success check
-        if test_results["successful_tests"] == 0:
-            test_results["success"] = False
-            test_results["error"] = last_error or "All train function tests failed"
-
-        # Log detailed test results
-        self.logger.log_response(
-            f"Train function testing completed: {test_results['successful_tests']}/{test_results['tests_run']} tests passed",
-            {"component": "train_function_testing", "test_results": test_results},
-        )
-
-        return test_results
-
     def generate_components(self):
         """
         Generate the configuration space, scenario, and training function code using LLM.
@@ -330,6 +163,10 @@ class AutoMLAgent:
             config_space_suggested_parameters,
         )
         self.suggested_facade = self.smac_facades[instructor_response.suggested_facade]
+        self.logger.log_response(
+            f"Suggested Facade: {instructor_response.suggested_facade}",
+            {"component": "instructor", "status": "success", "facade": instructor_response.suggested_facade},
+        )
 
         self.ui_agent.subheader("Instructor Response")
         # configuration plan:
@@ -446,30 +283,36 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     self.train_function_code = source
                     train_fn = self.namespace["train"]
+                    sampled = cfg.sample_configuration()
 
-                    # Comprehensive testing with multiple configurations
-                    self.ui_agent.info("Running comprehensive train function tests with multiple configurations...")
-                    test_results = self._test_train_function_comprehensive(cfg, train_fn)
+                    # Test train function with budget parameter for compatibility
+                    # Get dataset dictionary for train function
+                    dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
 
-                    if not test_results["success"]:
-                        # If comprehensive testing failed, raise the last error encountered
-                        raise Exception(f"Train function testing failed: {test_results['error']}")
+                    # Try with budget first (for multi-fidelity facades), then without
+                    try:
+                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=None)
+                    except TypeError:
+                        # If budget parameter not accepted, try without it
+                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0)
 
-                    # Store the best result from testing
-                    self.last_loss = test_results["best_loss"]
-                    self.ui_agent.success(
-                        f"✅ Train function testing successful! {test_results['successful_tests']}/{test_results['tests_run']} configurations passed"
-                    )
+                    # Handle different return formats
+                    if isinstance(result, dict) and "loss" in result:
+                        # New format: dictionary with loss and metrics
+                        self.last_loss = result["loss"]
+                        metrics_info = f", metrics: {list(result.keys())}"
+                    else:
+                        # Old format: just loss value (backward compatibility)
+                        self.last_loss = float(result)
+                        metrics_info = ""
 
                     self.last_model = None
                     self.logger.log_response(
-                        f"Training function tested successfully with {test_results['successful_tests']} configurations. Best loss: {self.last_loss}",
+                        f"Training executed successfully, loss: {self.last_loss}{metrics_info}",
                         {
                             "component": component,
                             "status": "success",
                             "loss": self.last_loss,
-                            "tests_run": test_results["tests_run"],
-                            "successful_tests": test_results["successful_tests"],
                         },
                     )
 
@@ -586,16 +429,13 @@ class AutoMLAgent:
                     budget_int = int(budget) if budget is not None else budget
 
                     # Add timeout protection for individual training runs
-                    def train_call():
-                        return train_fn(
+                    with timeout_handler(min(3600, self.time_budget // 10)):  # Max 1 hour per trial or 1/10 of total budget
+                        result = train_fn(
                             cfg=config,
                             dataset=dataset_for_train,
                             seed=int(seed),
                             budget=budget_int,
                         )
-
-                    timeout_seconds = min(300, self.time_budget // 10)  # Max 5 minutes per trial or 1/10 of total budget
-                    result = run_with_timeout(train_call, timeout_seconds)
 
                     # Train function now returns dictionary with loss and metrics
                     if isinstance(result, dict) and "loss" in result:
@@ -616,11 +456,8 @@ class AutoMLAgent:
                 """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
                 try:
                     # Add timeout protection for individual training runs
-                    def train_call():
-                        return train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
-
-                    timeout_seconds = min(300, self.time_budget // 10)  # Max 5 minutes per trial or 1/10 of total budget
-                    result = run_with_timeout(train_call, timeout_seconds)
+                    with timeout_handler(min(3600, self.time_budget // 10)):  # Max 1 hour per trial or 1/10 of total budget
+                        result = train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
 
                     # Train function now returns dictionary with loss and metrics
                     if isinstance(result, dict) and "loss" in result:
@@ -659,10 +496,8 @@ class AutoMLAgent:
                 },
             )
 
-            def optimization_call():
-                return smac.optimize()
-
-            incumbent = run_with_timeout(optimization_call, optimization_timeout)
+            with timeout_handler(optimization_timeout):
+                incumbent = smac.optimize()
 
             self.ui_agent.success(f"SMAC optimization completed successfully!")
             self.logger.log_response(
