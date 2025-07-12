@@ -2,7 +2,7 @@
 
 ---
 
-### ** CRITICAL CODE GENERATION RULE FOR HYPERPARAMETER OPTIMIZATION:**
+## **CRITICAL CODE GENERATION RULE FOR HYPERPARAMETER OPTIMIZATION:**
 **GENERATE ROBUST CODE THAT DOESN'T NEED ERROR HANDLING!**
 * **Why**: In hyperparameter optimization, the function will be called with diverse configurations
 * **HPO Context**: The training function must handle all configurations without crashing
@@ -12,7 +12,7 @@
 
 ---
 
-### ** CRITICAL HPO ROBUSTNESS RULE:**
+## **CRITICAL HPO ROBUSTNESS RULE:**
 **GENERATE CODE THAT NATURALLY HANDLES MULTI-ALGORITHM CONFIGURATIONS!**
 * **Context**: Configuration space may contain hyperparameters for multiple algorithm families
 * **Algorithm Selection**: Implement algorithms that match the configuration space definition
@@ -27,7 +27,7 @@
 
 ---
 
-### ** CRITICAL GENERALIZATION RULE:**
+## **CRITICAL GENERALIZATION RULE:**
 **ABSOLUTELY NO HARDCODED DIMENSIONS OR SHAPES!**
 * **Why**: The function must be reusable for different datasets. Hardcoding values makes the function brittle and useless.
 * **Instead**: All dimensions **must** be inferred dynamically from the input `dataset` object.
@@ -38,18 +38,51 @@
 * **This is a HARD REQUIREMENT**: Any code with hardcoded shapes will be rejected.
 
 ---
+
+## **Context Information:**
 * **Selected Facade**: `{suggested_facade}`
-* Recommended steps to write the train function based on the planner:
-  * `{train_function_plan}`
+* **Recommended Implementation Plan**: `{train_function_plan}`
+* **Dataset Description**: `{dataset_description}`
+* **ConfigSpace Definition**: `{config_space}`
+* **SMAC Scenario**: `{scenario}`
+
 ---
 
-### **Function signature** must be:
+## **Function Signature** (Must be exact):
 
 ```python
 from ConfigSpace import Configuration
 from typing import Any, Dict, Union
+
 def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Dict[str, Union[float, int]]:
 ```
+
+## **ESSENTIAL IMPORTS** (Include these at the top):
+
+**CRITICAL**: Always include essential imports based on your implementation. Missing imports will cause immediate failures.
+
+### **Core Libraries** (Always Required):
+```python
+import numpy as np
+import os
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
+from ConfigSpace import Configuration
+from typing import Dict, Union, Any
+```
+
+### **Additional Imports** (Include as needed based on algorithms and features):
+* **For metric calculations**: `from sklearn.metrics import roc_auc_score, mean_squared_error`
+* **For model persistence**: `import pickle` or `import joblib`
+* **For algorithm implementations**: Import specific classifiers/regressors based on your configuration space
+* **For time-based operations**: `import time` if using timestamps for model naming
+
+### **CRITICAL Import Issues to Avoid:**
+* **Missing numpy import**: Always include `import numpy as np` if using `np.` functions
+* **Algorithm-specific imports**: Only import algorithms you actually use
+* **Preprocessing imports**: Include additional preprocessing tools as needed (`from sklearn.preprocessing import RobustScaler, LabelEncoder`)
+* **Missing utility imports**: Include `import os` for directory operations, model saving
 
 **CRITICAL**: The function signature **MUST** include the `budget` parameter even if not used by all facades:
 - For standard optimization facades: `budget` parameter will be `None` and should be ignored
@@ -57,36 +90,12 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 - **Always include the budget parameter** in the signature for compatibility with all facades
 - Use conditional logic to handle the budget parameter appropriately based on the facade type
 
-**Budget Parameter Handling Examples:**
-```python
-# For iterative algorithms
-if budget is not None:
-    max_iterations = budget
-else:
-    max_iterations = default_iterations
-
-# For ensemble methods
-if budget is not None:
-    n_components = budget
-else:
-    n_components = default_components
-
-# For data-based fidelity
-if budget is not None:
-    data_fraction = min(budget, 1.0)  # Ensure valid fraction
-else:
-    data_fraction = 1.0  # Use full dataset
-```
-
 ---
 
-### **Function Behavior Requirements:**
+## **Function Behavior Requirements:**
 
+### **Data Handling**
 * The function **must** handle the dataset properly:
-  * Dataset Description: `{dataset_description}`
-  * ConfigSpace Definition (**very important for choosing the algorithm**): `{config_space}`
-  * SMAC Scenario: `{scenario}`
-
 * **CRITICAL**: The function **must** use the EXACT parameter names from the ConfigSpace definition above
   * **INSPECT** the ConfigSpace definition carefully and extract only those parameters that exist
 
@@ -96,16 +105,88 @@ else:
   * `dataset['X_test']`: (optional) test feature matrix - only present when separate test set is provided
   * `dataset['y_test']`: (optional) test label vector - only present when separate test set is provided
 
-* **CRITICAL**: Conditional train/test split behavior
-  * **When separate test set is provided** (`dataset['X_test']` and `dataset['y_test']` exist):
-    * Use the entire `dataset['X']` and `dataset['y']` for training
-    * Do NOT perform internal train/test splits
-    * The test set is already provided separately
-  * **When no separate test set is provided** (`dataset['X_test']` and `dataset['y_test']` are missing):
-    * Perform internal train/test split on the provided dataset for validation
-    * Use appropriate split ratio (e.g., 80/20 or 70/30)
-    * Use the split for validation during training
+### **CRITICAL Data Access Pattern**
+```python
+# Safe data extraction (handles both numpy arrays and pandas DataFrames)
+X = dataset['X']
+y = dataset['y']
 
+# Convert to numpy arrays if needed (avoid .values for numpy arrays)
+if hasattr(X, 'values'):  # pandas DataFrame
+    X = X.values
+if hasattr(y, 'values'):  # pandas Series
+    y = y.values
+
+# Ensure proper numpy array format
+X = np.asarray(X)
+y = np.asarray(y)
+```
+
+### **Conditional Train/Test Split Behavior**
+* **When separate test set is provided** (`dataset['X_test']` and `dataset['y_test']` exist):
+  * Use the entire `dataset['X']` and `dataset['y']` for training
+  * Do NOT perform internal train/test splits
+  * The test set is already provided separately
+* **When no separate test set is provided** (`dataset['X_test']` and `dataset['y_test']` are missing):
+  * Perform internal train/test split on the provided dataset for validation
+  * Use appropriate split ratio (e.g., 80/20 or 70/30)
+  * Use the split for validation during training
+
+### **CRITICAL Data Preprocessing Requirements**
+
+**MANDATORY**: Always include data preprocessing. Raw data often causes algorithm failures!
+
+#### **Essential Preprocessing Steps:**
+
+1. **Handle Missing Values** (if present):
+   * Check for NaN values with `np.isnan(X).any()`
+   * Apply appropriate imputation strategy based on data characteristics
+
+2. **Feature Scaling** (highly recommended for most algorithms):
+   * **StandardScaler**: For normally distributed features (mean=0, std=1)
+   * **MinMaxScaler**: For bounded features (range 0-1)
+   * **RobustScaler**: For data with outliers
+   * Choose based on dataset characteristics and algorithm requirements
+
+3. **Categorical Encoding** (if needed):
+   * Handle categorical features appropriately for your chosen algorithm
+   * Consider algorithm's native support for categorical data
+
+#### **Preprocessing Implementation Pattern:**
+```python
+# Extract and prepare data
+X, y = dataset['X'], dataset['y']
+# ... data access pattern from above ...
+
+# Handle train/test split first
+if 'X_test' in dataset and 'y_test' in dataset:
+    X_train, y_train = X, y
+    X_test = np.asarray(dataset['X_test'])
+    y_test = np.asarray(dataset['y_test'])
+    if hasattr(dataset['X_test'], 'values'):
+        X_test = dataset['X_test'].values
+    if hasattr(dataset['y_test'], 'values'):
+        y_test = dataset['y_test'].values
+else:
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=seed, stratify=y
+    )
+
+# Apply preprocessing (CRITICAL: fit only on training data!)
+# Choose scaler based on configuration or algorithm requirements
+scaler_type = cfg.get('preprocessing', 'standard')  # or determine based on algorithm
+if scaler_type == 'standard':
+    scaler = StandardScaler()
+elif scaler_type == 'minmax':
+    scaler = MinMaxScaler()
+# Add more preprocessing options as needed
+
+# Fit on training data, transform both train and test
+X_train_processed = scaler.fit_transform(X_train)
+X_test_processed = scaler.transform(X_test)
+```
+
+### **Configuration Handling**
 * The function **must** handle the configuration properly:
   * Access primitive values using `cfg.get('key')`
   * Handle all hyperparameters defined in the configuration space
@@ -113,69 +194,72 @@ else:
   * Handle conditional hyperparameters correctly
   * Parameter types may include numpy types (numpy.int64, numpy.float64, etc.)
 
-* **Algorithm Selection Requirements:**
-  * Choose algorithms based on dataset characteristics and configuration space parameters
-  * Implement algorithms that are appropriate for the given task type and data properties
-  * Consider computational constraints and evaluation time requirements
-  * Select frameworks and methods that match the dataset size and complexity
-  * **Framework Selection**: Choose the most appropriate framework based on:
-    * Dataset size and computational requirements
-    * Algorithm type and implementation availability
-    * Memory constraints and processing efficiency
+### **Algorithm Selection Requirements**
+* Choose algorithms based on dataset characteristics and configuration space parameters
+* Implement algorithms that are appropriate for the given task type and data properties
+* Consider computational constraints and evaluation time requirements
+* Select frameworks and methods that match the dataset size and complexity
+* **Framework Selection**: Choose the most appropriate framework based on:
+  * Dataset size and computational requirements
+  * Algorithm type and implementation availability
+  * Memory constraints and processing efficiency
 
-* **Training Requirements:**
-  * Implement proper training procedures for the selected algorithm
-  * Handle batch processing efficiently when needed
-  * Apply appropriate optimization strategies
-  * Implement early stopping if beneficial for the algorithm
-  * Handle validation appropriately
-  * **Prevent Overfitting**: Use proper validation, regularization, early stopping
-  * **Ensure Generalization**: Avoid fitting too closely to training data
-  * Return a dictionary with loss and evaluation metrics
+### **Training Requirements**
+* Implement proper training procedures for the selected algorithm
+* Handle batch processing efficiently when needed
+* Apply appropriate optimization strategies
+* Implement early stopping if beneficial for the algorithm
+* Handle validation appropriately
+* **Prevent Overfitting**: Use proper validation, regularization, early stopping
+* **Ensure Generalization**: Avoid fitting too closely to training data
 
-* **Model Saving Requirements:**
-  * **STRONGLY RECOMMENDED**: Save the trained model if `model_dir` is provided
-  * This enables proper model evaluation with comprehensive metrics
-  * Create the directory if it doesn't exist
-  * Save model in appropriate format for the chosen framework
-  * Generate unique model filename using timestamp or configuration hash
-  * **CRITICAL**: The function must return a dictionary with loss and metrics
-    * **REASON**: Loss is used for hyperparameter optimization, metrics provide comprehensive evaluation
+### **Model Saving Requirements**
+* **STRONGLY RECOMMENDED**: Save the trained model if `model_dir` is provided
+* This enables proper model evaluation with comprehensive metrics
+* Create the directory if it doesn't exist
+* Save model in appropriate format for the chosen framework
+* Generate unique model filename using timestamp or configuration hash
 
-* **Return Format Requirements:**
-  * **CRITICAL**: Return a dictionary with 'loss' key and evaluation metrics
-  * **Metric Calculation**: Use validation data if available, otherwise use training data
-  * **Consistent Format**: Always return the same dictionary keys for the task type
-
-* **Performance Optimization Requirements:**
-  * Minimize memory usage and allocations
-  * Use vectorized operations where possible
-  * Avoid unnecessary data copying
-  * Optimize data loading and preprocessing
-  * Use efficient data structures
-  * Implement efficient processing for the chosen algorithm
-  * **Resource Management**: Use computational resources efficiently based on dataset size
-
-* **Code Optimization Requirements:**
-  * Keep code minimal and focused
-  * Avoid redundant computations
-  * Use efficient algorithms
-  * Minimize function calls
-  * Optimize loops and iterations
-  * Use appropriate data types
-  * Avoid unnecessary object creation
-  * The train function should be computationally efficient
-
-* **Best Practices:**
-  * Implement proper logging for progress tracking
-  * Handle edge cases gracefully
-  * Ensure reproducibility with proper random seed usage
-  * Optimize performance for the dataset characteristics
-  * Follow framework-specific best practices for the chosen implementation
+### **Return Format Requirements**
+* **CRITICAL**: Return a dictionary with 'loss' key and evaluation metrics
+* **REASON**: Loss is used for hyperparameter optimization, metrics provide comprehensive evaluation
+* **Metric Calculation**: Use validation data if available, otherwise use training data
+* **Consistent Format**: Always return the same dictionary keys for the task type
+* **CRITICAL**: Dictionary must always include `loss` key for hyperparameter optimization
 
 ---
 
-### **Framework Selection Guidelines:**
+## **Performance and Code Quality Requirements:**
+
+### **Performance Optimization**
+* Minimize memory usage and allocations
+* Use vectorized operations where possible
+* Avoid unnecessary data copying
+* Optimize data loading and preprocessing
+* Use efficient data structures
+* Implement efficient processing for the chosen algorithm
+* **Resource Management**: Use computational resources efficiently based on dataset size
+
+### **Code Quality**
+* Keep code minimal and focused
+* Avoid redundant computations
+* Use efficient algorithms
+* Minimize function calls
+* Optimize loops and iterations
+* Use appropriate data types
+* Avoid unnecessary object creation
+* The train function should be computationally efficient
+
+### **Best Practices**
+* Implement proper logging for progress tracking
+* Handle edge cases gracefully
+* Ensure reproducibility with proper random seed usage
+* Optimize performance for the dataset characteristics
+* Follow framework-specific best practices for the chosen implementation
+
+---
+
+## **Framework Selection Guidelines:**
 
 Choose the most appropriate framework based on dataset characteristics and algorithm requirements:
 * **Traditional ML algorithms**: Use efficient implementations for the dataset size
@@ -185,33 +269,147 @@ Choose the most appropriate framework based on dataset characteristics and algor
 
 ---
 
-### **Output Format:**
+## **Code Generation Best Practices:**
 
-* Return **only** the `train()` function
-* Include necessary imports
-* No example usage or additional code
-* The function must be self-contained and executable
-* Code must be minimal and optimized for performance
-
----
-
-### **Code Generation Best Practices for HPO:**
-
+### **Parameter Handling**
 * **VALIDATE ALL INPUTS EXPLICITLY** - Check types, shapes, ranges before use
 * **HANDLE MISSING PARAMETERS** - Use sensible defaults for all hyperparameters
 * **CHECK DATA TYPES AND SHAPES** - Validate and convert before processing  
 * **CONVERT TYPES SAFELY** - Convert budget and other parameters to appropriate types
 * **BOUND ALL PARAMETERS** - Ensure parameters are within valid ranges
 * **USE SENSIBLE DEFAULTS** - Provide reasonable defaults for all hyperparameters
+* **HANDLE NUMPY TYPES** - Convert numpy.int64, numpy.float64 to native Python types using str() or int() conversion
+
+### **Algorithm Implementation**
 * **IMPLEMENT MATCHING ALGORITHMS** - Implement algorithms that match the configuration space
 * **USE EXACT PARAMETER NAMES** - Extract parameters using exact names from ConfigSpace definition
 * **PREVENT OVERFITTING** - Use appropriate validation, regularization, and early stopping
-* **HANDLE NUMPY TYPES** - Convert numpy.int64, numpy.float64 to native Python types
 * **DYNAMIC DIMENSIONS** - Infer all dimensions from data, never hardcode shapes
+* **ALGORITHM SELECTION** - Base algorithm choice on dataset characteristics, not predefined preferences
+
+### **Error Prevention**
+* **Convert numpy string types**: Use `str(cfg.get('param'))` to convert np.str_ to native string
+* **Validate categorical parameters** against allowed values before using them
+* **Use parameter mapping** when framework names differ from configuration names
+* **Handle multi-class problems** appropriately for the chosen algorithms
+* **Validate solver and activation parameters** for neural network algorithms
+
+### **CRITICAL ERROR PREVENTION PATTERNS:**
+
+**MUST implement these patterns to prevent common HPO failures:**
+
+#### **Safe Parameter Extraction Pattern:**
+```python
+# Always convert numpy types to native Python types
+def safe_extract(cfg, param_name, default_value, target_type=None):
+    value = cfg.get(param_name, default_value)
+    
+    # Handle numpy types
+    if hasattr(value, 'dtype'):
+        if 'str' in str(value.dtype):
+            value = str(value)
+        elif 'int' in str(value.dtype):
+            value = int(value)
+        elif 'float' in str(value.dtype):
+            value = float(value)
+    
+    # Apply type conversion if specified
+    if target_type is not None:
+        value = target_type(value)
+    
+    return value
+```
+
+#### **Parameter Validation Principles:**
+* **Multi-class Classification**: Always specify multi-class handling strategy when required
+* **Categorical Parameters**: Validate against allowed values and provide mappings for invalid values
+* **Numeric Parameters**: Ensure they are within valid ranges for the algorithm
+* **String Parameters**: Convert all string parameters to native Python strings
+
+#### **Robust Metric Calculation Pattern:**
+```python
+# Handle multi-class metrics safely
+try:
+    # Adapt metric calculation based on problem type and model capabilities
+    # Use appropriate averaging strategies
+    # Handle edge cases with fallback values
+except:
+    # Provide sensible fallback values for failed metric calculations
+    pass
+```
 
 ---
 
-### **General Structure Principles:**
+## **Budget Parameter Handling Principles:**
+
+**CRITICAL**: The budget parameter controls fidelity for multi-fidelity facades. Handle it appropriately!
+
+### **Budget Parameter Guidelines:**
+
+* **For Multi-Fidelity Facades**: Budget parameter contains a numeric value that should control algorithm fidelity
+* **For Full Evaluation Facades**: Budget parameter will be `None` and should be ignored
+* **Budget Application**: Use budget to override fidelity-related hyperparameters in the chosen algorithm
+* **Type Safety**: Always convert budget to appropriate type (usually `int`) before use
+
+### **Common Fidelity Parameters by Algorithm Type:**
+
+* **Ensemble Algorithms**: Use budget for number of estimators/components
+* **Iterative Algorithms**: Use budget for maximum iterations/epochs  
+* **Neural Networks**: Use budget for training epochs or iterations
+* **Data-Based Fidelity**: Use budget for fraction of training data
+
+### **Budget Implementation Pattern:**
+
+```python
+# General pattern for budget handling
+if budget is not None:
+    budget_value = int(budget)  # Convert to appropriate type
+    
+    # Identify which parameter controls fidelity for your chosen algorithm
+    # Override the fidelity parameter with budget value
+    # This depends on your algorithm and configuration space
+    
+         # The specific parameter to override should be determined by:
+     # 1. The algorithm you're implementing
+     # 2. Which parameter controls computational cost/iterations
+     # 3. What makes sense for partial evaluation
+```
+
+### **CRITICAL Budget Parameter Implementation:**
+
+**MANDATORY**: The budget parameter MUST be handled! Ignoring it breaks multi-fidelity optimization!
+
+```python
+# ALWAYS include this pattern in your train function
+def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Dict[str, Union[float, int]]:
+    # ... other setup code ...
+    
+    # Extract algorithm and parameters
+    algorithm = str(cfg.get('algorithm'))  # Convert to string safely
+    
+    # Get base parameters for your algorithm
+    # ... extract other hyperparameters ...
+    
+    # CRITICAL: Apply budget parameter before creating model
+    if budget is not None:
+        budget = int(budget)  # Ensure integer type
+        
+        # Override the appropriate fidelity parameter based on your algorithm
+        # Examples of what this might look like (adapt to your specific algorithm):
+        # - For ensemble methods: override n_estimators
+        # - For iterative methods: override max_iter or epochs
+        # - For neural networks: override epochs or early stopping patience
+        
+        # The key is to identify which parameter controls computational cost
+        # and override it with the budget value
+    
+    # Create and train your model with budget-adjusted parameters
+    # ... rest of training logic ...
+```
+
+---
+
+## **General Structure Principles:**
 
 **Your generated function should follow these principles:**
 
@@ -229,50 +427,17 @@ Choose the most appropriate framework based on dataset characteristics and algor
 
 ---
 
-### **Example Structure (NO try/except):**
+## **Output Format:**
 
-```python
-def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Dict[str, Union[float, int]]:
-    # Set random seed for reproducibility
-    
-    # Extract hyperparameters efficiently based on ConfigSpace definition
-    
-    # Prepare data efficiently - conditional train/test split behavior
-    X, y = dataset['X'], dataset['y']
-    
-    # Check if separate test set is provided
-    if 'X_test' in dataset and 'y_test' in dataset:
-        # Use entire training set - test set provided separately
-        X_train, y_train = X, y
-        X_test, y_test = dataset['X_test'], dataset['y_test']
-    else:
-        # Perform internal train/test split for validation
-        from sklearn.model_selection import train_test_split
-        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=seed)
-        X_test, y_test = X_val, y_val
-    
-    # Select and initialize algorithm based on configuration and dataset characteristics
-    
-    # Handle budget parameter for fidelity control
-    
-    # Implement optimized training procedure
-    
-    # Save model if directory is provided (recommended for evaluation)
-    if model_dir:
-        os.makedirs(model_dir, exist_ok=True)
-        model_path = os.path.join(model_dir, f"model_{{seed}}.pkl")
-        # Save using appropriate method for chosen framework
-    
-    # Calculate evaluation metrics on validation/test data
-    predictions = model.predict(X_test)  # Adapt for chosen framework
-    
-    # Return dictionary with loss and metrics
-    return metrics
-```
+* Return **only** the `train()` function
+* Include necessary imports
+* No example usage or additional code
+* The function must be self-contained and executable
+* Code must be minimal and optimized for performance
 
 ---
 
-** FINAL REMINDER - CRITICAL REQUIREMENTS:**
+## **FINAL REMINDER - CRITICAL REQUIREMENTS:**
 * Valid `import` statements
 * A single `train()` function that returns **a dictionary with loss and metrics**
 * No additional code or explanations

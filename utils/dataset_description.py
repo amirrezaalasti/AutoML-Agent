@@ -28,12 +28,13 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
         A string description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
-    info = get_dataset_info(dataset)
+    info = get_dataset_info(dataset, task_type)
 
     description = [
         "This is a tabular dataset.",
         "NOTE: Categorical features have been pre-processed using one-hot encoding.",
         f"It has {info.n_samples} samples and {info.n_features} features after encoding.",
+        f"The target variable is {info.target_type} with {info.target_description}.",
     ]
 
     # Task-specific description of the target variable
@@ -51,7 +52,6 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
                 'recall': recall_score(y_test, predictions, average='weighted', zero_division=0),
                 'f1': f1_score(y_test, predictions, average='weighted', zero_division=0),
                 'balanced_accuracy': balanced_accuracy_score(y_test, predictions)
-                'roc_auc': roc_auc_score(y_test, predictions)
             }}
             """
         )
@@ -99,7 +99,7 @@ def describe_time_series_dataset(dataset: Dict[str, Any], task_type: str) -> str
         String description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
-    info = get_dataset_info(dataset)
+    info = get_dataset_info(dataset, task_type)
 
     description = [
         "This is a time series dataset.",
@@ -219,7 +219,6 @@ def describe_image_dataset(dataset: Dict[str, Any], task_type: str) -> str:
                 'recall': recall_score(y_test, predictions, average='weighted', zero_division=0),
                 'f1': f1_score(y_test, predictions, average='weighted', zero_division=0),
                 'balanced_accuracy': balanced_accuracy_score(y_test, predictions)
-                'roc_auc': roc_auc_score(y_test, predictions)
             }}
             """
         )
@@ -253,7 +252,7 @@ def describe_categorical_dataset(dataset: Dict[str, Any], task_type: str) -> str
         String description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
-    info = get_dataset_info(dataset)
+    info = get_dataset_info(dataset, task_type)
 
     description = [
         "This is a categorical dataset.",
@@ -297,7 +296,7 @@ def describe_text_dataset(dataset: Dict[str, Any], task_type: str) -> str:
         String description of the dataset.
     """
     X, y = dataset["X"], dataset["y"]
-    info = get_dataset_info(dataset)
+    info = get_dataset_info(dataset, task_type)
 
     # Assuming X is a Series of text for this description
     if not isinstance(X, pd.Series):

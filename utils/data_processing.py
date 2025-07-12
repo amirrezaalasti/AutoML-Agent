@@ -64,13 +64,10 @@ def validate_dataset_type(dataset_type: str) -> None:
     from .constants import SUPPORTED_DATASET_TYPES
 
     if dataset_type not in SUPPORTED_DATASET_TYPES:
-        raise ValidationError(
-            f"Unsupported dataset type: {dataset_type}. "
-            f"Supported types: {SUPPORTED_DATASET_TYPES}"
-        )
+        raise ValidationError(f"Unsupported dataset type: {dataset_type}. " f"Supported types: {SUPPORTED_DATASET_TYPES}")
 
 
-def get_dataset_info(dataset: Dict[str, Any]) -> DatasetInfo:
+def get_dataset_info(dataset: Dict[str, Any], task_type: str) -> DatasetInfo:
     """
     Extract basic information from dataset.
 
@@ -91,16 +88,25 @@ def get_dataset_info(dataset: Dict[str, Any]) -> DatasetInfo:
         feature_names = list(X.columns)
         target_name = y.name if hasattr(y, "name") else "target"
     else:
-        feature_names = (
-            [f"feature_{i}" for i in range(X.shape[1])] if X.ndim > 1 else ["feature_0"]
-        )
+        feature_names = [f"feature_{i}" for i in range(X.shape[1])] if X.ndim > 1 else ["feature_0"]
         target_name = "target"
+
+    if isinstance(y, pd.Series):
+        # add description of the target variable
+        if task_type == "classification":
+            target_description = f"This is a {task_type} problem with {y.nunique()} classes."
+        elif task_type == "regression":
+            target_description = f"This is a {task_type} problem."
+        else:
+            raise ValidationError(f"Unsupported task type: {task_type}")
 
     return DatasetInfo(
         n_samples=X.shape[0],
         n_features=X.shape[1] if X.ndim > 1 else 1,
         feature_names=feature_names,
         target_name=target_name,
+        target_type=task_type,
+        target_description=target_description,
     )
 
 
@@ -144,9 +150,7 @@ def format_dataset(dataset: Any) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
         # 1. One-hot encode categorical features in X
         categorical_cols = X.select_dtypes(include=["object", "category"]).columns
         if not categorical_cols.empty:
-            X = pd.get_dummies(
-                X, columns=categorical_cols, drop_first=True, dtype=float
-            )
+            X = pd.get_dummies(X, columns=categorical_cols, drop_first=True, dtype=float)
 
         # 2. Label encode the target variable y if it's a non-numeric type (for classification)
         if pd.api.types.is_object_dtype(y) or pd.api.types.is_categorical_dtype(y):
