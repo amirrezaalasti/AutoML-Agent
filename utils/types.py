@@ -20,6 +20,8 @@ class DatasetInfo:
     feature_names: Optional[List[str]] = None
     target_name: Optional[str] = None
     dataset_type: str = "tabular"
+    target_type: str = "classification"
+    target_description: str = "This is a multi-class classification problem."
 
     def __post_init__(self):
         """Validate dataset info after initialization."""
