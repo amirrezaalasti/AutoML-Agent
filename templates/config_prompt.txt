@@ -69,19 +69,38 @@ def get_configspace() -> ConfigurationSpace:
 
 ---
 
+### **CRITICAL Parameter Naming Conventions:**
+
+**MANDATORY**: Use consistent, clear parameter names that match exactly between config space and train function:
+
+* **Use underscores for multi-word parameters**: `max_depth`, `min_samples_split`, `learning_rate`
+* **Use framework-appropriate parameter names**: Match exactly with chosen framework's parameter names (sklearn, XGBoost, PyTorch, etc.)
+* **Avoid ambiguous abbreviations**: Use `preprocessing_type` instead of `prep_type`
+* **Be explicit about algorithm selection**: Use `algorithm` or `classifier_type` for algorithm selection
+* **Example good names**:
+  - `preprocessing_scaler` (not `prep`, `scaler_type`, or `scaling`)
+  - `max_depth` (not `maxdepth` or `max_d`)
+  - `n_estimators` (not `nestimators` or `num_trees`)
+  - `learning_rate` (not `lr` or `learn_rate`)
+
+**REMEMBER**: The train function must use the EXACT same parameter names you define here!
+
+---
+
 ### **Example Structure:**
 
 ```python
 def get_configspace() -> ConfigurationSpace:
     cs = ConfigurationSpace()
     
-    # Add algorithm selection hyperparameters based on dataset characteristics
+    # Add framework selection based on dataset characteristics
+    # Consider: sklearn, XGBoost, LightGBM, CatBoost, PyTorch, TensorFlow
     
-    # Add algorithm-specific hyperparameters with conditional dependencies
+    # Add framework-specific hyperparameters with conditional dependencies
     
-    # Add preprocessing hyperparameters relevant to data types
+    # Add preprocessing hyperparameters relevant to chosen framework and data types
     
-    # Add regularization and optimization hyperparameters
+    # Add optimization hyperparameters appropriate for selected methods
     
     return cs
 ```
@@ -92,5 +111,6 @@ def get_configspace() -> ConfigurationSpace:
 * Valid `import` statements
 * A single `get_configspace()` function that returns a properly configured `ConfigurationSpace` object
 * No additional code or explanations
-* **Base algorithm selection on dataset characteristics, not predefined model preferences**
-* **Design parameter ranges that are appropriate for the specific dataset properties**
+* **Base framework and algorithm selection on dataset characteristics, not library bias**
+* **Consider all available frameworks (sklearn, XGBoost, LightGBM, CatBoost, PyTorch, TensorFlow) based on data needs**
+* **Design parameter ranges that are appropriate for the specific dataset properties and chosen methods**

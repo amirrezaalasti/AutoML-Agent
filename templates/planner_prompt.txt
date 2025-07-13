@@ -42,11 +42,12 @@ Generate exactly three implementation guides and return them in the following JS
 ### Guidelines
 
   - **IMPORTANT:** When OpenML meta-learning insights are available, use them to inform hyperparameter ranges and algorithm selection based on similar datasets.
-  - **CRITICAL:** Let the dataset characteristics drive model selection. Consider factors like:
-      - Dataset size and dimensionality
-      - Feature types (numerical, categorical, mixed)
-      - Target distribution and class balance
-      - Computational constraints and time requirements
+  - **CRITICAL:** Let the dataset characteristics drive framework and model selection. Consider all available frameworks:
+      - **Dataset size**: Small → sklearn/XGBoost; Medium → XGBoost/LightGBM; Large → LightGBM/neural networks
+      - **Data complexity**: Simple → traditional ML; Complex patterns → neural networks (PyTorch/TensorFlow)
+      - **Feature types**: Categorical-heavy → CatBoost; Mixed → XGBoost/LightGBM; High-dim → specialized approaches
+      - **Performance requirements**: High accuracy → gradient boosting, neural networks, ensembles
+      - **Resource constraints**: Limited → sklearn/LightGBM; Abundant → PyTorch/TensorFlow
   - Use appropriate parameter types (`Categorical`, `Integer`, `Float`) based on the nature of each hyperparameter.
   - Specify realistic ranges considering dataset characteristics and computational constraints.
   - Include algorithm-specific hyperparameters relevant to the chosen approach.
@@ -63,7 +64,7 @@ Generate exactly three implementation guides and return them in the following JS
 ### Guidelines
 
   - **CRITICAL:** The scenario MUST be compatible with the selected facade:
-      - **For Multi-Fidelity Facades** (HyperbandFacade, MultiFidelityFacade): **MUST** set both `min_budget` and `max_budget` parameters based on the chosen fidelity parameter.
+      - **For Multi-Fidelity Facades** (HyperbandFacade, MultiFidelityFacade): **MUST** set both `min_budget`, `max_budget`, and `eta` parameters based on the chosen fidelity parameter and dataset characteristics.
       - **For Full Evaluation Facades** (BlackBoxFacade, HyperparameterOptimizationFacade): **Do NOT** set budget parameters as they perform complete evaluations.
   - Set appropriate `n_trials` based on:
     - Dataset complexity and size
@@ -103,8 +104,10 @@ Generate exactly three implementation guides and return them in the following JS
   - Implement proper train/validation/test splits based on dataset availability
   - Use cross-validation when appropriate for robust evaluation
   - Return a dictionary with 'loss' key (for optimization) and additional metrics
-  - Base algorithm selection on dataset characteristics, computational constraints, and task requirements
-  - Consider model complexity, training time, and expected performance for the given dataset
+  - **Framework Selection**: Choose the best framework for the dataset (sklearn, XGBoost, LightGBM, CatBoost, PyTorch, TensorFlow)
+  - **Performance-Driven**: Prioritize methods likely to achieve best results, not just familiar libraries
+  - **Data-Specific**: Match algorithm choice to dataset characteristics (size, complexity, feature types)
+  - Consider model complexity, training time, and expected performance for the given dataset and available resources
 
 -----
 
@@ -188,12 +191,47 @@ Choose the most appropriate SMAC facade based on your analysis of the dataset ch
 
 ### Budget Parameter Guidelines (for Multi-Fidelity Facades)
 
-When using HyperbandFacade or MultiFidelityFacade, you must define budget parameters:
+When using HyperbandFacade or MultiFidelityFacade, you must define budget parameters carefully as they directly impact optimization efficiency:
+
+**CRITICAL Budget Parameter Selection:**
+- **min_budget**: Should allow meaningful partial evaluation but be computationally cheap
+- **max_budget**: Should provide near-optimal model performance
+- **Budget ratio**: Aim for max_budget/min_budget ratio between 4-20 for effective successive halving
+- **eta**: Controls successive halving aggressiveness (recommend values: 2, 3, 4, or 5)
+
+**ETA Parameter Selection:**
+The eta parameter is crucial for multi-fidelity optimization efficiency. You must choose eta based on dataset and algorithm characteristics:
+
+**Eta Options:**
+- **eta = 2**: Most conservative, gives configurations many chances (best for small datasets or similar-performing configurations)
+- **eta = 3**: Balanced approach, good default choice for most scenarios
+- **eta = 4**: More aggressive elimination (good for larger datasets with clear performance differences)
+- **eta = 5**: Most aggressive, fastest optimization (best when bad configurations are easily identifiable)
+
+**Selection Criteria:**
+1. **Dataset Size**: Larger datasets can handle higher eta values (more aggressive elimination)
+2. **Algorithm Characteristics**: Fast-converging algorithms benefit from higher eta
+3. **Performance Variation**: If configurations vary widely in performance, use higher eta
+4. **Time Constraints**: Higher eta values complete optimization faster
+5. **Exploration vs Exploitation**: Lower eta = more exploration, higher eta = more exploitation
 
 **Common Fidelity Parameters:**
-- **Tree Ensembles**: n_estimators (e.g., min_budget=20, max_budget=200)
-- **Neural Networks**: epochs (e.g., min_budget=5, max_budget=50)
-- **Iterative Classifiers**: max_iter (e.g., min_budget=50, max_budget=1000)
+- **Tree Ensembles**: n_estimators 
+  - Conservative: min_budget=10, max_budget=100
+  - Aggressive: min_budget=20, max_budget=200
+- **Neural Networks**: epochs
+  - Small datasets: min_budget=5, max_budget=50
+  - Large datasets: min_budget=10, max_budget=100
+- **Iterative Classifiers**: max_iter
+  - Fast convergence: min_budget=50, max_budget=500
+  - Slow convergence: min_budget=100, max_budget=1000
 - **Data Subsampling**: fraction of training data (e.g., min_budget=0.1, max_budget=1.0)
 
-**Important**: Only use multi-fidelity facades if your chosen algorithm has a meaningful fidelity parameter that allows partial evaluation.
+**Budget Selection Strategy:**
+1. Consider algorithm convergence characteristics
+2. Balance exploration (lower min_budget) vs exploitation (higher min_budget)
+3. Ensure max_budget provides adequate model quality
+4. Account for dataset size and computational constraints
+
+**Important**: The `n_trials` parameter will be optimized automatically by the system during scenario generation based on your budget parameters and dataset characteristics.
+

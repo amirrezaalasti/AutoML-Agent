@@ -61,28 +61,85 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 
 **CRITICAL**: Always include essential imports based on your implementation. Missing imports will cause immediate failures.
 
-### **Core Libraries** (Always Required):
+### **Core Libraries** (ALWAYS Include These):
 ```python
 import numpy as np
-import os
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
+import os  # CRITICAL: Required for model saving, directory operations
 from ConfigSpace import Configuration
 from typing import Dict, Union, Any
 ```
 
-### **Additional Imports** (Include as needed based on algorithms and features):
-* **For metric calculations**: `from sklearn.metrics import roc_auc_score, mean_squared_error`
-* **For model persistence**: `import pickle` or `import joblib`
-* **For algorithm implementations**: Import specific classifiers/regressors based on your configuration space
-* **For time-based operations**: `import time` if using timestamps for model naming
+### **Framework-Specific Imports** (Include based on your choice):
+```python
+# For sklearn: 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.metrics import accuracy_score, f1_score, etc.
+
+# For XGBoost: 
+import xgboost as xgb
+
+# For LightGBM:
+import lightgbm as lgb
+
+# For CatBoost:
+import catboost as cb
+
+# For PyTorch: 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# For TensorFlow: 
+import tensorflow as tf
+from tensorflow import keras
+```
+
+### **Framework Selection Guidelines:**
+
+**CRITICAL**: Choose the most appropriate framework based on dataset characteristics, not predefined preferences:
+
+### **Available Frameworks** (choose based on dataset needs):
+
+* **Scikit-learn**: Traditional ML algorithms, good baseline, fast for small-medium datasets
+* **XGBoost**: Excellent for tabular data, handles missing values, often top performer
+* **LightGBM**: Fast gradient boosting, good for large datasets, memory efficient
+* **CatBoost**: Handles categorical features natively, robust gradient boosting
+* **PyTorch**: Deep learning, neural networks, when data complexity requires it
+* **TensorFlow/Keras**: Deep learning, neural networks, established for complex patterns
+* **Other specialized libraries**: Use when they provide clear advantages for the specific problem
+
+### **Framework Selection Criteria:**
+
+* **Dataset Size**: Small (<10K) → sklearn/XGBoost; Large (>100K) → LightGBM/neural networks
+* **Data Complexity**: Simple → traditional ML; Complex patterns → neural networks
+* **Feature Types**: Mixed types → CatBoost; Categorical heavy → specialized handling
+* **Performance Requirements**: High accuracy needed → ensemble methods, deep learning
+* **Training Time**: Fast needed → LightGBM, sklearn; Time available → neural networks
+* **Interpretability**: High → sklearn linear models; Low → any high-performance method
+
+### **Additional Imports** (Include based on chosen framework):
+* **For scikit-learn**: `from sklearn.ensemble import RandomForestClassifier`, etc.
+* **For gradient boosting**: `import xgboost as xgb`, `import lightgbm as lgb`, `import catboost as cb`
+* **For deep learning**: `import torch`, `import tensorflow as tf`, `from tensorflow import keras`
+* **For metrics**: Framework-appropriate metrics (sklearn, torch, tf, etc.)
+* **For model persistence**: `import pickle`, `import joblib`, or framework-specific saving
+* **For preprocessing**: Choose appropriate preprocessing tools for your selected framework
 
 ### **CRITICAL Import Issues to Avoid:**
-* **Missing numpy import**: Always include `import numpy as np` if using `np.` functions
-* **Algorithm-specific imports**: Only import algorithms you actually use
-* **Preprocessing imports**: Include additional preprocessing tools as needed (`from sklearn.preprocessing import RobustScaler, LabelEncoder`)
-* **Missing utility imports**: Include `import os` for directory operations, model saving
+* **Missing `import os`**: ALWAYS include if you save models or create directories
+* **Missing `import numpy as np`**: ALWAYS include if you use any `np.` functions  
+* **Missing framework imports**: Import ALL libraries you actually use in the implementation
+* **Inconsistent preprocessing**: Match preprocessing to your chosen framework's expectations
+* **Missing utility imports**: Include `import time`, `import pickle`, etc. as needed
+
+### **MANDATORY Import Checklist:**
+Before generating code, ensure you include:
+- ✅ `import numpy as np` (if using numpy functions)
+- ✅ `import os` (if saving models or creating directories) 
+- ✅ Framework-specific imports (sklearn, xgboost, torch, etc.)
+- ✅ Preprocessing imports for your chosen approach
+- ✅ Metric calculation imports for evaluation
 
 **CRITICAL**: The function signature **MUST** include the `budget` parameter even if not used by all facades:
 - For standard optimization facades: `budget` parameter will be `None` and should be ignored
@@ -195,14 +252,16 @@ X_test_processed = scaler.transform(X_test)
   * Parameter types may include numpy types (numpy.int64, numpy.float64, etc.)
 
 ### **Algorithm Selection Requirements**
-* Choose algorithms based on dataset characteristics and configuration space parameters
-* Implement algorithms that are appropriate for the given task type and data properties
-* Consider computational constraints and evaluation time requirements
-* Select frameworks and methods that match the dataset size and complexity
-* **Framework Selection**: Choose the most appropriate framework based on:
-  * Dataset size and computational requirements
-  * Algorithm type and implementation availability
-  * Memory constraints and processing efficiency
+* **Data-Driven Selection**: Choose algorithms based on dataset characteristics, not bias towards specific libraries
+* **Performance-Oriented**: Prioritize methods that are likely to perform best on the given dataset type
+* **Framework Agnostic**: Consider all available frameworks and choose the most appropriate
+* **Consider Data Properties**: 
+  * Small datasets → traditional ML may be sufficient
+  * Large datasets → gradient boosting or neural networks may excel
+  * High-dimensional → specialized techniques may be needed
+  * Complex patterns → deep learning may be justified
+* **Computational Constraints**: Balance performance potential with available resources
+* **Task-Specific**: Choose methods proven effective for the specific task type (classification, regression, etc.)
 
 ### **Training Requirements**
 * Implement proper training procedures for the selected algorithm
@@ -219,6 +278,7 @@ X_test_processed = scaler.transform(X_test)
 * Create the directory if it doesn't exist
 * Save model in appropriate format for the chosen framework
 * Generate unique model filename using timestamp or configuration hash
+* Put the save model code section in a try/except to prevent it from possible errors
 
 ### **Return Format Requirements**
 * **CRITICAL**: Return a dictionary with 'loss' key and evaluation metrics
@@ -261,11 +321,26 @@ X_test_processed = scaler.transform(X_test)
 
 ## **Framework Selection Guidelines:**
 
-Choose the most appropriate framework based on dataset characteristics and algorithm requirements:
-* **Traditional ML algorithms**: Use efficient implementations for the dataset size
-* **Deep learning approaches**: Select frameworks suitable for the architecture and data type
-* **Ensemble methods**: Choose implementations that scale well with the dataset
-* **Consider computational constraints and available resources**
+**CRITICAL**: Choose frameworks based on what will achieve the best performance for your specific dataset:
+
+### **Dataset-Driven Framework Selection:**
+* **Small Datasets (< 10K samples)**: Traditional ML (sklearn) often sufficient, but consider XGBoost for better performance
+* **Medium Datasets (10K-100K)**: XGBoost, LightGBM, CatBoost often excel; neural networks if complexity warrants
+* **Large Datasets (> 100K)**: LightGBM, neural networks (PyTorch/TensorFlow), distributed methods
+* **High-Dimensional Data**: Specialized techniques, potentially neural networks with proper regularization
+* **Categorical-Heavy Data**: CatBoost, XGBoost with categorical handling, or appropriate preprocessing + any framework
+
+### **Performance-First Approach:**
+* **Prioritize proven high-performers**: XGBoost, LightGBM often outperform sklearn on tabular data
+* **Consider neural networks**: For complex patterns, large datasets, or when traditional ML plateaus
+* **Don't default to sklearn**: Use it when appropriate, not as a default choice
+* **Leverage specialized libraries**: CatBoost for categorical data, PyTorch for custom architectures
+
+### **Implementation Considerations:**
+* **Available compute**: GPU available → consider PyTorch/TensorFlow; CPU only → focus on efficient CPU libraries
+* **Memory constraints**: Large datasets may need memory-efficient approaches (LightGBM, streaming)
+* **Training time**: Fast needed → LightGBM; time available → explore neural networks
+* **Deployment requirements**: Consider inference speed and model size for production
 
 ---
 
@@ -320,6 +395,39 @@ def safe_extract(cfg, param_name, default_value, target_type=None):
     return value
 ```
 
+#### **CRITICAL Parameter Type Conversion Patterns:**
+
+**MANDATORY**: Use these patterns to prevent type-related errors:
+
+```python
+# For INTEGER parameters (max_depth, n_estimators, etc.)
+max_depth = cfg.get('max_depth')
+if max_depth is not None:
+    max_depth = int(max_depth)  # Convert float to int
+
+# For FLOAT parameters (learning_rate, alpha, etc.)  
+learning_rate = float(cfg.get('learning_rate', 0.01))
+
+# For STRING parameters (algorithm, solver, etc.)
+algorithm = str(cfg.get('algorithm', 'random_forest'))
+solver = str(cfg.get('solver', 'lbfgs'))
+
+# For BOOLEAN parameters
+fit_intercept = bool(cfg.get('fit_intercept', True))
+
+# For CATEGORICAL parameters with validation
+activation = str(cfg.get('activation', 'relu'))
+valid_activations = ['relu', 'tanh', 'logistic', 'identity']
+if activation not in valid_activations:
+    activation = 'relu'  # Fallback to default
+
+# For OPTIONAL INTEGER parameters (can be None)
+max_depth = cfg.get('max_depth')
+if max_depth is not None:
+    max_depth = int(max_depth)  # Only convert if not None
+# max_depth can now be either an int or None, which is correct for sklearn
+```
+
 #### **Parameter Validation Principles:**
 * **Multi-class Classification**: Always specify multi-class handling strategy when required
 * **Categorical Parameters**: Validate against allowed values and provide mappings for invalid values
@@ -358,53 +466,96 @@ except:
 * **Neural Networks**: Use budget for training epochs or iterations
 * **Data-Based Fidelity**: Use budget for fraction of training data
 
-### **Budget Implementation Pattern:**
+### **Unbiased Budget Application Principles:**
+
+**CRITICAL**: Apply budget based on the algorithm you choose from dataset characteristics, not predefined algorithms:
+
+### **Unbiased Budget Implementation Pattern:**
+
+**MANDATORY**: Choose algorithms based on dataset characteristics first, then apply budget to the appropriate fidelity parameter.
+
+### **General Budget Application Principles:**
+
+**CRITICAL**: The budget parameter controls algorithm fidelity. Apply it based on what parameter controls computational cost in your chosen algorithm:
+
+* **Identify the fidelity parameter**: Determine which hyperparameter controls computational cost/training time
+* **Apply budget appropriately**: Use budget to limit or scale that parameter
+* **Ensure reasonable bounds**: Don't let budget create invalid parameter values
+* **Scale budget intelligently**: Different algorithms may need different scaling factors
+
+### **Budget Parameter Categories:**
+
+* **Ensemble Size Control**: For algorithms that build multiple models, use budget to control ensemble size
+* **Iteration Control**: For iterative algorithms, use budget to control maximum iterations or epochs  
+* **Early Stopping Control**: For algorithms with early stopping, use budget to control patience or validation rounds
+* **Component Control**: For algorithms with multiple components, use budget to control number of components
+
+### **CRITICAL Budget Implementation Pattern:**
 
 ```python
-# General pattern for budget handling
-if budget is not None:
-    budget_value = int(budget)  # Convert to appropriate type
-    
-    # Identify which parameter controls fidelity for your chosen algorithm
-    # Override the fidelity parameter with budget value
-    # This depends on your algorithm and configuration space
-    
-         # The specific parameter to override should be determined by:
-     # 1. The algorithm you're implementing
-     # 2. Which parameter controls computational cost/iterations
-     # 3. What makes sense for partial evaluation
-```
-
-### **CRITICAL Budget Parameter Implementation:**
-
-**MANDATORY**: The budget parameter MUST be handled! Ignoring it breaks multi-fidelity optimization!
-
-```python
-# ALWAYS include this pattern in your train function
 def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model_dir: str = None) -> Dict[str, Union[float, int]]:
-    # ... other setup code ...
+    # ... data extraction and algorithm selection based on dataset characteristics ...
     
-    # Extract algorithm and parameters
-    algorithm = str(cfg.get('algorithm'))  # Convert to string safely
-    
-    # Get base parameters for your algorithm
-    # ... extract other hyperparameters ...
-    
-    # CRITICAL: Apply budget parameter before creating model
+    # CRITICAL: Apply budget BEFORE creating the model
     if budget is not None:
         budget = int(budget)  # Ensure integer type
         
-        # Override the appropriate fidelity parameter based on your algorithm
-        # Examples of what this might look like (adapt to your specific algorithm):
-        # - For ensemble methods: override n_estimators
-        # - For iterative methods: override max_iter or epochs
-        # - For neural networks: override epochs or early stopping patience
+        # Identify the appropriate fidelity parameter for your chosen algorithm
+        # This depends on what algorithm you selected based on dataset characteristics
         
-        # The key is to identify which parameter controls computational cost
-        # and override it with the budget value
+        # Apply budget to the parameter that controls computational cost:
+        # - If your algorithm uses n_estimators: limit it with budget
+        # - If your algorithm uses max_iter: scale budget appropriately  
+        # - If your algorithm uses epochs: use budget to control training length
+        # - Ensure the budget application makes sense for your specific algorithm
+        
+        # Example pattern (adapt to your chosen algorithm):
+        # fidelity_param = min(budget * scale_factor, cfg.get('param_name', default_value))
     
     # Create and train your model with budget-adjusted parameters
     # ... rest of training logic ...
+```
+
+### **CRITICAL Preprocessing Pattern (Prevents Scaler Errors):**
+
+**MANDATORY**: Always initialize scaler to prevent "referenced before assignment" errors:
+
+```python
+# CRITICAL: Initialize scaler variable BEFORE conditional blocks
+scaler = None
+
+# Extract and prepare data
+X, y = dataset['X'], dataset['y']
+# ... safe data access pattern ...
+
+# Handle train/test split
+if 'X_test' in dataset and 'y_test' in dataset:
+    X_train, y_train = X, y
+    X_test = np.asarray(dataset['X_test'])
+    y_test = np.asarray(dataset['y_test'])
+    # ... handle test data conversion ...
+else:
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=seed, stratify=y
+    )
+
+# CRITICAL: Always initialize and apply appropriate preprocessing for your chosen framework
+preprocessing_scaler = str(cfg.get('preprocessing_scaler', 'standard'))
+
+if preprocessing_scaler == 'standard':
+    scaler = StandardScaler()
+elif preprocessing_scaler == 'minmax':
+    scaler = MinMaxScaler()
+elif preprocessing_scaler == 'robust':
+    from sklearn.preprocessing import RobustScaler
+    scaler = RobustScaler()
+else:
+    # Choose appropriate default based on your framework and algorithm
+    scaler = StandardScaler()
+
+# Apply preprocessing (adapt to your chosen framework's requirements)
+X_train_processed = scaler.fit_transform(X_train)
+X_test_processed = scaler.transform(X_test)
 ```
 
 ---
@@ -438,7 +589,7 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 ---
 
 ## **FINAL REMINDER - CRITICAL REQUIREMENTS:**
-* Valid `import` statements
+* **COMPLETE `import` statements** - Include ALL libraries you use (numpy, os, framework-specific, etc.)
 * A single `train()` function that returns **a dictionary with loss and metrics**
 * No additional code or explanations
 * Code must be optimized for performance and minimal in size
@@ -462,4 +613,4 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
 * **Metric Calculation**: Always calculate metrics on validation/test data, not training data
 * **Return Format**: Dictionary with consistent keys based on task type (classification/regression)
 * **CRITICAL**: Dictionary must always include `loss` key for hyperparameter optimization
-* **Algorithm Selection**: Base algorithm choice on dataset characteristics, not predefined preferences
+* **Framework and Algorithm Selection**: Choose best framework and algorithms for dataset characteristics, not library bias

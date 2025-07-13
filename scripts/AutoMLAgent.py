@@ -24,6 +24,9 @@ from smac import Scenario
 from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
+from smac.intensifier.hyperband_utils import get_n_trials_for_hyperband_multifidelity
+
+
 import numpy as np
 from contextlib import contextmanager
 
@@ -106,10 +109,10 @@ class AutoMLAgent:
 
         self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH)
         self.LLMInstructor = LLMPlanner(
-            dataset_name=self.dataset_name,
+            dataset_name=self.dataset_name or "unknown",
             dataset_description=self.dataset_description,
             dataset_type=self.dataset_type,
-            task_type=self.task_type,
+            task_type=self.task_type or "classification",
             model_name=model_name,
             base_url=base_url,
             api_key=api_key,
@@ -149,13 +152,179 @@ class AutoMLAgent:
                 "y": dataset_train["y"],
             }
 
+
+    
+
+
+    def _calculate_optimal_scenario_parameters(self, facade_name: str) -> dict:
+        """
+        Calculate optimal scenario parameters before code generation.
+        
+        :param facade_name: Name of the selected facade
+        :return: Dictionary with optimal parameters for scenario generation
+        """
+        # Dataset characteristics
+        dataset_size = self.dataset['X'].shape[0]
+        n_features = self.dataset['X'].shape[1] if len(self.dataset['X'].shape) > 1 else 1
+        
+        # Default parameters for all facades
+        params = {
+            "optimal_trials": 100,
+            "optimal_eta": 3,
+            "min_budget": None,
+            "max_budget": None,
+            "total_budget": None,
+        }
+        
+        # Calculate facade-specific parameters
+        if facade_name in ['HyperbandFacade', 'MultiFidelityFacade']:
+            # Calculate budget parameters for multi-fidelity facades
+            params.update(self._calculate_multi_fidelity_parameters(dataset_size, n_features))
+            
+            self.ui_agent.info(
+                f"Pre-calculated optimal parameters for {facade_name}: "
+                f"trials={params['optimal_trials']}, eta={params['optimal_eta']}, "
+                f"budget={params['min_budget']}-{params['max_budget']}"
+            )
+            
+            self.logger.log_response(
+                f"Pre-calculated optimal parameters for {facade_name}",
+                {
+                    "component": "parameter_calculation",
+                    "facade": facade_name,
+                    "params": params
+                }
+            )
+        else:
+            # For standard facades, calculate optimal trials based on dataset size
+            params["optimal_trials"] = self._calculate_standard_trials(dataset_size, facade_name)
+            
+            self.ui_agent.info(
+                f"Pre-calculated optimal trials for {facade_name}: {params['optimal_trials']}"
+            )
+        
+        return params
+    
+    def _calculate_multi_fidelity_parameters(self, dataset_size: int, n_features: int) -> dict:
+        """
+        Calculate optimal budget and trial parameters for multi-fidelity facades.
+        
+        :param dataset_size: Dataset size
+        :param n_features: Number of features
+        :return: Dictionary with calculated parameters
+        """
+        # Use reasonable budget estimates to calculate optimal trials with SMAC's function
+        # But don't force these budget values - let LLM choose actual ranges
+        
+        # Estimate reasonable budget ranges for trial calculation purposes
+        # These are just for calculating optimal trials, not constraining the LLM
+        if dataset_size < 5000:
+            estimate_min_budget, estimate_max_budget = 5, 30
+        elif dataset_size < 20000:
+            estimate_min_budget, estimate_max_budget = 3, 25
+        else:
+            estimate_min_budget, estimate_max_budget = 2, 20
+            
+        # Adjust estimates based on feature complexity
+        if n_features > 1000:
+            estimate_max_budget = min(estimate_max_budget + 10, 50)
+        elif n_features < 50:
+            estimate_max_budget = max(estimate_max_budget - 5, 10)
+            
+        # Calculate optimal eta based on dataset characteristics
+        if dataset_size < 5000:
+            optimal_eta = 2  # Conservative for small datasets
+        elif dataset_size < 20000:
+            optimal_eta = 3  # Balanced for medium datasets
+        else:
+            optimal_eta = 4  # Aggressive for large datasets
+            
+        # Calculate optimal trials using SMAC's function with estimated budgets
+        try:
+            # Estimate total budget for trial calculation
+            size_factor = min(10, max(2, dataset_size / 1000))
+            complexity_factor = min(5, max(1, n_features / 100))
+            dataset_complexity_factor = (size_factor + complexity_factor) / 2
+            
+            base_time_per_trial = max(0.5, dataset_size / 5000)
+            estimated_time_per_max_trial = base_time_per_trial * estimate_max_budget / estimate_min_budget
+            usable_time = self.time_budget * 0.8
+            max_possible_trials = max(10, int(usable_time // estimated_time_per_max_trial))
+            
+            budget_ratio = estimate_max_budget / estimate_min_budget
+            efficiency_factor = min(2.0, max(0.5, 10 / budget_ratio))
+            estimated_total_budget = dataset_complexity_factor * estimate_max_budget * max_possible_trials * efficiency_factor / 15
+            
+            # Use SMAC's function to calculate optimal trials
+            optimal_trials = get_n_trials_for_hyperband_multifidelity(
+                total_budget=estimated_total_budget,
+                min_budget=estimate_min_budget,
+                max_budget=estimate_max_budget,
+                eta=optimal_eta,
+                print_summary=False
+            )
+            
+            # Cap the trials to reasonable bounds
+            min_trials = 50  # Minimum for meaningful multi-fidelity optimization
+            max_trials = min(400, max_possible_trials)  # Maximum based on time budget
+            optimal_trials = max(min_trials, min(optimal_trials, max_trials))
+            
+        except Exception as e:
+            # Fallback calculation if SMAC function fails
+            if dataset_size < 5000:
+                optimal_trials = 100
+            elif dataset_size < 20000:
+                optimal_trials = 150
+            else:
+                optimal_trials = 200
+                
+            # Adjust trials based on feature complexity
+            if n_features > 1000:
+                optimal_trials = min(optimal_trials + 50, 300)
+            elif n_features < 50:
+                optimal_trials = max(optimal_trials - 25, 75)
+            
+        return {
+            "min_budget": None,  # Let LLM choose based on algorithms
+            "max_budget": None,  # Let LLM choose based on algorithms
+            "total_budget": None,  # Not needed for LLM guidance
+            "optimal_eta": optimal_eta,
+            "optimal_trials": optimal_trials,
+        }
+    
+    def _calculate_standard_trials(self, dataset_size: int, facade_name: str) -> int:
+        """
+        Calculate optimal number of trials for standard facades.
+        
+        :param dataset_size: Dataset size
+        :param facade_name: Name of the facade
+        :return: Optimal number of trials
+        """
+        if facade_name == "BlackBoxFacade":
+            if dataset_size < 1000:
+                return 40
+            elif dataset_size < 10000:
+                return 60
+            else:
+                return 80
+        elif facade_name == "HyperparameterOptimizationFacade":
+            if dataset_size < 5000:
+                return 75
+            elif dataset_size < 50000:
+                return 125
+            else:
+                return 150
+        else:
+            # Default fallback
+            return 100
+
     def generate_components(self):
         """
         Generate the configuration space, scenario, and training function code using LLM.
         :return: Tuple containing the generated configuration space, scenario, training function code, last loss, and prompts.
         """
         config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
-            dataset_name=self.dataset_name,
+            dataset_name=self.dataset_name or "unknown",
             X=self.dataset["X"],
             y=self.dataset["y"],
         )
@@ -195,8 +364,16 @@ class AutoMLAgent:
         self.ui_agent.subheader("Generated Configuration Space Code")
         self.ui_agent.code(self.config_code, language="python")
 
+        # Pre-calculate optimal parameters for multi-fidelity facades
+        facade_name = self.suggested_facade.__name__
+        optimal_params = self._calculate_optimal_scenario_parameters(facade_name)
+        
         # Scenario
-        self.prompts["scenario"] = self._create_scenario_prompt(instructor_response.scenario_plan, instructor_response.suggested_facade)
+        self.prompts["scenario"] = self._create_scenario_prompt(
+            instructor_response.scenario_plan, 
+            instructor_response.suggested_facade,
+            optimal_params
+        )
         self.scenario_code = self.llm.generate(self.prompts["scenario"])
         self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
         self.logger.log_response(self.scenario_code, {"component": "scenario"})
@@ -272,6 +449,7 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     self.scenario_code = source
                     scenario_obj = self.namespace["generate_scenario"](cfg)
+                    
                     self.scenario_obj = scenario_obj
                     self.logger.log_response(
                         f"Scenario generated successfully",
@@ -369,7 +547,7 @@ class AutoMLAgent:
                 recommended_configuration=recommended_configuration,
             )
 
-    def _create_scenario_prompt(self, scenario_plan, suggested_facade) -> str:
+    def _create_scenario_prompt(self, scenario_plan, suggested_facade, optimal_params) -> str:
         """
         Create a prompt for generating the scenario code.
         :return: A formatted prompt string for the LLM.
@@ -381,6 +559,10 @@ class AutoMLAgent:
                 scenario_plan=scenario_plan,
                 output_directory=self.logger.experiment_dir,
                 suggested_facade=suggested_facade,
+                optimal_trials=optimal_params["optimal_trials"],
+                min_budget=optimal_params["min_budget"],
+                max_budget=optimal_params["max_budget"],
+                total_budget=optimal_params["total_budget"],
             )
 
         return base_prompt
@@ -429,7 +611,7 @@ class AutoMLAgent:
                     budget_int = int(budget) if budget is not None else budget
 
                     # Add timeout protection for individual training runs
-                    with timeout_handler(min(3600, self.time_budget // 10)):  # Max 1 hour per trial or 1/10 of total budget
+                    with timeout_handler(min(600, self.time_budget // 10)):  # Max 10 minutes per trial or 1/10 of total budget
                         result = train_fn(
                             cfg=config,
                             dataset=dataset_for_train,
@@ -456,7 +638,7 @@ class AutoMLAgent:
                 """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
                 try:
                     # Add timeout protection for individual training runs
-                    with timeout_handler(min(3600, self.time_budget // 10)):  # Max 1 hour per trial or 1/10 of total budget
+                    with timeout_handler(min(600, self.time_budget // 10)):  # Max 10 minutes per trial or 1/10 of total budget
                         result = train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
 
                     # Train function now returns dictionary with loss and metrics
