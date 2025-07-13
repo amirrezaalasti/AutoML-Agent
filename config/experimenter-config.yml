@@ -5,14 +5,15 @@ PY_EXPERIMENTER:
     provider: mysql
     database: AgentSmac
     table:
-      name: AgentSmacRuns_tabular_1489
+      name: AgentSmacRuns_tabular_v3
+      # name: AgentSmacRuns_tabular_1489
       keyfields:
         dataset_origin:
           type: VARCHAR(255)
           values: ['openml']
         dataset_name:
           type: VARCHAR(255)
-          values: ['openml']
+          values: ['openml_tabular_dataset_v3_runs']
         dataset_type:
           type: VARCHAR(255)
           values: ['tabular']
@@ -24,7 +25,8 @@ PY_EXPERIMENTER:
           values: ['llama-3.3-70b-instruct']
         dataset_openml_id:
           type: int
-          values: [1489]
+          values: [23517, 715, 752, 772, 807, 28, 1489]
+          # values: [1489]
           # values: [1489, 23517, 28, 715, 752, 772, 807, 354, 31]  # Default to credit-g dataset ID
         time_budget:
           type: int
