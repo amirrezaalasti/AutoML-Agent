@@ -41,7 +41,8 @@ class LLMPlanner:
     LOGS_DIR = "./logs/instructor"
     SMAC_DOCS_PATH = "collected_docs/smac_docs.json"
     TEMPLATES_DIR = "templates"
-    PLANNER_TEMPLATE = "planner_prompt.txt"
+    PLANNER_TEMPLATE_TABULAR = "planner_prompt_tabular.txt"
+    PLANNER_TEMPLATE_IMAGE = "planner_prompt_image.txt"
 
     def __init__(
         self,
@@ -59,7 +60,7 @@ class LLMPlanner:
         Args:
             dataset_name: Name of the dataset
             dataset_description: Description of the dataset
-            dataset_type: Type of the dataset (e.g., classification, regression)
+            dataset_type: Type of the dataset
             task_type: Type of task to perform (optional)
 
         Raises:
@@ -87,21 +88,40 @@ class LLMPlanner:
                     api_key=api_key,
                 )
 
-            # Load prompt template
+            # Load appropriate prompt template based on dataset type
             self._load_prompt_template()
 
         except Exception as e:
             raise LLMPlannerError(f"Failed to initialize LLMPlanner: {e}")
 
+    def _get_template_name(self) -> str:
+        """
+        Determine the appropriate template name based on dataset type.
+
+        Returns:
+            Template filename for the dataset type
+        """
+        # Check if dataset type suggests image data
+        if any(keyword in self.dataset_type.lower() for keyword in ['image', 'vision', 'cnn', 'conv']):
+            return self.PLANNER_TEMPLATE_IMAGE
+        
+        # Check if dataset description suggests image data
+        if any(keyword in self.dataset_description.lower() for keyword in ['image', 'pixel', 'vision', 'photo', 'picture']):
+            return self.PLANNER_TEMPLATE_IMAGE
+        
+        # Default to tabular template
+        return self.PLANNER_TEMPLATE_TABULAR
+
     def _load_prompt_template(self) -> None:
         """
-        Load the planner prompt template from file.
+        Load the appropriate planner prompt template from file based on dataset type.
 
         Raises:
             LLMPlannerError: If template file cannot be loaded
         """
         try:
-            template_path = Path(self.TEMPLATES_DIR) / self.PLANNER_TEMPLATE
+            template_name = self._get_template_name()
+            template_path = Path(self.TEMPLATES_DIR) / template_name
 
             if not template_path.exists():
                 raise LLMPlannerError(f"Planner template not found: {template_path}")
@@ -195,7 +215,6 @@ class LLMPlanner:
                 dataset_description=self.dataset_description,
                 dataset_type=self.dataset_type,
                 task_type=self.task_type,
-                smac_documentation=smac_documentation,
                 config_space_suggested_parameters=config_space_suggested_parameters or "No OpenML meta-learning insights available for this dataset.",
             )
             if self.base_url:

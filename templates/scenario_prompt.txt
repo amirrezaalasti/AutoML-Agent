@@ -18,24 +18,22 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
   * Dataset Description: `{dataset_description}`
 
 * The scenario **must** include:
-  * Appropriate budget settings (min_budget, max_budget) for multi-fidelity facades
+  * Appropriate budget settings (min_budget, max_budget) for multi-fidelity facades based on dataset type and complexity
   * Optimal number of workers for parallelization (typically 1)
-  * Reasonable walltime and CPU time limits (avoid setting these unless necessary)
-  * Proper trial resource constraints
-  * Appropriate number of trials based on facade type and dataset characteristics
+  * Appropriate number of trials based on facade type, dataset characteristics, and available computational resources
+  * **AVOID setting walltime and CPU time limits** unless absolutely necessary - they often cause errors
 
 * **Best Practices:**
   * Set deterministic=False for better generalization
   * Use multi-fidelity optimization when appropriate
   * Configure proper output directory structure
-  * Set appropriate trial resource limits
+  * **AVOID setting trial resource limits** unless absolutely necessary
   * Enable parallel optimization when possible
 
 * **Resource Management:**
-  * Set appropriate memory limits for trials
-  * Configure proper walltime limits
+  * **AVOID setting memory and walltime limits** - they often cause errors
   * Enable parallel processing when beneficial
-  * Consider dataset size for budget settings
+  * Consider dataset size and complexity for budget and trial settings
 
 ---
 
@@ -106,8 +104,8 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
 ### **Error Prevention:**
 
 * Ensure all parameters are within valid ranges
-* Verify that resource limits are reasonable
-* Check that budget settings are appropriate
+* **AVOID setting walltime, CPU time, and memory limits** - they often cause errors
+* Check that budget settings are appropriate for the selected facade
 * Validate that parallelization settings are correct
 * Ensure the training function can be pickled for parallel processing
 
@@ -133,45 +131,41 @@ def generate_scenario(cs: ConfigurationSpace) -> Scenario:
 
 {scenario_plan}
 
-### **Pre-Calculated Optimal Parameters:**
-
-For efficient optimization, the following parameters have been automatically calculated based on your dataset characteristics:
-
-**Optimal Trials:** {optimal_trials}
-
-### **Budget Parameter Selection (for Multi-Fidelity Facades Only):**
-
-**IMPORTANT**: Budget ranges should be chosen based on the algorithms you select, not dataset size. Consider:
-
-* **For Ensemble Algorithms**: Budget controls number of estimators (e.g., min_budget=10, max_budget=100)
-* **For Iterative Algorithms**: Budget controls iterations/epochs (e.g., min_budget=5, max_budget=50) 
-* **For Neural Networks**: Budget controls training epochs (e.g., min_budget=3, max_budget=30)
-* **For Boosting Algorithms**: Budget controls boosting rounds (e.g., min_budget=10, max_budget=200)
-
-**Choose budget ranges that:**
-1. Make sense for your selected algorithm's fidelity parameter
-2. Allow meaningful early stopping at min_budget
-3. Provide sufficient training at max_budget
-4. Have a reasonable ratio (typically max_budget/min_budget between 5-20)
-
 ### **Facade-Specific Requirements:**
 
 The scenario configuration MUST be compatible with the selected facade. Based on the suggested facade, include the appropriate parameters:
 
 **Selected Facade: {suggested_facade}**
 
+### **Parameter Selection Guidelines:**
+
 **For Multi-Fidelity Facades (HyperbandFacade, MultiFidelityFacade):**
-- **MUST include** `min_budget` and `max_budget` parameters (choose based on your algorithms - see guidance above)
-- **MUST use** `n_trials={optimal_trials}` (pre-calculated optimal value)
-- Budget represents fidelity levels (e.g., epochs, training steps, iterations)
-- Choose budget values that make sense for the algorithms in your configuration space
+- **MUST include** `min_budget` and `max_budget` parameters
+- **Budget Selection for Image Datasets:**
+  - For simple image datasets (MNIST, Fashion-MNIST): min_budget=10-20, max_budget=100-200
+  - For medium complexity (CIFAR-10, CIFAR-100): min_budget=20-30, max_budget=200-400  
+  - For complex datasets (ImageNet-style): min_budget=30-50, max_budget=300-600
+- **Budget Selection for Tabular Datasets:**
+  - For tree-based models: min_budget=20, max_budget=500 (n_estimators)
+  - For neural networks: min_budget=10, max_budget=200 (epochs)
+  - For iterative models: min_budget=50, max_budget=1000 (max_iter)
+- **Trial Selection:**
+  - For image datasets with high resources: 200-500 trials
+  - For tabular datasets: 100-300 trials based on complexity
+  - Consider computational resources and dataset size
 
 **For Standard Facades (BlackBoxFacade, HyperparameterOptimizationFacade):**
 - **DO NOT include** `min_budget` or `max_budget` parameters
-- **MUST use** `n_trials={optimal_trials}` (pre-calculated optimal value)
-- These facades do not support multi-fidelity optimization
+- **Trial Selection:**
+  - For image datasets: 150-300 trials
+  - For tabular datasets: 100-200 trials
+  - These facades do not support multi-fidelity optimization
 
-**IMPORTANT**: Configure the scenario parameters according to the selected facade type above.
+**IMPORTANT**: 
+- Choose parameters intelligently based on dataset characteristics and computational resources
+- For image datasets, prefer higher trial counts due to longer training times and higher resource availability
+- Ensure min_budget is meaningful (never below 5 for epochs, never below 10 for estimators)
+- Consider the trade-off between exploration (more trials) and exploitation (higher budgets)
 
 ---
 
@@ -180,5 +174,6 @@ The scenario configuration MUST be compatible with the selected facade. Based on
 * A single `generate_scenario(cs)` function that returns a properly configured `Scenario` object
 * No additional code or explanations
 * The output_directory should be "{output_directory}"
-* set the number of workers to 1
-* do not set these parameters: walltime_limit, cputime_limit, trial_walltime_limit ,trial_memory_limit=
+* Set the number of workers to 1
+* **AVOID setting walltime, CPU time, and memory limits** - they cause errors
+* don't set crash_cost

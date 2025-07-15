@@ -5,18 +5,23 @@ PY_EXPERIMENTER:
     provider: mysql
     database: AgentSmac
     table:
-      name: AgentSmacRuns_tabular_v3
-      # name: AgentSmacRuns_tabular_1489
+      # name: AgentSmacRuns_image_fashionmnist
+      # name: AgentSmacRuns_tabular_creditg
+      name: AgentSmacRuns_image_cifar10
+      # name: AgentSmacRuns_tabular_v5
       keyfields:
         dataset_origin:
           type: VARCHAR(255)
           values: ['openml']
         dataset_name:
           type: VARCHAR(255)
-          values: ['openml_tabular_dataset_v3_runs']
+          # values: ['fashion-mnist']
+          values: ['cifar10']
+          # values: ['creditg'] 
         dataset_type:
           type: VARCHAR(255)
-          values: ['tabular']
+          values: ['image']
+          # values: ['tabular']
         task_type:
           type: VARCHAR(255)
           values: ['classification']
@@ -25,12 +30,14 @@ PY_EXPERIMENTER:
           values: ['llama-3.3-70b-instruct']
         dataset_openml_id:
           type: int
-          values: [23517, 715, 752, 772, 807, 28, 1489]
-          # values: [1489]
+          # values: [1489, 23517, 28, 715, 752, 772, 807]
+          # values: [40996] # Fashion MNIST
+          values: [40926] # CIFAR-10
+          # values: [31] # Credit-G
           # values: [1489, 23517, 28, 715, 752, 772, 807, 354, 31]  # Default to credit-g dataset ID
         time_budget:
           type: int
-          values: [21600]
+          values: [86400]
         metric:
           type: VARCHAR(255)
           values: ['accuracy']

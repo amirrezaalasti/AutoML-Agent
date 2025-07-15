@@ -48,6 +48,7 @@ DATASET_OPTIONS = {
     "image": [
         "MNIST",
         "Fashion-MNIST",
+        "Custom Upload",
     ],
     "time_series": ["Sunspot"],
     "text": ["20 Newsgroups"],
@@ -90,6 +91,9 @@ class DummyUI:
                 print("Done.")
 
         return Spinner()
+    
+    def warning(self, text):
+        print(f"\n[WARNING] {text}")
 
 
 class TerminalUI:
@@ -208,6 +212,16 @@ class TerminalUI:
                 (xtr, ytr), _ = mnist.load_data()
             elif dataset_name == "Fashion-MNIST":
                 (xtr, ytr), _ = fashion_mnist.load_data()
+            elif dataset_name == "Custom Upload":
+                file_path = input("Enter the path to your CSV file: ")
+                try:
+                    df = pd.read_csv(file_path)
+                    target_column = self._get_choice("Select the target column:", df.columns.tolist())
+                    X = df.drop(columns=[target_column])
+                    y = df[target_column]
+                except Exception as e:
+                    print(f"Error loading custom file: {e}")
+                    return None
             X = pd.DataFrame(xtr.reshape(xtr.shape[0], -1))
             y = pd.Series(ytr.flatten())
             return {"X": X, "y": y}

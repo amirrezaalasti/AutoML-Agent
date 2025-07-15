@@ -39,9 +39,16 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
 
     # Task-specific description of the target variable
     if task_type == "classification":
-        description.append("The target variable has been label-encoded to be numeric for classification.")
-        description.append("\nEncoded label distribution:")
-        description.append(str(y.value_counts()))
+        description.append(
+            "The target variable has been label-encoded to be numeric for classification."
+        )
+        class_counts = y.value_counts()
+        if len(class_counts) <= 10:
+            description.append(f"\nClass distribution: {class_counts.to_dict()}")
+        else:
+            description.append(
+                f"\nNumber of classes: {len(class_counts)} (too many to display)"
+            )
         description.append(
             f"""* **For classification tasks**
             from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
@@ -56,10 +63,14 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
             """
         )
     elif task_type == "regression":
-        description.append("The target variable is continuous for this regression task.")
+        description.append(
+            "The target variable is continuous for this regression task."
+        )
         # for regression sometimes the target value is not normalized properly, so we need to normalize it
         if y.min() < 0 or y.max() > 1:
-            description.append("The target variable is not normalized properly. Please normalize it.")
+            description.append(
+                "The target variable is not normalized properly. Please normalize it."
+            )
         description.append("\nTarget variable statistical summary:")
         description.append(str(y.describe()))
         description.append(
@@ -77,12 +88,21 @@ def describe_tabular_dataset(dataset: Dict[str, Any], task_type: str) -> str:
         description.append("The target variable is present for evaluation purposes.")
 
     if hasattr(X, "dtypes"):
-        description.append("\nFeature columns and their final data types:")
-        description.append(X.dtypes.to_string())
+        description.append(f"\nFeature data types summary:")
+        dtype_counts = X.dtypes.value_counts()
+        description.append(f"- {dtype_counts.to_dict()}")
+        if len(X.columns) <= 20:
+            description.append(f"- Column names: {list(X.columns)}")
+        else:
+            description.append(
+                f"- Total columns: {len(X.columns)} (too many to display)"
+            )
 
     if hasattr(X, "describe"):
-        description.append("\nFeature statistical summary (post-encoding):")
-        description.append(str(X.describe(include="all")))
+        description.append("\nFeature statistical summary (first 5 numeric columns):")
+        numeric_cols = X.select_dtypes(include=[np.number]).columns[:5]
+        if len(numeric_cols) > 0:
+            description.append(str(X[numeric_cols].describe()))
 
     return "\n".join(description)
 
@@ -148,96 +168,291 @@ def describe_time_series_dataset(dataset: Dict[str, Any], task_type: str) -> str
     return "\n".join(description)
 
 
+import os
+import math
+import numpy as np
+import pandas as pd
+import torch
+from typing import Dict, Any
+
+
 def describe_image_dataset(dataset: Dict[str, Any], task_type: str) -> str:
     """
-    Generate a detailed description for an image dataset, tailored to the ML task.
+    Generate a description for an image dataset, tailored to the ML task.
 
     Args:
         dataset: A dictionary containing 'X' (features) and 'y' (labels).
         task_type: The machine learning task ('classification', 'regression', etc.).
 
     Returns:
-        A string description of the dataset with preprocessing advice.
+        A string description of the dataset with preprocessing guidance.
     """
-    X, y = dataset["X"], dataset["y"]
-    description_parts = []
+    # Validate inputs
+    if "X" not in dataset or "y" not in dataset:
+        return "Error: dataset must contain 'X' and 'y'."
 
-    # --- Section 1: Data Shape, Type, and Analysis ---
-    description_parts.append("### Dataset Analysis")
-    if isinstance(X, (pd.DataFrame, pd.Series)):
-        description_parts.append(f"* **Input Type**: Pandas {type(X).__name__} with shape {X.shape}.")
-        X_np = X.values
+    X, y = dataset["X"], dataset["y"]
+
+    # Determine input type and extract numpy array
+    if isinstance(X, pd.DataFrame):
+        input_type = f"Pandas DataFrame with shape {X.shape}"
+        X_np = X.values.astype(np.float32)
     elif isinstance(X, np.ndarray):
-        description_parts.append(f"* **Input Type**: NumPy Array with shape {X.shape}.")
-        X_np = X
+        input_type = f"NumPy Array with shape {X.shape}"
+        X_np = X.astype(np.float32)
     else:
         return f"Unsupported input type for image dataset: {type(X).__name__}."
 
+    # Basic sample and feature counts
     n_samples = X_np.shape[0]
+    n_features = np.prod(X_np.shape[1:]) if X_np.ndim >= 2 else 0
 
-    # --- Section 2: Preprocessing Recommendations ---
-    description_parts.append("\n### Preprocessing Recommendations for CNNs")
+    # Analyze image format and detect channels dynamically
+    img_info = ""
+    channels = 1  # Default to grayscale
+    img_dim = 28  # Default dimension
 
-    if X_np.ndim == 2:  # Flattened images
-        n_features = X_np.shape[1]
-        description_parts.append(f"* **Data Format**: Flattened images, with {n_samples} samples and {n_features} features each.")
-        h = int(math.sqrt(n_features))
-        if h * h == n_features:
-            description_parts.append(f"* **Action**: Reshape to `(N, 1, {h}, {h})` for grayscale CNNs.")
+    if X_np.ndim == 2:
+        # Flattened images - try to infer dimensions
+        feature_count = X_np.shape[1]
+        dim_color = int(math.sqrt(feature_count / 3))
+        dim_gray = int(math.sqrt(feature_count))
+
+        if dim_color**2 * 3 == feature_count:
+            img_info = f"Likely {dim_color}x{dim_color} color images (3 channels)"
+            channels = 3
+            img_dim = dim_color
+        elif dim_gray**2 == feature_count:
+            img_info = f"Likely {dim_gray}x{dim_gray} grayscale images (1 channel)"
+            channels = 1
+            img_dim = dim_gray
         else:
-            next_h = int(math.ceil(math.sqrt(n_features)))
-            pad_needed = next_h * next_h - n_features
-            description_parts.append(
-                f"* **Action Required**: Features ({n_features}) are not a perfect square. "
-                f"Pad with {pad_needed} zeros and reshape to `(N, 1, {next_h}, {next_h})`."
-            )
-    elif X_np.ndim == 3:  # Grayscale images
-        description_parts.append("* **Data Format**: 3D array `(N, H, W)`. Add a channel dimension.")
-        description_parts.append("* **Action**: Reshape to `(N, 1, H, W)`.")
-    elif X_np.ndim == 4:  # Color images
-        description_parts.append("* **Data Format**: 4D array. Verify channel order (`(N, C, H, W)` vs `(N, H, W, C)`).")
+            img_info = f"Flattened images with {feature_count} features per sample"
+            # Try to infer from common image sizes
+            if feature_count == 784:  # 28x28 MNIST/Fashion-MNIST
+                channels, img_dim = 1, 28
+            elif feature_count == 3072:  # 32x32x3 CIFAR-10
+                channels, img_dim = 3, 32
+            elif feature_count == 1024:  # 32x32 grayscale
+                channels, img_dim = 1, 32
+    elif X_np.ndim == 4:
+        n, c, h, w = X_np.shape
+        img_info = f"4D array format: {n} samples, {c} channels, {h}x{w} resolution"
+        channels = c
+        img_dim = h
     else:
-        description_parts.append(f"* **Data Format**: Unexpected {X_np.ndim}D array. Manual inspection required.")
+        img_info = f"Unexpected dimensionality: {X_np.ndim}D array"
 
-    description_parts.append("\n* **Normalization**: Remember to scale pixel values (e.g., divide by 255.0).")
+    # Target variable analysis
+    if task_type.lower() == "classification":
+        y_np = y.values if hasattr(y, "values") else np.asarray(y)
+        num_classes = len(np.unique(y_np))
+        task_info = f"Classification task with {num_classes} classes"
+    elif task_type.lower() == "regression":
+        task_info = "Regression task"
+    else:
+        task_info = f"{task_type} task"
 
-    # --- Section 3: Target Variable Analysis (Task-Specific) ---
-    description_parts.append("\n### Target Variable (y) Analysis")
-    if task_type == "classification":
-        num_classes = y.nunique() if hasattr(y, "nunique") else len(np.unique(y))
-        class_dist = str(y.value_counts().to_dict()) if hasattr(y, "value_counts") else str(dict(zip(*np.unique(y, return_counts=True))))
-        description_parts.append(f"* **Task**: Image Classification.")
-        description_parts.append(f"* **Number of Classes**: {num_classes}")
-        description_parts.append(f"* **Class Distribution**: {class_dist}")
-        description_parts.append(
-            f"""* **For classification tasks**
-            from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
-            metrics = {{
-                'loss': loss,
-                'accuracy': accuracy_score(y_test, predictions),
-                'precision': precision_score(y_test, predictions, average='weighted', zero_division=0),
-                'recall': recall_score(y_test, predictions, average='weighted', zero_division=0),
-                'f1': f1_score(y_test, predictions, average='weighted', zero_division=0),
-                'balanced_accuracy': balanced_accuracy_score(y_test, predictions)
-            }}
-            """
-        )
-    elif task_type == "regression":
-        description_parts.append(f"* **Task**: Image Regression (e.g., predicting age, angle).")
-        description_parts.append(f"* **Target Summary**: \n{y.describe().to_string()}")
-        description_parts.append(
-            f"""* **For regression tasks**
-            from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-            metrics = {{
-                'loss': loss,
-                'mse': mean_squared_error(y_test, predictions),
-                'mae': mean_absolute_error(y_test, predictions),
-                'r2': r2_score(y_test, predictions)
-            }}
-            """
-        )
+    # Build description
+    description = f"""### Image Dataset Analysis
+    **Input Type**: {input_type}
+    **Samples**: {n_samples}
+    **Total Features**: {n_features}
+    **Image Format**: {img_info}
+    **Task**: {task_info}
 
-    return "\n".join(description_parts)
+    ### Preprocessing Guidelines
+
+    1. **Data Reshaping**: If data is flattened, reshape to (N, C, H, W) format for CNN models
+    2. **Normalization**: Scale pixel values to [0,1] range by dividing by 255.0
+    3. **Data Splitting**: Split data into training (70%), validation (15%), and test (15%) sets
+    4. **Validation**: Ensure input dimensions match model expectations
+    
+    ### Data Augmentation (Recommended for Better Performance)
+    
+    Data augmentation can significantly improve model performance and generalization:
+    
+    ```python
+    from torchvision import transforms
+    
+    # For training data
+    train_transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.RandomRotation(10),
+        transforms.RandomHorizontalFlip(0.5),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # ImageNet stats
+    ])
+    
+    # For validation/test data
+    val_transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+    ```
+
+    ### Model Architecture Considerations
+
+    - **CNN Models**: Require 4D input tensors (batch, channels, height, width)
+    - **Adaptive Pooling**: Use `nn.AdaptiveAvgPool2d((1, 1))` for robust feature extraction
+    - **Dynamic Padding**: Use `padding = kernel_size // 2` to maintain spatial dimensions
+    - **Memory Management**: Monitor batch sizes to avoid GPU memory issues
+
+    ### Critical Hyperparameter Insights
+
+    Based on empirical analysis, consider these factors for optimal performance:
+
+    1. **Learning Rate**: Default to 0.01 for better convergence (avoid 0.001 which can lead to poor performance)
+    2. **Learning Rate Schedulers**: Use schedulers for better training convergence
+    3. **Optimizer**: Adam optimizer typically provides better convergence than SGD
+    4. **Tensor Operations**: Use `torch.from_numpy()` for memory efficiency
+    5. **Budget Handling**: Use `min(budget, epochs)` to respect both time constraints and default training duration
+    6. **Parameter Validation**: Use less restrictive bounds that preserve user intent
+    
+    **Learning Rate Scheduler Example**:
+    ```python
+    from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
+    
+    # Option 1: Step decay
+    scheduler = StepLR(optimizer, step_size=30, gamma=0.1)
+    
+    # Option 2: Reduce on plateau (recommended)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10)
+    
+    # In training loop:
+    for epoch in range(epochs):
+        # ... training code ...
+        scheduler.step()  # For StepLR
+        # scheduler.step(val_loss)  # For ReduceLROnPlateau
+    ```
+
+    ### Task-Specific Guidance
+    """
+    # Add task-specific guidance
+    if task_type.lower() == "classification":
+        y_np = y.values if hasattr(y, "values") else np.asarray(y)
+        num_classes = len(np.unique(y_np))
+        description += f"""
+    **Classification Task**:
+    - Use `nn.CrossEntropyLoss()` for multi-class classification
+    - Evaluate with: accuracy, precision, recall, F1-score (weighted average)
+    - Number of classes: {num_classes}
+    - Consider class imbalance in evaluation metrics
+
+    **Suggested Architecture Pattern**:
+    ```python
+    class DynamicCNN(nn.Module):
+        def __init__(self, num_classes, num_conv_layers=3, initial_filters=32, 
+                     kernel_size=3, dropout_rate=0.2, in_channels={channels}):
+            super().__init__()
+            layers = []
+            current_channels = {channels}
+            out_channels = initial_filters
+            for _ in range(num_conv_layers):
+                padding = kernel_size // 2
+                layers.extend([
+                    nn.Conv2d(current_channels, out_channels, kernel_size, padding=padding),
+                    nn.ReLU(),
+                    nn.MaxPool2d(2, 2)
+                ])
+                current_channels = out_channels
+                out_channels *= 2
+            layers.append(nn.AdaptiveAvgPool2d((1, 1)))
+            self.features = nn.Sequential(*layers)
+            self.classifier = nn.Sequential(
+                nn.Flatten(),
+                nn.Dropout(dropout_rate),
+                nn.Linear(current_channels, num_classes)
+            )
+        def forward(self, x):
+            x = self.features(x)
+            return self.classifier(x)
+    ```
+    """
+    elif task_type.lower() == "regression":
+        description += f"""
+    **Regression Task**:
+    - Use `nn.MSELoss()` or `nn.L1Loss()` depending on requirements
+    - Evaluate with: MSE, MAE, R² score
+    - Consider target normalization if values are not in reasonable ranges
+    - Monitor for overfitting with validation loss
+
+    **Suggested Architecture Pattern**:
+    ```python
+    class CNNRegressor(nn.Module):
+        def __init__(self, num_conv_layers=3, initial_filters=32, 
+                     kernel_size=3, dropout_rate=0.2, in_channels={channels}):
+            super().__init__()
+            layers = []
+            current_channels =  {channels}
+            out_channels = initial_filters
+            for _ in range(num_conv_layers):
+                padding = kernel_size // 2
+                layers.extend([
+                    nn.Conv2d(current_channels, out_channels, kernel_size, padding=padding),
+                    nn.ReLU(),
+                    nn.MaxPool2d(2, 2)
+                ])
+                current_channels = out_channels
+                out_channels *= 2
+            layers.append(nn.AdaptiveAvgPool2d((1, 1)))
+            self.features = nn.Sequential(*layers)
+            self.regressor = nn.Sequential(
+                nn.Flatten(),
+                nn.Dropout(dropout_rate),
+                nn.Linear(current_channels, 1)
+            )
+        def forward(self, x):
+            x = self.features(x)
+            return self.regressor(x)
+    ```
+    """
+    description += f"""
+    
+    ### Transfer Learning (Alternative Approach)
+    
+    For better performance, especially with limited data, consider using pre-trained models:
+    
+    ```python
+    import torchvision.models as models
+    import torch.nn as nn
+    
+    # Load pre-trained ResNet
+    model = models.resnet18(pretrained=True)
+    
+    # Modify input layer for different channel counts
+    if {channels} != 3:
+        model.conv1 = nn.Conv2d({channels}, 64, kernel_size=7, stride=2, padding=3, bias=False)
+    
+    # Replace final layer for your task
+    num_features = model.fc.in_features
+    model.fc = nn.Linear(num_features, {num_classes if task_type.lower() == 'classification' else '1'})
+    
+    # Freeze early layers (optional)
+    for param in model.parameters():
+        param.requires_grad = False
+    for param in model.fc.parameters():
+        param.requires_grad = True
+    ```
+    
+    ### Common Pitfalls to Avoid
+    1. **Learning Rate Too Low**: Using 0.001 can lead to poor convergence (~40% accuracy)
+    2. **Missing Adaptive Pooling**: Can cause crashes with certain input sizes
+    3. **Overly Restrictive Validation**: Overriding user parameters unnecessarily
+    4. **Inefficient Tensor Creation**: Using `torch.tensor()` instead of `torch.from_numpy()`
+    5. **Poor Budget Handling**: Direct assignment instead of `min(budget, epochs)`
+
+    ### Performance Optimization Tips
+    - Start with learning rate 0.01 for better convergence
+    - Use Adam optimizer consistently
+    - Implement proper error handling for tensor size mismatches
+    - Monitor GPU memory usage with large batch sizes
+    - Use adaptive pooling for input size flexibility
+    """
+
+    return description
 
 
 def describe_categorical_dataset(dataset: Dict[str, Any], task_type: str) -> str:
@@ -266,7 +481,9 @@ def describe_categorical_dataset(dataset: Dict[str, Any], task_type: str) -> str
 
     # Task-specific description of the target variable
     if task_type == "classification":
-        description.append(f"\nTarget variable has {y.nunique()} unique classes for classification.")
+        description.append(
+            f"\nTarget variable has {y.nunique()} unique classes for classification."
+        )
         description.append("Label distribution:")
         description.append(str(y.value_counts()))
     elif task_type == "clustering":
@@ -315,16 +532,20 @@ def describe_text_dataset(dataset: Dict[str, Any], task_type: str) -> str:
         description.append(f"* **Number of Classes**: {y.nunique()}")
         description.append(f"* **Class Distribution**: {y.value_counts().to_dict()}")
     elif task_type == "regression":
-        description.append(f"* **Task**: Text Regression (e.g., predicting a sentiment score).")
+        description.append(
+            f"* **Task**: Text Regression (e.g., predicting a sentiment score)."
+        )
         description.append(f"* **Target Summary**: \n{y.describe().to_string()}")
 
     # Add handling requirements
     requirements = [
         "\n### Text Data Handling Requirements",
-        "1. **Preprocessing**: Tokenization, stop-word removal, and stemming/lemmatization " "are standard.",
+        "1. **Preprocessing**: Tokenization, stop-word removal, and stemming/lemmatization "
+        "are standard.",
         "2. **Feature Extraction**: Convert text to numerical vectors using TF-IDF, word "
         "embeddings (Word2Vec, GloVe), or transformer-based embeddings (BERT).",
-        "3. **Model-Specific**: For RNNs/Transformers, ensure inputs are padded/truncated " "to a consistent sequence length.",
+        "3. **Model-Specific**: For RNNs/Transformers, ensure inputs are padded/truncated "
+        "to a consistent sequence length.",
     ]
 
     description.extend(requirements)

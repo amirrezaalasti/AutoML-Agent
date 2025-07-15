@@ -1,5 +1,5 @@
 from scripts.LLMClient import LLMClient
-from typing import Any
+from typing import Any, Optional
 from utils import (
     describe_dataset,
     save_code_to_file,
@@ -24,7 +24,6 @@ from smac import Scenario
 from smac.facade.hyperband_facade import HyperbandFacade as HyperbandFacade
 from smac.facade.multi_fidelity_facade import MultiFidelityFacade as MultiFidelityFacade
 from smac.facade.blackbox_facade import BlackBoxFacade
-from smac.intensifier.hyperband_utils import get_n_trials_for_hyperband_multifidelity
 
 
 import numpy as np
@@ -52,11 +51,11 @@ class AutoMLAgent:
         dataset: Any,
         dataset_type: str,
         ui_agent: Any,
-        dataset_name: str = None,
-        task_type: str = None,
-        model_name: str = None,
-        api_key: str = None,
-        base_url: str = None,
+        dataset_name: Optional[str] = None,
+        task_type: Optional[str] = None,
+        model_name: Optional[str] = None,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
         n_folds: int = 5,
         fold: int = 0,
         time_budget: int = 3600,  # Default 1 hour timeout
@@ -80,7 +79,7 @@ class AutoMLAgent:
         self.dataset_type = dataset_type
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
-        self.dataset_description = describe_dataset(self.dataset, dataset_type, task_type)
+        self.dataset_description = describe_dataset(self.dataset, dataset_type, task_type or "classification")
         self.time_budget = time_budget
 
         self.config_code = None
@@ -97,13 +96,17 @@ class AutoMLAgent:
         # store original prompts for retries
         self.prompts = {}
 
-        self.llm = LLMClient(api_key=api_key, model_name=model_name, base_url=base_url)
+        self.llm = LLMClient(
+            api_key=api_key or "",
+            model_name=model_name or "llama3-8b-8192",
+            base_url=base_url
+        )
         self.ui_agent = ui_agent
 
         # Initialize logger
         self.logger = Logger(
-            model_name=model_name,
-            dataset_name=dataset_name,
+            model_name=model_name or "llama3-8b-8192",
+            dataset_name=dataset_name or "unknown",
             base_log_dir=folder_name,
         )
 
@@ -113,9 +116,9 @@ class AutoMLAgent:
             dataset_description=self.dataset_description,
             dataset_type=self.dataset_type,
             task_type=self.task_type or "classification",
-            model_name=model_name,
+            model_name=model_name or "llama3-8b-8192",
             base_url=base_url,
-            api_key=api_key,
+            api_key=api_key or "",
         )
 
         self.smac_facades = {
@@ -156,272 +159,219 @@ class AutoMLAgent:
     
 
 
-    def _calculate_optimal_scenario_parameters(self, facade_name: str) -> dict:
-        """
-        Calculate optimal scenario parameters before code generation.
+    def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
+        """Test the incumbent configuration and evaluate model on test set if possible"""
         
-        :param facade_name: Name of the selected facade
-        :return: Dictionary with optimal parameters for scenario generation
-        """
-        # Dataset characteristics
-        dataset_size = self.dataset['X'].shape[0]
-        n_features = self.dataset['X'].shape[1] if len(self.dataset['X'].shape) > 1 else 1
-        
-        # Default parameters for all facades
-        params = {
-            "optimal_trials": 100,
-            "optimal_eta": 3,
-            "min_budget": None,
-            "max_budget": None,
-            "total_budget": None,
-        }
-        
-        # Calculate facade-specific parameters
-        if facade_name in ['HyperbandFacade', 'MultiFidelityFacade']:
-            # Calculate budget parameters for multi-fidelity facades
-            params.update(self._calculate_multi_fidelity_parameters(dataset_size, n_features))
-            
-            self.ui_agent.info(
-                f"Pre-calculated optimal parameters for {facade_name}: "
-                f"trials={params['optimal_trials']}, eta={params['optimal_eta']}, "
-                f"budget={params['min_budget']}-{params['max_budget']}"
-            )
-            
-            self.logger.log_response(
-                f"Pre-calculated optimal parameters for {facade_name}",
-                {
-                    "component": "parameter_calculation",
-                    "facade": facade_name,
-                    "params": params
-                }
-            )
-        else:
-            # For standard facades, calculate optimal trials based on dataset size
-            params["optimal_trials"] = self._calculate_standard_trials(dataset_size, facade_name)
-            
-            self.ui_agent.info(
-                f"Pre-calculated optimal trials for {facade_name}: {params['optimal_trials']}"
-            )
-        
-        return params
-    
-    def _calculate_multi_fidelity_parameters(self, dataset_size: int, n_features: int) -> dict:
-        """
-        Calculate optimal budget and trial parameters for multi-fidelity facades.
-        
-        :param dataset_size: Dataset size
-        :param n_features: Number of features
-        :return: Dictionary with calculated parameters
-        """
-        # Use reasonable budget estimates to calculate optimal trials with SMAC's function
-        # But don't force these budget values - let LLM choose actual ranges
-        
-        # Estimate reasonable budget ranges for trial calculation purposes
-        # These are just for calculating optimal trials, not constraining the LLM
-        if dataset_size < 5000:
-            estimate_min_budget, estimate_max_budget = 5, 30
-        elif dataset_size < 20000:
-            estimate_min_budget, estimate_max_budget = 3, 25
-        else:
-            estimate_min_budget, estimate_max_budget = 2, 20
-            
-        # Adjust estimates based on feature complexity
-        if n_features > 1000:
-            estimate_max_budget = min(estimate_max_budget + 10, 50)
-        elif n_features < 50:
-            estimate_max_budget = max(estimate_max_budget - 5, 10)
-            
-        # Calculate optimal eta based on dataset characteristics
-        if dataset_size < 5000:
-            optimal_eta = 2  # Conservative for small datasets
-        elif dataset_size < 20000:
-            optimal_eta = 3  # Balanced for medium datasets
-        else:
-            optimal_eta = 4  # Aggressive for large datasets
-            
-        # Calculate optimal trials using SMAC's function with estimated budgets
+        # Get facade parameters
+        facade_name = self.suggested_facade.__name__
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+
+        # Get dataset dictionary for train function
+        dataset_for_train = self._get_dataset_for_train_function(dataset_train, dataset_test, include_test_data=True)
+
+        # Prepare training parameters using utility function
+        training_params = prepare_training_parameters(
+            facade_name=facade_name,
+            required_params=required_params,
+            scenario_obj=self.scenario_obj,
+            incumbent=incumbent,
+            dataset=dataset_for_train,
+            seed=0,
+            model_dir=self.logger.experiment_dir,
+        )
+
         try:
-            # Estimate total budget for trial calculation
-            size_factor = min(10, max(2, dataset_size / 1000))
-            complexity_factor = min(5, max(1, n_features / 100))
-            dataset_complexity_factor = (size_factor + complexity_factor) / 2
-            
-            base_time_per_trial = max(0.5, dataset_size / 5000)
-            estimated_time_per_max_trial = base_time_per_trial * estimate_max_budget / estimate_min_budget
-            usable_time = self.time_budget * 0.8
-            max_possible_trials = max(10, int(usable_time // estimated_time_per_max_trial))
-            
-            budget_ratio = estimate_max_budget / estimate_min_budget
-            efficiency_factor = min(2.0, max(0.5, 10 / budget_ratio))
-            estimated_total_budget = dataset_complexity_factor * estimate_max_budget * max_possible_trials * efficiency_factor / 15
-            
-            # Use SMAC's function to calculate optimal trials
-            optimal_trials = get_n_trials_for_hyperband_multifidelity(
-                total_budget=estimated_total_budget,
-                min_budget=estimate_min_budget,
-                max_budget=estimate_max_budget,
-                eta=optimal_eta,
-                print_summary=False
-            )
-            
-            # Cap the trials to reasonable bounds
-            min_trials = 50  # Minimum for meaningful multi-fidelity optimization
-            max_trials = min(400, max_possible_trials)  # Maximum based on time budget
-            optimal_trials = max(min_trials, min(optimal_trials, max_trials))
-            
+            # Execute training function - now returns dictionary with loss and metrics
+            result = train_fn(**training_params)
+
+            # Handle different return formats
+            if isinstance(result, dict):
+                # New format: dictionary with loss and metrics
+                metrics = result.copy()
+                loss = metrics.get("loss", float("inf"))
+                self._log_evaluation_success(metrics, incumbent)
+            else:
+                # Old format: just loss value (backward compatibility)
+                loss = float(result)
+                metrics = get_default_metrics(self.task_type or "classification")
+                metrics["loss"] = loss
+                self._log_evaluation_success(metrics, incumbent)
+
         except Exception as e:
-            # Fallback calculation if SMAC function fails
-            if dataset_size < 5000:
-                optimal_trials = 100
-            elif dataset_size < 20000:
-                optimal_trials = 150
-            else:
-                optimal_trials = 200
-                
-            # Adjust trials based on feature complexity
-            if n_features > 1000:
-                optimal_trials = min(optimal_trials + 50, 300)
-            elif n_features < 50:
-                optimal_trials = max(optimal_trials - 25, 75)
-            
-        return {
-            "min_budget": None,  # Let LLM choose based on algorithms
-            "max_budget": None,  # Let LLM choose based on algorithms
-            "total_budget": None,  # Not needed for LLM guidance
-            "optimal_eta": optimal_eta,
-            "optimal_trials": optimal_trials,
-        }
-    
-    def _calculate_standard_trials(self, dataset_size: int, facade_name: str) -> int:
-        """
-        Calculate optimal number of trials for standard facades.
-        
-        :param dataset_size: Dataset size
-        :param facade_name: Name of the facade
-        :return: Optimal number of trials
-        """
-        if facade_name == "BlackBoxFacade":
-            if dataset_size < 1000:
-                return 40
-            elif dataset_size < 10000:
-                return 60
-            else:
-                return 80
-        elif facade_name == "HyperparameterOptimizationFacade":
-            if dataset_size < 5000:
-                return 75
-            elif dataset_size < 50000:
-                return 125
-            else:
-                return 150
-        else:
-            # Default fallback
-            return 100
+            # Handle training function execution errors
+            loss = float("inf")
+            metrics = get_default_metrics(self.task_type or "classification")
+            metrics["error"] = f"Training function execution failed: {str(e)}"
+            self.logger.log_error(
+                f"Training function execution failed: {str(e)}",
+                error_type="TRAINING_ERROR",
+            )
+
+        # Display results
+        self.ui_agent.subheader("Test Metrics")
+        self.ui_agent.write(f"Metrics: {metrics}")
+
+        # Store results
+        self.last_loss = loss
+        self.last_metrics = metrics
+
+        return loss, metrics
+
+    def _log_evaluation_success(self, metrics: dict, incumbent: Any):
+        """Log successful model evaluation"""
+        self.logger.log_response(
+            f"Model evaluation successful. Metrics: {metrics}",
+            {
+                "component": "evaluation",
+                "status": "success",
+                "metrics": metrics,
+                "config": str(incumbent),
+            },
+        )
+
+    def _log_evaluation_error(self, error_msg: str):
+        """Log model evaluation errors"""
+        self.logger.log_response(
+            f"Model evaluation failed: {error_msg}",
+            {
+                "component": "evaluation",
+                "status": "error",
+                "error": error_msg,
+            },
+        )
 
     def generate_components(self):
         """
         Generate the configuration space, scenario, and training function code using LLM.
         :return: Tuple containing the generated configuration space, scenario, training function code, last loss, and prompts.
         """
-        config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
-            dataset_name=self.dataset_name or "unknown",
-            X=self.dataset["X"],
-            y=self.dataset["y"],
-        )
-        instructor_response = self.LLMInstructor.generate_instructions(
-            config_space_suggested_parameters,
-        )
-        self.suggested_facade = self.smac_facades[instructor_response.suggested_facade]
-        self.logger.log_response(
-            f"Suggested Facade: {instructor_response.suggested_facade}",
-            {"component": "instructor", "status": "success", "facade": instructor_response.suggested_facade},
-        )
-
-        self.ui_agent.subheader("Instructor Response")
-        # configuration plan:
-        self.ui_agent.subheader("Configuration Plan")
-        self.ui_agent.write(instructor_response.configuration_plan)
-        # scenario plan:
-        self.ui_agent.subheader("Scenario Plan")
-        self.ui_agent.write(instructor_response.scenario_plan)
-        # train function plan:
-        self.ui_agent.subheader("Train Function Plan")
-        self.ui_agent.write(instructor_response.train_function_plan)
-        # scenario facade:
-        self.ui_agent.subheader("Suggested Facade")
-        self.ui_agent.write(instructor_response.suggested_facade)
-
-        # Configuration Space
-        self.prompts["config"] = self._create_config_prompt(
-            instructor_response.configuration_plan,
-            # self.task_type,
-        )
-        self.config_code = self.llm.generate(self.prompts["config"])
-
-        self.logger.log_prompt(self.prompts["config"], {"component": "config"})
-        self.logger.log_response(self.config_code, {"component": "config"})
-        self._run_generated("config")
-        self.ui_agent.subheader("Generated Configuration Space Code")
-        self.ui_agent.code(self.config_code, language="python")
-
-        # Pre-calculate optimal parameters for multi-fidelity facades
-        facade_name = self.suggested_facade.__name__
-        optimal_params = self._calculate_optimal_scenario_parameters(facade_name)
+        max_retries = 3  # Maximum number of retries for the entire process
         
-        # Scenario
-        self.prompts["scenario"] = self._create_scenario_prompt(
-            instructor_response.scenario_plan, 
-            instructor_response.suggested_facade,
-            optimal_params
-        )
-        self.scenario_code = self.llm.generate(self.prompts["scenario"])
-        self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
-        self.logger.log_response(self.scenario_code, {"component": "scenario"})
-        self._run_generated("scenario")
-        self.ui_agent.subheader("Generated Scenario Code")
-        self.ui_agent.code(self.scenario_code, language="python")
+        for attempt in range(max_retries):
+            try:
+                self.ui_agent.info(f"Starting component generation (attempt {attempt + 1}/{max_retries})")
+                
+                config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
+                    dataset_name=self.dataset_name or "unknown",
+                    X=self.dataset["X"],
+                    y=self.dataset["y"],
+                )
+                instructor_response = self.LLMInstructor.generate_instructions(
+                    config_space_suggested_parameters,
+                )
+                self.suggested_facade = self.smac_facades[instructor_response.suggested_facade]
+                self.logger.log_response(
+                    f"Suggested Facade: {instructor_response.suggested_facade}",
+                    {"component": "instructor", "status": "success", "facade": instructor_response.suggested_facade},
+                )
 
-        # Training Function
-        train_plan = instructor_response.train_function_plan
-        self.prompts["train_function"] = self._create_train_prompt(train_plan, instructor_response.suggested_facade)
-        self.train_function_code = self.llm.generate(self.prompts["train_function"])
-        self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
-        self.logger.log_response(self.train_function_code, {"component": "train_function"})
-        self._run_generated("train_function")
-        self.ui_agent.subheader("Generated Training Function Code")
-        self.ui_agent.code(self.train_function_code, language="python")
+                self.ui_agent.subheader("Instructor Response")
+                # configuration plan:
+                self.ui_agent.subheader("Configuration Plan")
+                self.ui_agent.write(instructor_response.configuration_plan)
+                # scenario plan:
+                self.ui_agent.subheader("Scenario Plan")
+                self.ui_agent.write(instructor_response.scenario_plan)
+                # train function plan:
+                self.ui_agent.subheader("Train Function Plan")
+                self.ui_agent.write(instructor_response.train_function_plan)
+                # scenario facade:
+                self.ui_agent.subheader("Suggested Facade")
+                self.ui_agent.write(instructor_response.suggested_facade)
 
-        # Save outputs
-        save_code_to_file(self.config_code, "scripts/generated_codes/generated_config_space.py")
-        save_code_to_file(self.scenario_code, "scripts/generated_codes/generated_scenario.py")
-        save_code_to_file(
-            self.train_function_code,
-            "scripts/generated_codes/generated_train_function.py",
-        )
+                # Configuration Space
+                self.prompts["config"] = self._create_config_prompt(
+                    instructor_response.configuration_plan,
+                    # self.task_type,
+                )
+                self.config_code = self.llm.generate(self.prompts["config"])
 
-        # Use the train function that was just generated and tested, not the imported one
-        # This ensures consistency between the tested function and the one used in SMAC
-        self.train_fn = self.namespace["train"]
+                self.logger.log_prompt(self.prompts["config"], {"component": "config"})
+                self.logger.log_response(self.config_code, {"component": "config"})
+                self._run_generated("config")
+                self.ui_agent.subheader("Generated Configuration Space Code")
+                self.ui_agent.code(self.config_code, language="python")
 
-        self.ui_agent.success("AutoML Agent setup complete!")
-        self.ui_agent.subheader("Loss Value")
-        self.ui_agent.write(self.last_loss)
+                # Pre-calculate optimal parameters for multi-fidelity facades
+                facade_name = self.suggested_facade.__name__
+                
+                # Scenario
+                self.prompts["scenario"] = self._create_scenario_prompt(
+                    instructor_response.scenario_plan, 
+                    instructor_response.suggested_facade
+                )
+                self.scenario_code = self.llm.generate(self.prompts["scenario"])
+                self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
+                self.logger.log_response(self.scenario_code, {"component": "scenario"})
+                self._run_generated("scenario")
+                self.ui_agent.subheader("Generated Scenario Code")
+                self.ui_agent.code(self.scenario_code, language="python")
 
-        self.ui_agent.subheader("Starting Optimization Process")
-        self.ui_agent.write("Starting Optimization Process")
+                # Training Function
+                train_plan = instructor_response.train_function_plan
+                self.prompts["train_function"] = self._create_train_prompt(train_plan, instructor_response.suggested_facade)
+                self.train_function_code = self.llm.generate(self.prompts["train_function"])
+                self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
+                self.logger.log_response(self.train_function_code, {"component": "train_function"})
+                self._run_generated("train_function")
+                self.ui_agent.subheader("Generated Training Function Code")
+                self.ui_agent.code(self.train_function_code, language="python")
 
-        loss, metrics = self.run_scenario(self.scenario_obj, self.train_fn, self.dataset, self.config_space_obj)
+                # Save outputs
+                if self.config_code and isinstance(self.config_code, str):
+                    save_code_to_file(self.config_code, "scripts/generated_codes/generated_config_space.py")
+                if self.scenario_code and isinstance(self.scenario_code, str):
+                    save_code_to_file(self.scenario_code, "scripts/generated_codes/generated_scenario.py")
+                if self.train_function_code and isinstance(self.train_function_code, str):
+                    save_code_to_file(
+                        self.train_function_code,
+                        "scripts/generated_codes/generated_train_function.py",
+                    )
 
-        # Return results and last training loss
-        return (
-            self.config_code,
-            self.scenario_code,
-            self.train_function_code,
-            loss,
-            metrics,
-            self.prompts,
-            self.logger.experiment_dir,
-        )
+                # Use the train function that was just generated and tested, not the imported one
+                # This ensures consistency between the tested function and the one used in SMAC
+                self.train_fn = self.namespace["train"]
+
+                self.ui_agent.success("AutoML Agent setup complete!")
+                self.ui_agent.subheader("Loss Value")
+                self.ui_agent.write(self.last_loss)
+
+                self.ui_agent.subheader("Starting Optimization Process")
+                self.ui_agent.write("Starting Optimization Process")
+
+                loss, metrics = self.run_scenario(self.scenario_obj, self.train_fn, self.dataset, self.config_space_obj)
+
+                # If we get here, everything worked successfully
+                self.ui_agent.success(f"Component generation completed successfully on attempt {attempt + 1}")
+                
+                # Return results and last training loss
+                return (
+                    self.config_code,
+                    self.scenario_code,
+                    self.train_function_code,
+                    loss,
+                    metrics,
+                    self.prompts,
+                    self.logger.experiment_dir,
+                )
+
+            except Exception as e:
+                self.logger.log_error(
+                    f"Component generation failed on attempt {attempt + 1}: {str(e)}",
+                    error_type="COMPONENT_GENERATION_ERROR",
+                )
+                self.ui_agent.error(f"Component generation failed on attempt {attempt + 1}: {str(e)}")
+                
+                if attempt == max_retries - 1:
+                    # Last attempt failed, raise the error
+                    self.ui_agent.error(f"All {max_retries} attempts failed. Raising error.")
+                    raise e
+                else:
+                    # Wait a bit before retrying
+                    import time
+                    wait_time = 2 ** attempt  # Exponential backoff: 1s, 2s, 4s
+                    self.ui_agent.warning(f"Retrying in {wait_time} seconds...")
+                    time.sleep(wait_time)
 
     def _run_generated(self, component: str):
         """Generic runner for config, scenario, or train_function"""
@@ -467,11 +417,10 @@ class AutoMLAgent:
                     # Get dataset dictionary for train function
                     dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
 
-                    # Try with budget first (for multi-fidelity facades), then without
-                    try:
-                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=None)
-                    except TypeError:
-                        # If budget parameter not accepted, try without it
+                    # if the train function is multi-fidelity or hyperband, then we need to pass the budget parameter
+                    if self.suggested_facade.__name__ in ["HyperbandFacade", "MultiFidelityFacade"]:
+                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=10)
+                    else:
                         result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0)
 
                     # Handle different return formats
@@ -547,22 +496,17 @@ class AutoMLAgent:
                 recommended_configuration=recommended_configuration,
             )
 
-    def _create_scenario_prompt(self, scenario_plan, suggested_facade, optimal_params) -> str:
+    def _create_scenario_prompt(self, scenario_plan, suggested_facade) -> str:
         """
         Create a prompt for generating the scenario code.
         :return: A formatted prompt string for the LLM.
         """
-
         with open("templates/scenario_prompt.txt", "r") as f:
             base_prompt = f.read().format(
                 dataset_description=self.dataset_description,
                 scenario_plan=scenario_plan,
                 output_directory=self.logger.experiment_dir,
                 suggested_facade=suggested_facade,
-                optimal_trials=optimal_params["optimal_trials"],
-                min_budget=optimal_params["min_budget"],
-                max_budget=optimal_params["max_budget"],
-                total_budget=optimal_params["total_budget"],
             )
 
         return base_prompt
@@ -574,7 +518,6 @@ class AutoMLAgent:
         :param suggested_facade: The suggested SMAC facade.
         :return: A formatted prompt string for the LLM.
         """
-
         with open("templates/train_prompt.txt", "r") as f:
             prompt = f.read().format(
                 dataset_description=self.dataset_description,
@@ -747,85 +690,4 @@ class AutoMLAgent:
             self.dataset,
             self.dataset_test,
             self.config_space_obj,
-        )
-
-    def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
-        """Test the incumbent configuration and evaluate model on test set if possible"""
-
-        # Get facade parameters
-        facade_name = self.suggested_facade.__name__
-        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
-
-        # Get dataset dictionary for train function
-        dataset_for_train = self._get_dataset_for_train_function(dataset_train, dataset_test, include_test_data=True)
-
-        # Prepare training parameters using utility function
-        training_params = prepare_training_parameters(
-            facade_name=facade_name,
-            required_params=required_params,
-            scenario_obj=self.scenario_obj,
-            incumbent=incumbent,
-            dataset=dataset_for_train,
-            seed=0,
-            model_dir=self.logger.experiment_dir,
-        )
-
-        try:
-            # Execute training function - now returns dictionary with loss and metrics
-            result = train_fn(**training_params)
-
-            # Handle different return formats
-            if isinstance(result, dict):
-                # New format: dictionary with loss and metrics
-                metrics = result.copy()
-                loss = metrics.get("loss", float("inf"))
-                self._log_evaluation_success(metrics, incumbent)
-            else:
-                # Old format: just loss value (backward compatibility)
-                loss = float(result)
-                metrics = get_default_metrics(self.task_type)
-                metrics["loss"] = loss
-                self._log_evaluation_success(metrics, incumbent)
-
-        except Exception as e:
-            # Handle training function execution errors
-            loss = float("inf")
-            metrics = get_default_metrics(self.task_type)
-            metrics["error"] = f"Training function execution failed: {str(e)}"
-            self.logger.log_error(
-                f"Training function execution failed: {str(e)}",
-                error_type="TRAINING_ERROR",
-            )
-
-        # Display results
-        self.ui_agent.subheader("Test Metrics")
-        self.ui_agent.write(f"Metrics: {metrics}")
-
-        # Store results
-        self.last_loss = loss
-        self.last_metrics = metrics
-
-        return loss, metrics
-
-    def _log_evaluation_success(self, metrics: dict, incumbent: Any):
-        """Log successful model evaluation"""
-        self.logger.log_response(
-            f"Model evaluation successful. Metrics: {metrics}",
-            {
-                "component": "evaluation",
-                "status": "success",
-                "metrics": metrics,
-                "config": str(incumbent),
-            },
-        )
-
-    def _log_evaluation_error(self, error_msg: str):
-        """Log model evaluation errors"""
-        self.logger.log_response(
-            f"Model evaluation failed: {error_msg}",
-            {
-                "component": "evaluation",
-                "status": "error",
-                "error": error_msg,
-            },
         )

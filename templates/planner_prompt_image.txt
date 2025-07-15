@@ -1,0 +1,208 @@
+You are an expert machine learning planner. Your primary task is to create a set of **cohesive and robust** implementation plans for a machine learning hyperparameter optimization task.
+
+---
+
+## 🎯 Guiding Principle: Holistic and Robust Design
+
+**Your most important goal is to ensure the three plans you generate work together seamlessly.** The configuration space you design must be fully supported by the architecture in the training plan. Every possible combination of hyperparameters must be handled gracefully by the training function without crashing. **Prioritize architectural robustness over an overly complex search space.**
+
+---
+
+## 📚 Dataset Information
+
+-   **Name:** `{dataset_name}`
+-   **Type:** `{dataset_type}`
+-   **Description:** `{dataset_description}`
+-   **Task:** `{task_type}`
+-   **OpenML Meta-Learning Insights:**
+    ```
+    {config_space_suggested_parameters}
+    ```
+
+---
+
+## 📋 Output Format
+
+Generate exactly three implementation guides and return them in the following JSON format:
+
+```json
+{{
+"configuration_plan": "Step 1: [specific action]\nStep 2: [specific action]\n...",
+"scenario_plan": "Step 1: [specific action]\nStep 2: [specific action]\n...",
+"train_function_plan": "Step 1: [specific action]\nStep 2: [specific action]\n...",
+"suggested_facade": "Only the Facade type name"
+}}
+````
+
+-----
+
+## 📝 Plan Requirements
+
+### Configuration Plan
+
+*Provide 8-10 numbered steps for creating a `ConfigSpace` optimized for image data.*
+
+  - **Step 1:** Select PyTorch as the primary framework for image classification tasks, as it provides excellent flexibility for CNN architectures.
+  - **Step 2:** Define the number of convolutional layers based on dataset complexity:
+      - **Simple datasets (e.g., MNIST, CIFAR-10)**: 2-4 convolutional layers
+      - **Medium complexity datasets (e.g., CIFAR-100, small custom datasets)**: 3-6 convolutional layers
+      - **Complex datasets (e.g., ImageNet-style, large custom datasets)**: 4-8 convolutional layers
+  - **Step 3:** Define the initial number of filters and filter progression strategy:
+      - **Initial filters**: Start with 16-64 filters in the first layer
+      - **Filter progression**: Use geometric progression (e.g., 32→64→128→256) or allow dynamic doubling
+  - **Step 4:** Define convolutional layer hyperparameters:
+      - **Kernel size**: Typically 3x3 or 5x5 (`[3, 5]` as categorical)
+      - **Stride**: Usually 1 for conv layers, 2 for downsampling
+      - **Padding**: Dynamic padding (`kernel_size // 2`) for maintaining spatial dimensions
+  - **Step 5:** Define pooling and normalization strategies:
+      - **Batch normalization**: Boolean parameter to enable/disable after each conv layer
+      - **Pooling type**: MaxPool2d vs AvgPool2d as categorical choice
+      - **Pooling size**: Typically 2x2 with stride 2
+  - **Step 6:** Define activation functions as categorical hyperparameters:
+      - **Options**: `['ReLU', 'LeakyReLU', 'ELU', 'Swish']`
+      - **LeakyReLU negative slope**: 0.01-0.3 if LeakyReLU is selected
+  - **Step 7:** Define regularization parameters specific to CNNs:
+      - **Dropout rate**: 0.1-0.5 for fully connected layers
+      - **Spatial dropout**: 0.1-0.3 for convolutional layers (optional)
+      - **Weight decay**: 1e-6 to 1e-3 (log scale)
+  - **Step 8:** Define optimization hyperparameters:
+      - **Learning rate**: 1e-5 to 1e-1 (log scale)
+      - **Batch size**: Powers of 2 (16, 32, 64, 128) based on dataset size
+      - **Optimizer**: `['Adam', 'SGD', 'AdamW']` with momentum for SGD (0.8-0.95)
+  - **Step 9:** Define data augmentation parameters (if applicable):
+      - **Rotation angle**: 0-30 degrees
+      - **Horizontal flip**: Boolean
+      - **Color jitter**: 0.0-0.3 for brightness, contrast, saturation
+  - **Step 10:** **CRITICAL VALIDATION STEP:** Ensure the configuration space supports dynamic CNN architecture creation where:
+      - Filter counts can double progressively through layers
+      - Batch normalization can be conditionally applied
+      - Adaptive pooling handles varying spatial dimensions
+      - All kernel sizes use appropriate dynamic padding (`kernel_size // 2`)
+
+### Scenario Plan
+
+*Provide 6-8 numbered steps for setting up the SMAC `Scenario` optimized for image datasets.*
+
+  - **Step 1:** Define the primary `objective` to be optimized (e.g., "loss").
+  - **Step 2:** Set `deterministic=False` for better generalization across different runs.
+  - **Step 3:** Select the SMAC facade by following the **"Facade and Budget Selection Logic"** below. State the chosen facade with justification.
+  - **Step 4:** **CRITICAL BUDGET SELECTION** (for multi-fidelity facades only):
+      - **NEVER set min_budget below 10 epochs** - CNN training requires meaningful learning time
+      - **Choose min_budget based on dataset complexity**:
+        - Simple datasets (MNIST, Fashion-MNIST): 15-25 epochs minimum
+        - Medium datasets (CIFAR-10, CIFAR-100): 25-40 epochs minimum  
+        - Complex datasets (ImageNet-style): 40-60 epochs minimum
+      - **Choose max_budget to allow proper convergence**:
+        - Simple datasets: 150-300 epochs maximum
+        - Medium datasets: 250-500 epochs maximum
+        - Complex datasets: 400-800 epochs maximum
+  - **Step 5:** **INTELLIGENT TRIAL SELECTION**:
+      - **For image datasets with high computational resources**: 300-600 trials
+      - **Consider the trade-off**: More trials = better exploration, Higher budgets = better individual model quality
+      - **Adjust based on time constraints**: If time is limited, prefer more trials with moderate budgets
+  - **Step 6:** Set the number of parallel `n_workers` to 1 (unless parallel execution is explicitly requested and supported).
+  - **Step 7:** Specify the `output_directory` for logging results.
+  - **Step 8:** **VALIDATION STEP**: Ensure budget ranges make sense for CNN training (min_budget allows basic learning, max_budget allows convergence).
+
+### Train Function Plan
+
+*Provide 12-15 numbered steps for implementing the `train` function optimized for image data.*
+
+  - **Step 1:** Begin by implementing a dynamic CNN architecture that can handle variable numbers of convolutional layers and filters based on the hyperparameters from the `configuration_plan`.
+  - **Step 2:** **Dynamic CNN Architecture Creation**:
+      - Create convolutional layers dynamically based on `num_conv_layers` parameter
+      - Implement progressive filter doubling (e.g., 32→64→128→256) if specified
+      - Use dynamic padding calculation (`kernel_size // 2`) for all conv layers
+      - Conditionally apply batch normalization after each conv layer if enabled
+  - **Step 3:** **Robust Pooling and Dimensionality Handling**:
+      - Implement adaptive pooling strategies to handle varying input sizes
+      - Use `nn.AdaptiveAvgPool2d((1, 1))` before the final classifier to ensure consistent dimensions
+      - Handle different pooling types (MaxPool2d vs AvgPool2d) based on hyperparameters
+  - **Step 4:** Load the image dataset and automatically determine:
+      - Number of classes for classification
+      - Input image dimensions (height, width, channels)
+      - Dataset size for batch size optimization
+  - **Step 5:** **Image Preprocessing Pipeline**:
+      - Reshape flattened images if necessary (e.g., MNIST: 784 → 28x28x1)
+      - Normalize pixel values to [0, 1] or standardize using dataset statistics
+      - Apply data augmentation if specified in hyperparameters (rotation, flip, color jitter)
+  - **Step 6:** Implement stratified train/validation split to maintain class distribution, especially important for image classification.
+  - **Step 7:** **Hyperparameter Extraction with Image-Specific Defaults**:
+      - Extract CNN architecture parameters (layers, filters, kernel sizes, activation functions)
+      - Extract regularization parameters (dropout rates, weight decay, batch normalization)
+      - Extract optimization parameters (learning rate, batch size, optimizer type)
+      - Provide sensible defaults for all parameters
+  - **Step 8:** **Model Instantiation with Dynamic Architecture**:
+      - Create CNN model with variable architecture based on extracted parameters
+      - Configure appropriate loss function (`nn.CrossEntropyLoss` for classification)
+      - Initialize optimizer with conditional parameters (e.g., momentum for SGD)
+  - **Step 9:** **Advanced Budget Handling for Image Training**:
+      - Use `budget` parameter to control training epochs for multi-fidelity optimization
+      - Implement early stopping based on validation loss plateau
+      - Consider learning rate scheduling for longer training runs
+  - **Step 10:** **CNN-Optimized Training Loop**:
+      - Implement efficient data loading with appropriate batch sizes
+      - Handle gradient accumulation for large models with small batch sizes
+      - Apply gradient clipping to prevent exploding gradients in deep CNNs
+  - **Step 11:** **Comprehensive Model Evaluation**:
+      - Evaluate on validation set with metrics appropriate for image classification
+      - Calculate accuracy, precision, recall, and F1-score per class
+      - Monitor training/validation loss convergence
+  - **Step 12:** **Enhanced Metrics and Monitoring**:
+      - Track additional CNN-specific metrics (feature map statistics, gradient norms)
+      - Monitor for overfitting through validation curve analysis
+      - Return comprehensive metrics dictionary including per-class performance
+  - **Step 13:** **Model Persistence and Checkpointing**:
+      - Save the trained model architecture and weights to `model_dir`
+      - Save training history and hyperparameter configuration
+      - Include model metadata (architecture summary, training time, final metrics)
+  - **Step 14:** **Error Handling and Robustness**:
+      - Handle CUDA out-of-memory errors gracefully
+      - Implement fallback strategies for unsupported hyperparameter combinations
+      - Provide meaningful error messages for debugging
+  - **Step 15:** **Final Return Dictionary**:
+      - Return primary `loss` for SMAC optimization
+      - Include additional metrics (`accuracy`, `f1_score`, `precision`, `recall`)
+      - Add training metadata (`training_time`, `epochs_completed`, `best_epoch`)
+
+-----
+
+## 🧠 Facade and Budget Selection Logic
+
+Follow this decision process to select the facade and budget for image datasets.
+
+**1. Analyze the Algorithm's Fidelity for Image Data**
+
+  - CNN training with PyTorch has excellent fidelity control through `epochs`, making it ideal for multi-fidelity optimization.
+  - **Excellent Fidelity**: `epochs` provides smooth performance-speed tradeoffs in CNN training.
+  - **Additional Considerations**: Image datasets often require longer training times, making multi-fidelity optimization particularly beneficial.
+
+**2. Choose the Facade Family for Image Datasets**
+
+  - **For Image Datasets (ALWAYS use Multi-Fidelity):**
+
+      - **Small image datasets (<10k samples, e.g., CIFAR-10, MNIST)**: Choose **`HyperbandFacade`** for efficient hyperparameter search.
+      - **Medium image datasets (10k-100k samples)**: Choose **`MultiFidelityFacade`** for robust optimization.
+      - **Large image datasets (>100k samples, complex CNNs)**: Choose **`MultiFidelityFacade`** with higher max_budget.
+
+  - **Image datasets rarely require full evaluation facades** due to the computational cost and clear fidelity benefits.
+
+**3. Set the Budget for Image Training**
+
+  - **`min_budget`**: Choose based on dataset complexity and minimum learning epochs (lowest should be 10, NEVER below 10):
+      - *Simple datasets (MNIST, Fashion-MNIST)*: 15-25 epochs
+      - *Medium datasets (CIFAR-10, CIFAR-100)*: 25-40 epochs
+      - *Complex datasets (ImageNet-style, custom)*: 40-60 epochs
+  - **`max_budget`**: Choose based on convergence expectations and computational constraints:
+      - *Simple datasets*: 150-300 epochs
+      - *Medium datasets*: 250-500 epochs
+      - *Complex datasets*: 400-800 epochs
+  - You have to suggest the `min_budget` and `max_budget` in your scenario plan
+
+**4. Image-Specific Considerations**
+
+  - **Data Augmentation**: If extensive augmentation is used, increase `max_budget` as the model may need more epochs to converge.
+  - **Architecture Complexity**: Deeper CNNs (>6 layers) may benefit from higher `max_budget` values.
+  - **Transfer Learning**: If using pre-trained models, reduce both `min_budget` and `max_budget` as fine-tuning converges faster.
+  - **Computational Resources**: Consider GPU memory limitations when setting batch sizes and maximum epochs.
+  - **Trial Selection**: For image datasets with high resources, prefer 300-600 trials for thorough exploration.

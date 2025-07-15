@@ -2,11 +2,11 @@
 #SBATCH --job-name=automl_agent_job
 #SBATCH --output=logs/%x_%A/%a_output.log
 #SBATCH --error=logs/%x_%A/%a_error.log
-#SBATCH --time=03:00:00
+#SBATCH --time=24:00:00
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
-#SBATCH --array=1-100
+#SBATCH --array=1-5
 
 # Load modules or setup environment if needed
 # module load cuda/11.7
