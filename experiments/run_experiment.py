@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from py_experimenter.experimenter import PyExperimenter
 from scripts.AutoMLAgent import AutoMLAgent
 from sklearn.datasets import fetch_openml
-from config.api_keys import LOCAL_LLAMA_API_KEY
+from config.api_keys import LOCAL_LLAMA_API_KEY, GOOGLE_API_KEY
 from config.urls import BASE_URL
 from py_experimenter.result_processor import ResultProcessor
 from typing import Any
@@ -76,10 +76,16 @@ class AutoMLAgentExperimenter:
         ui_agent = CLIUI()
         n_folds = parameters["n_folds"]
         fold = parameters["fold"]
-        time_budget = parameters.get("time_budget", 28800)  # Default to 1 hour if not specified
+        time_budget = parameters.get("time_budget", 86400)
         dataset_folder = "./agent_smac_logs/logs" + "_" + dataset_name
 
         print(f"Experiment configuration: Dataset={dataset_name}, Time Budget={time_budget}s")
+        api_key = LOCAL_LLAMA_API_KEY
+        base_url = BASE_URL
+
+        if llm_model == "gemini-2.0-flash":
+            api_key = GOOGLE_API_KEY
+            base_url = None
 
         X, y = fetch_openml(data_id=dataset_openml_id, return_X_y=True)
         dataset = {"X": X, "y": y}
@@ -90,8 +96,8 @@ class AutoMLAgentExperimenter:
             ui_agent=ui_agent,
             model_name=llm_model,
             dataset_name=dataset_name,
-            api_key=LOCAL_LLAMA_API_KEY,
-            base_url=BASE_URL,
+            api_key=api_key,
+            base_url=base_url,
             n_folds=n_folds,
             fold=fold,
             time_budget=time_budget,

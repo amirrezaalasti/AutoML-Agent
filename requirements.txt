@@ -22,3 +22,4 @@ imblearn
 xgboost
 catboost
 lightgbm
+torchvision

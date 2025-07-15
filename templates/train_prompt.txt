@@ -272,6 +272,23 @@ X_test_processed = scaler.transform(X_test)
 * **Prevent Overfitting**: Use proper validation, regularization, early stopping
 * **Ensure Generalization**: Avoid fitting too closely to training data
 
+### **Neural Network Training Requirements**
+* **CRITICAL EPOCH HANDLING**: For PyTorch/TensorFlow neural networks:
+  * **NEVER** hardcode epochs to 10 or any fixed value
+  * **MUST** extract epochs from configuration: `epochs = int(cfg.get('epochs', 100))`
+  * **MUST** apply budget constraints when available: `epochs = min(int(budget), epochs)`
+  * **MUST** make epochs a tunable hyperparameter from ConfigSpace
+  * **NEVER** use `epochs = 10` or similar hardcoded values
+  * **BUDGET INTELLIGENT DECISION**: The LLM should decide how to use budget based on context:
+  * **If budget seems like epochs**: Use `epochs = int(budget)` (common in multi-fidelity)
+  * **If budget seems like iterations**: Use `max_iter = int(budget)` (for iterative algorithms)
+  * **If budget seems like ensemble size**: Use `n_estimators = int(budget)` (for ensemble methods)
+  * **If budget seems like data fraction**: Use budget to sample training data
+  * **CRITICAL**: Make intelligent decision based on algorithm type and context
+* **Device Handling**: Always use appropriate device (CPU/GPU) detection
+* **Early Stopping**: Implement early stopping with configurable patience
+* **Validation**: Use validation data for early stopping and model selection
+
 ### **Model Saving Requirements**
 * **STRONGLY RECOMMENDED**: Save the trained model if `model_dir` is provided
 * This enables proper model evaluation with comprehensive metrics
@@ -337,7 +354,7 @@ X_test_processed = scaler.transform(X_test)
 * **Leverage specialized libraries**: CatBoost for categorical data, PyTorch for custom architectures
 
 ### **Implementation Considerations:**
-* **Available compute**: GPU available → consider PyTorch/TensorFlow; CPU only → focus on efficient CPU libraries
+* **Available compute**: for PyTorch/TensorFlow use GPU if available
 * **Memory constraints**: Large datasets may need memory-efficient approaches (LightGBM, streaming)
 * **Training time**: Fast needed → LightGBM; time available → explore neural networks
 * **Deployment requirements**: Consider inference speed and model size for production
@@ -354,6 +371,16 @@ X_test_processed = scaler.transform(X_test)
 * **BOUND ALL PARAMETERS** - Ensure parameters are within valid ranges
 * **USE SENSIBLE DEFAULTS** - Provide reasonable defaults for all hyperparameters
 * **HANDLE NUMPY TYPES** - Convert numpy.int64, numpy.float64 to native Python types using str() or int() conversion
+* **CRITICAL EPOCH PARAMETER**: For neural networks, NEVER hardcode epochs to 10
+  * **MUST** extract from config: `epochs = int(cfg.get('epochs', 100))`
+  * **MUST** apply budget constraints when available
+  * **NEVER** use `epochs = 10` or any fixed value
+  * **BUDGET INTELLIGENT DECISION**: The LLM should decide how to use budget based on context:
+  * **If budget seems like epochs**: Use `epochs = int(budget)` (common in multi-fidelity)
+  * **If budget seems like iterations**: Use `max_iter = int(budget)` (for iterative algorithms)
+  * **If budget seems like ensemble size**: Use `n_estimators = int(budget)` (for ensemble methods)
+  * **If budget seems like data fraction**: Use budget to sample training data
+  * **CRITICAL**: Make intelligent decision based on algorithm type and context
 
 ### **Algorithm Implementation**
 * **IMPLEMENT MATCHING ALGORITHMS** - Implement algorithms that match the configuration space
@@ -426,6 +453,16 @@ max_depth = cfg.get('max_depth')
 if max_depth is not None:
     max_depth = int(max_depth)  # Only convert if not None
 # max_depth can now be either an int or None, which is correct for sklearn
+
+# CRITICAL: For neural network epochs (NEVER hardcode to 10!)
+epochs = int(cfg.get('epochs', 100))  # Extract from config, use reasonable default
+if budget is not None:
+    # The LLM should intelligently decide how to use budget:
+    # - If using neural networks: epochs = int(budget)  # Budget controls training epochs
+    # - If using ensemble methods: n_estimators = int(budget)  # Budget controls ensemble size
+    # - If using iterative methods: max_iter = int(budget)  # Budget controls iterations
+    # - If using data sampling: sample_size = int(budget * len(X_train))  # Budget controls data fraction
+    epochs = int(budget)  # Example for neural networks - adapt based on algorithm choice
 ```
 
 #### **Parameter Validation Principles:**
@@ -459,20 +496,67 @@ except:
 * **Budget Application**: Use budget to override fidelity-related hyperparameters in the chosen algorithm
 * **Type Safety**: Always convert budget to appropriate type (usually `int`) before use
 
+### **Budget Handling by Facade Type:**
+
+* **Multi-Fidelity Facades** (e.g., Hyperband, BOHB):
+  * **Budget controls fidelity**: Higher budget = more computational resources
+  * **Budget can be epochs**: `epochs = int(budget)` (common for neural networks)
+  * **Budget can be ensemble size**: `n_estimators = int(budget)` (for ensemble methods)
+  * **Budget can be iterations**: `max_iter = int(budget)` (for iterative algorithms)
+  * **Budget can be data fraction**: `sample_size = int(budget * len(X_train))` (for data sampling)
+
+* **Standard Optimization Facades** (e.g., SMAC, Random Search):
+  * **Budget may be None**: Use configuration parameters when budget is None
+  * **Budget may constrain parameters**: Use budget as upper bound when provided
+  * **Budget may control fidelity**: Use budget to control computational cost
+
+* **CRITICAL**: The LLM should intelligently decide how to use budget based on:
+  * Algorithm type (neural networks, ensemble methods, iterative methods)
+  * Dataset characteristics (size, complexity)
+  * Configuration space parameters
+  * Context clues from the optimization scenario
+
 ### **Common Fidelity Parameters by Algorithm Type:**
 
 * **Ensemble Algorithms**: Use budget for number of estimators/components
 * **Iterative Algorithms**: Use budget for maximum iterations/epochs  
 * **Neural Networks**: Use budget for training epochs or iterations
+  * **CRITICAL**: NEVER hardcode epochs to 10 or any fixed value
+  * **MUST** extract epochs from configuration and apply budget constraints
+  * **Example**: `epochs = min(int(budget), int(cfg.get('epochs', 100)))` if budget available
+  * **BUDGET INTELLIGENT DECISION**: The LLM should decide how to use budget based on context:
+  * **If budget seems like epochs**: Use `epochs = int(budget)` (common in multi-fidelity)
+  * **If budget seems like iterations**: Use `max_iter = int(budget)` (for iterative algorithms)
+  * **If budget seems like ensemble size**: Use `n_estimators = int(budget)` (for ensemble methods)
+  * **If budget seems like data fraction**: Use budget to sample training data
+  * **CRITICAL**: Make intelligent decision based on algorithm type and context
 * **Data-Based Fidelity**: Use budget for fraction of training data
 
-### **Unbiased Budget Application Principles:**
+### **Intelligent Budget Decision Making:**
 
-**CRITICAL**: Apply budget based on the algorithm you choose from dataset characteristics, not predefined algorithms:
+**CRITICAL**: The LLM should intelligently decide how to use the budget parameter based on context:
 
-### **Unbiased Budget Implementation Pattern:**
+### **Budget Decision Framework:**
 
-**MANDATORY**: Choose algorithms based on dataset characteristics first, then apply budget to the appropriate fidelity parameter.
+**MANDATORY**: Analyze the context and make intelligent decisions about budget usage:
+
+1. **Algorithm Type Analysis**:
+   * **Neural Networks**: Budget likely controls epochs (`epochs = int(budget)`)
+   * **Ensemble Methods**: Budget likely controls ensemble size (`n_estimators = int(budget)`)
+   * **Iterative Algorithms**: Budget likely controls iterations (`max_iter = int(budget)`)
+   * **Data Sampling**: Budget likely controls data fraction (`sample_size = int(budget * len(X_train))`)
+
+2. **Context Clues**:
+   * **Multi-fidelity optimization**: Budget directly controls fidelity parameter
+   * **Standard optimization**: Budget may constrain or control parameters
+   * **Dataset size**: Large datasets may suggest data sampling
+   * **Configuration space**: Parameters in config suggest appropriate budget usage
+
+3. **Intelligent Decision Making**:
+   * **Choose the most appropriate fidelity parameter** for the selected algorithm
+   * **Consider computational cost** - what parameter controls training time?
+   * **Consider algorithm characteristics** - what parameter affects performance most?
+   * **Adapt to the specific context** - don't assume budget is always epochs
 
 ### **General Budget Application Principles:**
 
@@ -509,8 +593,13 @@ def train(cfg: Configuration, dataset: Any, seed: int, budget: int = None, model
         # - If your algorithm uses epochs: use budget to control training length
         # - Ensure the budget application makes sense for your specific algorithm
         
-        # Example pattern (adapt to your chosen algorithm):
-        # fidelity_param = min(budget * scale_factor, cfg.get('param_name', default_value))
+        # Example patterns (adapt to your chosen algorithm):
+        # The LLM should intelligently decide how to use budget based on context:
+        # For ensemble methods: n_estimators = int(budget)  # Budget controls ensemble size
+        # For neural networks: epochs = int(budget)  # Budget controls training epochs
+        # For iterative methods: max_iter = int(budget)  # Budget controls iterations
+        # For data sampling: sample_size = int(budget * len(X_train))  # Budget controls data fraction
+        # CRITICAL: Make intelligent decision based on algorithm type and context
     
     # Create and train your model with budget-adjusted parameters
     # ... rest of training logic ...
@@ -614,3 +703,16 @@ X_test_processed = scaler.transform(X_test)
 * **Return Format**: Dictionary with consistent keys based on task type (classification/regression)
 * **CRITICAL**: Dictionary must always include `loss` key for hyperparameter optimization
 * **Framework and Algorithm Selection**: Choose best framework and algorithms for dataset characteristics, not library bias
+* **CRITICAL** When you use pytorch or tensorflow it is very important to use device and cuda
+* **CRITICAL EPOCH HANDLING**: For neural networks, NEVER hardcode epochs to a fixed value like 10
+  * **MUST** extract epochs from configuration: `epochs = int(cfg.get('epochs', default_value))`
+  * **MUST** use budget parameter when available: `epochs = min(int(budget), int(cfg.get('epochs', default_value)))`
+  * **MUST** allow epochs to be tunable hyperparameter from ConfigSpace
+  * **NEVER** use `epochs = 10` or any other hardcoded value
+  * **NEVER** set epochs constant - it must be configurable for hyperparameter optimization
+  * **BUDGET INTELLIGENT DECISION**: The LLM should decide how to use budget based on context:
+  * **If budget seems like epochs**: Use `epochs = int(budget)` (common in multi-fidelity)
+  * **If budget seems like iterations**: Use `max_iter = int(budget)` (for iterative algorithms)
+  * **If budget seems like ensemble size**: Use `n_estimators = int(budget)` (for ensemble methods)
+  * **If budget seems like data fraction**: Use budget to sample training data
+  * **CRITICAL**: Make intelligent decision based on algorithm type and context
