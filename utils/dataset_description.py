@@ -450,6 +450,8 @@ def describe_image_dataset(dataset: Dict[str, Any], task_type: str) -> str:
     - Implement proper error handling for tensor size mismatches
     - Monitor GPU memory usage with large batch sizes
     - Use adaptive pooling for input size flexibility
+    - It is very important to use cuda here.
+    - device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     """
 
     return description

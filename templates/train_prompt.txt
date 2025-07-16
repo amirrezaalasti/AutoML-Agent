@@ -118,14 +118,6 @@ from tensorflow import keras
 * **Training Time**: Fast needed → LightGBM, sklearn; Time available → neural networks
 * **Interpretability**: High → sklearn linear models; Low → any high-performance method
 
-### **Additional Imports** (Include based on chosen framework):
-* **For scikit-learn**: `from sklearn.ensemble import RandomForestClassifier`, etc.
-* **For gradient boosting**: `import xgboost as xgb`, `import lightgbm as lgb`, `import catboost as cb`
-* **For deep learning**: `import torch`, `import tensorflow as tf`, `from tensorflow import keras`
-* **For metrics**: Framework-appropriate metrics (sklearn, torch, tf, etc.)
-* **For model persistence**: `import pickle`, `import joblib`, or framework-specific saving
-* **For preprocessing**: Choose appropriate preprocessing tools for your selected framework
-
 ### **CRITICAL Import Issues to Avoid:**
 * **Missing `import os`**: ALWAYS include if you save models or create directories
 * **Missing `import numpy as np`**: ALWAYS include if you use any `np.` functions  
@@ -716,3 +708,4 @@ X_test_processed = scaler.transform(X_test)
   * **If budget seems like ensemble size**: Use `n_estimators = int(budget)` (for ensemble methods)
   * **If budget seems like data fraction**: Use budget to sample training data
   * **CRITICAL**: Make intelligent decision based on algorithm type and context
+* Only generate the train function nothing else
