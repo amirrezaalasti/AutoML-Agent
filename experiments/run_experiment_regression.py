@@ -12,10 +12,11 @@ from config.urls import BASE_URL
 from py_experimenter.result_processor import ResultProcessor
 from scripts.CLIUI import CLIUI
 
+
 class AutoMLAgentExperimenter:
     def __init__(self):
         self.experimenter = PyExperimenter(
-            experiment_configuration_file_path="/mnt/home/aalasti/agent-smac-project/autoML-Agent/config/experimenter-config.yml",
+            experiment_configuration_file_path="/mnt/home/aalasti/agent-smac-project/autoML-Agent/config/experimenter-config-regression.yml",
             database_credential_file_path="/mnt/home/aalasti/agent-smac-project/autoML-Agent/config/database_credentials.yml",
             use_ssh_tunnel=False,
             use_codecarbon=False,
@@ -78,13 +79,9 @@ class AutoMLAgentExperimenter:
 
             result_processor.process_results(
                 {
-                    "test_accuracy": metrics.get("accuracy"),
-                    "test_f1": metrics.get("f1"),
-                    "test_precision": metrics.get("precision"),
-                    "test_recall": metrics.get("recall"),
-                    "test_roc_auc": metrics.get("roc_auc"),
-                    "test_balanced_accuracy": metrics.get("balanced_accuracy"),
-                    "test_mcc": metrics.get("mcc"),
+                    "test_mse": metrics.get("mse"),
+                    "test_mae": metrics.get("mae"),
+                    "test_r2": metrics.get("r2"),
                     "log_dir": experiment_dir,
                 }
             )
@@ -94,13 +91,9 @@ class AutoMLAgentExperimenter:
             # Process results with error information
             result_processor.process_results(
                 {
-                    "test_accuracy": None,
-                    "test_f1": None,
-                    "test_precision": None,
-                    "test_recall": None,
-                    "test_roc_auc": None,
-                    "test_balanced_accuracy": None,
-                    "test_mcc": None,
+                    "test_mse": None,
+                    "test_mae": None,
+                    "test_r2": None,
                     "log_dir": f"ERROR: {str(e)}",
                 }
             )

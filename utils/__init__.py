@@ -25,6 +25,8 @@ from .data_processing import (
     get_dataset_info,
     format_dataset,
     split_dataset_kfold,
+    split_dataset_kfold_classification,
+    split_dataset_kfold_regression,
 )
 
 from .dataset_description import (
@@ -82,6 +84,8 @@ __all__ = [
     "get_dataset_info",
     "format_dataset",
     "split_dataset_kfold",
+    "split_dataset_kfold_classification",
+    "split_dataset_kfold_regression",
     # Dataset Description
     "describe_dataset",
     "describe_tabular_dataset",

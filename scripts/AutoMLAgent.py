@@ -6,6 +6,8 @@ from utils import (
     format_dataset,
     extract_code_block,
     split_dataset_kfold,
+    split_dataset_kfold_classification,
+    split_dataset_kfold_regression,
     FACADE_PARAMETER_REQUIREMENTS,
     get_default_metrics,
     prepare_training_parameters,
@@ -75,11 +77,23 @@ class AutoMLAgent:
                                 When False, train function will only receive X and y and should do internal train/test splits.
         """
         self.dataset = format_dataset(dataset)
-        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42))
+
+        # Choose appropriate splitting function based on task type
+        if task_type and task_type.lower() == "regression":
+            self.dataset, self.dataset_test = split_dataset_kfold_regression(
+                self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42)
+            )
+        else:
+            # Default to classification splitting (handles both explicit classification and None/unknown cases)
+            self.dataset, self.dataset_test = split_dataset_kfold_classification(
+                self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42)
+            )
         self.dataset_type = dataset_type
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
-        self.dataset_description = describe_dataset(self.dataset, dataset_type, task_type or "classification")
+        self.dataset_description = describe_dataset(
+            self.dataset, dataset_type, task_type or "classification"
+        )
         self.time_budget = time_budget
 
         self.config_code = None
@@ -99,7 +113,7 @@ class AutoMLAgent:
         self.llm = LLMClient(
             api_key=api_key or "",
             model_name=model_name or "llama3-8b-8192",
-            base_url=base_url
+            base_url=base_url,
         )
         self.ui_agent = ui_agent
 
@@ -110,7 +124,9 @@ class AutoMLAgent:
             base_log_dir=folder_name,
         )
 
-        self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH)
+        self.openML = OpenMLRAG(
+            openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH
+        )
         self.LLMInstructor = LLMPlanner(
             dataset_name=self.dataset_name or "unknown",
             dataset_description=self.dataset_description,
@@ -155,19 +171,21 @@ class AutoMLAgent:
                 "y": dataset_train["y"],
             }
 
-
-    
-
-
-    def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
+    def test_incumbent(
+        self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any
+    ):
         """Test the incumbent configuration and evaluate model on test set if possible"""
-        
+
         # Get facade parameters
         facade_name = self.suggested_facade.__name__
-        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(
+            facade_name, ["config", "seed"]
+        )
 
         # Get dataset dictionary for train function
-        dataset_for_train = self._get_dataset_for_train_function(dataset_train, dataset_test, include_test_data=True)
+        dataset_for_train = self._get_dataset_for_train_function(
+            dataset_train, dataset_test, include_test_data=True
+        )
 
         # Prepare training parameters using utility function
         training_params = prepare_training_parameters(
@@ -246,23 +264,33 @@ class AutoMLAgent:
         :return: Tuple containing the generated configuration space, scenario, training function code, last loss, and prompts.
         """
         max_retries = 3  # Maximum number of retries for the entire process
-        
+
         for attempt in range(max_retries):
             try:
-                self.ui_agent.info(f"Starting component generation (attempt {attempt + 1}/{max_retries})")
-                
-                config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
-                    dataset_name=self.dataset_name or "unknown",
-                    X=self.dataset["X"],
-                    y=self.dataset["y"],
+                self.ui_agent.info(
+                    f"Starting component generation (attempt {attempt + 1}/{max_retries})"
+                )
+
+                config_space_suggested_parameters = (
+                    self.openML.extract_suggested_config_space_parameters(
+                        dataset_name=self.dataset_name or "unknown",
+                        X=self.dataset["X"],
+                        y=self.dataset["y"],
+                    )
                 )
                 instructor_response = self.LLMInstructor.generate_instructions(
                     config_space_suggested_parameters,
                 )
-                self.suggested_facade = self.smac_facades[instructor_response.suggested_facade]
+                self.suggested_facade = self.smac_facades[
+                    instructor_response.suggested_facade
+                ]
                 self.logger.log_response(
                     f"Suggested Facade: {instructor_response.suggested_facade}",
-                    {"component": "instructor", "status": "success", "facade": instructor_response.suggested_facade},
+                    {
+                        "component": "instructor",
+                        "status": "success",
+                        "facade": instructor_response.suggested_facade,
+                    },
                 )
 
                 self.ui_agent.subheader("Instructor Response")
@@ -294,14 +322,16 @@ class AutoMLAgent:
 
                 # Pre-calculate optimal parameters for multi-fidelity facades
                 facade_name = self.suggested_facade.__name__
-                
+
                 # Scenario
                 self.prompts["scenario"] = self._create_scenario_prompt(
-                    instructor_response.scenario_plan, 
-                    instructor_response.suggested_facade
+                    instructor_response.scenario_plan,
+                    instructor_response.suggested_facade,
                 )
                 self.scenario_code = self.llm.generate(self.prompts["scenario"])
-                self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
+                self.logger.log_prompt(
+                    self.prompts["scenario"], {"component": "scenario"}
+                )
                 self.logger.log_response(self.scenario_code, {"component": "scenario"})
                 self._run_generated("scenario")
                 self.ui_agent.subheader("Generated Scenario Code")
@@ -309,20 +339,36 @@ class AutoMLAgent:
 
                 # Training Function
                 train_plan = instructor_response.train_function_plan
-                self.prompts["train_function"] = self._create_train_prompt(train_plan, instructor_response.suggested_facade)
-                self.train_function_code = self.llm.generate(self.prompts["train_function"])
-                self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
-                self.logger.log_response(self.train_function_code, {"component": "train_function"})
+                self.prompts["train_function"] = self._create_train_prompt(
+                    train_plan, instructor_response.suggested_facade
+                )
+                self.train_function_code = self.llm.generate(
+                    self.prompts["train_function"]
+                )
+                self.logger.log_prompt(
+                    self.prompts["train_function"], {"component": "train_function"}
+                )
+                self.logger.log_response(
+                    self.train_function_code, {"component": "train_function"}
+                )
                 self._run_generated("train_function")
                 self.ui_agent.subheader("Generated Training Function Code")
                 self.ui_agent.code(self.train_function_code, language="python")
 
                 # Save outputs
                 if self.config_code and isinstance(self.config_code, str):
-                    save_code_to_file(self.config_code, "scripts/generated_codes/generated_config_space.py")
+                    save_code_to_file(
+                        self.config_code,
+                        "scripts/generated_codes/generated_config_space.py",
+                    )
                 if self.scenario_code and isinstance(self.scenario_code, str):
-                    save_code_to_file(self.scenario_code, "scripts/generated_codes/generated_scenario.py")
-                if self.train_function_code and isinstance(self.train_function_code, str):
+                    save_code_to_file(
+                        self.scenario_code,
+                        "scripts/generated_codes/generated_scenario.py",
+                    )
+                if self.train_function_code and isinstance(
+                    self.train_function_code, str
+                ):
                     save_code_to_file(
                         self.train_function_code,
                         "scripts/generated_codes/generated_train_function.py",
@@ -339,11 +385,18 @@ class AutoMLAgent:
                 self.ui_agent.subheader("Starting Optimization Process")
                 self.ui_agent.write("Starting Optimization Process")
 
-                loss, metrics = self.run_scenario(self.scenario_obj, self.train_fn, self.dataset, self.config_space_obj)
+                loss, metrics = self.run_scenario(
+                    self.scenario_obj,
+                    self.train_fn,
+                    self.dataset,
+                    self.config_space_obj,
+                )
 
                 # If we get here, everything worked successfully
-                self.ui_agent.success(f"Component generation completed successfully on attempt {attempt + 1}")
-                
+                self.ui_agent.success(
+                    f"Component generation completed successfully on attempt {attempt + 1}"
+                )
+
                 # Return results and last training loss
                 return (
                     self.config_code,
@@ -360,16 +413,21 @@ class AutoMLAgent:
                     f"Component generation failed on attempt {attempt + 1}: {str(e)}",
                     error_type="COMPONENT_GENERATION_ERROR",
                 )
-                self.ui_agent.error(f"Component generation failed on attempt {attempt + 1}: {str(e)}")
-                
+                self.ui_agent.error(
+                    f"Component generation failed on attempt {attempt + 1}: {str(e)}"
+                )
+
                 if attempt == max_retries - 1:
                     # Last attempt failed, raise the error
-                    self.ui_agent.error(f"All {max_retries} attempts failed. Raising error.")
+                    self.ui_agent.error(
+                        f"All {max_retries} attempts failed. Raising error."
+                    )
                     raise e
                 else:
                     # Wait a bit before retrying
                     import time
-                    wait_time = 2 ** attempt  # Exponential backoff: 1s, 2s, 4s
+
+                    wait_time = 2**attempt  # Exponential backoff: 1s, 2s, 4s
                     self.ui_agent.warning(f"Retrying in {wait_time} seconds...")
                     time.sleep(wait_time)
 
@@ -380,7 +438,9 @@ class AutoMLAgent:
             code_attr = f"{component}_code"
             raw_code = getattr(self, code_attr)
             source = extract_code_block(raw_code)
-            self.logger.log_prompt(f"Running {component} code:", {"component": component, "action": "run"})
+            self.logger.log_prompt(
+                f"Running {component} code:", {"component": component, "action": "run"}
+            )
             self.logger.log_response(source, {"component": component, "action": "run"})
 
             try:
@@ -399,7 +459,7 @@ class AutoMLAgent:
                     exec(source, self.namespace)
                     self.scenario_code = source
                     scenario_obj = self.namespace["generate_scenario"](cfg)
-                    
+
                     self.scenario_obj = scenario_obj
                     self.logger.log_response(
                         f"Scenario generated successfully",
@@ -415,13 +475,22 @@ class AutoMLAgent:
 
                     # Test train function with budget parameter for compatibility
                     # Get dataset dictionary for train function
-                    dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
+                    dataset_for_train = self._get_dataset_for_train_function(
+                        self.dataset, self.dataset_test, include_test_data=True
+                    )
 
                     # if the train function is multi-fidelity or hyperband, then we need to pass the budget parameter
-                    if self.suggested_facade.__name__ in ["HyperbandFacade", "MultiFidelityFacade"]:
-                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=10)
+                    if self.suggested_facade.__name__ in [
+                        "HyperbandFacade",
+                        "MultiFidelityFacade",
+                    ]:
+                        result = train_fn(
+                            cfg=sampled, dataset=dataset_for_train, seed=0, budget=10
+                        )
                     else:
-                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0)
+                        result = train_fn(
+                            cfg=sampled, dataset=dataset_for_train, seed=0
+                        )
 
                     # Handle different return formats
                     if isinstance(result, dict) and "loss" in result:
@@ -477,11 +546,17 @@ class AutoMLAgent:
                     retry_count = 0
                 else:
                     # Ask LLM to fix errors with history of recent issues
-                    recent_errors = "\n".join(self.error_history[component][-self.MAX_RETRIES_PROMPT :])
+                    recent_errors = "\n".join(
+                        self.error_history[component][-self.MAX_RETRIES_PROMPT :]
+                    )
                     fix_prompt = self._create_fix_prompt(recent_errors, raw_code)
-                    self.logger.log_prompt(fix_prompt, {"component": component, "action": "fix"})
+                    self.logger.log_prompt(
+                        fix_prompt, {"component": component, "action": "fix"}
+                    )
                     fixed = self.llm.generate(fix_prompt)
-                    self.logger.log_response(fixed, {"component": component, "action": "fix"})
+                    self.logger.log_response(
+                        fixed, {"component": component, "action": "fix"}
+                    )
                     setattr(self, code_attr, fixed)
 
     def _create_config_prompt(self, recommended_configuration) -> str:
@@ -511,7 +586,9 @@ class AutoMLAgent:
 
         return base_prompt
 
-    def _create_train_prompt(self, train_function_instructions, suggested_facade) -> str:
+    def _create_train_prompt(
+        self, train_function_instructions, suggested_facade
+    ) -> str:
         """
         Create a prompt for generating the training function code.
         :param train_function_instructions: Instructions for the training function.
@@ -539,10 +616,14 @@ class AutoMLAgent:
 
         # Get the facade name to determine parameter requirements
         facade_name = self.suggested_facade.__name__
-        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(
+            facade_name, ["config", "seed"]
+        )
 
         # Get dataset dictionary for train function
-        dataset_for_train = self._get_dataset_for_train_function(dataset, self.dataset_test)
+        dataset_for_train = self._get_dataset_for_train_function(
+            dataset, self.dataset_test
+        )
 
         # Create dynamic wrapper function based on facade requirements
         if "budget" in required_params:
@@ -554,7 +635,9 @@ class AutoMLAgent:
                     budget_int = int(budget) if budget is not None else budget
 
                     # Add timeout protection for individual training runs
-                    with timeout_handler(min(600, self.time_budget // 10)):  # Max 10 minutes per trial or 1/10 of total budget
+                    with timeout_handler(
+                        min(600, self.time_budget // 10)
+                    ):  # Max 10 minutes per trial or 1/10 of total budget
                         result = train_fn(
                             cfg=config,
                             dataset=dataset_for_train,
@@ -581,8 +664,12 @@ class AutoMLAgent:
                 """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
                 try:
                     # Add timeout protection for individual training runs
-                    with timeout_handler(min(600, self.time_budget // 10)):  # Max 10 minutes per trial or 1/10 of total budget
-                        result = train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
+                    with timeout_handler(
+                        min(600, self.time_budget // 10)
+                    ):  # Max 10 minutes per trial or 1/10 of total budget
+                        result = train_fn(
+                            cfg=config, dataset=dataset_for_train, seed=int(seed)
+                        )
 
                     # Train function now returns dictionary with loss and metrics
                     if isinstance(result, dict) and "loss" in result:
@@ -606,7 +693,9 @@ class AutoMLAgent:
         # Add timeout protection around SMAC optimization
         incumbent = None
         try:
-            self.ui_agent.info(f"Starting SMAC optimization with {self.time_budget} seconds timeout...")
+            self.ui_agent.info(
+                f"Starting SMAC optimization with {self.time_budget} seconds timeout..."
+            )
 
             # Use 90% of time budget for optimization, reserve 10% for final evaluation
             optimization_timeout = int(self.time_budget * 0.9)
@@ -635,13 +724,17 @@ class AutoMLAgent:
                 f"SMAC optimization timed out after {optimization_timeout} seconds. Using best configuration found so far.",
                 error_type="SMAC_TIMEOUT",
             )
-            self.ui_agent.warning(f"Optimization timed out after {optimization_timeout}s, using best config found so far")
+            self.ui_agent.warning(
+                f"Optimization timed out after {optimization_timeout}s, using best config found so far"
+            )
 
             # Get the best configuration found so far
             try:
                 incumbent = smac.optimizer.intensifier.get_incumbent()
             except Exception as e:
-                self.logger.log_error(f"Error getting incumbent: {e}", error_type="SMAC_ERROR")
+                self.logger.log_error(
+                    f"Error getting incumbent: {e}", error_type="SMAC_ERROR"
+                )
                 # Fallback to default configuration if no incumbent found
                 incumbent = cfg.get_default_configuration()
                 self.logger.log_error(
@@ -650,7 +743,9 @@ class AutoMLAgent:
                 )
 
         except Exception as e:
-            self.logger.log_error(f"SMAC optimization failed: {str(e)}", error_type="SMAC_ERROR")
+            self.logger.log_error(
+                f"SMAC optimization failed: {str(e)}", error_type="SMAC_ERROR"
+            )
             self.ui_agent.error(f"Optimization failed: {str(e)}")
             # Fallback to default configuration
             incumbent = cfg.get_default_configuration()

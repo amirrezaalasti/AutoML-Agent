@@ -5,41 +5,32 @@ PY_EXPERIMENTER:
     provider: mysql
     database: AgentSmac
     table:
-      # name: AgentSmacRuns_image_fashionmnist
-      # name: AgentSmacRuns_tabular_regression_44973
-      name: AgentSmacRuns_image_fashionmnistv2
-      # name: AgentSmacRuns_tabular_v5
+      name: AgentSmacRuns_tabular_regression
       keyfields:
         dataset_origin:
           type: VARCHAR(255)
           values: ['openml']
         dataset_name:
           type: VARCHAR(255)
-          values: ['fashion-mnist']
-          # values: ['tabular44973'] 
+          values: ['openmlregression']
         dataset_type:
           type: VARCHAR(255)
-          values: ['image']
-          # values: ['tabular']
+          values: ['tabular']
         task_type:
           type: VARCHAR(255)
-          values: ['classification']
+          values: ['regression']
         llm_model:
           type: VARCHAR(255)
           values: ['llama-3.3-70b-instruct']
         dataset_openml_id:
           type: int
-          # values: [1489, 23517, 28, 715, 752, 772, 807]
-          values: [40996] # Fashion MNIST
-          # values: [40926] # CIFAR-10
-          # values: [44973]
-          # values: [1489, 23517, 28, 715, 752, 772, 807, 354, 31]  # Default to credit-g dataset ID
+          values: [44973, 44977]  # California Housing, Diabetes, Boston Housing, Energy Efficiency, Concrete Strength
         time_budget:
           type: int
-          values: [86400]
+          values: [3600]  # 1h, 2h, 4h time budgets
         metric:
           type: VARCHAR(255)
-          values: ['accuracy']
+          values: ['mse']  # Regression metrics
         n_folds:
           type: int
           values: [10]
@@ -47,7 +38,7 @@ PY_EXPERIMENTER:
           type: int
           values:
             start: 1
-            stop: 10 # Only one seed to keep experiment size small
+            stop: 10  # Reduced to 5 folds for faster experimentation
             step: 1
         n_gpus:
           type: int
@@ -60,13 +51,9 @@ PY_EXPERIMENTER:
           values: [16]
       result_timestamps: True
       resultfields:
-        test_accuracy: FLOAT
-        test_balanced_accuracy: FLOAT
-        test_mcc: FLOAT
-        test_roc_auc: FLOAT
-        test_f1: FLOAT
-        test_precision: FLOAT
-        test_recall: FLOAT
+        test_mse: FLOAT
+        test_mae: FLOAT
+        test_r2: FLOAT
         log_dir: VARCHAR(255)
   Custom:
-    datapath: sample_data
+    datapath: sample_data 

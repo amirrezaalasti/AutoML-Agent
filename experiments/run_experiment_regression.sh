@@ -18,6 +18,6 @@ conda activate automl_agent
 echo "Starting job on $(hostname) at $(date)"
 
 # Run the python script
-python experiments/run_experiment.py
+python experiments/run_experiment_regression.py
 
 echo "Job finished at $(date)"

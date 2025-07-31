@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import openml
 import os
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, KFold
 from sklearn.preprocessing import LabelEncoder
 from numpy.random import RandomState
 
@@ -64,7 +64,10 @@ def validate_dataset_type(dataset_type: str) -> None:
     from .constants import SUPPORTED_DATASET_TYPES
 
     if dataset_type not in SUPPORTED_DATASET_TYPES:
-        raise ValidationError(f"Unsupported dataset type: {dataset_type}. " f"Supported types: {SUPPORTED_DATASET_TYPES}")
+        raise ValidationError(
+            f"Unsupported dataset type: {dataset_type}. "
+            f"Supported types: {SUPPORTED_DATASET_TYPES}"
+        )
 
 
 def get_dataset_info(dataset: Dict[str, Any], task_type: str) -> DatasetInfo:
@@ -88,13 +91,17 @@ def get_dataset_info(dataset: Dict[str, Any], task_type: str) -> DatasetInfo:
         feature_names = list(X.columns)
         target_name = y.name if hasattr(y, "name") else "target"
     else:
-        feature_names = [f"feature_{i}" for i in range(X.shape[1])] if X.ndim > 1 else ["feature_0"]
+        feature_names = (
+            [f"feature_{i}" for i in range(X.shape[1])] if X.ndim > 1 else ["feature_0"]
+        )
         target_name = "target"
 
     if isinstance(y, pd.Series):
         # add description of the target variable
         if task_type == "classification":
-            target_description = f"This is a {task_type} problem with {y.nunique()} classes."
+            target_description = (
+                f"This is a {task_type} problem with {y.nunique()} classes."
+            )
         elif task_type == "regression":
             target_description = f"This is a {task_type} problem."
         else:
@@ -150,7 +157,9 @@ def format_dataset(dataset: Any) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
         # 1. One-hot encode categorical features in X
         categorical_cols = X.select_dtypes(include=["object", "category"]).columns
         if not categorical_cols.empty:
-            X = pd.get_dummies(X, columns=categorical_cols, drop_first=True, dtype=float)
+            X = pd.get_dummies(
+                X, columns=categorical_cols, drop_first=True, dtype=float
+            )
 
         # 2. Label encode the target variable y if it's a non-numeric type (for classification)
         if pd.api.types.is_object_dtype(y) or pd.api.types.is_categorical_dtype(y):
@@ -170,7 +179,11 @@ def split_dataset_kfold(
     rng: RandomState,
 ) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
     """
-    Split dataset into training and testing sets using stratified K-fold cross-validation.
+    Split dataset into training and testing sets using K-fold cross-validation.
+
+    Automatically detects task type and uses appropriate cross-validation strategy:
+    - For classification: Uses StratifiedKFold to maintain class distribution
+    - For regression: Uses regular KFold for continuous targets
 
     Args:
         dataset: Dataset dictionary with 'X' and 'y' keys
@@ -189,11 +202,26 @@ def split_dataset_kfold(
 
         X, y = dataset["X"], dataset["y"]
 
-        # Create stratified K-fold splitter
-        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=rng)
+        # Detect task type: classification vs regression
+        # For regression: target is continuous (many unique values relative to dataset size)
+        # For classification: target is discrete (few unique values)
+        unique_values = y.nunique()
+        n_samples = len(y)
 
-        # Get the fold indices
-        fold_indices = list(skf.split(X, y))
+        # Use heuristic: if unique values > 10 and > 5% of total samples, likely regression
+        is_regression = (unique_values > 10 and unique_values > 0.05 * n_samples) or (
+            pd.api.types.is_numeric_dtype(y) and not pd.api.types.is_integer_dtype(y)
+        )
+
+        if is_regression:
+            # Use regular K-fold for regression
+            kf = KFold(n_splits=n_folds, shuffle=True, random_state=rng)
+            fold_indices = list(kf.split(X, y))
+        else:
+            # Use stratified K-fold for classification
+            skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=rng)
+            fold_indices = list(skf.split(X, y))
+
         train_idx, test_idx = fold_indices[fold]
 
         # Split the data using the fold indices
@@ -214,3 +242,105 @@ def split_dataset_kfold(
 
     except Exception as e:
         raise ValidationError(f"Failed to split dataset: {e}")
+
+
+def split_dataset_kfold_classification(
+    dataset: Dict[str, Any],
+    n_folds: int,
+    fold: int,
+    rng: RandomState,
+) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
+    """
+    Split dataset into training and testing sets using stratified K-fold cross-validation for classification.
+
+    Args:
+        dataset: Dataset dictionary with 'X' and 'y' keys
+        n_folds: Number of folds for cross-validation
+        fold: Current fold to use for train-test split (0-indexed)
+        rng: Random state for reproducibility
+
+    Returns:
+        Tuple containing train and test data
+
+    Raises:
+        ValidationError: If dataset is invalid or split parameters are invalid
+    """
+    try:
+        validate_dataset(dataset)
+
+        X, y = dataset["X"], dataset["y"]
+
+        # Create stratified K-fold splitter for classification
+        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=rng)
+        fold_indices = list(skf.split(X, y))
+        train_idx, test_idx = fold_indices[fold]
+
+        # Split the data using the fold indices
+        X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+        y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
+
+        # Reset indices for DataFrames/Series to ensure clean alignment
+        train_data = {
+            "X": X_train.reset_index(drop=True),
+            "y": y_train.reset_index(drop=True),
+        }
+        test_data = {
+            "X": X_test.reset_index(drop=True),
+            "y": y_test.reset_index(drop=True),
+        }
+
+        return train_data, test_data
+
+    except Exception as e:
+        raise ValidationError(f"Failed to split dataset for classification: {e}")
+
+
+def split_dataset_kfold_regression(
+    dataset: Dict[str, Any],
+    n_folds: int,
+    fold: int,
+    rng: RandomState,
+) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
+    """
+    Split dataset into training and testing sets using regular K-fold cross-validation for regression.
+
+    Args:
+        dataset: Dataset dictionary with 'X' and 'y' keys
+        n_folds: Number of folds for cross-validation
+        fold: Current fold to use for train-test split (0-indexed)
+        rng: Random state for reproducibility
+
+    Returns:
+        Tuple containing train and test data
+
+    Raises:
+        ValidationError: If dataset is invalid or split parameters are invalid
+    """
+    try:
+        validate_dataset(dataset)
+
+        X, y = dataset["X"], dataset["y"]
+
+        # Create regular K-fold splitter for regression
+        kf = KFold(n_splits=n_folds, shuffle=True, random_state=rng)
+        fold_indices = list(kf.split(X, y))
+        train_idx, test_idx = fold_indices[fold]
+
+        # Split the data using the fold indices
+        X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+        y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
+
+        # Reset indices for DataFrames/Series to ensure clean alignment
+        train_data = {
+            "X": X_train.reset_index(drop=True),
+            "y": y_train.reset_index(drop=True),
+        }
+        test_data = {
+            "X": X_test.reset_index(drop=True),
+            "y": y_test.reset_index(drop=True),
+        }
+
+        return train_data, test_data
+
+    except Exception as e:
+        raise ValidationError(f"Failed to split dataset for regression: {e}")

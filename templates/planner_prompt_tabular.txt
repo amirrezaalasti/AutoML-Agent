@@ -10,7 +10,6 @@ You are an expert machine learning planner. Your task is to analyze the given da
 - **Type:** `{dataset_type}`
 - **Description:** `{dataset_description}`
 - **Task:** `{task_type}`
-- **SMAC Documentation:** `{smac_documentation}`
 - **OpenML Meta-Learning Insights:**
   ```
   {config_space_suggested_parameters}
