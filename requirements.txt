@@ -23,3 +23,5 @@ xgboost
 catboost
 lightgbm
 torchvision
+autogluon.tabular
+autogluon.multimodal

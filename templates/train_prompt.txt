@@ -46,6 +46,18 @@
 * **ConfigSpace Definition**: `{config_space}`
 * **SMAC Scenario**: `{scenario}`
 
+## **Performance Target Requirements:**
+
+### **Baseline Performance Target:**
+{baseline_accuracy_section}
+
+### **Performance Optimization Guidelines:**
+* **Aim Higher**: Target accuracy significantly above any available baseline (e.g., +5-10% improvement)
+* **Efficient Implementation**: Use algorithms and hyperparameters that can achieve high performance
+* **Robust Training**: Implement proper validation, regularization, and early stopping
+* **Quality Metrics**: Focus on accuracy, balanced_accuracy, or F1-score depending on the task
+* **Avoid Overfitting**: Use cross-validation or holdout validation appropriately
+
 ---
 
 ## **Function Signature** (Must be exact):
