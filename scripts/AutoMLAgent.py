@@ -11,6 +11,7 @@ from utils import (
     prepare_training_parameters,
 )
 from utils.baseline_evaluator import create_baseline_evaluator
+from scripts.PostProcessor import PostProcessor
 from scripts.Logger import Logger
 from scripts.OpenMLRAG import OpenMLRAG
 from config.api_keys import OPENML_API_KEY
@@ -65,6 +66,7 @@ class AutoMLAgent:
         time_budget: int = 3600,  # Default 1 hour timeout
         folder_name: str = "./logs",
         baseline_time_budget: int = 300,  # 5 minutes for baseline evaluation
+        enable_baseline_retry: bool = True,  # Enable automatic retry with improvement feedback
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -102,6 +104,9 @@ class AutoMLAgent:
         # store original prompts for retries
         self.prompts = {}
 
+        # Baseline retry configuration
+        self.enable_baseline_retry = enable_baseline_retry
+
         # Initialize baseline evaluator
         self.baseline_evaluator = create_baseline_evaluator(dataset_type=dataset_type, time_budget=baseline_time_budget)
         self.baseline_metrics = None
@@ -120,6 +125,9 @@ class AutoMLAgent:
             dataset_name=dataset_name or "unknown",
             base_log_dir=folder_name,
         )
+
+        # Initialize post-processor
+        self.post_processor = PostProcessor(ui_agent, self.logger)
 
         self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH)
         self.LLMInstructor = LLMPlanner(
@@ -225,6 +233,16 @@ class AutoMLAgent:
         # Validate against baseline target
         self.validate_baseline_target(metrics)
 
+        # Post-process if baseline was not beaten
+        if self.baseline_accuracy is not None:
+            baseline_beaten, improvement_feedback = self.post_processor.analyze_performance(
+                metrics,
+                incumbent,
+                self.config_code,
+                self.scenario_code,
+                self.train_function_code,
+            )
+
         return loss, metrics
 
     def _log_evaluation_success(self, metrics: dict, incumbent: Any):
@@ -260,6 +278,10 @@ class AutoMLAgent:
         for attempt in range(max_retries):
             try:
                 self.ui_agent.info(f"Starting component generation (attempt {attempt + 1}/{max_retries})")
+
+                # Add iteration header for initial generation
+                self.ui_agent.subheader("🚀 Initial Component Generation")
+                self.ui_agent.info("Generating initial configuration space, scenario, and training function...")
 
                 config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
                     dataset_name=self.dataset_name or "unknown",
@@ -368,6 +390,37 @@ class AutoMLAgent:
                     self.dataset,
                     self.config_space_obj,
                 )
+
+                # Check if baseline was beaten and retry if needed
+                if self.enable_baseline_retry and self.baseline_accuracy is not None and self.post_processor.improvement_feedback is not None:
+                    self.ui_agent.info("Baseline not beaten. Attempting improvement with feedback...")
+
+                    # Retry with improvement feedback - regenerate all components
+                    if self.retry_with_improvement_feedback():
+                        # Re-run scenario with improved components
+                        loss, metrics = self.run_scenario(
+                            self.scenario_obj,
+                            self.train_fn,
+                            self.dataset,
+                            self.config_space_obj,
+                        )
+
+                        # Check if improvement was successful
+                        if self.baseline_accuracy is not None:
+                            final_accuracy = None
+                            if "accuracy" in metrics:
+                                final_accuracy = metrics["accuracy"]
+                            elif "balanced_accuracy" in metrics:
+                                final_accuracy = metrics["balanced_accuracy"]
+                            elif "f1" in metrics:
+                                final_accuracy = metrics["f1"]
+                            elif "loss" in metrics:
+                                final_accuracy = 1.0 - metrics["loss"]
+
+                            if final_accuracy is not None and final_accuracy >= self.baseline_accuracy:
+                                self.ui_agent.success("✓ Improvement successful! Baseline beaten in retry.")
+                            else:
+                                self.ui_agent.warning("⚠ Improvement attempted but baseline still not beaten.")
 
                 # If we get here, everything worked successfully
                 self.ui_agent.success(f"Component generation completed successfully on attempt {attempt + 1}")
@@ -826,6 +879,10 @@ class AutoMLAgent:
                 self.ui_agent.warning("No recognizable accuracy metric found in baseline results")
                 self.baseline_accuracy = None
 
+            # Set baseline in post-processor
+            if self.baseline_accuracy is not None:
+                self.post_processor.set_baseline(self.baseline_accuracy, baseline_results)
+
             self.ui_agent.success(f"Baseline evaluation completed!")
             self.ui_agent.subheader("Baseline Performance")
             self.ui_agent.write(f"Baseline metrics: {baseline_results}")
@@ -857,3 +914,165 @@ class AutoMLAgent:
             self.baseline_metrics = None
 
             return False
+
+    def retry_with_improvement_feedback(self) -> bool:
+        """
+        Retry the component generation with improvement feedback from baseline failure.
+        Regenerates all components (config, scenario, train_function) with improvement guidance.
+
+        Returns:
+            True if retry was successful, False otherwise
+        """
+        if not self.post_processor.improvement_feedback:
+            return False
+
+        self.ui_agent.info("Retrying with baseline improvement feedback...")
+
+        # Store original codes for comparison
+        original_config_code = self.config_code
+        original_scenario_code = self.scenario_code
+        original_train_function_code = self.train_function_code
+
+        try:
+            # Regenerate configuration space with improvement feedback
+            improved_config_prompt = self._create_improved_config_prompt()
+            self.config_code = self.llm.generate(improved_config_prompt)
+            self._run_generated("config")
+
+            # Display improved config code
+            self.ui_agent.subheader("🔄 Improved Configuration Space")
+            self.ui_agent.code(self.config_code, language="python")
+
+            # Regenerate scenario with improvement feedback
+            improved_scenario_prompt = self._create_improved_scenario_prompt()
+            self.scenario_code = self.llm.generate(improved_scenario_prompt)
+            self._run_generated("scenario")
+
+            # Display improved scenario code
+            self.ui_agent.subheader("🔄 Improved Scenario Configuration")
+            self.ui_agent.code(self.scenario_code, language="python")
+
+            # Regenerate training function with improvement feedback
+            improved_train_prompt = self._create_improved_train_prompt()
+            self.train_function_code = self.llm.generate(improved_train_prompt)
+            self._run_generated("train_function")
+
+            # Display improved training function code
+            self.ui_agent.subheader("🔄 Improved Training Function")
+            self.ui_agent.code(self.train_function_code, language="python")
+
+            self.ui_agent.success("All components regenerated with improvement feedback!")
+
+            # Show comparison between original and improved codes
+            self.ui_agent.subheader("📊 Code Comparison")
+            self.ui_agent.info("Comparing original vs improved implementations:")
+
+            # Configuration Space comparison
+            self.ui_agent.subheader("Configuration Space Changes")
+            self.ui_agent.write("**Original:**")
+            self.ui_agent.code(
+                (original_config_code[:300] + "..." if len(original_config_code) > 300 else original_config_code),
+                language="python",
+            )
+            self.ui_agent.write("**Improved:**")
+            self.ui_agent.code(
+                (self.config_code[:300] + "..." if len(self.config_code) > 300 else self.config_code),
+                language="python",
+            )
+
+            # Scenario comparison
+            self.ui_agent.subheader("Scenario Configuration Changes")
+            self.ui_agent.write("**Original:**")
+            self.ui_agent.code(
+                (original_scenario_code[:300] + "..." if len(original_scenario_code) > 300 else original_scenario_code),
+                language="python",
+            )
+            self.ui_agent.write("**Improved:**")
+            self.ui_agent.code(
+                (self.scenario_code[:300] + "..." if len(self.scenario_code) > 300 else self.scenario_code),
+                language="python",
+            )
+
+            # Training Function comparison
+            self.ui_agent.subheader("Training Function Changes")
+            self.ui_agent.write("**Original:**")
+            self.ui_agent.code(
+                (original_train_function_code[:300] + "..." if len(original_train_function_code) > 300 else original_train_function_code),
+                language="python",
+            )
+            self.ui_agent.write("**Improved:**")
+            self.ui_agent.code(
+                (self.train_function_code[:300] + "..." if len(self.train_function_code) > 300 else self.train_function_code),
+                language="python",
+            )
+
+            # Show summary of improvements
+            self.ui_agent.subheader("📊 Improvement Summary")
+            self.ui_agent.info(f"Iteration {self.post_processor.iteration_count}: All components regenerated with targeted improvements")
+            self.ui_agent.info("Key improvements applied:")
+            self.ui_agent.write("• Configuration Space: Enhanced algorithm diversity and hyperparameter ranges")
+            self.ui_agent.write("• Scenario: Optimized time budget and trial allocation")
+            self.ui_agent.write("• Training Function: Improved preprocessing and algorithm selection")
+
+            return True
+
+        except Exception as e:
+            self.ui_agent.error(f"Retry with improvement feedback failed: {str(e)}")
+            return False
+
+    def _create_improved_config_prompt(self) -> str:
+        """
+        Create an improved configuration space prompt incorporating baseline failure feedback.
+
+        Returns:
+            Improved config prompt string
+        """
+        improvement_context = self.post_processor.create_improvement_prompt("config")
+
+        # Get the original config prompt
+        original_prompt = self._create_config_prompt("Implement improved configuration space based on baseline failure analysis")
+
+        # Insert improvement context at the beginning
+        improved_prompt = improvement_context + "\n\n" + original_prompt
+
+        return improved_prompt
+
+    def _create_improved_scenario_prompt(self) -> str:
+        """
+        Create an improved scenario prompt incorporating baseline failure feedback.
+
+        Returns:
+            Improved scenario prompt string
+        """
+        improvement_context = self.post_processor.create_improvement_prompt("scenario")
+
+        # Get the original scenario prompt
+        original_prompt = self._create_scenario_prompt(
+            "Implement improved scenario based on baseline failure analysis",
+            self.suggested_facade.__name__,
+        )
+
+        # Insert improvement context at the beginning
+        improved_prompt = improvement_context + "\n\n" + original_prompt
+
+        return improved_prompt
+
+    def _create_improved_train_prompt(self) -> str:
+        """
+        Create an improved training function prompt incorporating baseline failure feedback.
+
+        Returns:
+            Improved train prompt string
+        """
+        improvement_context = self.post_processor.create_improvement_prompt("train_function")
+
+        # Get the original train prompt
+        original_prompt = self._create_train_prompt(
+            "Implement improved solution based on baseline failure analysis",
+            self.suggested_facade.__name__,
+        )
+
+        # Insert improvement context at the beginning
+        improved_prompt = improvement_context + "\n\n" + original_prompt
+
+        return improved_prompt
