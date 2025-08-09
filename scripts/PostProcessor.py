@@ -2,7 +2,7 @@
 Post-processing module for analyzing and improving LLM-generated solutions
 """
 
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 import pandas as pd
 
 
@@ -23,6 +23,7 @@ class PostProcessor:
         self.baseline_metrics: Optional[Dict] = None
         self.improvement_feedback: Optional[str] = None
         self.iteration_count = 0
+        self.history: List[Dict[str, Any]] = []
 
     def set_baseline(self, baseline_accuracy: float, baseline_metrics: Dict):
         """Set the baseline performance metrics"""
@@ -58,6 +59,9 @@ class PostProcessor:
         if final_accuracy is None:
             return True, None  # Could not extract accuracy
 
+        # Record to history
+        self._record_result(final_metrics, final_accuracy, incumbent)
+
         # Check if baseline was beaten
         if final_accuracy >= self.baseline_accuracy:
             return True, None  # Baseline beaten, no improvement needed
@@ -82,14 +86,25 @@ class PostProcessor:
 
     def _extract_accuracy(self, metrics: Dict) -> Optional[float]:
         """Extract accuracy from metrics dictionary"""
-        if "accuracy" in metrics:
-            return metrics["accuracy"]
-        elif "balanced_accuracy" in metrics:
-            return metrics["balanced_accuracy"]
-        elif "f1" in metrics:
-            return metrics["f1"]
-        elif "loss" in metrics:
-            return 1.0 - metrics["loss"]
+        if not isinstance(metrics, dict) or ("error" in metrics and metrics["error"]):
+            return None
+        try:
+            if "accuracy" in metrics:
+                v = float(metrics["accuracy"])
+                return v if 0.0 <= v <= 1.0 else None
+            if "balanced_accuracy" in metrics:
+                v = float(metrics["balanced_accuracy"])
+                return v if 0.0 <= v <= 1.0 else None
+            if "f1" in metrics:
+                v = float(metrics["f1"])
+                return v if 0.0 <= v <= 1.0 else None
+            if "loss" in metrics:
+                v = float(metrics["loss"])
+                if v != v or v in (float("inf"), float("-inf")):
+                    return None
+                return 1.0 - v
+        except Exception:
+            return None
         return None
 
     def _generate_improvement_feedback(
@@ -119,6 +134,27 @@ class PostProcessor:
         accuracy_gap = self.baseline_accuracy - final_accuracy
         improvement_needed = accuracy_gap / self.baseline_accuracy * 100
 
+        # Compute dynamic recommendations
+        trials_recommendation = "Increase n_trials moderately (e.g., +25%)"
+        budget_recommendation = "Slightly raise max_budget to allow deeper models"
+        if improvement_needed >= 10:
+            trials_recommendation = (
+                "Increase n_trials substantially (e.g., +50% to +100%)"
+            )
+            budget_recommendation = "Raise max_budget significantly (e.g., 1.5x to 2x)"
+        elif improvement_needed >= 5:
+            trials_recommendation = "Increase n_trials (e.g., +35% to +50%)"
+            budget_recommendation = "Increase max_budget (e.g., +50%)"
+
+        # Trend analysis from history (last two)
+        trend_text = "N/A"
+        if len(self.history) >= 2:
+            prev_acc = self.history[-2].get("accuracy")
+            delta = final_accuracy - prev_acc if prev_acc is not None else None
+            if delta is not None:
+                arrow = "↑" if delta > 0 else ("↓" if delta < 0 else "→")
+                trend_text = f"{arrow} {delta:+.4f} since last round"
+
         feedback = f"""
         ## **Iteration {self.iteration_count} - Baseline Performance Analysis**
 
@@ -126,6 +162,7 @@ class PostProcessor:
         - **Baseline Accuracy**: {self.baseline_accuracy:.4f} (AutoGluon)
         - **Generated Solution Accuracy**: {final_accuracy:.4f}
         - **Accuracy Gap**: {accuracy_gap:.4f} ({improvement_needed:.1f}% improvement needed)
+        - **Trend**: {trend_text}
 
         ### **Current Solution Analysis:**
         - **Best Configuration**: {incumbent}
@@ -172,8 +209,8 @@ class PostProcessor:
         - **Algorithm Selection**: Implement more sophisticated algorithm selection logic
 
         #### **3. Scenario Optimization:**
-        - **Time Budget**: Allocate more time for complex algorithms
-        - **Trial Count**: Increase number of trials for better exploration
+        - **Time Budget**: {budget_recommendation}
+        - **Trial Count**: {trials_recommendation}
         - **Parallelization**: Optimize worker configuration
         - **Facade Selection**: Consider different SMAC facades based on dataset
 
@@ -197,6 +234,19 @@ class PostProcessor:
 
         return feedback
 
+    def _record_result(
+        self, final_metrics: Dict, final_accuracy: Optional[float], incumbent: Any
+    ) -> None:
+        """Store iteration result for trend analysis and auditing"""
+        entry = {
+            "iteration": self.iteration_count
+            + 1,  # will be incremented when feedback generated
+            "metrics": final_metrics,
+            "accuracy": final_accuracy,
+            "incumbent": str(incumbent),
+        }
+        self.history.append(entry)
+
     def _log_analysis(self, final_accuracy: float, final_metrics: Dict, incumbent: Any):
         """Log the performance analysis"""
         self.logger.log_response(
@@ -216,9 +266,15 @@ class PostProcessor:
 
     def _display_analysis(self, final_accuracy: float):
         """Display analysis results to user"""
-        self.ui_agent.subheader(f"Iteration {self.iteration_count} - Baseline Performance Analysis")
-        self.ui_agent.warning(f"Generated solution ({final_accuracy:.4f}) did not beat baseline ({self.baseline_accuracy:.4f})")
-        self.ui_agent.info(f"Improvement suggestions generated for iteration {self.iteration_count + 1}")
+        self.ui_agent.subheader(
+            f"Iteration {self.iteration_count} - Baseline Performance Analysis"
+        )
+        self.ui_agent.warning(
+            f"Generated solution ({final_accuracy:.4f}) did not beat baseline ({self.baseline_accuracy:.4f})"
+        )
+        self.ui_agent.info(
+            f"Improvement suggestions generated for iteration {self.iteration_count + 1}"
+        )
 
     def create_improvement_prompt(self, component_type: str) -> str:
         """

@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
-#SBATCH --array=1-20
+#SBATCH --array=1-8
 
 # Load modules or setup environment if needed
 # module load cuda/11.7

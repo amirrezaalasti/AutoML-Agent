@@ -38,7 +38,7 @@ class AutoMLAgentExperimenter:
         n_folds = parameters["n_folds"]
         fold = parameters["fold"]
         time_budget = parameters.get("time_budget", 86400)
-        dataset_folder = "./agent_smac_logs/logs" + "_" + dataset_name
+        dataset_folder = "./agent_smac_logs_v2/logs" + "_" + dataset_name
 
         print(f"Experiment configuration: Dataset={dataset_name}, Time Budget={time_budget}s")
         api_key = LOCAL_LLAMA_API_KEY

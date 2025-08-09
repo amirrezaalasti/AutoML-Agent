@@ -67,6 +67,8 @@ class AutoMLAgent:
         folder_name: str = "./logs",
         baseline_time_budget: int = 300,  # 5 minutes for baseline evaluation
         enable_baseline_retry: bool = True,  # Enable automatic retry with improvement feedback
+        max_improvement_rounds: int = 3,  # Maximum iterative improvement rounds if baseline not beaten
+        track_best_across_rounds: bool = True,  # Track and return/save best result across rounds
     ):
         """
         Initialize the AutoML Agent with dataset, LLM client, and UI agent.
@@ -83,11 +85,15 @@ class AutoMLAgent:
                                 When False, train function will only receive X and y and should do internal train/test splits.
         """
         self.dataset = format_dataset(dataset)
-        self.dataset, self.dataset_test = split_dataset_kfold(self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42))
+        self.dataset, self.dataset_test = split_dataset_kfold(
+            self.dataset, n_folds=n_folds, fold=fold, rng=np.random.RandomState(42)
+        )
         self.dataset_type = dataset_type
         self.dataset_name = dataset_name if dataset_name else None
         self.task_type = task_type if task_type else None
-        self.dataset_description = describe_dataset(self.dataset, dataset_type, task_type or "classification")
+        self.dataset_description = describe_dataset(
+            self.dataset, dataset_type, task_type or "classification"
+        )
         self.time_budget = time_budget
 
         self.config_code = None
@@ -106,9 +112,13 @@ class AutoMLAgent:
 
         # Baseline retry configuration
         self.enable_baseline_retry = enable_baseline_retry
+        self.max_improvement_rounds = max_improvement_rounds
+        self.track_best_across_rounds = track_best_across_rounds
 
         # Initialize baseline evaluator
-        self.baseline_evaluator = create_baseline_evaluator(dataset_type=dataset_type, time_budget=baseline_time_budget)
+        self.baseline_evaluator = create_baseline_evaluator(
+            dataset_type=dataset_type, time_budget=baseline_time_budget
+        )
         self.baseline_metrics = None
         self.baseline_accuracy = None
 
@@ -129,7 +139,9 @@ class AutoMLAgent:
         # Initialize post-processor
         self.post_processor = PostProcessor(ui_agent, self.logger)
 
-        self.openML = OpenMLRAG(openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH)
+        self.openML = OpenMLRAG(
+            openml_api_key=OPENML_API_KEY, metafeatures_csv_path=OPENML_CSV_PATH
+        )
         self.LLMInstructor = LLMPlanner(
             dataset_name=self.dataset_name or "unknown",
             dataset_description=self.dataset_description,
@@ -145,6 +157,18 @@ class AutoMLAgent:
             "MultiFidelityFacade": MultiFidelityFacade,
             "HyperparameterOptimizationFacade": HPOFacade,
             "BlackBoxFacade": BlackBoxFacade,
+        }
+
+        # Best-tracking across rounds
+        self.best_loss = None
+        self.best_metrics = None
+        self.best_accuracy = None
+        self.best_round = None
+        self.best_incumbent = None
+        self.best_codes = {
+            "config": None,
+            "scenario": None,
+            "train_function": None,
         }
 
     def _get_dataset_for_train_function(
@@ -174,15 +198,21 @@ class AutoMLAgent:
                 "y": dataset_train["y"],
             }
 
-    def test_incumbent(self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any):
+    def test_incumbent(
+        self, train_fn, incumbent: Any, dataset_train: Any, dataset_test: Any, cfg: Any
+    ):
         """Test the incumbent configuration and evaluate model on test set if possible"""
 
         # Get facade parameters
         facade_name = self.suggested_facade.__name__
-        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(
+            facade_name, ["config", "seed"]
+        )
 
         # Get dataset dictionary for train function
-        dataset_for_train = self._get_dataset_for_train_function(dataset_train, dataset_test, include_test_data=True)
+        dataset_for_train = self._get_dataset_for_train_function(
+            dataset_train, dataset_test, include_test_data=True
+        )
 
         # Prepare training parameters using utility function
         training_params = prepare_training_parameters(
@@ -201,15 +231,23 @@ class AutoMLAgent:
 
             # Handle different return formats
             if isinstance(result, dict):
-                # New format: dictionary with loss and metrics
                 metrics = result.copy()
                 loss = metrics.get("loss", float("inf"))
-                self._log_evaluation_success(metrics, incumbent)
             else:
-                # Old format: just loss value (backward compatibility)
                 loss = float(result)
                 metrics = get_default_metrics(self.task_type or "classification")
                 metrics["loss"] = loss
+
+            # Validate metrics; if invalid, log and fallback to default error metrics
+            if not self._is_valid_metrics(metrics):
+                self.logger.log_error(
+                    f"Invalid metrics returned from training function: {metrics}",
+                    error_type="TRAINING_METRICS_INVALID",
+                )
+                metrics = get_default_metrics(self.task_type or "classification")
+                metrics["error"] = "Invalid metrics returned from training function"
+                loss = float("inf")
+            else:
                 self._log_evaluation_success(metrics, incumbent)
 
         except Exception as e:
@@ -221,6 +259,47 @@ class AutoMLAgent:
                 f"Training function execution failed: {str(e)}",
                 error_type="TRAINING_ERROR",
             )
+
+        # If metrics invalid, ask LLM to fix train function and retry once
+        if not self._is_valid_metrics(metrics):
+            self.ui_agent.warning(
+                "Primary evaluation returned invalid metrics; regenerating train function with fix prompt and retrying once."
+            )
+            self._regenerate_component_with_fix(
+                component="train_function",
+                summary_error="Invalid metrics detected after evaluation (non-finite loss or out-of-range accuracy)",
+            )
+
+            # Re-evaluate once after regeneration
+            try:
+                result_retry = train_fn(**training_params)
+                if isinstance(result_retry, dict):
+                    metrics_retry = result_retry.copy()
+                    loss_retry = metrics_retry.get("loss", float("inf"))
+                else:
+                    loss_retry = float(result_retry)
+                    metrics_retry = get_default_metrics(
+                        self.task_type or "classification"
+                    )
+                    metrics_retry["loss"] = loss_retry
+
+                if self._is_valid_metrics(metrics_retry):
+                    metrics = metrics_retry
+                    loss = loss_retry
+                    self.logger.log_response(
+                        "Train function regenerated and metrics validated on retry.",
+                        {"component": "evaluation", "status": "retry_success"},
+                    )
+                else:
+                    self.logger.log_error(
+                        f"Metrics still invalid after retry: {metrics_retry}",
+                        error_type="TRAINING_METRICS_INVALID_RETRY",
+                    )
+            except Exception as e:
+                self.logger.log_error(
+                    f"Retry after regeneration failed: {str(e)}",
+                    error_type="TRAINING_RETRY_FAILED",
+                )
 
         # Display results
         self.ui_agent.subheader("Test Metrics")
@@ -235,12 +314,14 @@ class AutoMLAgent:
 
         # Post-process if baseline was not beaten
         if self.baseline_accuracy is not None:
-            baseline_beaten, improvement_feedback = self.post_processor.analyze_performance(
-                metrics,
-                incumbent,
-                self.config_code,
-                self.scenario_code,
-                self.train_function_code,
+            baseline_beaten, improvement_feedback = (
+                self.post_processor.analyze_performance(
+                    metrics,
+                    incumbent,
+                    self.config_code,
+                    self.scenario_code,
+                    self.train_function_code,
+                )
             )
 
         return loss, metrics
@@ -277,21 +358,29 @@ class AutoMLAgent:
 
         for attempt in range(max_retries):
             try:
-                self.ui_agent.info(f"Starting component generation (attempt {attempt + 1}/{max_retries})")
+                self.ui_agent.info(
+                    f"Starting component generation (attempt {attempt + 1}/{max_retries})"
+                )
 
                 # Add iteration header for initial generation
                 self.ui_agent.subheader("🚀 Initial Component Generation")
-                self.ui_agent.info("Generating initial configuration space, scenario, and training function...")
+                self.ui_agent.info(
+                    "Generating initial configuration space, scenario, and training function..."
+                )
 
-                config_space_suggested_parameters = self.openML.extract_suggested_config_space_parameters(
-                    dataset_name=self.dataset_name or "unknown",
-                    X=self.dataset["X"],
-                    y=self.dataset["y"],
+                config_space_suggested_parameters = (
+                    self.openML.extract_suggested_config_space_parameters(
+                        dataset_name=self.dataset_name or "unknown",
+                        X=self.dataset["X"],
+                        y=self.dataset["y"],
+                    )
                 )
                 instructor_response = self.LLMInstructor.generate_instructions(
                     config_space_suggested_parameters,
                 )
-                self.suggested_facade = self.smac_facades[instructor_response.suggested_facade]
+                self.suggested_facade = self.smac_facades[
+                    instructor_response.suggested_facade
+                ]
                 self.logger.log_response(
                     f"Suggested Facade: {instructor_response.suggested_facade}",
                     {
@@ -337,7 +426,9 @@ class AutoMLAgent:
                     instructor_response.suggested_facade,
                 )
                 self.scenario_code = self.llm.generate(self.prompts["scenario"])
-                self.logger.log_prompt(self.prompts["scenario"], {"component": "scenario"})
+                self.logger.log_prompt(
+                    self.prompts["scenario"], {"component": "scenario"}
+                )
                 self.logger.log_response(self.scenario_code, {"component": "scenario"})
                 self._run_generated("scenario")
                 self.ui_agent.subheader("Generated Scenario Code")
@@ -348,29 +439,34 @@ class AutoMLAgent:
 
                 # Training Function
                 train_plan = instructor_response.train_function_plan
-                self.prompts["train_function"] = self._create_train_prompt(train_plan, instructor_response.suggested_facade)
-                self.train_function_code = self.llm.generate(self.prompts["train_function"])
-                self.logger.log_prompt(self.prompts["train_function"], {"component": "train_function"})
-                self.logger.log_response(self.train_function_code, {"component": "train_function"})
+                self.prompts["train_function"] = self._create_train_prompt(
+                    train_plan, instructor_response.suggested_facade
+                )
+                self.train_function_code = self.llm.generate(
+                    self.prompts["train_function"]
+                )
+                self.logger.log_prompt(
+                    self.prompts["train_function"], {"component": "train_function"}
+                )
+                self.logger.log_response(
+                    self.train_function_code, {"component": "train_function"}
+                )
                 self._run_generated("train_function")
                 self.ui_agent.subheader("Generated Training Function Code")
                 self.ui_agent.code(self.train_function_code, language="python")
 
-                # Save outputs
-                if self.config_code and isinstance(self.config_code, str):
-                    save_code_to_file(
-                        self.config_code,
-                        "scripts/generated_codes/generated_config_space.py",
+                # Quality gate: ensure smoke test succeeded and produced a finite loss
+                if (
+                    not hasattr(self, "last_loss")
+                    or self.last_loss is None
+                    or not self._is_finite(self.last_loss)
+                ):
+                    self.logger.log_error(
+                        "Training function smoke test failed (non-finite or missing loss). Regenerating components.",
+                        error_type="TRAIN_FUNCTION_SMOKE_TEST_FAILED",
                     )
-                if self.scenario_code and isinstance(self.scenario_code, str):
-                    save_code_to_file(
-                        self.scenario_code,
-                        "scripts/generated_codes/generated_scenario.py",
-                    )
-                if self.train_function_code and isinstance(self.train_function_code, str):
-                    save_code_to_file(
-                        self.train_function_code,
-                        "scripts/generated_codes/generated_train_function.py",
+                    raise RuntimeError(
+                        "Training function smoke test failed (non-finite or missing loss)."
                     )
 
                 # Use the train function that was just generated and tested, not the imported one
@@ -391,47 +487,185 @@ class AutoMLAgent:
                     self.config_space_obj,
                 )
 
-                # Check if baseline was beaten and retry if needed
-                if self.enable_baseline_retry and self.baseline_accuracy is not None and self.post_processor.improvement_feedback is not None:
-                    self.ui_agent.info("Baseline not beaten. Attempting improvement with feedback...")
+                # Initialize best-tracking with first-run results (only if metrics valid)
+                if self._is_valid_metrics(metrics):
+                    current_accuracy = self._extract_accuracy_from_metrics(metrics)
+                    self.best_loss = loss
+                    self.best_metrics = metrics
+                    self.best_accuracy = current_accuracy
+                    self.best_round = 0
+                    self.best_incumbent = getattr(self, "incumbent", None)
+                    self.best_codes = {
+                        "config": self.config_code,
+                        "scenario": self.scenario_code,
+                        "train_function": self.train_function_code,
+                    }
 
-                    # Retry with improvement feedback - regenerate all components
-                    if self.retry_with_improvement_feedback():
-                        # Re-run scenario with improved components
-                        loss, metrics = self.run_scenario(
+                # Multi-round improvement loop
+                if self.enable_baseline_retry and self.baseline_accuracy is not None:
+                    rounds_run = 0
+                    while (
+                        self.post_processor.improvement_feedback is not None
+                        and rounds_run < self.max_improvement_rounds
+                        and (
+                            self.best_accuracy is None
+                            or self.best_accuracy < self.baseline_accuracy
+                        )
+                    ):
+                        rounds_run += 1
+                        self.ui_agent.info(
+                            f"Baseline not beaten. Attempting improvement round {rounds_run}/{self.max_improvement_rounds}..."
+                        )
+
+                        # Regenerate all components using improvement feedback
+                        if not self.retry_with_improvement_feedback():
+                            self.ui_agent.warning(
+                                "Improvement regeneration failed; stopping improvement loop."
+                            )
+                            break
+
+                        # Update train function reference after regeneration
+                        self.train_fn = self.namespace["train"]
+
+                        # Re-run scenario
+                        loss_i, metrics_i = self.run_scenario(
                             self.scenario_obj,
                             self.train_fn,
                             self.dataset,
                             self.config_space_obj,
                         )
 
-                        # Check if improvement was successful
-                        if self.baseline_accuracy is not None:
-                            final_accuracy = None
-                            if "accuracy" in metrics:
-                                final_accuracy = metrics["accuracy"]
-                            elif "balanced_accuracy" in metrics:
-                                final_accuracy = metrics["balanced_accuracy"]
-                            elif "f1" in metrics:
-                                final_accuracy = metrics["f1"]
-                            elif "loss" in metrics:
-                                final_accuracy = 1.0 - metrics["loss"]
+                        # Validate metrics; skip improvement if invalid
+                        if not self._is_valid_metrics(metrics_i):
+                            self.ui_agent.warning(
+                                "Skipping invalid metrics from improvement round"
+                            )
+                            acc_i = None
+                        else:
+                            acc_i = self._extract_accuracy_from_metrics(metrics_i)
 
-                            if final_accuracy is not None and final_accuracy >= self.baseline_accuracy:
-                                self.ui_agent.success("✓ Improvement successful! Baseline beaten in retry.")
-                            else:
-                                self.ui_agent.warning("⚠ Improvement attempted but baseline still not beaten.")
+                        # Track best across rounds
+                        is_better = False
+                        if acc_i is not None and (
+                            self.best_accuracy is None or acc_i > self.best_accuracy
+                        ):
+                            is_better = True
+                        elif (
+                            acc_i is None
+                            and self.best_accuracy is None
+                            and loss_i is not None
+                            and (self.best_loss is None or loss_i < self.best_loss)
+                        ):
+                            # Fallback to loss if accuracy-like metric unavailable
+                            is_better = True
+
+                        if is_better:
+                            self.best_loss = loss_i
+                            self.best_metrics = metrics_i
+                            self.best_accuracy = acc_i
+                            self.best_round = rounds_run
+                            self.best_incumbent = getattr(self, "incumbent", None)
+                            self.best_codes = {
+                                "config": self.config_code,
+                                "scenario": self.scenario_code,
+                                "train_function": self.train_function_code,
+                            }
+
+                        # Early exit if baseline beaten
+                        if acc_i is not None and acc_i >= self.baseline_accuracy:
+                            self.ui_agent.success(
+                                "✓ Improvement achieved: baseline beaten."
+                            )
+                            break
+
+                # Save last-generated artifacts
+                if self.config_code and isinstance(self.config_code, str):
+                    save_code_to_file(
+                        self.config_code,
+                        "scripts/generated_codes/generated_config_space.py",
+                    )
+                if self.scenario_code and isinstance(self.scenario_code, str):
+                    save_code_to_file(
+                        self.scenario_code,
+                        "scripts/generated_codes/generated_scenario.py",
+                    )
+                if self.train_function_code and isinstance(
+                    self.train_function_code, str
+                ):
+                    save_code_to_file(
+                        self.train_function_code,
+                        "scripts/generated_codes/generated_train_function.py",
+                    )
+
+                # Also save best artifacts separately if tracking enabled
+                if self.track_best_across_rounds and self.best_codes["config"]:
+                    save_code_to_file(
+                        self.best_codes["config"],
+                        "scripts/generated_codes/generated_config_space_best.py",
+                    )
+                if self.track_best_across_rounds and self.best_codes["scenario"]:
+                    save_code_to_file(
+                        self.best_codes["scenario"],
+                        "scripts/generated_codes/generated_scenario_best.py",
+                    )
+                if self.track_best_across_rounds and self.best_codes["train_function"]:
+                    save_code_to_file(
+                        self.best_codes["train_function"],
+                        "scripts/generated_codes/generated_train_function_best.py",
+                    )
 
                 # If we get here, everything worked successfully
-                self.ui_agent.success(f"Component generation completed successfully on attempt {attempt + 1}")
+                self.ui_agent.success(
+                    f"Component generation completed successfully on attempt {attempt + 1}"
+                )
 
-                # Return results and last training loss
+                # Present best vs last
+                if self.track_best_across_rounds and self.best_metrics is not None:
+                    self.ui_agent.subheader("Best Metrics Across Rounds")
+                    self.ui_agent.write(
+                        {
+                            "best_round": self.best_round,
+                            "best_accuracy_like": self.best_accuracy,
+                            "best_metrics": self.best_metrics,
+                        }
+                    )
+
+                # Return results (prefer best across rounds if tracked)
+                final_config_code = (
+                    self.best_codes["config"]
+                    if (self.track_best_across_rounds and self.best_codes["config"])
+                    else self.config_code
+                )
+                final_scenario_code = (
+                    self.best_codes["scenario"]
+                    if (self.track_best_across_rounds and self.best_codes["scenario"])
+                    else self.scenario_code
+                )
+                final_train_code = (
+                    self.best_codes["train_function"]
+                    if (
+                        self.track_best_across_rounds
+                        and self.best_codes["train_function"]
+                    )
+                    else self.train_function_code
+                )
+                final_loss = (
+                    self.best_loss
+                    if (self.track_best_across_rounds and self.best_loss is not None)
+                    else loss
+                )
+                final_metrics = (
+                    self.best_metrics
+                    if (self.track_best_across_rounds and self.best_metrics is not None)
+                    else metrics
+                )
+
                 return (
-                    self.config_code,
-                    self.scenario_code,
-                    self.train_function_code,
-                    loss,
-                    metrics,
+                    final_config_code,
+                    final_scenario_code,
+                    final_train_code,
+                    final_loss,
+                    final_metrics,
                     self.prompts,
                     self.logger.experiment_dir,
                 )
@@ -441,11 +675,15 @@ class AutoMLAgent:
                     f"Component generation failed on attempt {attempt + 1}: {str(e)}",
                     error_type="COMPONENT_GENERATION_ERROR",
                 )
-                self.ui_agent.error(f"Component generation failed on attempt {attempt + 1}: {str(e)}")
+                self.ui_agent.error(
+                    f"Component generation failed on attempt {attempt + 1}: {str(e)}"
+                )
 
                 if attempt == max_retries - 1:
                     # Last attempt failed, raise the error
-                    self.ui_agent.error(f"All {max_retries} attempts failed. Raising error.")
+                    self.ui_agent.error(
+                        f"All {max_retries} attempts failed. Raising error."
+                    )
                     raise e
                 else:
                     # Wait a bit before retrying
@@ -462,7 +700,9 @@ class AutoMLAgent:
             code_attr = f"{component}_code"
             raw_code = getattr(self, code_attr)
             source = extract_code_block(raw_code)
-            self.logger.log_prompt(f"Running {component} code:", {"component": component, "action": "run"})
+            self.logger.log_prompt(
+                f"Running {component} code:", {"component": component, "action": "run"}
+            )
             self.logger.log_response(source, {"component": component, "action": "run"})
 
             try:
@@ -497,16 +737,22 @@ class AutoMLAgent:
 
                     # Test train function with budget parameter for compatibility
                     # Get dataset dictionary for train function
-                    dataset_for_train = self._get_dataset_for_train_function(self.dataset, self.dataset_test, include_test_data=True)
+                    dataset_for_train = self._get_dataset_for_train_function(
+                        self.dataset, self.dataset_test, include_test_data=True
+                    )
 
                     # if the train function is multi-fidelity or hyperband, then we need to pass the budget parameter
                     if self.suggested_facade.__name__ in [
                         "HyperbandFacade",
                         "MultiFidelityFacade",
                     ]:
-                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0, budget=10)
+                        result = train_fn(
+                            cfg=sampled, dataset=dataset_for_train, seed=0, budget=10
+                        )
                     else:
-                        result = train_fn(cfg=sampled, dataset=dataset_for_train, seed=0)
+                        result = train_fn(
+                            cfg=sampled, dataset=dataset_for_train, seed=0
+                        )
 
                     # Handle different return formats
                     if isinstance(result, dict) and "loss" in result:
@@ -562,11 +808,17 @@ class AutoMLAgent:
                     retry_count = 0
                 else:
                     # Ask LLM to fix errors with history of recent issues
-                    recent_errors = "\n".join(self.error_history[component][-self.MAX_RETRIES_PROMPT :])
+                    recent_errors = "\n".join(
+                        self.error_history[component][-self.MAX_RETRIES_PROMPT :]
+                    )
                     fix_prompt = self._create_fix_prompt(recent_errors, raw_code)
-                    self.logger.log_prompt(fix_prompt, {"component": component, "action": "fix"})
+                    self.logger.log_prompt(
+                        fix_prompt, {"component": component, "action": "fix"}
+                    )
                     fixed = self.llm.generate(fix_prompt)
-                    self.logger.log_response(fixed, {"component": component, "action": "fix"})
+                    self.logger.log_response(
+                        fixed, {"component": component, "action": "fix"}
+                    )
                     setattr(self, code_attr, fixed)
 
     def _create_config_prompt(self, recommended_configuration) -> str:
@@ -596,7 +848,9 @@ class AutoMLAgent:
 
         return base_prompt
 
-    def _create_train_prompt(self, train_function_instructions, suggested_facade) -> str:
+    def _create_train_prompt(
+        self, train_function_instructions, suggested_facade
+    ) -> str:
         """
         Create a prompt for generating the training function code.
         :param train_function_instructions: Instructions for the training function.
@@ -639,10 +893,14 @@ class AutoMLAgent:
 
         # Get the facade name to determine parameter requirements
         facade_name = self.suggested_facade.__name__
-        required_params = FACADE_PARAMETER_REQUIREMENTS.get(facade_name, ["config", "seed"])
+        required_params = FACADE_PARAMETER_REQUIREMENTS.get(
+            facade_name, ["config", "seed"]
+        )
 
         # Get dataset dictionary for train function
-        dataset_for_train = self._get_dataset_for_train_function(dataset, self.dataset_test)
+        dataset_for_train = self._get_dataset_for_train_function(
+            dataset, self.dataset_test
+        )
 
         # Create dynamic wrapper function based on facade requirements
         if "budget" in required_params:
@@ -654,7 +912,9 @@ class AutoMLAgent:
                     budget_int = int(budget) if budget is not None else budget
 
                     # Add timeout protection for individual training runs
-                    with timeout_handler(min(600, self.time_budget // 10)):  # Max 10 minutes per trial or 1/10 of total budget
+                    with timeout_handler(
+                        min(600, self.time_budget // 10)
+                    ):  # Max 10 minutes per trial or 1/10 of total budget
                         result = train_fn(
                             cfg=config,
                             dataset=dataset_for_train,
@@ -664,9 +924,19 @@ class AutoMLAgent:
 
                     # Train function now returns dictionary with loss and metrics
                     if isinstance(result, dict) and "loss" in result:
-                        return result["loss"]
+                        # Validate loss; if invalid, treat as crash cost
+                        try:
+                            loss_value = float(result["loss"])
+                            if not self._is_finite(loss_value):
+                                return float("inf")
+                            return loss_value
+                        except Exception:
+                            return float("inf")
                     else:
-                        return float(result)  # Fallback for backward compatibility
+                        try:
+                            return float(result)  # Fallback for backward compatibility
+                        except Exception:
+                            return float("inf")
 
                 except (TimeoutError, Exception) as e:
                     self.logger.log_error(
@@ -681,14 +951,27 @@ class AutoMLAgent:
                 """Wrapper function for standard facades (BlackBox, HyperparameterOptimization)"""
                 try:
                     # Add timeout protection for individual training runs
-                    with timeout_handler(min(600, self.time_budget // 10)):  # Max 10 minutes per trial or 1/10 of total budget
-                        result = train_fn(cfg=config, dataset=dataset_for_train, seed=int(seed))
+                    with timeout_handler(
+                        min(600, self.time_budget // 10)
+                    ):  # Max 10 minutes per trial or 1/10 of total budget
+                        result = train_fn(
+                            cfg=config, dataset=dataset_for_train, seed=int(seed)
+                        )
 
                     # Train function now returns dictionary with loss and metrics
                     if isinstance(result, dict) and "loss" in result:
-                        return result["loss"]
+                        try:
+                            loss_value = float(result["loss"])
+                            if not self._is_finite(loss_value):
+                                return float("inf")
+                            return loss_value
+                        except Exception:
+                            return float("inf")
                     else:
-                        return float(result)  # Fallback for backward compatibility
+                        try:
+                            return float(result)  # Fallback for backward compatibility
+                        except Exception:
+                            return float("inf")
 
                 except (TimeoutError, Exception) as e:
                     self.logger.log_error(
@@ -706,7 +989,9 @@ class AutoMLAgent:
         # Add timeout protection around SMAC optimization
         incumbent = None
         try:
-            self.ui_agent.info(f"Starting SMAC optimization with {self.time_budget} seconds timeout...")
+            self.ui_agent.info(
+                f"Starting SMAC optimization with {self.time_budget} seconds timeout..."
+            )
 
             # Use 90% of time budget for optimization, reserve 10% for final evaluation
             optimization_timeout = int(self.time_budget * 0.9)
@@ -735,13 +1020,17 @@ class AutoMLAgent:
                 f"SMAC optimization timed out after {optimization_timeout} seconds. Using best configuration found so far.",
                 error_type="SMAC_TIMEOUT",
             )
-            self.ui_agent.warning(f"Optimization timed out after {optimization_timeout}s, using best config found so far")
+            self.ui_agent.warning(
+                f"Optimization timed out after {optimization_timeout}s, using best config found so far"
+            )
 
             # Get the best configuration found so far
             try:
                 incumbent = smac.optimizer.intensifier.get_incumbent()
             except Exception as e:
-                self.logger.log_error(f"Error getting incumbent: {e}", error_type="SMAC_ERROR")
+                self.logger.log_error(
+                    f"Error getting incumbent: {e}", error_type="SMAC_ERROR"
+                )
                 # Fallback to default configuration if no incumbent found
                 incumbent = cfg.get_default_configuration()
                 self.logger.log_error(
@@ -750,7 +1039,9 @@ class AutoMLAgent:
                 )
 
         except Exception as e:
-            self.logger.log_error(f"SMAC optimization failed: {str(e)}", error_type="SMAC_ERROR")
+            self.logger.log_error(
+                f"SMAC optimization failed: {str(e)}", error_type="SMAC_ERROR"
+            )
             self.ui_agent.error(f"Optimization failed: {str(e)}")
             # Fallback to default configuration
             incumbent = cfg.get_default_configuration()
@@ -760,10 +1051,15 @@ class AutoMLAgent:
             )
 
         default_cost = smac.validate(self.config_space_obj.get_default_configuration())
+        # Guard against non-finite costs
+        if not self._is_finite(default_cost):
+            default_cost = float("inf")
         self.ui_agent.subheader("Default Cost")
         self.ui_agent.write(default_cost)
 
         incubment_cost = smac.validate(incumbent)
+        if not self._is_finite(incubment_cost):
+            incubment_cost = float("inf")
         self.ui_agent.subheader("Incumbent Cost")
         self.ui_agent.write(incubment_cost)
 
@@ -784,6 +1080,23 @@ class AutoMLAgent:
             {"component": "scenario", "status": "success", "config": default_cost},
         )
         self.incumbent = incumbent
+        # Degenerate results guard: if both costs are non-finite, attempt regeneration once
+        if (
+            self.enable_baseline_retry
+            and (not self._is_finite(incubment_cost))
+            and (not self._is_finite(default_cost))
+        ):
+            self.ui_agent.warning(
+                "Both default and incumbent costs are non-finite. Attempting regeneration with improvement feedback."
+            )
+            if self.retry_with_improvement_feedback():
+                return self.run_scenario(
+                    self.scenario_obj,
+                    self.namespace.get("train", self.train_fn),
+                    self.dataset,
+                    self.config_space_obj,
+                )
+
         return self.test_incumbent(
             self.train_fn,
             incumbent,
@@ -818,7 +1131,9 @@ class AutoMLAgent:
             final_accuracy = 1.0 - final_metrics["loss"]
 
         if final_accuracy is None:
-            self.ui_agent.warning("Could not extract accuracy metric for baseline comparison")
+            self.ui_agent.warning(
+                "Could not extract accuracy metric for baseline comparison"
+            )
             return True
 
         # Compare with baseline
@@ -826,11 +1141,13 @@ class AutoMLAgent:
 
         if meets_target:
             self.ui_agent.success(
-                f"✓ Solution meets baseline target! " f"Final accuracy: {final_accuracy:.4f} >= Baseline: {self.baseline_accuracy:.4f}"
+                f"✓ Solution meets baseline target! "
+                f"Final accuracy: {final_accuracy:.4f} >= Baseline: {self.baseline_accuracy:.4f}"
             )
         else:
             self.ui_agent.warning(
-                f"⚠ Solution below baseline target. " f"Final accuracy: {final_accuracy:.4f} < Baseline: {self.baseline_accuracy:.4f}"
+                f"⚠ Solution below baseline target. "
+                f"Final accuracy: {final_accuracy:.4f} < Baseline: {self.baseline_accuracy:.4f}"
             )
 
         # Log validation result
@@ -847,6 +1164,72 @@ class AutoMLAgent:
 
         return meets_target
 
+    def _extract_accuracy_from_metrics(self, metrics: dict) -> Optional[float]:
+        """Extract an accuracy-like scalar from metrics for comparison and best-tracking."""
+        if metrics is None:
+            return None
+        if "accuracy" in metrics:
+            return float(metrics["accuracy"])
+        if "balanced_accuracy" in metrics:
+            return float(metrics["balanced_accuracy"])
+        if "f1" in metrics:
+            return float(metrics["f1"])
+        if "loss" in metrics:
+            try:
+                return 1.0 - float(metrics["loss"])
+            except Exception:
+                return None
+        return None
+
+    def _is_finite(self, value: Any) -> bool:
+        try:
+            v = float(value)
+            return v == v and v not in (float("inf"), float("-inf"))
+        except Exception:
+            return False
+
+    def _is_valid_metrics(self, metrics: dict) -> bool:
+        if not isinstance(metrics, dict):
+            return False
+        # Disallow explicit error flag
+        if "error" in metrics and metrics["error"]:
+            return False
+        # Loss must be finite if present
+        if "loss" in metrics and not self._is_finite(metrics["loss"]):
+            return False
+        # If accuracy-like present, it must be within [0,1]
+        for k in ("accuracy", "balanced_accuracy", "f1"):
+            if k in metrics:
+                try:
+                    val = float(metrics[k])
+                    if not (0.0 <= val <= 1.0):
+                        return False
+                except Exception:
+                    return False
+        return True
+
+    def _regenerate_component_with_fix(
+        self, component: str, summary_error: str
+    ) -> None:
+        """Regenerate a component using the fix prompt with provided error context, then run it."""
+        code_attr = f"{component}_code"
+        raw_code = getattr(self, code_attr)
+        # Append to error history
+        self.error_history[component].append(summary_error)
+        recent_errors = "\n".join(
+            self.error_history[component][-self.MAX_RETRIES_PROMPT :]
+        )
+        fix_prompt = self._create_fix_prompt(recent_errors, raw_code)
+        self.logger.log_prompt(
+            fix_prompt, {"component": component, "action": "fix_after_eval"}
+        )
+        fixed = self.llm.generate(fix_prompt)
+        self.logger.log_response(
+            fixed, {"component": component, "action": "fix_after_eval"}
+        )
+        setattr(self, code_attr, fixed)
+        self._run_generated(component)
+
     def evaluate_baseline(self):
         """Evaluate baseline performance using AutoGluon to set minimum targets"""
         try:
@@ -859,7 +1242,9 @@ class AutoMLAgent:
             y_test = self.dataset_test["y"]
 
             # Evaluate baseline
-            baseline_results = self.baseline_evaluator.evaluate_baseline(X_train, y_train, X_test, y_test)
+            baseline_results = self.baseline_evaluator.evaluate_baseline(
+                X_train, y_train, X_test, y_test
+            )
 
             # Store baseline metrics
             self.baseline_metrics = baseline_results
@@ -876,12 +1261,16 @@ class AutoMLAgent:
                 self.baseline_accuracy = 1.0 / (1.0 + baseline_results["mse"])
             else:
                 # If no recognizable metric, skip baseline validation
-                self.ui_agent.warning("No recognizable accuracy metric found in baseline results")
+                self.ui_agent.warning(
+                    "No recognizable accuracy metric found in baseline results"
+                )
                 self.baseline_accuracy = None
 
             # Set baseline in post-processor
             if self.baseline_accuracy is not None:
-                self.post_processor.set_baseline(self.baseline_accuracy, baseline_results)
+                self.post_processor.set_baseline(
+                    self.baseline_accuracy, baseline_results
+                )
 
             self.ui_agent.success(f"Baseline evaluation completed!")
             self.ui_agent.subheader("Baseline Performance")
@@ -961,7 +1350,9 @@ class AutoMLAgent:
             self.ui_agent.subheader("🔄 Improved Training Function")
             self.ui_agent.code(self.train_function_code, language="python")
 
-            self.ui_agent.success("All components regenerated with improvement feedback!")
+            self.ui_agent.success(
+                "All components regenerated with improvement feedback!"
+            )
 
             # Show comparison between original and improved codes
             self.ui_agent.subheader("📊 Code Comparison")
@@ -971,12 +1362,20 @@ class AutoMLAgent:
             self.ui_agent.subheader("Configuration Space Changes")
             self.ui_agent.write("**Original:**")
             self.ui_agent.code(
-                (original_config_code[:300] + "..." if len(original_config_code) > 300 else original_config_code),
+                (
+                    original_config_code[:300] + "..."
+                    if len(original_config_code) > 300
+                    else original_config_code
+                ),
                 language="python",
             )
             self.ui_agent.write("**Improved:**")
             self.ui_agent.code(
-                (self.config_code[:300] + "..." if len(self.config_code) > 300 else self.config_code),
+                (
+                    self.config_code[:300] + "..."
+                    if len(self.config_code) > 300
+                    else self.config_code
+                ),
                 language="python",
             )
 
@@ -984,12 +1383,20 @@ class AutoMLAgent:
             self.ui_agent.subheader("Scenario Configuration Changes")
             self.ui_agent.write("**Original:**")
             self.ui_agent.code(
-                (original_scenario_code[:300] + "..." if len(original_scenario_code) > 300 else original_scenario_code),
+                (
+                    original_scenario_code[:300] + "..."
+                    if len(original_scenario_code) > 300
+                    else original_scenario_code
+                ),
                 language="python",
             )
             self.ui_agent.write("**Improved:**")
             self.ui_agent.code(
-                (self.scenario_code[:300] + "..." if len(self.scenario_code) > 300 else self.scenario_code),
+                (
+                    self.scenario_code[:300] + "..."
+                    if len(self.scenario_code) > 300
+                    else self.scenario_code
+                ),
                 language="python",
             )
 
@@ -997,22 +1404,38 @@ class AutoMLAgent:
             self.ui_agent.subheader("Training Function Changes")
             self.ui_agent.write("**Original:**")
             self.ui_agent.code(
-                (original_train_function_code[:300] + "..." if len(original_train_function_code) > 300 else original_train_function_code),
+                (
+                    original_train_function_code[:300] + "..."
+                    if len(original_train_function_code) > 300
+                    else original_train_function_code
+                ),
                 language="python",
             )
             self.ui_agent.write("**Improved:**")
             self.ui_agent.code(
-                (self.train_function_code[:300] + "..." if len(self.train_function_code) > 300 else self.train_function_code),
+                (
+                    self.train_function_code[:300] + "..."
+                    if len(self.train_function_code) > 300
+                    else self.train_function_code
+                ),
                 language="python",
             )
 
             # Show summary of improvements
             self.ui_agent.subheader("📊 Improvement Summary")
-            self.ui_agent.info(f"Iteration {self.post_processor.iteration_count}: All components regenerated with targeted improvements")
+            self.ui_agent.info(
+                f"Iteration {self.post_processor.iteration_count}: All components regenerated with targeted improvements"
+            )
             self.ui_agent.info("Key improvements applied:")
-            self.ui_agent.write("• Configuration Space: Enhanced algorithm diversity and hyperparameter ranges")
-            self.ui_agent.write("• Scenario: Optimized time budget and trial allocation")
-            self.ui_agent.write("• Training Function: Improved preprocessing and algorithm selection")
+            self.ui_agent.write(
+                "• Configuration Space: Enhanced algorithm diversity and hyperparameter ranges"
+            )
+            self.ui_agent.write(
+                "• Scenario: Optimized time budget and trial allocation"
+            )
+            self.ui_agent.write(
+                "• Training Function: Improved preprocessing and algorithm selection"
+            )
 
             return True
 
@@ -1030,7 +1453,9 @@ class AutoMLAgent:
         improvement_context = self.post_processor.create_improvement_prompt("config")
 
         # Get the original config prompt
-        original_prompt = self._create_config_prompt("Implement improved configuration space based on baseline failure analysis")
+        original_prompt = self._create_config_prompt(
+            "Implement improved configuration space based on baseline failure analysis"
+        )
 
         # Insert improvement context at the beginning
         improved_prompt = improvement_context + "\n\n" + original_prompt
@@ -1064,7 +1489,9 @@ class AutoMLAgent:
         Returns:
             Improved train prompt string
         """
-        improvement_context = self.post_processor.create_improvement_prompt("train_function")
+        improvement_context = self.post_processor.create_improvement_prompt(
+            "train_function"
+        )
 
         # Get the original train prompt
         original_prompt = self._create_train_prompt(

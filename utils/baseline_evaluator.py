@@ -6,6 +6,8 @@ import pandas as pd
 from pathlib import Path
 import os
 import shutil
+import uuid
+import atexit
 from typing import Dict, Optional
 from autogluon.tabular import TabularPredictor
 from autogluon.multimodal import MultiModalPredictor
@@ -60,22 +62,31 @@ class AutoGluonBaseline:
     ) -> Dict:
         """Evaluate baseline for tabular data using AutoGluon TabularPredictor"""
 
-        # Prepare data
-        train_data = pd.concat([X_train, y_train], axis=1)
-        test_data = pd.concat([X_test, y_test], axis=1)
+        # Prepare data and ensure label column has a valid name
+        label_name = y_train.name if y_train.name else "target"
+        train_data = pd.concat([X_train, y_train], axis=1).copy()
+        test_data = pd.concat([X_test, y_test], axis=1).copy()
+        if y_train.name != label_name:
+            # y had no name; rename the last column to a stable label name
+            train_data.columns = list(train_data.columns[:-1]) + [label_name]
+            test_data.columns = list(test_data.columns[:-1]) + [label_name]
 
-        # Create temporary directory for AutoGluon
-        temp_dir = Path("./temp_autogluon_baseline")
-        temp_dir.mkdir(exist_ok=True)
+        # Create a unique, absolute temporary directory for AutoGluon to avoid races
+        temp_parent = Path(os.path.abspath("./temp_autogluon_baseline"))
+        temp_parent.mkdir(parents=True, exist_ok=True)
+        temp_dir = temp_parent / f"run_{uuid.uuid4().hex}"
+        temp_dir.mkdir(parents=True, exist_ok=True)
 
         try:
             # Initialize predictor
-            predictor = TabularPredictor(label=y_train.name, path=str(temp_dir), verbosity=0)
+            predictor = TabularPredictor(
+                label=label_name, path=str(temp_dir), verbosity=0
+            )
 
             # Train with limited time budget
             predictor.fit(
                 train_data=train_data,
-                presets="best_quality",
+                presets="good_quality",
                 time_limit=self.time_budget,
                 num_cpus=min(4, os.cpu_count() or 1),  # Limit CPU usage
                 verbosity=0,
@@ -87,8 +98,10 @@ class AutoGluonBaseline:
             return results
 
         finally:
-            # Clean up
-            shutil.rmtree(temp_dir, ignore_errors=True)
+            # Defer cleanup to process exit to prevent races with any background file access
+            atexit.register(
+                lambda p=str(temp_dir): shutil.rmtree(p, ignore_errors=True)
+            )
 
     def _evaluate_image_baseline(
         self,
@@ -103,13 +116,17 @@ class AutoGluonBaseline:
         train_data = pd.concat([X_train, y_train], axis=1)
         test_data = pd.concat([X_test, y_test], axis=1)
 
-        # Create temporary directory
-        temp_dir = Path("./temp_autogluon_multimodal_baseline")
-        temp_dir.mkdir(exist_ok=True)
+        # Create a unique, absolute temporary directory
+        temp_parent = Path(os.path.abspath("./temp_autogluon_multimodal_baseline"))
+        temp_parent.mkdir(parents=True, exist_ok=True)
+        temp_dir = temp_parent / f"run_{uuid.uuid4().hex}"
+        temp_dir.mkdir(parents=True, exist_ok=True)
 
         try:
             # Initialize predictor
-            predictor = MultiModalPredictor(label=y_train.name, path=str(temp_dir), verbosity=0)
+            predictor = MultiModalPredictor(
+                label=y_train.name, path=str(temp_dir), verbosity=0
+            )
 
             # Train with limited time budget
             predictor.fit(
@@ -124,8 +141,10 @@ class AutoGluonBaseline:
             return results
 
         finally:
-            # Clean up
-            shutil.rmtree(temp_dir, ignore_errors=True)
+            # Defer cleanup to process exit
+            atexit.register(
+                lambda p=str(temp_dir): shutil.rmtree(p, ignore_errors=True)
+            )
 
 
 def create_baseline_evaluator(dataset_type: str, time_budget: int = 300):

@@ -24,5 +24,6 @@ build
 *.log
 .DS_Store
 agent_smac_logs/
+agent_smac_logs_v2/
 certificates/
 catboost_info/
