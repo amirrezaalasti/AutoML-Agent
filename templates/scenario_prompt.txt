@@ -157,8 +157,8 @@ The scenario configuration MUST be compatible with the selected facade. Based on
 **For Standard Facades (BlackBoxFacade, HyperparameterOptimizationFacade):**
 - **DO NOT include** `min_budget` or `max_budget` parameters
 - **Trial Selection:**
-  - For image datasets: 150-300 trials
-  - For tabular datasets: 100-200 trials
+  - For image datasets: 150-500 trials
+  - For tabular datasets: 100-400 trials
   - These facades do not support multi-fidelity optimization
 
 **IMPORTANT**: 

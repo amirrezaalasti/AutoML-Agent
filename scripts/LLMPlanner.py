@@ -102,13 +102,19 @@ class LLMPlanner:
             Template filename for the dataset type
         """
         # Check if dataset type suggests image data
-        if any(keyword in self.dataset_type.lower() for keyword in ['image', 'vision', 'cnn', 'conv']):
+        if any(
+            keyword in self.dataset_type.lower()
+            for keyword in ["image", "vision", "cnn", "conv"]
+        ):
             return self.PLANNER_TEMPLATE_IMAGE
-        
+
         # Check if dataset description suggests image data
-        if any(keyword in self.dataset_description.lower() for keyword in ['image', 'pixel', 'vision', 'photo', 'picture']):
+        if any(
+            keyword in self.dataset_description.lower()
+            for keyword in ["image", "pixel", "vision", "photo", "picture"]
+        ):
             return self.PLANNER_TEMPLATE_IMAGE
-        
+
         # Default to tabular template
         return self.PLANNER_TEMPLATE_TABULAR
 
@@ -192,7 +198,11 @@ class LLMPlanner:
         except json.JSONDecodeError as e:
             raise LLMPlannerError(f"Failed to parse JSON response: {e}")
 
-    def generate_instructions(self, config_space_suggested_parameters: Optional[str] = None) -> InstructorInfo:
+    def generate_instructions(
+        self,
+        config_space_suggested_parameters: Optional[str] = None,
+        improvement_context: Optional[str] = None,
+    ) -> InstructorInfo:
         """
         Generate structured instructions for the dataset using the Gemini LLM.
 
@@ -209,14 +219,20 @@ class LLMPlanner:
             # Get SMAC documentation
             smac_documentation = self._get_smac_documentation()
 
-            # Create the complete instruction using the planner template
+            # Create the base instruction using the planner template
             instruction = self.planner_template.format(
                 dataset_name=self.dataset_name,
                 dataset_description=self.dataset_description,
                 dataset_type=self.dataset_type,
                 task_type=self.task_type,
-                config_space_suggested_parameters=config_space_suggested_parameters or "No OpenML meta-learning insights available for this dataset.",
+                config_space_suggested_parameters=config_space_suggested_parameters
+                or "No OpenML meta-learning insights available for this dataset.",
             )
+            # Append improvement context if provided (for iterative planning)
+            if improvement_context:
+                instruction += "\n\n### Iterative Improvement Context\n" + str(
+                    improvement_context
+                )
             if self.base_url:
                 response = self.client.chat.completions.create(
                     model=self.model_name,
@@ -255,8 +271,12 @@ class LLMPlanner:
             )
 
             # Log the interaction
-            self.logger.log_prompt(prompt=instruction, metadata={"dataset_name": self.dataset_name})
-            self.logger.log_response(response=response_text, metadata={"dataset_name": self.dataset_name})
+            self.logger.log_prompt(
+                prompt=instruction, metadata={"dataset_name": self.dataset_name}
+            )
+            self.logger.log_response(
+                response=response_text, metadata={"dataset_name": self.dataset_name}
+            )
 
             return instructor_info
 

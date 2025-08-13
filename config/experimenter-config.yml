@@ -27,7 +27,7 @@ PY_EXPERIMENTER:
           values: ['classification']
         llm_model:
           type: VARCHAR(255)
-          values: ['llama-3.3-70b-instruct']
+          values: ['deepseek-r1-distill-llama-70b']
         dataset_openml_id:
           type: int
           # values: [1489, 23517, 28, 715, 752, 772, 807]

@@ -324,6 +324,14 @@ class AutoMLAgent:
                 )
             )
 
+            # Debug logging for post-processing result
+            self.logger.log_response(
+                f"Post-processing completed: baseline_beaten={baseline_beaten}, "
+                f"improvement_feedback_set={self.post_processor.improvement_feedback is not None}, "
+                f"improvement_feedback_length={len(self.post_processor.improvement_feedback) if self.post_processor.improvement_feedback else 0}",
+                {"component": "post_processing", "action": "debug"},
+            )
+
         return loss, metrics
 
     def _log_evaluation_success(self, metrics: dict, incumbent: Any):
@@ -354,7 +362,7 @@ class AutoMLAgent:
         Generate the configuration space, scenario, and training function code using LLM.
         :return: Tuple containing the generated configuration space, scenario, training function code, last loss, and prompts.
         """
-        max_retries = 3  # Maximum number of retries for the entire process
+        max_retries = 5  # Maximum number of retries for the entire process
 
         for attempt in range(max_retries):
             try:
@@ -462,12 +470,13 @@ class AutoMLAgent:
                     or not self._is_finite(self.last_loss)
                 ):
                     self.logger.log_error(
-                        "Training function smoke test failed (non-finite or missing loss). Regenerating components.",
+                        "Training function smoke test failed (non-finite or missing loss). Restarting component generation.",
                         error_type="TRAIN_FUNCTION_SMOKE_TEST_FAILED",
                     )
-                    raise RuntimeError(
-                        "Training function smoke test failed (non-finite or missing loss)."
+                    self.ui_agent.warning(
+                        "Training function smoke test failed. Restarting component generation..."
                     )
+                    continue  # Restart the current iteration
 
                 # Use the train function that was just generated and tested, not the imported one
                 # This ensures consistency between the tested function and the one used in SMAC
@@ -503,15 +512,34 @@ class AutoMLAgent:
 
                 # Multi-round improvement loop
                 if self.enable_baseline_retry and self.baseline_accuracy is not None:
+                    # Debug logging for improvement loop conditions
+                    self.logger.log_response(
+                        f"Checking improvement loop conditions: "
+                        f"enable_baseline_retry={self.enable_baseline_retry}, "
+                        f"baseline_accuracy={self.baseline_accuracy}, "
+                        f"improvement_feedback_exists={self.post_processor.improvement_feedback is not None}, "
+                        f"best_accuracy={self.best_accuracy}, "
+                        f"baseline_beaten={self.best_accuracy is not None and self.best_accuracy >= self.baseline_accuracy}",
+                        {"component": "improvement_loop", "action": "condition_check"},
+                    )
+
                     rounds_run = 0
-                    while (
+                    improvement_needed = (
                         self.post_processor.improvement_feedback is not None
                         and rounds_run < self.max_improvement_rounds
                         and (
                             self.best_accuracy is None
                             or self.best_accuracy < self.baseline_accuracy
                         )
-                    ):
+                    )
+
+                    self.logger.log_response(
+                        f"Improvement loop decision: improvement_needed={improvement_needed}, "
+                        f"improvement_feedback_length={len(self.post_processor.improvement_feedback) if self.post_processor.improvement_feedback else 0}",
+                        {"component": "improvement_loop", "action": "loop_decision"},
+                    )
+
+                    while improvement_needed:
                         rounds_run += 1
                         self.ui_agent.info(
                             f"Baseline not beaten. Attempting improvement round {rounds_run}/{self.max_improvement_rounds}..."
@@ -577,6 +605,16 @@ class AutoMLAgent:
                                 "✓ Improvement achieved: baseline beaten."
                             )
                             break
+
+                        # Update loop condition for next iteration
+                        improvement_needed = (
+                            self.post_processor.improvement_feedback is not None
+                            and rounds_run < self.max_improvement_rounds
+                            and (
+                                self.best_accuracy is None
+                                or self.best_accuracy < self.baseline_accuracy
+                            )
+                        )
 
                 # Save last-generated artifacts
                 if self.config_code and isinstance(self.config_code, str):
@@ -1323,30 +1361,51 @@ class AutoMLAgent:
         original_train_function_code = self.train_function_code
 
         try:
-            # Regenerate configuration space with improvement feedback
-            improved_config_prompt = self._create_improved_config_prompt()
-            self.config_code = self.llm.generate(improved_config_prompt)
-            self._run_generated("config")
+            # 1) Re-run planner with improvement context to get a fresh plan
+            improvement_context = self.post_processor.improvement_feedback
+            config_space_suggested_parameters = (
+                self.openML.extract_suggested_config_space_parameters(
+                    dataset_name=self.dataset_name or "unknown",
+                    X=self.dataset["X"],
+                    y=self.dataset["y"],
+                )
+            )
+            instructor_response = self.LLMInstructor.generate_instructions(
+                config_space_suggested_parameters,
+                improvement_context=improvement_context,
+            )
+            # Update suggested facade from the new plan
+            self.suggested_facade = self.smac_facades[
+                instructor_response.suggested_facade
+            ]
 
-            # Display improved config code
+            # 2) Regenerate components from the refreshed plan
+            # Configuration Space
+            self.prompts["config"] = self._create_config_prompt(
+                instructor_response.configuration_plan,
+            )
+            self.config_code = self.llm.generate(self.prompts["config"])
+            self._run_generated("config")
             self.ui_agent.subheader("🔄 Improved Configuration Space")
             self.ui_agent.code(self.config_code, language="python")
 
-            # Regenerate scenario with improvement feedback
-            improved_scenario_prompt = self._create_improved_scenario_prompt()
-            self.scenario_code = self.llm.generate(improved_scenario_prompt)
+            # Scenario
+            self.prompts["scenario"] = self._create_scenario_prompt(
+                instructor_response.scenario_plan,
+                instructor_response.suggested_facade,
+            )
+            self.scenario_code = self.llm.generate(self.prompts["scenario"])
             self._run_generated("scenario")
-
-            # Display improved scenario code
             self.ui_agent.subheader("🔄 Improved Scenario Configuration")
             self.ui_agent.code(self.scenario_code, language="python")
 
-            # Regenerate training function with improvement feedback
-            improved_train_prompt = self._create_improved_train_prompt()
-            self.train_function_code = self.llm.generate(improved_train_prompt)
+            # Training Function
+            self.prompts["train_function"] = self._create_train_prompt(
+                instructor_response.train_function_plan,
+                instructor_response.suggested_facade,
+            )
+            self.train_function_code = self.llm.generate(self.prompts["train_function"])
             self._run_generated("train_function")
-
-            # Display improved training function code
             self.ui_agent.subheader("🔄 Improved Training Function")
             self.ui_agent.code(self.train_function_code, language="python")
 
