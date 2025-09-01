@@ -7,17 +7,26 @@ PY_EXPERIMENTER:
     table:
       # name: AgentSmacRuns_image_fashionmnist
       # name: AgentSmacRuns_tabular_regression_44973
-      name: AgentSmacRuns_715_tabular_classification
+      name: AgentSmacRuns_software_defect_prediction_tabular_classification
       # name: AgentSmacRuns_tabular_v5
       keyfields:
         dataset_origin:
           type: VARCHAR(255)
-          values: ['openml']
+          values: ['kaggle']
         dataset_name:
           type: VARCHAR(255)
           # values: ['fashion-mnist']
-          values: ['715']
+          values: ['semustafacevik/software-defect-prediction/versions/1']
           # values: ['tabular44973'] 
+        kaggle_dataset_id:
+          type: VARCHAR(255)
+          values: ['semustafacevik/software-defect-prediction/versions/1']
+        kaggle_file_path:
+          type: VARCHAR(255)
+          values: ['jm1.csv']
+        kaggle_target_column:
+          type: VARCHAR(255)
+          values: ['defects']
         dataset_type:
           type: VARCHAR(255)
           # values: ['image']
@@ -27,7 +36,7 @@ PY_EXPERIMENTER:
           values: ['classification']
         llm_model:
           type: VARCHAR(255)
-          values: ['deepseek-r1-distill-llama-70b']
+          values: ['gpt-oss-120b']
         dataset_openml_id:
           type: int
           # values: [1489, 23517, 28, 715, 752, 772, 807]

@@ -11,6 +11,8 @@ from config.api_keys import LOCAL_LLAMA_API_KEY, GOOGLE_API_KEY
 from config.urls import BASE_URL
 from py_experimenter.result_processor import ResultProcessor
 from scripts.CLIUI import CLIUI
+from utils.file_operations import load_kaggle_dataset
+
 
 class AutoMLAgentExperimenter:
     def __init__(self):
@@ -22,7 +24,9 @@ class AutoMLAgentExperimenter:
             name="AutoMLAgentRuns",
         )
 
-    def run_automl_experiment(self, parameters: dict, result_processor: ResultProcessor, custom_config: dict):
+    def run_automl_experiment(
+        self, parameters: dict, result_processor: ResultProcessor, custom_config: dict
+    ):
         """
         Function to be executed by PyExperimenter.
         :param parameters: Dictionary of parameters for the experiment.
@@ -33,23 +37,56 @@ class AutoMLAgentExperimenter:
         task_type = parameters["task_type"]
         llm_model = parameters["llm_model"]
         dataset_openml_id = parameters["dataset_openml_id"]
-        dataset_name = parameters["dataset_name"] + "_" + str(dataset_openml_id)
+        # Build dataset_name dynamically depending on origin
+        if parameters["dataset_origin"] == "kaggle":
+            kaggle_dataset_id = parameters.get("kaggle_dataset_id", "")
+            dataset_name = (
+                parameters["dataset_name"]
+                if parameters.get("dataset_name")
+                else kaggle_dataset_id
+            )
+        else:
+            dataset_name = parameters["dataset_name"] + "_" + str(dataset_openml_id)
+        dataset_origin = parameters["dataset_origin"]
         ui_agent = CLIUI()
         n_folds = parameters["n_folds"]
         fold = parameters["fold"]
         time_budget = parameters.get("time_budget", 86400)
         dataset_folder = "./agent_smac_logs_v2/logs" + "_" + dataset_name
 
-        print(f"Experiment configuration: Dataset={dataset_name}, Time Budget={time_budget}s")
+        print(
+            f"Experiment configuration: Dataset={dataset_name}, Time Budget={time_budget}s"
+        )
         api_key = LOCAL_LLAMA_API_KEY
         base_url = BASE_URL
 
         if llm_model == "gemini-2.0-flash":
             api_key = GOOGLE_API_KEY
             base_url = None
+        if dataset_origin == "openml":
+            X, y = fetch_openml(data_id=dataset_openml_id, return_X_y=True)
+            dataset = {"X": X, "y": y}
+        elif dataset_origin == "kaggle":
+            kaggle_dataset_id = parameters.get("kaggle_dataset_id")
+            kaggle_file_path = parameters.get("kaggle_file_path")
+            kaggle_target_column = parameters.get("kaggle_target_column")
 
-        X, y = fetch_openml(data_id=dataset_openml_id, return_X_y=True)
-        dataset = {"X": X, "y": y}
+            if (
+                not kaggle_dataset_id
+                or not kaggle_file_path
+                or not kaggle_target_column
+            ):
+                raise ValueError(
+                    "For kaggle origin, provide kaggle_dataset_id, kaggle_file_path, kaggle_target_column in config"
+                )
+
+            dataset_df = load_kaggle_dataset(
+                dataset_id=kaggle_dataset_id,
+                file_path=kaggle_file_path,
+            )
+            X = dataset_df.drop(columns=[kaggle_target_column])
+            y = dataset_df[kaggle_target_column]
+            dataset = {"X": X, "y": y}
         agent = AutoMLAgent(
             dataset=dataset,
             dataset_type=dataset_type,

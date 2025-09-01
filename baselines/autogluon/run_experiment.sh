@@ -13,7 +13,8 @@
 
 # Activate conda environment
 source ~/.bashrc
-conda activate autogluon_baseline
+# conda activate autogluon_baseline
+# conda activate automl_agent
 
 echo "Starting job on $(hostname) at $(date)"
 

@@ -33,6 +33,7 @@ from contextlib import contextmanager
 import pandas as pd
 import os
 from pathlib import Path
+import json
 
 
 @contextmanager
@@ -652,10 +653,41 @@ class AutoMLAgent:
                         "scripts/generated_codes/generated_train_function_best.py",
                     )
 
-                # If we get here, everything worked successfully
-                self.ui_agent.success(
-                    f"Component generation completed successfully on attempt {attempt + 1}"
+                # Check if AutoGluon fallback should be used
+                current_accuracy = (
+                    self.best_accuracy
+                    if self.track_best_across_rounds and self.best_accuracy is not None
+                    else self._extract_accuracy_from_metrics(metrics)
                 )
+
+                # Get rounds completed from local variable if available, otherwise use default
+                rounds_completed = locals().get("rounds_run", 0)
+
+                should_use_autogluon, autogluon_results = (
+                    self._evaluate_autogluon_fallback(
+                        final_accuracy=current_accuracy,
+                        rounds_completed=rounds_completed,
+                    )
+                )
+
+                if should_use_autogluon and autogluon_results:
+                    self.ui_agent.info(
+                        "🤖 Switching to AutoGluon based on LLM decision..."
+                    )
+                    # Update final results with AutoGluon performance
+                    final_metrics = autogluon_results
+                    final_loss = 1.0 - autogluon_results.get(
+                        "accuracy", autogluon_results.get("balanced_accuracy", 0.5)
+                    )
+
+                    self.ui_agent.success(
+                        "✓ AutoGluon fallback completed successfully!"
+                    )
+                else:
+                    # If we get here, everything worked successfully with agent approach
+                    self.ui_agent.success(
+                        f"Component generation completed successfully on attempt {attempt + 1}"
+                    )
 
                 # Present best vs last
                 if self.track_best_across_rounds and self.best_metrics is not None:
@@ -1562,3 +1594,150 @@ class AutoMLAgent:
         improved_prompt = improvement_context + "\n\n" + original_prompt
 
         return improved_prompt
+
+    def _evaluate_autogluon_fallback(
+        self, final_accuracy: float, rounds_completed: int
+    ) -> tuple:
+        """
+        Use LLM to decide whether to fallback to AutoGluon based on performance and context.
+
+        Args:
+            final_accuracy: Best accuracy achieved by the agent so far
+            rounds_completed: Number of improvement rounds completed
+
+        Returns:
+            Tuple of (should_use_autogluon: bool, autogluon_results: dict or None)
+        """
+        # Only consider fallback if baseline exists and wasn't beaten
+        if (
+            self.baseline_accuracy is None
+            or final_accuracy is None
+            or final_accuracy >= self.baseline_accuracy
+        ):
+            return False, None
+
+        # Calculate performance metrics for LLM decision
+        performance_gap = self.baseline_accuracy - final_accuracy
+        performance_gap_percent = (performance_gap / self.baseline_accuracy) * 100
+
+        # Create decision prompt for LLM
+        decision_prompt = self._create_autogluon_decision_prompt(
+            baseline_accuracy=self.baseline_accuracy,
+            agent_accuracy=final_accuracy,
+            performance_gap_percent=performance_gap_percent,
+            rounds_completed=rounds_completed,
+            max_rounds=self.max_improvement_rounds,
+        )
+
+        # Get LLM decision
+        llm_response = self.llm.generate(decision_prompt)
+
+        # Parse LLM decision (look for clear indicators)
+        should_fallback = self._parse_autogluon_decision(llm_response)
+
+        self.logger.log_response(
+            f"AutoGluon fallback decision: {should_fallback}, "
+            f"performance_gap: {performance_gap_percent:.2f}%, "
+            f"rounds_completed: {rounds_completed}/{self.max_improvement_rounds}",
+            {"component": "autogluon_fallback", "action": "decision"},
+        )
+
+        if should_fallback:
+            self.ui_agent.info(
+                "🤖 LLM decided to use AutoGluon fallback. Running full AutoGluon optimization..."
+            )
+
+            # Run AutoGluon with extended time budget
+            extended_budget = max(
+                self.baseline_evaluator.time_budget * 3, 900
+            )  # At least 15 minutes
+
+            # Create temporary evaluator with extended budget
+            from utils.baseline_evaluator import create_baseline_evaluator
+
+            extended_evaluator = create_baseline_evaluator(
+                dataset_type=self.baseline_evaluator.dataset_type,
+                time_budget=extended_budget,
+            )
+
+            try:
+                # Get training and test data
+                X_train = self.dataset["X"]
+                y_train = self.dataset["y"]
+                X_test = self.dataset_test["X"]
+                y_test = self.dataset_test["y"]
+
+                # Run extended AutoGluon optimization
+                autogluon_results = extended_evaluator.evaluate_baseline(
+                    X_train, y_train, X_test, y_test
+                )
+
+                # Log comparison
+                ag_accuracy = autogluon_results.get(
+                    "accuracy", autogluon_results.get("balanced_accuracy", 0)
+                )
+                self.ui_agent.subheader("AutoGluon vs Agent Comparison")
+                self.ui_agent.write(
+                    {
+                        "agent_accuracy": final_accuracy,
+                        "autogluon_accuracy": ag_accuracy,
+                        "improvement": (
+                            ag_accuracy - final_accuracy if ag_accuracy else 0
+                        ),
+                        "time_budget_used": f"{extended_budget}s",
+                    }
+                )
+
+                return True, autogluon_results
+
+            except Exception as e:
+                self.logger.log_error(
+                    f"AutoGluon fallback failed: {str(e)}",
+                    error_type="AUTOGLUON_FALLBACK_ERROR",
+                )
+                self.ui_agent.error(f"AutoGluon fallback failed: {str(e)}")
+                return False, None
+
+        return False, None
+
+    def _create_autogluon_decision_prompt(
+        self,
+        baseline_accuracy: float,
+        agent_accuracy: float,
+        performance_gap_percent: float,
+        rounds_completed: int,
+        max_rounds: int,
+    ) -> str:
+        """Create prompt for LLM to decide on AutoGluon fallback"""
+
+        return f"""
+        You are an AutoML strategy advisor. Based on the performance data below, decide whether to switch to AutoGluon or continue with the current agent-based approach.
+
+        PERFORMANCE SUMMARY:
+        - AutoGluon Baseline: {baseline_accuracy:.4f}
+        - Agent Best Performance: {agent_accuracy:.4f}
+        - Performance Gap: {performance_gap_percent:.2f}% below baseline
+        - Improvement Rounds Completed: {rounds_completed}/{max_rounds}
+
+        CONTEXT:
+        - The agent has tried {rounds_completed} rounds of iterative improvement
+        - Current approach uses SMAC optimization with LLM-generated components
+        - AutoGluon is a robust automated ML solution that often performs well on tabular data
+        - Switching to AutoGluon means abandoning the current optimization approach
+
+        Your decision should be in a json format and no additional text.
+        the decision should be either "SWITCH_TO_AUTOGLUON" or "CONTINUE_WITH_AGENT"
+        sample response:
+        {{
+            "decision": "SWITCH_TO_AUTOGLUON",
+            "reason": "The performance gap is significant and the agent has not been able to close it."
+        }}
+        """
+
+    def _parse_autogluon_decision(self, llm_response: str) -> bool:
+        """Parse LLM response to extract AutoGluon fallback decision"""
+        response_json = json.loads(llm_response)
+        return (
+            response_json.get("decision", "CONTINUE_WITH_AGENT")
+            == "SWITCH_TO_AUTOGLUON"
+        )

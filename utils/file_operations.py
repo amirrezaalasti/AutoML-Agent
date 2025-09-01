@@ -13,6 +13,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 import pandas as pd
+import kagglehub
+from kagglehub import KaggleDatasetAdapter
 
 from .data_processing import validate_dataset
 from .types import ValidationError
@@ -183,3 +185,20 @@ def get_imagedata_path(dataset_origin: str, dataset_id: str | int) -> str:
     Get the path to the dataset.
     """
     return f"data/images/{dataset_origin}/{dataset_id}"
+
+
+def load_kaggle_dataset(
+    dataset_id: str | int, file_path: str
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Load kaggle dataset.
+    """
+    return kagglehub.dataset_load(
+        KaggleDatasetAdapter.PANDAS,
+        dataset_id,
+        file_path,
+        # Provide any additional arguments like
+        # sql_query or pandas_kwargs. See the
+        # documenation for more information:
+        # https://github.com/Kaggle/kagglehub/blob/main/README.md#kaggledatasetadapterpandas
+    )

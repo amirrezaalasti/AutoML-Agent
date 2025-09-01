@@ -5,17 +5,23 @@ PY_EXPERIMENTER:
     provider: mysql
     database: AgentSmac
     table:
-      name: AutogluonRuns_test_images
+      name: Autogluon_new_tabular_datasets
       keyfields:
         dataset_origin:
           type: VARCHAR(255)
-          values: ['openml']
+          values: ['kaggle']
         dataset_name:
           type: VARCHAR(255)
-          values: ['41983']
+          values: ['semustafacevik/software-defect-prediction/versions/1']
+        kaggle_dataset_id:
+          type: VARCHAR(255)
+          values: ['semustafacevik/software-defect-prediction/versions/1']
+        kaggle_file_path:
+          type: VARCHAR(255)
+          values: ['jm1.csv']
         dataset_type:
           type: VARCHAR(255)
-          values: ['image']
+          values: ['tabular']
         time_budget:
           type: int
           values: [3600]
@@ -25,6 +31,9 @@ PY_EXPERIMENTER:
         preset:
           type: VARCHAR(255)
           values: ['best_quality']
+        target_column:
+          type: VARCHAR(255)
+          values: ['defects']
         n_folds:
           type: int
           values: [10]

@@ -4,10 +4,11 @@ from autogluon.tabular import TabularPredictor
 from autogluon.multimodal import MultiModalPredictor
 from pathlib import Path
 
-from utils.file_operations import load_dataset, load_image_dataset 
+from utils.file_operations import load_dataset, load_image_dataset
 from utils.data_processing import split_dataset_kfold
 from py_experimenter.experimenter import PyExperimenter
 import pandas as pd
+from utils.file_operations import load_kaggle_dataset
 
 
 class AutoGluonWrapper:
@@ -49,17 +50,28 @@ class AutoGluonWrapper:
         y_train: pd.Series,
         X_test: pd.DataFrame,
         y_test: pd.Series,
+        label: str,
     ) -> dict:
-        predictor = self.get_predictor()
+        predictor = self.get_predictor(label)
 
         train_data = pd.concat([X_train, y_train], axis=1)
         test_data = pd.concat([X_test, y_test], axis=1)
 
         if isinstance(predictor, TabularPredictor):
-            predictor = predictor.fit(train_data=train_data, presets="best_quality", num_gpus=self.n_gpus, num_cpus=self.n_cpus, time_limit=self.time_budget)
-        elif isinstance(predictor, MultiModalPredictor):    
+            predictor = predictor.fit(
+                train_data=train_data,
+                presets="best_quality",
+                # num_gpus=self.n_gpus,
+                # num_cpus=self.n_cpus,
+                time_limit=self.time_budget,
+            )
+        elif isinstance(predictor, MultiModalPredictor):
             predictor.set_num_gpus(self.n_gpus)
-            predictor = predictor.fit(train_data=train_data, presets="best_quality", time_limit=self.time_budget)
+            predictor = predictor.fit(
+                train_data=train_data,
+                presets="best_quality",
+                time_limit=self.time_budget,
+            )
         else:
             raise ValueError(f"Unsupported predictor type: {type(predictor)}")
 
@@ -70,10 +82,10 @@ class AutoGluonWrapper:
         results = {f"test_{key}": float(value) for key, value in results.items()}
         self.result_processor.process_results(results)
 
-    def get_predictor(self) -> TabularPredictor | MultiModalPredictor:
+    def get_predictor(self, label: str) -> TabularPredictor | MultiModalPredictor:
         if self.dataset_type == "tabular":
             return TabularPredictor(
-                label="target", log_file_path=str(self.log_path / "autogluon.log")
+                label=label, log_file_path=str(self.log_path / "autogluon.log")
             )
 
         elif self.dataset_type == "image":
@@ -87,20 +99,43 @@ class AutoGluonWrapper:
                     / self.dataset_origin
                     / self.dataset_name
                     / str(self.fold)
-                )
+                ),
             )
         else:
             raise ValueError(f"Dataset type {self.dataset_type} not supported")
 
-    def create_dataset(self):
-        if self.dataset_type == "tabular":
-            X, y = load_dataset(
-                dataset_origin=self.dataset_origin, dataset_id=self.dataset_name, 
+    def create_dataset(
+        self,
+        target_column: str,
+        kaggle_dataset_id: str | None = None,
+        kaggle_file_path: str | None = None,
+    ):
+        if self.dataset_origin == "kaggle":
+            if not kaggle_dataset_id or not kaggle_file_path:
+                raise ValueError(
+                    "For kaggle origin, provide kaggle_dataset_id and kaggle_file_path"
+                )
+            df = load_kaggle_dataset(
+                dataset_id=kaggle_dataset_id, file_path=kaggle_file_path
             )
-        elif self.dataset_type == "image":
-            X, y = load_image_dataset(
-                dataset_origin=self.dataset_origin, dataset_id=self.dataset_name, overwrite=True
-            )
+            if target_column not in df.columns:
+                raise ValueError(
+                    f"Target column '{target_column}' not found in dataset"
+                )
+            X = df.drop(columns=[target_column])
+            y = df[target_column]
+        else:
+            if self.dataset_type == "tabular":
+                X, y = load_dataset(
+                    dataset_origin=self.dataset_origin,
+                    dataset_id=self.dataset_name,
+                )
+            elif self.dataset_type == "image":
+                X, y = load_image_dataset(
+                    dataset_origin=self.dataset_origin,
+                    dataset_id=self.dataset_name,
+                    overwrite=True,
+                )
 
         X_train, y_train, X_test, y_test = split_dataset_kfold(
             X=X, y=y, n_folds=self.n_folds, fold=self.fold, rng=self.rng
@@ -125,9 +160,27 @@ def run_ml(
         time_budget=parameters["time_budget"],
         result_processor=result_processor,
     )
-    X_train, y_train, X_test, y_test = predictor.create_dataset()
+    target_column = parameters.get("target_column", "target")
+    kaggle_dataset_id = parameters.get("kaggle_dataset_id")
+    kaggle_file_path = parameters.get("kaggle_file_path")
+    X_train, y_train, X_test, y_test = predictor.create_dataset(
+        target_column=target_column,
+        kaggle_dataset_id=kaggle_dataset_id,
+        kaggle_file_path=kaggle_file_path,
+    )
+    # Recreate predictor with the correct target label (for tabular)
+    if predictor.dataset_type == "tabular":
+        predictor_instance = TabularPredictor(
+            label=target_column, log_file_path=str(predictor.log_path / "autogluon.log")
+        )
+    else:
+        predictor_instance = predictor.get_predictor()
     results = predictor.run(
-        X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test
+        X_train=X_train,
+        y_train=y_train,
+        X_test=X_test,
+        y_test=y_test,
+        label=target_column,
     )
     predictor.log_final_results(results)
 
@@ -144,6 +197,6 @@ if __name__ == "__main__":
         use_codecarbon=False,
     )
     fill_table(experimenter)
-    #experimenter.execute(
-    #    experiment_function=run_ml, random_order=True, max_experiments=1
-    #)
+    experimenter.execute(
+        experiment_function=run_ml, random_order=True, max_experiments=1
+    )
